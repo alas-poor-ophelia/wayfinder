@@ -1,0 +1,21 @@
+{
+  "name": "minisheet",
+  "version": "0.1.0",
+  "description": "Pathfinder 1e character sheet system for Obsidian",
+  "type": "module",
+  "scripts": {
+    "test:e2e": "vitest run",
+    "test:e2e:watch": "vitest",
+    "screenshots": "vitest run --config vitest.config.ts",
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.1",
+    "obsidian": "^1.11.0",
+    "obsidian-testing-framework": "^0.1.6",
+    "patch-package": "^8.0.1",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.4"
+  },
+  "license": "MIT"
+}

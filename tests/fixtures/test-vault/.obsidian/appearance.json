@@ -1,0 +1,18 @@
+{
+  "theme": "obsidian",
+  "cssTheme": "ITS Theme",
+  "enabledCssSnippets": [
+    "MiniSheet",
+    "spellbook",
+    "spell-background",
+    "Font - RPGAwesome",
+    "S-Encoded Fonts",
+    "S-Encoded Icons",
+    "banner",
+    "chassis_callouts",
+    "minimal-pinned-mobile-right-sidebar",
+    "ITS-x-FaS-ArtDeco-sidebar",
+    "ITS-x-FaS-ArtDeco-Sidebar",
+    "TabsInObsidian"
+  ]
+}

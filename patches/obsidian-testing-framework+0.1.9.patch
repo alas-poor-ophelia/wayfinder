@@ -1,0 +1,140 @@
+diff --git a/node_modules/obsidian-testing-framework/lib/index.js b/node_modules/obsidian-testing-framework/lib/index.js
+index 3be8dff..edf9aa6 100644
+--- a/node_modules/obsidian-testing-framework/lib/index.js
++++ b/node_modules/obsidian-testing-framework/lib/index.js
+@@ -10,9 +10,15 @@ export function getExe(obsidianPath) {
+         return path.join(obsidianPath, "Resources", "app.asar");
+     }
+     if (process.platform == "win32") {
+-        const p = path.join(process.env.LOCALAPPDATA, "Obsidian", "Resources", "app.asar");
+-        if (existsSync(p)) {
+-            return p;
++        // Check both possible Windows install locations
++        const candidates = [
++            path.join(process.env.LOCALAPPDATA, "Programs", "Obsidian", "resources", "app.asar"),
++            path.join(process.env.LOCALAPPDATA, "Obsidian", "Resources", "app.asar"),
++        ];
++        for (const p of candidates) {
++            if (existsSync(p)) {
++                return p;
++            }
+         }
+     }
+     const possibleDirs = [
+@@ -25,7 +31,6 @@ export function getExe(obsidianPath) {
+     ];
+     for (let i = 0; i < possibleDirs.length; i++) {
+         if (existsSync(possibleDirs[i])) {
+-            // console.log(execSync(`ls -l ${possibleDirs[i]}`).toString());
+             return path.join(possibleDirs[i], "resources", "app.asar");
+         }
+     }
+@@ -69,6 +74,22 @@ function generateVaultConfig(vault) {
+         return Object.entries(json.vaults).find(a => a[1].path === vault)[0];
+     }
+ }
++// Helper to set up vault config in custom data directory
++function setupVaultConfig(dataDir, vaultPath) {
++    const vaultHash = randomBytes(8).toString("hex").toLowerCase();
++    const obsidianJson = {
++        vaults: {
++            [vaultHash]: {
++                path: vaultPath,
++                ts: Date.now()
++            }
++        }
++    };
++    writeFileSync(path.join(dataDir, "obsidian.json"), JSON.stringify(obsidianJson));
++    writeFileSync(path.join(dataDir, `${vaultHash}.json`), "{}");
++    return vaultHash;
++}
++
+ // @ts-ignore some error about a string type now having `undefined` as part of it's union
+ export const test = base.extend({
+     electronApp: [
+@@ -78,16 +99,18 @@ export const test = base.extend({
+             const vault = inject("vault");
+             process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
+             console.log("asar located at:", getExe(obsidianPath));
+-            let uriArg = "";
+-            if (vault) {
+-                let id = generateVaultConfig(vault);
+-                if (!!id) {
+-                    uriArg = `obsidian://open?vault=${encodeURIComponent(id)}`;
+-                }
+-            }
++            // Use separate user-data-dir to avoid single-instance conflicts
++            const testDataDir = path.join(process.env.TEMP || "/tmp", "obsidian-test-" + randomBytes(4).toString("hex"));
++            mkdirSync(testDataDir, { recursive: true });
++            console.log("Test data dir:", testDataDir);
++            console.log("Vault path:", vault);
++            // Set up vault config in the temp data dir
++            const vaultHash = setupVaultConfig(testDataDir, vault);
++            console.log("Vault hash:", vaultHash);
++            const vaultUri = `obsidian://open?vault=${vaultHash}`;
+             const electronApp = await electron.launch({
+                 timeout: 60000,
+-                args: [getExe(obsidianPath), uriArg].filter((a) => !!a),
++                args: [getExe(obsidianPath), "--user-data-dir=" + testDataDir, vaultUri],
+             });
+             electronApp.on("console", async (msg) => {
+                 console.log(...(await Promise.all(msg.args().map((a) => a.jsonValue()))));
+@@ -103,6 +126,34 @@ export const test = base.extend({
+             // console.log("windows", windows);
+             let page = windows[windows.length - 1];
+             await page.waitForLoadState("domcontentloaded");
++
++            // Handle "Safe Mode" / "Enable community plugins" modal
++            try {
++                const enableButton = page.locator('.modal-button-container button:has-text("Turn off"), .modal-button-container button:has-text("Enable"), .modal-button-container button:has-text("Trust")');
++                await enableButton.waitFor({ state: "visible", timeout: 5000 });
++                console.log("Safe mode modal detected, clicking to enable plugins...");
++                await enableButton.first().click();
++
++                // Wait for plugins to load after enabling
++                await page.waitForTimeout(3000);
++
++                // Settings window often opens after enabling — close it aggressively
++                for (let attempt = 0; attempt < 5; attempt++) {
++                    const settingsModal = page.locator('.modal-container .mod-settings, .modal-container');
++                    if (await settingsModal.count() > 0 && await settingsModal.first().isVisible()) {
++                        console.log("Settings window detected (attempt " + (attempt + 1) + "), pressing Escape...");
++                        await page.keyboard.press("Escape");
++                        await page.waitForTimeout(500);
++                    } else {
++                        break;
++                    }
++                }
++                // Final wait for any UI transitions
++                await page.waitForTimeout(500);
++            } catch (e) {
++                // Modal didn't appear — vault may already be trusted
++            }
++
+             try {
+                 await waitForIndexingComplete(page);
+             }
+diff --git a/node_modules/obsidian-testing-framework/lib/util.js b/node_modules/obsidian-testing-framework/lib/util.js
+index 298045f..2e01e6d 100644
+--- a/node_modules/obsidian-testing-framework/lib/util.js
++++ b/node_modules/obsidian-testing-framework/lib/util.js
+@@ -111,12 +111,18 @@ export function waitForIndexingComplete(page) {
+     return page.evaluateHandle("window.app").then((appHandle) => {
+         return appHandle.evaluate((app) => {
+             return new Promise((res2, rej2) => {
++                // Check if already resolved (small vaults resolve instantly)
++                if (app.metadataCache.initialized) {
++                    res2(null);
++                    return;
++                }
+                 let resolved = false;
+                 app.metadataCache.on("resolved", () => {
+                     res2(null);
+                     resolved = true;
+                 });
+-                setTimeout(() => !resolved && rej2("timeout"), 10000);
++                // Reduced timeout for small test vaults
++                setTimeout(() => !resolved && rej2("timeout"), 3000);
+             });
+         });
+     });

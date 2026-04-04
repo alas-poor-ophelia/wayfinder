@@ -1,0 +1,7 @@
+{
+  "startupScripts": [
+    "Projects/startup-scripts/FaS-flag-tabs-treatment.js",
+    "Projects/startup-scripts/popout-combat-tracker.js",
+    "Projects/startup-scripts/resizable-settings.js"
+  ]
+}

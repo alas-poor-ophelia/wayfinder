@@ -1,0 +1,244 @@
+/*************************/
+/* Blood Droplet Styling */
+/*************************/
+
+/*Blood Droplet Input */
+code.mb-input.mb-input-inline .blood-droplet-input {
+    position: relative;
+    display: inline-block;
+    width: 70px;
+    height: 70px;
+    background-color: #8b0000;
+    clip-path: polygon(50% 0%, 0% 70%, 20% 100%, 80% 100%, 100% 70%);
+    border-radius: 0 0 35px 35px;
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.3);
+    font-family: serif;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  
+  /* Float the AC shield left to make room for HP droplet */
+  div.block-language-meta-bind-js-view.mb-view:has(.ac-shield) {
+    display: inline-flex;
+    float: left;
+    padding-right: 10px;
+  }
+  
+  /* Styling for the input inside the blood droplet */
+  .blood-droplet-input input {
+    position: absolute;
+    bottom: 9px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+    border: none;
+    color: white;
+    line-height: 125px;
+    font-size: 32px;
+    font-weight: bold;
+    outline: none;
+  }
+  
+  /* Remove border on hover for the input inside blood droplet */
+  .blood-droplet-input input:hover,
+  .blood-droplet-input input:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+  
+  /* Blood Droplet View */
+  code.mb-view.mb-view-inline .blood-droplet-view {
+    position: relative;
+    display: inline-block;
+    anchor-name: --blood-droplet;
+    width: 70px;
+    height: 70px;
+    background-color: #8b0000;
+    clip-path: path('M35,0 C25,20 0,30 0,50 C0,75 25,70 35,70 C45,70 70,75 70,50 C70,30 45,20 35,0');
+    border-radius: 0 0 35px 35px;
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.3);
+    font-family: serif;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 90px;
+    box-sizing: border-box;
+    padding: 0 5px;
+    /* Center the droplet initially */
+    left: 50%;
+    transform: translateX(-50%);
+    /* Add transition for smooth animation */
+    transition: transform 0.3s ease, left 0.3s ease;
+  }
+  
+  /* When in edit mode, shift the blood droplet view left */
+  p[dir="auto"]:has(.checkbox-container[aria-checked="true"]) code.mb-view-inline .blood-droplet-view {
+    left: 0;
+    transform: translateX(0);
+  }
+  
+  /***************************************************/
+  /* Adjust spacing and layout for inline elements */
+  /***************************************************/
+  
+  /* Remove unnecessary spacing */
+  p[dir="auto"] > code {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Ensure button group is properly positioned */
+  code.mb-button-group-inline:has(.mod-hp-button) {
+    padding-top: 0;
+    display: inline-block !important;
+  }
+  
+  /* Style the individual HP mod buttons */
+  .mod-hp-button .mb-button-inner {
+    height: 30px; 
+    width: 30px; 
+    padding: 0; 
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the + and - symbols */
+    margin: 0 2px; /* Add small margin between buttons */
+  }
+  
+  /***********************************/
+  /* Hidden, centered checkbox input */
+  /***********************************/
+  
+  /* Create a container for proper positioning - with specific child selectors */
+  p[dir="auto"]:has(.mb-view-inline .blood-droplet-view):has(.mb-input-inline .invisible-input) {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Style for the blood droplet view */
+  .mb-view-inline .mb-view-wrapper.blood-droplet-view {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Position the checkbox on top of the blood droplet */
+  .mb-input-inline .mb-input-wrapper.invisible-input {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10; /* High z-index by default */
+    pointer-events: all; /* Allow interaction by default */
+  }
+  
+  /* Make checkbox invisible */
+  .invisible-input {
+    opacity: 0;
+  }
+  
+  /* Make Invisible Input larger */
+  .mb-input-inline .invisible-input .checkbox-container {
+    transform: scale(3);
+  }
+  
+  /*********************/
+  /* Show/Hide Buttons/Input */
+  /*********************/
+  
+  /* Hide blood droplet input by default */
+  p[dir="auto"] code.mb-input-inline .mb-input-wrapper.blood-droplet-input {
+    display: none;
+    opacity: 0;
+  }
+  
+  /* Hide HP buttons by default */
+  p[dir="auto"] code.mb-button-group-inline .mod-hp-button {
+    display: none;
+    opacity: 0;
+  }
+  
+  /* Show input when checkbox is checked */
+  p[dir="auto"]:has(.checkbox-container[aria-checked="true"]) code.mb-input-inline .blood-droplet-input {
+    animation: fadeIn 0.2s ease forwards;
+    animation-delay: 0.3s;
+    display: inline-block;
+    z-index: 15; /* Higher z-index than the invisible input when checked */
+  }
+  
+  /* When checked, lower invisible input z-index so blood droplet is clickable */
+  p[dir="auto"]:has(.checkbox-container[aria-checked="true"]) code.mb-input-inline .invisible-input {
+    z-index: 1; /* Lower z-index when checked */
+  }
+  
+  /* Show buttons when checkbox is checked */
+  p[dir="auto"]:has(.checkbox-container[aria-checked="true"]) code.mb-button-group-inline .mod-hp-button {
+    animation: fadeIn 0.2s ease forwards;
+    animation-delay: 0.3s;
+    display: inline-block;
+  }
+  
+  /* Animation keyframes for fade in */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /****************************************************/
+  /* Position Input Droplet centered over View Droplet*/
+  /****************************************************/
+  
+  /* Main container positioning */
+  p[dir="auto"]:has(.blood-droplet-view) {
+    position: relative;
+    display: inline-block;
+    width: 120px; /* Increased width to accommodate droplet and buttons */
+    height: 70px;
+    margin-top: 5px;
+  }
+  
+  /* Blood droplet view positioning */
+  p[dir="auto"] code.mb-view-inline .blood-droplet-view {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Position the blood droplet input absolutely over the view */
+  p[dir="auto"] code.mb-input-inline .blood-droplet-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: all;
+  }
+  
+  /* Position the buttons to the right of the droplet */
+  p[dir="auto"] code.mb-button-group-inline:has(.mod-hp-button) {
+    position: absolute;
+    left: 75px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  
+  /* Add spacing between inline elements */
+  p[dir="auto"] > code {
+    margin-right: 4px; /* Add some space between the inline elements */
+  }
+  
+  /* Ensure proper stacking of elements */
+  p[dir="auto"] {
+    position: relative;
+  }
+  
+  /* Hide whitespace between elements */
+  p[dir="auto"] code + code {
+    margin-left: -4px; /* Compensate for the space character in HTML */
+  }

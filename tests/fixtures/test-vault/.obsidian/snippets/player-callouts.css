@@ -1,0 +1,71 @@
+.callout[data-callout="player-card"] {
+    max-width: 134px;
+    
+    & > .callout-content {
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--hr);
+      display: flex;
+      flex-direction: column;
+  
+      /* Top row (first child) */
+      & > :nth-child(odd) {
+        background-color: var(--theme-rainbow-1);
+        padding: 8px 12px;
+        margin: 0;
+        line-height: 1.2;
+        font-weight: 500;
+        text-align: center;
+        color: black; /* Black text for top row */
+        
+        /* Bottom row (last odd child) */
+        &:last-child {
+          color: white; /* White text for bottom row */
+          background-color: var(--theme-rainbow-4); /* Using rainbow-4 instead of --hr */
+          text-align: center;
+        }
+  
+        /* Handle anchor tags inside top and bottom rows */
+        & a {
+          color: inherit; /* Inherit the color from parent */
+          font-weight: inherit;
+        }
+      }
+  
+      /* Middle row with image (second child) */
+      & > :nth-child(2) {
+        margin: 0;
+        line-height: 0;
+        height: 180px; /* Fixed height for consistent card sizing */
+        overflow: hidden;
+        position: relative;
+
+        &::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px; /* Height of the gradient overlay */
+            background: linear-gradient(to bottom, transparent, var(--theme-rainbow-4));
+            z-index: 1;
+          }
+        
+        & > span {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+        
+        & > span > img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover; /* Crop to fit while maintaining aspect ratio */
+          object-position: center; /* Center the image */
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+      }
+    }
+  }

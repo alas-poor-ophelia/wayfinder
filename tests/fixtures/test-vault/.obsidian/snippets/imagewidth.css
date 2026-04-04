@@ -1,0 +1,4 @@
+.image-embed[alt][alt*=relative][alt*=hhalf],
+div:not(.image-embed) > img[alt][alt*=relative][alt*=hhalf] {
+  width: 50%;
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "minisheet": {
+      "command": "bun",
+      "args": ["run", "mcp/server.ts"]
+    }
+  }
+}

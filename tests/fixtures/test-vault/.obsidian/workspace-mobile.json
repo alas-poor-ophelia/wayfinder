@@ -1,0 +1,3465 @@
+{
+  "main": {
+    "id": "minisheet-main-mobile",
+    "type": "split",
+    "children": [
+      {
+        "id": "minisheet-tabs-mobile",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "minisheet-leaf-mobile",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "minisheet-left-mobile",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "minisheet-left-files",
+        "type": "leaf",
+        "state": {
+          "type": "file-explorer",
+          "state": {
+            "sortOrder": "alphabetical",
+            "autoReveal": false
+          },
+          "icon": "lucide-folder-closed",
+          "title": "Files"
+        }
+      },
+      {
+        "id": "7e2632144123c842",
+        "type": "leaf",
+        "state": {
+          "type": "bookmarks",
+          "state": {},
+          "icon": "lucide-bookmark",
+          "title": "Bookmarks"
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "right": {
+    "id": "minisheet-right-mobile",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "4ad4c948054ae6ac",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9d3ea0b117aba5dc",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "7a7f4a34e8bbc772",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "784a578ce0ba4310",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "7557e2053090108d",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "85507faa596b6792",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "f14c65eaf15cffc3",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9e277dc674a2886d",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "89758f922575c98e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "f3415e6296d8a038",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "30896e75e5cfc6b3",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "24a9045fda1d036f",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "0506484789ea07e2",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "5443b1a8837c346c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "fef3121f2e0be824",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "6897cd0dfd020feb",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "bf6e30be98092d45",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "150e23fa71404811",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "de3f7e3e367ba853",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1d3acaaf8d927bc2",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "43054b16dd72138f",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "538ee8a6fa3bc438",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "931a978a44c080ec",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "cccef2301fde4a5c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9dfd70010d144891",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "2b3c977d94e57c24",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1a298eebb8157af4",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "c579ebb89ea80df2",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "546f4a303bdceff5",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "edb72ba1c6c8c702",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1e6fd6885a296cf8",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "cc3e4a2d36d2a3d8",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "bd2671933838f1ce",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "03b0406771c1149a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9ff30280899bbe7b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1ef05845413c516d",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "dd82c6a058932e01",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "5aeda381737c9765",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "b4e3083753730744",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "dee5f6e29fef4d9e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "acefd25ac5487297",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "08eb9f3fbd7a419f",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "f4ef630fff4f9040",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "07d9f399d06125a0",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "a30c3aa498f63443",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "038eb33149d79dea",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "39e688e0484631e5",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "53b08ddcc1ff5e19",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "0389efe5efbf5656",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "6c2294d038dbe012",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "e2686fd15a8254a6",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "c52aba085dd91af9",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "bc5554e386758246",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "7ef0dfb6670a6fcb",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1e815faeabae82ad",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "38d23f8157a1a271",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "cf4af2aa7fcaf548",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "e499973e4b8207e7",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "16f25e16e2f97c34",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "8ebba929c37c4aa4",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "90b0775dcbcf69b8",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "482de30c858e12e6",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "56b744b34593ff6c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1935c9ebdc98eba3",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "7768a742b033a133",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "58955a17facce51b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "8c25d68780b5ca1e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "37ea9663d3475cc2",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "065f50b512cafcab",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "7716f5950fbdf9a0",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "7271a692ee49a0cf",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "76a6973e8e2b71b4",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "594b10e55fe9b392",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "943cd665cf764722",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "8a3de71ffcb6f4da",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9309e2371c478667",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "cbef91e6cc8a7e55",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "6955e6eabbbf50ee",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "29d33624c7be5c53",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "bc5fafbec7705480",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "c955e2e0dfa588d5",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "0fa94ddd25794cc4",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "889a7c36daa6eac8",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "a856117d32fdaed4",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "9bb2f5ed1bfa7c74",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1fea819647a220f3",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "a0396af62f5d599a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "be98363218dba3fb",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "650ba9f1e35774fc",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "407e8b0f5c297e8f",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "33c71a3d5281967b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9da8029ec9d136b3",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "a51d3f17dd68cfc7",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "523dacff60e2507a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "d11609f26dc6bb5a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "66ecabbdf5cb7886",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "85150b90d7d1c176",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "596ba59d8152a9cc",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "2689c8d020cad2e3",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "5f5b38140077542a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "dbefc7ee2ed201e0",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "f6f887c355b3a352",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "6c3dca65c8e5ab44",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "2a0e2ceebc4c2dc8",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "d5211f0515085378",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "75df47d33746c967",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "8a0bd30416c358a7",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "0265d3597a0643f0",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "648ac3610c78cc48",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ac45dd6d92db5c95",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "dd5f253a96bdf95a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "d2d5f1881c2795a4",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "58d725acfbe9afb2",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "c3b08ceee3390df8",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "fdc9d956c9e94932",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "929a7d0b7bc912ff",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "b3dd76ef18274df6",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "6b943df33c11df61",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "fa6a3ad6f1f3944a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "a10eaa66d7bb0452",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "e2994b6e5eac3c26",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "85851508b464426d",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "4b3619becc41c52e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "cbf67b6d4b162bb7",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "3aaf5bebf576cfa4",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "f4086faaba28ae59",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "0289ed4017b8ab25",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "c3212aa54c208f5b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "61edf5c1276b52f0",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "d46babeaea5d6dd3",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "82930c6ddf75044c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ae4845193e1fa70b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "75663076f888ec2e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "66d4fdec9f25db7e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "a0c4dcffa60bf5f6",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "e89449576e6b5563",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1b30a388f68e39ca",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "b1eb57343fed09aa",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ff06edc3f35c0af2",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "adb24d18d4d8a903",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "5dab51d4dd567323",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "3f8f3656c5477734",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "869a0e30724e7c3e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "8363b5c9a6868ec1",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "b3d39c1b81745570",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "c1e656dd5fe3f22d",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "b45353cef8e8610b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "2bf49741863b8cbc",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "09015eeb372988bb",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "a4c5beed9cba86c7",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "992496d29f67ac8a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "3cccf6d36a1fcc8e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ba6a465d06671c0e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "169877f267d0343c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "75972206f826c71f",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9a7220dd179df9b7",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "f467598dbb40c161",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "fb7204e9756edf9a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9d406adea5383829",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "824fae2621c5aee5",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9ae339ec94254478",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "cf1d7c241561ffd0",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "c2ce7b586b12d94e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "aa19295612c01fbc",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "4ae363beb759aed7",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "39a1e86fc2f42ed6",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "3d0d131f5766ef75",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "cb3d6d3c09afc6ad",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "b78b5c1c24bc80d1",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "38c7116357f6399d",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "44a655069bfc6625",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "82e5549c55f93fdb",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "26a6b0298384e65b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "1e278d5c306d09c8",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "2d11689052a5b3c2",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1e113dafd274db0a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "201980d32f5f3f70",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "5e1423275b1ef4f6",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "244e766bcfb9aea1",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1d8d4de93edb70d3",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "b11db975a604625c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "2d4cc508407de1f7",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "a82d92584b3401ff",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1f920654a51eed88",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "9e3741deff7eda68",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ef850e238c1e5213",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "0e5c42c7b65f123a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "fe5431f18ca0ce8e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "92a2aae9a01623e7",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "4829282ae1b192eb",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ea2ccbe3fbf0a8e0",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "03bdf953a01ec758",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "f6b49d6c4eacd611",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "098d089c4cf70224",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ecee0944ec2ea917",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ce1295c29b2aecd5",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "c77789a5178c48c6",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "86d3ae553bd52280",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "f546eb26df76394f",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "2422bab0ee1c9538",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "21f801e1852d667b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      },
+      {
+        "id": "b5779246bd4e7eb2",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "d749ce513206ad7c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "e1a7560a2b4cb8c4",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "81f4e1cbe13ab560",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "a3e941b141ea3ccb",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "2c4d332bd9a7e437",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "6418d46af367c5aa",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "4ce7db059fc85e1b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "63ce26dfce8f5f4e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "5ec06e8eed3f1a10",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "f198d3455e506c51",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "3c8c8d5d488c3a1e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "c7f369d9de3f217c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "03c97f489a1a7e80",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "1ec2316fcacabb08",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "e02831c6e7051ebc",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "33c703ea0c0d8d6c",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "b6b7f5ec7639c86a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ef2a297f4e18972b",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "ca3ee811fb3ecac0",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "d3f299598a0c934a",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "caf42a1ad62d4cda",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "fce552e8de9817f6",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "bedf7b6c172d7e49",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Adarin/Adarin Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Adarin Mini Sheet"
+        }
+      },
+      {
+        "id": "413186c026aeb67d",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "MiniSheet/Hwayoung/Hwayoung Mini Sheet.md",
+            "mode": "preview",
+            "source": false,
+            "backlinks": false
+          },
+          "icon": "lucide-file",
+          "title": "Hwayoung Mini Sheet"
+        }
+      }
+    ],
+    "currentTab": 0,
+    "pinned": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "canvas:Create new canvas": false,
+      "markdown-importer:Open format converter": false,
+      "bases:Create new base": false,
+      "pexels-banner:🚩 Pixel Banner Menu": false
+    }
+  },
+  "active": "413186c026aeb67d",
+  "lastOpenFiles": [
+    "MiniSheet/Adarin/Adarin Mini Sheet.md"
+  ]
+}

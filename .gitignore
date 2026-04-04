@@ -1,0 +1,5 @@
+node_modules/
+mcp/node_modules/
+mcp/screenshots/
+.claude/
+tests/fixtures/test-vault/MiniSheet/

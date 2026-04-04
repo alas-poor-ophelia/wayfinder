@@ -1,0 +1,81 @@
+{
+  "main": {
+    "id": "minisheet-main",
+    "type": "split",
+    "children": [
+      {
+        "id": "minisheet-tabs",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "minisheet-leaf",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "minisheet-left",
+    "type": "split",
+    "children": [
+      {
+        "id": "53d2e7f6b8effc25",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9e206ad163991f23",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "5d119f9223db3165",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "right": {
+    "id": "minisheet-right",
+    "type": "split",
+    "children": [],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "canvas:Create new canvas": false,
+      "markdown-importer:Open format converter": false,
+      "bases:Create new base": false,
+      "pexels-banner:🚩 Pixel Banner Menu": false
+    }
+  },
+  "active": "minisheet-leaf",
+  "lastOpenFiles": []
+}
