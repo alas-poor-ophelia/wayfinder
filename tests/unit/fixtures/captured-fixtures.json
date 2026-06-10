@@ -1,0 +1,5184 @@
+{
+  "meta": {
+    "capturedAt": "2026-06-10T19:39:01.721Z"
+  },
+  "warnings": [],
+  "frontmatter": {
+    "adarinSheet": {
+      "paladinLevel": 4,
+      "skaldLevel": 3,
+      "monkunchainedLevel": 2,
+      "str": 8,
+      "dex": 22,
+      "con": 14,
+      "int": 13,
+      "wis": 8,
+      "cha": 22,
+      "sizeMod": 0,
+      "hp": 81,
+      "hpMax": 81,
+      "hpMod": 0,
+      "tmpHp": "",
+      "hpEditable": false,
+      "showCMBCMD": false,
+      "plumeOfPanacheMax": 1,
+      "plumeofPanacheCurrent": 1,
+      "quickrunnersMax": 1,
+      "quickrunnersCurrent": 1,
+      "resistanceEnhancement": 2,
+      "meleeWeaponEnhancement": 1,
+      "rangedWeaponEnhancement": 0,
+      "naturalAC": 2,
+      "dodgeAC": 1,
+      "deflectionAC": 2,
+      "energyRes": {
+        "cold": 5
+      },
+      "smiteEvil": false,
+      "smiteEvilOutsider": false,
+      "charging": false,
+      "powerAttack": true,
+      "rangedAttackStyle": "Shuriken",
+      "fightingDefensively": false,
+      "craneStyle": true,
+      "agileWeapon": true,
+      "flanking": false,
+      "versatilePerformance": true,
+      "flurryOfBlows": true,
+      "weaponSong": "Off",
+      "weaponSongEnhancement": "enhancement",
+      "preciseStrike": true,
+      "doublePreciseStrike": false,
+      "init": 14,
+      "initFamilarBonus": 4,
+      "initOther": 4,
+      "atkAdjust": 0,
+      "dmgAdjust": null,
+      "acAdjust": 0,
+      "initAdjust": 0,
+      "strAdjust": null,
+      "dexAdjust": null,
+      "conAdjust": 0,
+      "intAdjust": 0,
+      "wisAdjust": 0,
+      "chaAdjust": 0,
+      "dexDrain": null,
+      "dexDamage": null,
+      "strDrain": null,
+      "strDamage": null,
+      "skillAdjust": 0,
+      "skills": {
+        "Acrobatics": [
+          "dex",
+          5,
+          0,
+          true
+        ],
+        "Appraise": [
+          "int",
+          0,
+          0,
+          true
+        ],
+        "Bluff": [
+          "cha",
+          0,
+          0,
+          true
+        ],
+        "Climb": [
+          "str",
+          0,
+          0,
+          true
+        ],
+        "Craft (any)": [
+          "int",
+          0,
+          0,
+          true
+        ],
+        "Diplomacy": [
+          "cha",
+          6,
+          0,
+          true
+        ],
+        "Disable Device": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Disguise": [
+          "cha",
+          0,
+          0,
+          true
+        ],
+        "Escape Artist": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Fly": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Handle Animal": [
+          "cha",
+          0,
+          0,
+          true
+        ],
+        "Heal": [
+          "wis",
+          1,
+          0,
+          true
+        ],
+        "Intimidate": [
+          "cha",
+          7,
+          0,
+          true
+        ],
+        "Knowledge (arcana)": [
+          "int",
+          1,
+          0,
+          true
+        ],
+        "Knowledge (religion)": [
+          "int",
+          1,
+          0,
+          true
+        ],
+        "Linguistics": [
+          "int",
+          2,
+          0,
+          true
+        ],
+        "Perception": [
+          "wis",
+          9,
+          0,
+          true
+        ],
+        "Perform (Sing)": [
+          "cha",
+          7,
+          0,
+          true
+        ],
+        "Perform (Stringed)": [
+          "cha",
+          7,
+          0,
+          true
+        ],
+        "Profession (any)": [
+          "wis",
+          0,
+          0,
+          true
+        ],
+        "Ride": [
+          "dex",
+          0,
+          0,
+          true
+        ],
+        "Sense Motive": [
+          "wis",
+          0,
+          true
+        ],
+        "Sleight of Hand": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Spellcraft": [
+          "int",
+          1,
+          0,
+          true
+        ],
+        "Stealth": [
+          "dex",
+          1,
+          0,
+          true
+        ],
+        "Survival": [
+          "wis",
+          0,
+          [
+            null
+          ],
+          false
+        ],
+        "Swim": [
+          "str",
+          0,
+          0,
+          true
+        ],
+        "Use Magic Device": [
+          "cha",
+          3,
+          0,
+          true
+        ]
+      },
+      "negativeLevels": null,
+      "conditions": [],
+      "buffs": [
+        "blessing of fervor"
+      ],
+      "conditionEffects": {
+        "meleeAtkAdjust": 2,
+        "rangedAtkAdjust": 2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 2,
+        "touchAcAdjust": 2,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 2,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves"
+      },
+      "bofChoice": "+2 Atk/AC/Reflex",
+      "selectedTab": 1,
+      "cssclasses": [
+        "hide-title",
+        "hide-properties",
+        "keep-loaded",
+        "hide-sidebar-header"
+      ],
+      "panacheCurrent": 5,
+      "level1SpellSlotsCurrent": 4,
+      "selectedResourceTab": 1,
+      "selectedTabResources": 1,
+      "selectedAdventuringTab": 1,
+      "layOnHandsCurrent": null,
+      "channelEnergyCurrent": null,
+      "layOnHandsMax": 7,
+      "lohAmount": 2,
+      "channelEnergyMax": 3,
+      "ceAmount": 2,
+      "smiteEvilCurrent": 2,
+      "smiteEvilMax": 2,
+      "weaponSongRoundsMax": 12,
+      "weaponSongRoundsCurrent": 12,
+      "panachePoints": 6,
+      "panacheMax": 5,
+      "knightsBracersLongarmCurrent": 1,
+      "conDrain": 0
+    },
+    "adarinConfig": {
+      "cssClasses": [
+        "hide-title"
+      ],
+      "classes": [
+        "Paladin",
+        "Skald",
+        "Monk (Unchained)"
+      ],
+      "raceChoice": "Tiefling",
+      "race": {
+        "stat_adjustments": "+2 Dex, +2 Int, -2 Cha",
+        "base_speed": "30",
+        "size": "Medium",
+        "type": "Outsider (Native)"
+      },
+      "strOffsets": 0,
+      "strMod": -1,
+      "dexOffsets": 0,
+      "dexMod": 6,
+      "conOffsets": 0,
+      "conMod": 2,
+      "intOffsets": 0,
+      "intMod": 1,
+      "wisOffsets": 0,
+      "wisMod": -1,
+      "chaOffsets": 0,
+      "chaMod": 6,
+      "panacheMax": 6,
+      "panachePoints": 5,
+      "totalLevel": 10,
+      "adarinBab": 9,
+      "layOnHandsCurrent": 7,
+      "layOnHandsMax": 8,
+      "lohAmount": 2,
+      "channelEnergyCurrent": 3,
+      "channelEnergyMax": 3,
+      "ceAmount": 2,
+      "smiteEvilCurrent": 2,
+      "smiteEvilMax": 2,
+      "weaponSongRoundsMax": 13,
+      "weaponSongRoundsCurrent": 11,
+      "plumeOfPanacheMax": 1,
+      "plumeofPanacheCurrent": 1,
+      "quickrunnersMax": 1,
+      "quickrunnersCurrent": 1,
+      "attackStrings": {
+        "waveblade": "**Standard Attack:** +17 (1d6+17) (18-20/x2)\n**Full Attack:** +17/+17/+12 (1d6+17) (18-20/x2)",
+        "ranged": "**Standard Attack:** +16 (1d2+9) (20/x2)\n**Full Attack:** +16/+16/+11 (1d2+9) (20/x2)",
+        "unarmed": "**Standard Attack:** +16 (1d6+9) (20/x2)\n**Full Attack:** +16/+16/+11 (1d6+9) (20/x2)"
+      },
+      "saves": {
+        "fort": {
+          "value": 20,
+          "notes": "- +2 against death effects"
+        },
+        "ref": {
+          "value": 21,
+          "notes": "- +2 against death effects\n- Evasion"
+        },
+        "will": {
+          "value": 14,
+          "notes": "- +2 against death effects"
+        }
+      },
+      "isUpdating": false,
+      "inventory": [],
+      "currency": {
+        "copper": 0,
+        "silver": 0,
+        "gold": 0,
+        "platinum": 0
+      },
+      "xp": 0,
+      "classStats": {
+        "Paladin": {
+          "hitDie": "d10",
+          "saves": {
+            "fort": true,
+            "ref": false,
+            "will": true
+          },
+          "bab": 1
+        },
+        "Skald": {
+          "hitDie": "d8",
+          "saves": {
+            "fort": true,
+            "ref": false,
+            "will": true
+          },
+          "bab": 0.75
+        },
+        "Monk (Unchained)": {
+          "hitDie": "d10",
+          "saves": {
+            "fort": true,
+            "ref": true,
+            "will": false
+          },
+          "bab": 1
+        }
+      },
+      "skaldLevel": 3,
+      "paladinLevel": 5,
+      "monkunchainedLevel": 2,
+      "previousValues": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "hwayoungSheet": {
+      "masterLevel": 10,
+      "str": 3,
+      "dex": 16,
+      "con": 9,
+      "int": 7,
+      "wis": 12,
+      "cha": 5,
+      "sizeMod": 2,
+      "hp": 36.5,
+      "hpMax": 40.5,
+      "hpMod": 0,
+      "tmpHp": "",
+      "hpEditable": false,
+      "showCMBCMD": false,
+      "layOnPawsCurrent": null,
+      "layOnPawsMax": 3,
+      "channelEnergyCurrent": null,
+      "channelEnergyMax": 1,
+      "resistanceEnhancement": 0,
+      "meleeWeaponEnhancement": 1,
+      "rangedWeaponEnhancement": 0,
+      "naturalAC": 2,
+      "smiteEvil": false,
+      "smiteEvilOutsider": false,
+      "charging": false,
+      "powerAttack": false,
+      "fightingDefensively": false,
+      "hasted": false,
+      "init": 3,
+      "atkAdjust": 0,
+      "dmgAdjust": null,
+      "acAdjust": 0,
+      "initAdjust": 0,
+      "strAdjust": null,
+      "dexAdjust": null,
+      "conAdjust": 0,
+      "intAdjust": 0,
+      "wisAdjust": 0,
+      "chaAdjust": 0,
+      "dexDrain": null,
+      "dexDamage": null,
+      "strDrain": null,
+      "strDamage": null,
+      "skillAdjust": 0,
+      "skills": {
+        "Acrobatics": [
+          "dex",
+          5,
+          0,
+          true
+        ],
+        "Appraise": [
+          "int",
+          0,
+          0,
+          true
+        ],
+        "Bluff": [
+          "cha",
+          0,
+          0,
+          true
+        ],
+        "Climb": [
+          "str",
+          0,
+          0,
+          true
+        ],
+        "Craft (any)": [
+          "int",
+          0,
+          0,
+          true
+        ],
+        "Diplomacy": [
+          "cha",
+          6,
+          0,
+          true
+        ],
+        "Disable Device": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Disguise": [
+          "cha",
+          0,
+          0,
+          true
+        ],
+        "Escape Artist": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Fly": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Handle Animal": [
+          "cha",
+          0,
+          0,
+          true
+        ],
+        "Heal": [
+          "wis",
+          1,
+          0,
+          true
+        ],
+        "Intimidate": [
+          "cha",
+          7,
+          0,
+          true
+        ],
+        "Knowledge (arcana)": [
+          "int",
+          1,
+          0,
+          true
+        ],
+        "Knowledge (religion)": [
+          "int",
+          1,
+          0,
+          true
+        ],
+        "Linguistics": [
+          "int",
+          2,
+          0,
+          true
+        ],
+        "Perception": [
+          "wis",
+          9,
+          0,
+          true
+        ],
+        "Perform (Sing)": [
+          "cha",
+          7,
+          0,
+          true
+        ],
+        "Perform (Stringed)": [
+          "cha",
+          7,
+          0,
+          true
+        ],
+        "Profession (any)": [
+          "wis",
+          0,
+          0,
+          true
+        ],
+        "Ride": [
+          "dex",
+          0,
+          0,
+          true
+        ],
+        "Sense Motive": [
+          "wis",
+          0,
+          true
+        ],
+        "Sleight of Hand": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Spellcraft": [
+          "int",
+          1,
+          0,
+          true
+        ],
+        "Stealth": [
+          "dex",
+          1,
+          0,
+          true
+        ],
+        "Survival": [
+          "wis",
+          0,
+          [
+            null
+          ],
+          false
+        ],
+        "Swim": [
+          "str",
+          0,
+          0,
+          true
+        ],
+        "Use Magic Device": [
+          "cha",
+          3,
+          0,
+          true
+        ]
+      },
+      "negativeLevels": null,
+      "conditions": [],
+      "conditionEffects": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": ""
+      },
+      "cssclasses": [
+        "hide-title",
+        "keep-loaded"
+      ],
+      "banner-height": 180,
+      "content-start": 90,
+      "banner-fade": -85,
+      "banner-radius": 0,
+      "banner-display": "100%",
+      "banner-x": 50,
+      "banner-y": 29,
+      "selectedTab": 1
+    },
+    "hwayoungConfig": {
+      "strOffsets": 0,
+      "strMod": -4,
+      "dexOffsets": 0,
+      "dexMod": 3,
+      "conOffsets": 0,
+      "conMod": -1,
+      "intOffsets": 0,
+      "intMod": -2,
+      "wisOffsets": 0,
+      "wisMod": 1,
+      "chaOffsets": 0,
+      "chaMod": -3,
+      "bab": 9,
+      "saves": {
+        "fort": {
+          "value": 9,
+          "notes": ""
+        },
+        "ref": {
+          "value": 8,
+          "notes": ""
+        },
+        "will": {
+          "value": 8,
+          "notes": ""
+        }
+      },
+      "attackStrings": {
+        "bite": "**Standard Attack:** +2 (1d3-4) (20/x2)\n**Full Attack:** +2 (1d3-4) (20/x2)",
+        "ray": "**Standard Attack:** +2 (touch) (20/x2)\n**Full Attack:** +2 (touch) (20/x2)"
+      }
+    }
+  },
+  "attacksLive": {
+    "input": {
+      "strMod": -1,
+      "dexMod": 6,
+      "conMod": 2,
+      "intMod": 1,
+      "wisMod": -1,
+      "chaMod": 6,
+      "bab": 9,
+      "panachePoints": 6,
+      "paladinLevel": 4,
+      "monkLevel": 2,
+      "sizeMod": 0,
+      "naturalAC": 2,
+      "deflectionAC": 2,
+      "dodgeAC": 1,
+      "acAdjust": 0,
+      "atkAdjust": 0,
+      "dmgAdjust": 0,
+      "rangedAtkAdjust": 0,
+      "rangedDmgAdjust": 0,
+      "unarmedAtkAdjust": 0,
+      "unarmedDmgAdjust": 0,
+      "meleeWeaponEnhancement": 1,
+      "rangedWeaponEnhancement": 0,
+      "smiteEvil": false,
+      "smiteEvilOutsider": false,
+      "charging": false,
+      "flurryOfBlows": true,
+      "fightingDefensively": false,
+      "craneStyle": true,
+      "powerAttack": true,
+      "agileWeapon": true,
+      "preciseStrike": true,
+      "doublePreciseStrike": false,
+      "flanking": false,
+      "hasted": false,
+      "rangedAttackStyle": "Shuriken",
+      "weaponSong": "Off",
+      "conditionEffects": {
+        "meleeAtkAdjust": 2,
+        "rangedAtkAdjust": 2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 2,
+        "touchAcAdjust": 2,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 2,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves"
+      }
+    },
+    "output": {
+      "waveblade": "**Standard Attack:** +17 (1d6+17) (18-20/x2)\n**Full Attack:** +17/+17/+12 (1d6+17) (18-20/x2)",
+      "ranged": "**Standard Attack:** +16 (1d2+9) (20/x2)\n**Full Attack:** +16/+16/+11 (1d2+9) (20/x2)",
+      "unarmed": "**Standard Attack:** +16 (1d6+9) (20/x2)\n**Full Attack:** +16/+16/+11 (1d6+9) (20/x2)"
+    },
+    "storedAttackStrings": {
+      "waveblade": "**Standard Attack:** +17 (1d6+17) (18-20/x2)\n**Full Attack:** +17/+17/+12 (1d6+17) (18-20/x2)",
+      "ranged": "**Standard Attack:** +16 (1d2+9) (20/x2)\n**Full Attack:** +16/+16/+11 (1d2+9) (20/x2)",
+      "unarmed": "**Standard Attack:** +16 (1d6+9) (20/x2)\n**Full Attack:** +16/+16/+11 (1d6+9) (20/x2)"
+    },
+    "matchesStored": true
+  },
+  "acLive": {
+    "input": {
+      "strMod": -1,
+      "dexMod": 6,
+      "conMod": 2,
+      "intMod": 1,
+      "wisMod": -1,
+      "chaMod": 6,
+      "bab": 9,
+      "panachePoints": 6,
+      "paladinLevel": 4,
+      "monkLevel": 2,
+      "sizeMod": 0,
+      "naturalAC": 2,
+      "deflectionAC": 2,
+      "dodgeAC": 1,
+      "acAdjust": 0,
+      "atkAdjust": 0,
+      "dmgAdjust": 0,
+      "rangedAtkAdjust": 0,
+      "rangedDmgAdjust": 0,
+      "unarmedAtkAdjust": 0,
+      "unarmedDmgAdjust": 0,
+      "meleeWeaponEnhancement": 1,
+      "rangedWeaponEnhancement": 0,
+      "smiteEvil": false,
+      "smiteEvilOutsider": false,
+      "charging": false,
+      "flurryOfBlows": true,
+      "fightingDefensively": false,
+      "craneStyle": true,
+      "powerAttack": true,
+      "agileWeapon": true,
+      "preciseStrike": true,
+      "doublePreciseStrike": false,
+      "flanking": false,
+      "hasted": false,
+      "rangedAttackStyle": "Shuriken",
+      "weaponSong": "Off",
+      "conditionEffects": {
+        "meleeAtkAdjust": 2,
+        "rangedAtkAdjust": 2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 2,
+        "touchAcAdjust": 2,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 2,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves"
+      }
+    },
+    "output": {
+      "normalAC": 30,
+      "touchAC": 28,
+      "flatFootedAC": 20,
+      "cmb": 15,
+      "cmd": 34,
+      "conditionEffects": {
+        "meleeAtkAdjust": 2,
+        "rangedAtkAdjust": 2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 2,
+        "touchAcAdjust": 2,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 2,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves"
+      },
+      "breakdown": {
+        "dexMod": 6,
+        "chaMod": 6,
+        "strMod": -1,
+        "sizeMod": 0,
+        "monkLvl": 2,
+        "paladinLvl": 4,
+        "bab": 9,
+        "baseAC": 10,
+        "weaponSongBonus": 0,
+        "naturalAC": 2,
+        "deflectionAC": 2,
+        "dodgeAC": 1,
+        "monkACBonus": 6,
+        "paladinACBonus": 1,
+        "fightingDefensivelyBonus": 0,
+        "hastedACBonus": 0,
+        "chargingACPenalty": 0,
+        "normalAcAdjust": 2,
+        "touchAcAdjust": 2,
+        "ffAcAdjust": 0,
+        "loseDexToAC": false
+      }
+    }
+  },
+  "attackMatrix": [
+    {
+      "name": "neutral",
+      "overrides": {},
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "powerAttack",
+      "overrides": {
+        "powerAttack": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +6 (1d6+6) (18-20/x2)\n**Full Attack:** +6/+1 (1d6+6) (18-20/x2)",
+        "ranged": "**Standard Attack:** +12 (1d2+5) (20/x2)\n**Full Attack:** +12/+7 (1d2+5) (20/x2)",
+        "unarmed": "**Standard Attack:** +12 (1d6+5) (20/x2)\n**Full Attack:** +12/+7 (1d6+5) (20/x2)"
+      }
+    },
+    {
+      "name": "fightingDefensively",
+      "overrides": {
+        "fightingDefensively": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +5 (1d6+0) (18-20/x2)\n**Full Attack:** +5/+0 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +11 (1d2+-1) (20/x2)\n**Full Attack:** +11/+6 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +11 (1d6+-1) (20/x2)\n**Full Attack:** +11/+6 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "fightingDefensively+craneStyle",
+      "overrides": {
+        "fightingDefensively": true,
+        "craneStyle": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +7 (1d6+0) (18-20/x2)\n**Full Attack:** +7/+2 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +13 (1d2+-1) (20/x2)\n**Full Attack:** +13/+8 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +13 (1d6+-1) (20/x2)\n**Full Attack:** +13/+8 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "flurryOfBlows",
+      "overrides": {
+        "flurryOfBlows": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+9/+4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+15/+10 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "smiteEvil",
+      "overrides": {
+        "smiteEvil": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +15 (1d6+4) (18-20/x2)\n**Full Attack:** +15/+10 (1d6+4) (18-20/x2)",
+        "ranged": "**Standard Attack:** +21 (1d2+3) (20/x2)\n**Full Attack:** +21/+16 (1d2+3) (20/x2)",
+        "unarmed": "**Standard Attack:** +21 (1d6+3) (20/x2)\n**Full Attack:** +21/+16 (1d6+3) (20/x2)"
+      }
+    },
+    {
+      "name": "smiteEvil+outsider",
+      "overrides": {
+        "smiteEvil": true,
+        "smiteEvilOutsider": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +15 (1d6+8 (2x vs outsider)) (18-20/x2)\n**Full Attack:** +15/+10 (1d6+8 (2x vs outsider)) (18-20/x2)",
+        "ranged": "**Standard Attack:** +21 (1d2+7 (2x vs outsider)) (20/x2)\n**Full Attack:** +21/+16 (1d2+7 (2x vs outsider)) (20/x2)",
+        "unarmed": "**Standard Attack:** +21 (1d6+7 (2x vs outsider)) (20/x2)\n**Full Attack:** +21/+16 (1d6+7 (2x vs outsider)) (20/x2)"
+      }
+    },
+    {
+      "name": "charging",
+      "overrides": {
+        "charging": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +11 (1d6+0) (18-20/x2)\n**Full Attack:** +11/+6 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +17 (1d6+-1) (20/x2)\n**Full Attack:** +17/+12 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "flanking",
+      "overrides": {
+        "flanking": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +11 (1d6+0) (18-20/x2)\n**Full Attack:** +11/+6 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +17 (1d6+-1) (20/x2)\n**Full Attack:** +17/+12 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "agileWeapon",
+      "overrides": {
+        "agileWeapon": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +16 (1d6+7) (18-20/x2)\n**Full Attack:** +16/+11 (1d6+7) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "preciseStrike",
+      "overrides": {
+        "preciseStrike": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+4) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+4) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+3) (20/x2)\n**Full Attack:** +15/+10 (1d2+3) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+3) (20/x2)\n**Full Attack:** +15/+10 (1d6+3) (20/x2)"
+      }
+    },
+    {
+      "name": "preciseStrike+double",
+      "overrides": {
+        "preciseStrike": true,
+        "doublePreciseStrike": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+8) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+8) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+7) (20/x2)\n**Full Attack:** +15/+10 (1d2+7) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+7) (20/x2)\n**Full Attack:** +15/+10 (1d6+7) (20/x2)"
+      }
+    },
+    {
+      "name": "hasted",
+      "overrides": {
+        "hasted": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "powerAttack+flurry",
+      "overrides": {
+        "powerAttack": true,
+        "flurryOfBlows": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +6 (1d6+6) (18-20/x2)\n**Full Attack:** +6/+6/+1 (1d6+6) (18-20/x2)",
+        "ranged": "**Standard Attack:** +12 (1d2+5) (20/x2)\n**Full Attack:** +12/+12/+7 (1d2+5) (20/x2)",
+        "unarmed": "**Standard Attack:** +12 (1d6+5) (20/x2)\n**Full Attack:** +12/+12/+7 (1d6+5) (20/x2)"
+      }
+    },
+    {
+      "name": "powerAttack+smite+charging",
+      "overrides": {
+        "powerAttack": true,
+        "smiteEvil": true,
+        "charging": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +14 (1d6+10) (18-20/x2)\n**Full Attack:** +14/+9 (1d6+10) (18-20/x2)",
+        "ranged": "**Standard Attack:** +18 (1d2+9) (20/x2)\n**Full Attack:** +18/+13 (1d2+9) (20/x2)",
+        "unarmed": "**Standard Attack:** +20 (1d6+9) (20/x2)\n**Full Attack:** +20/+15 (1d6+9) (20/x2)"
+      }
+    },
+    {
+      "name": "fd+crane+flurry",
+      "overrides": {
+        "fightingDefensively": true,
+        "craneStyle": true,
+        "flurryOfBlows": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +7 (1d6+0) (18-20/x2)\n**Full Attack:** +7/+7/+2 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +13 (1d2+-1) (20/x2)\n**Full Attack:** +13/+13/+8 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +13 (1d6+-1) (20/x2)\n**Full Attack:** +13/+13/+8 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "kitchen-sink",
+      "overrides": {
+        "powerAttack": true,
+        "flurryOfBlows": true,
+        "smiteEvil": true,
+        "flanking": true,
+        "preciseStrike": true,
+        "weaponSong": "Flaming"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +14 (1d6+14 +1d6 fire) (18-20/x2)\n**Full Attack:** +14/+14/+9 (1d6+14 +1d6 fire) (18-20/x2)",
+        "ranged": "**Standard Attack:** +18 (1d2+13 +1d6 fire) (20/x2)\n**Full Attack:** +18/+18/+13 (1d2+13 +1d6 fire) (20/x2)",
+        "unarmed": "**Standard Attack:** +20 (1d6+13) (20/x2)\n**Full Attack:** +20/+20/+15 (1d6+13) (20/x2)"
+      }
+    },
+    {
+      "name": "ranged:Shuriken",
+      "overrides": {
+        "rangedAttackStyle": "Shuriken"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "ranged:Shuriken+flurry",
+      "overrides": {
+        "rangedAttackStyle": "Shuriken",
+        "flurryOfBlows": true
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+9/+4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+15/+10 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "ranged:Longbow",
+      "overrides": {
+        "rangedAttackStyle": "Longbow"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d8+0) (20/x3)\n**Full Attack:** +15/+10 (1d8+0) (20/x3)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "ranged:Ray",
+      "overrides": {
+        "rangedAttackStyle": "Ray"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (touch) (20/x2)\n**Full Attack:** +15/+10 (touch) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Off",
+      "overrides": {
+        "weaponSong": "Off"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Enhancement",
+      "overrides": {
+        "weaponSong": "Enhancement"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +10 (1d6+1) (18-20/x2)\n**Full Attack:** +10/+5 (1d6+1) (18-20/x2)",
+        "ranged": "**Standard Attack:** +16 (1d2+0) (20/x2)\n**Full Attack:** +16/+11 (1d2+0) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Defending",
+      "overrides": {
+        "weaponSong": "Defending"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)\n\n**Weapon Song Effects:**\n**Defending:** You can use the enhancement bonus as a bonus to your AC. Designate when the song begins.",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)\n\n**Weapon Song Effects:**\n**Defending:** You can use the enhancement bonus as a bonus to your AC. Designate when the song begins.",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Distance",
+      "overrides": {
+        "weaponSong": "Distance"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)\n\n**Weapon Song Effects:**\n**Distance:** Doubles the range increment of your ranged weapon.",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)\n\n**Weapon Song Effects:**\n**Distance:** Doubles the range increment of your ranged weapon.",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Flaming",
+      "overrides": {
+        "weaponSong": "Flaming"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0 +1d6 fire) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0 +1d6 fire) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1 +1d6 fire) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1 +1d6 fire) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Frost",
+      "overrides": {
+        "weaponSong": "Frost"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0 +1d6 cold) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0 +1d6 cold) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1 +1d6 cold) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1 +1d6 cold) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Ghost Touch",
+      "overrides": {
+        "weaponSong": "Ghost Touch"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)\n\n**Weapon Song Effects:**\n**Ghost Touch:** Your weapon can strike incorporeal creatures without miss chance and deals full damage to them.",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)\n\n**Weapon Song Effects:**\n**Ghost Touch:** Your weapon can strike incorporeal creatures without miss chance and deals full damage to them.",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Keen",
+      "overrides": {
+        "weaponSong": "Keen"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (15-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (15-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (19-20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (19-20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Mighty Cleaving",
+      "overrides": {
+        "weaponSong": "Mighty Cleaving"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)\n\n**Weapon Song Effects:**\n**Mighty Cleaving:** If you hit your target, you can make an additional attack against another opponent within reach at the same attack bonus.",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)\n\n**Weapon Song Effects:**\n**Mighty Cleaving:** If you hit your target, you can make an additional attack against another opponent within reach at the same attack bonus.",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Returning",
+      "overrides": {
+        "weaponSong": "Returning"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)\n\n**Weapon Song Effects:**\n**Returning:** A thrown weapon returns to your hand immediately after it is thrown, allowing you to make a full attack with it.",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)\n\n**Weapon Song Effects:**\n**Returning:** A thrown weapon returns to your hand immediately after it is thrown, allowing you to make a full attack with it.",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Shock",
+      "overrides": {
+        "weaponSong": "Shock"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0 +1d6 electricity) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0 +1d6 electricity) (18-20/x2)",
+        "ranged": "**Standard Attack:** +15 (1d2+-1 +1d6 electricity) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1 +1d6 electricity) (20/x2)",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    },
+    {
+      "name": "weaponSong:Seeking",
+      "overrides": {
+        "weaponSong": "Seeking"
+      },
+      "output": {
+        "waveblade": "**Standard Attack:** +9 (1d6+0) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+0) (18-20/x2)\n\n**Weapon Song Effects:**\n**Seeking:** Negates the miss chance for concealment (not total concealment) for ranged attacks.",
+        "ranged": "**Standard Attack:** +15 (1d2+-1) (20/x2)\n**Full Attack:** +15/+10 (1d2+-1) (20/x2)\n\n**Weapon Song Effects:**\n**Seeking:** Negates the miss chance for concealment (not total concealment) for ranged attacks.",
+        "unarmed": "**Standard Attack:** +15 (1d6+-1) (20/x2)\n**Full Attack:** +15/+10 (1d6+-1) (20/x2)"
+      }
+    }
+  ],
+  "attackMatrixBase": {
+    "strMod": -1,
+    "dexMod": 6,
+    "conMod": 2,
+    "intMod": 1,
+    "wisMod": -1,
+    "chaMod": 6,
+    "bab": 9,
+    "panachePoints": 6,
+    "paladinLevel": 4,
+    "monkLevel": 2,
+    "sizeMod": 0,
+    "naturalAC": 2,
+    "deflectionAC": 2,
+    "dodgeAC": 1,
+    "acAdjust": 0,
+    "atkAdjust": 0,
+    "dmgAdjust": 0,
+    "rangedAtkAdjust": 0,
+    "rangedDmgAdjust": 0,
+    "unarmedAtkAdjust": 0,
+    "unarmedDmgAdjust": 0,
+    "meleeWeaponEnhancement": 1,
+    "rangedWeaponEnhancement": 0,
+    "smiteEvil": false,
+    "smiteEvilOutsider": false,
+    "charging": false,
+    "flurryOfBlows": false,
+    "fightingDefensively": false,
+    "craneStyle": false,
+    "powerAttack": false,
+    "agileWeapon": false,
+    "preciseStrike": false,
+    "doublePreciseStrike": false,
+    "flanking": false,
+    "hasted": false,
+    "rangedAttackStyle": "Shuriken",
+    "weaponSong": "Off",
+    "conditionEffects": {}
+  },
+  "acMatrix": [
+    {
+      "name": "neutral",
+      "overrides": {},
+      "output": {
+        "normalAC": 28,
+        "touchAC": 26,
+        "flatFootedAC": 20,
+        "cmb": 15,
+        "cmd": 34,
+        "conditionEffects": {},
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 0,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "fightingDefensively",
+      "overrides": {
+        "fightingDefensively": true
+      },
+      "output": {
+        "normalAC": 31,
+        "touchAC": 29,
+        "flatFootedAC": 20,
+        "cmb": 15,
+        "cmd": 34,
+        "conditionEffects": {},
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 3,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 0,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "fightingDefensively+craneStyle",
+      "overrides": {
+        "fightingDefensively": true,
+        "craneStyle": true
+      },
+      "output": {
+        "normalAC": 32,
+        "touchAC": 30,
+        "flatFootedAC": 20,
+        "cmb": 15,
+        "cmd": 34,
+        "conditionEffects": {},
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 4,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 0,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "charging",
+      "overrides": {
+        "charging": true
+      },
+      "output": {
+        "normalAC": 26,
+        "touchAC": 24,
+        "flatFootedAC": 18,
+        "cmb": 15,
+        "cmd": 34,
+        "conditionEffects": {},
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": -2,
+          "normalAcAdjust": -2,
+          "touchAcAdjust": -2,
+          "ffAcAdjust": -2,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "hasted",
+      "overrides": {
+        "hasted": true
+      },
+      "output": {
+        "normalAC": 29,
+        "touchAC": 27,
+        "flatFootedAC": 20,
+        "cmb": 15,
+        "cmd": 34,
+        "conditionEffects": {},
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 1,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 0,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "weaponSong:Defending",
+      "overrides": {
+        "weaponSong": "Defending"
+      },
+      "output": {
+        "normalAC": 29,
+        "touchAC": 27,
+        "flatFootedAC": 21,
+        "cmb": 15,
+        "cmd": 34,
+        "conditionEffects": {},
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 11,
+          "weaponSongBonus": 1,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 0,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "acAdjust:+3",
+      "overrides": {
+        "acAdjust": 3
+      },
+      "output": {
+        "normalAC": 31,
+        "touchAC": 29,
+        "flatFootedAC": 23,
+        "cmb": 15,
+        "cmd": 34,
+        "conditionEffects": {},
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 3,
+          "touchAcAdjust": 3,
+          "ffAcAdjust": 3,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "loseDexToAC",
+      "overrides": {
+        "conditionEffects": {
+          "loseDexToAC": true
+        }
+      },
+      "output": {
+        "normalAC": 22,
+        "touchAC": 20,
+        "flatFootedAC": 20,
+        "cmb": 9,
+        "cmd": 28,
+        "conditionEffects": {
+          "loseDexToAC": true
+        },
+        "breakdown": {
+          "dexMod": 0,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 0,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "loseDexToAC": true
+        }
+      }
+    },
+    {
+      "name": "flatFooted",
+      "overrides": {
+        "conditionEffects": {
+          "flatFooted": true
+        }
+      },
+      "output": {
+        "normalAC": 22,
+        "touchAC": 20,
+        "flatFootedAC": 20,
+        "cmb": 9,
+        "cmd": 28,
+        "conditionEffects": {
+          "flatFooted": true
+        },
+        "breakdown": {
+          "dexMod": 0,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 0,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "loseDexToAC": true
+        }
+      }
+    },
+    {
+      "name": "condition ac adjusts",
+      "overrides": {
+        "conditionEffects": {
+          "acAdjust": -4,
+          "touchAcAdjust": -2,
+          "ffAcAdjust": 1,
+          "cmb": -2,
+          "cmd": -2
+        }
+      },
+      "output": {
+        "normalAC": 24,
+        "touchAC": 24,
+        "flatFootedAC": 21,
+        "cmb": 13,
+        "cmd": 32,
+        "conditionEffects": {
+          "acAdjust": -4,
+          "touchAcAdjust": -2,
+          "ffAcAdjust": 1,
+          "cmb": -2,
+          "cmd": -2
+        },
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": -4,
+          "touchAcAdjust": -2,
+          "ffAcAdjust": 1,
+          "loseDexToAC": false
+        }
+      }
+    }
+  ],
+  "conditionMatrix": [
+    {
+      "name": "condition:prone",
+      "input": {
+        "conditions": [
+          "prone"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -4,
+        "rangedAtkAdjust": -4,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": -4,
+        "touchAcAdjust": -4,
+        "ffAcAdjust": -4,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Prone: +4 AC vs ranged attacks, -4 vs melee; can't use ranged except crossbows",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:blinded",
+      "input": {
+        "conditions": [
+          "blinded"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -4,
+        "rangedAtkAdjust": -4,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": -2,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": -4,
+        "strSkillAdjust": -4,
+        "dexSkillAdjust": -4,
+        "movementAdjust": 0.5,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": true,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": true,
+        "conditionNotes": "- Blinded: All sight-based checks auto-fail, 50% miss chance, half speed",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:dazed",
+      "input": {
+        "conditions": [
+          "dazed"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": false,
+        "canFullRound": false,
+        "canStandard": false,
+        "canMove": false,
+        "canAttack": false,
+        "canCast": false,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Dazed: Cannot take actions, no penalty to AC",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:staggered",
+      "input": {
+        "conditions": [
+          "staggered"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": false,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Staggered: Can take only a single move OR standard action each round",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:stunned",
+      "input": {
+        "conditions": [
+          "stunned"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": -2,
+        "touchAcAdjust": -2,
+        "ffAcAdjust": -2,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": false,
+        "canFullRound": false,
+        "canStandard": false,
+        "canMove": false,
+        "canAttack": false,
+        "canCast": false,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": true,
+        "loseDexToAC": true,
+        "conditionNotes": "- Stunned: Drop items, can't act, -2 AC, lose Dex to AC. Attackers get +4 to CMB",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:shaken",
+      "input": {
+        "conditions": [
+          "shaken"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -2,
+        "rangedAtkAdjust": -2,
+        "extraAttacks": [],
+        "cmb": -2,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": -2,
+        "refAdjust": -2,
+        "willAdjust": -2,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": -2,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Shaken: -2 penalty on attacks, saves, skills, and ability checks",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:paralyzed",
+      "input": {
+        "conditions": [
+          "paralyzed"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": -10,
+        "dexAdjust": -10,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": false,
+        "canFullRound": false,
+        "canStandard": false,
+        "canMove": false,
+        "canAttack": false,
+        "canCast": false,
+        "miss50": false,
+        "helpless": true,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Paralyzed: Frozen in place, helpless, cannot move, STR & DEX = 0; mental actions only",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:grappled",
+      "input": {
+        "conditions": [
+          "grappled"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -2,
+        "rangedAtkAdjust": -2,
+        "extraAttacks": [],
+        "cmb": -2,
+        "cmd": -2,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": -4,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 0,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Grappled: -2 attacks, -4 DEX, can't move, no stealth, can't cast with somatic components unless concentration check",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:flat-footed",
+      "input": {
+        "conditions": [
+          "flat-footed"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": true,
+        "loseDexToAC": true,
+        "conditionNotes": "- Flat-Footed: Lose DEX bonus to AC, cannot make AoO (unless Combat Reflexes)",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:nauseated",
+      "input": {
+        "conditions": [
+          "nauseated"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": false,
+        "canStandard": false,
+        "canMove": true,
+        "canAttack": false,
+        "canCast": false,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Nauseated: Can't attack, cast, concentrate, or do anything requiring attention. Only a single move action per turn",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:sickened",
+      "input": {
+        "conditions": [
+          "sickened"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -2,
+        "rangedAtkAdjust": -2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": -2,
+        "refAdjust": -2,
+        "willAdjust": -2,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": -2,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Sickened: -2 penalty on attack rolls, weapon damage rolls, saving throws, skill checks, and ability checks",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:frightened",
+      "input": {
+        "conditions": [
+          "frightened"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -2,
+        "rangedAtkAdjust": -2,
+        "extraAttacks": [],
+        "cmb": -2,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": -2,
+        "refAdjust": -2,
+        "willAdjust": -2,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": -2,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Frightened: -2 penalty on attacks, saves, skills, and ability checks; must flee from fear source if possible",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:panicked",
+      "input": {
+        "conditions": [
+          "panicked"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -2,
+        "rangedAtkAdjust": -2,
+        "extraAttacks": [],
+        "cmb": -2,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": -2,
+        "refAdjust": -2,
+        "willAdjust": -2,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": -2,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Panicked: -2 penalty on attacks, saves, skills, and ability checks; drop held items, flee randomly from all dangers",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:deafened",
+      "input": {
+        "conditions": [
+          "deafened"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Deafened: -4 initiative checks, auto-fail Listen checks, 20% spell failure for verbal components",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:exhausted",
+      "input": {
+        "conditions": [
+          "exhausted"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": -6,
+        "dexAdjust": -6,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 0.5,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": false,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Exhausted: -6 STR and DEX, half speed, can't run or charge; 1 hour rest makes fatigued",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:fatigued",
+      "input": {
+        "conditions": [
+          "fatigued"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": -2,
+        "dexAdjust": -2,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": false,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Fatigued: -2 STR and DEX, can't run or charge; doing fatiguing activity makes exhausted",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:entangled",
+      "input": {
+        "conditions": [
+          "entangled"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -2,
+        "rangedAtkAdjust": -2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": -4,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 0.5,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": false,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Entangled: -2 attack rolls, -4 DEX, half speed, can't run/charge; concentration check DC 15+spell level to cast",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:helpless",
+      "input": {
+        "conditions": [
+          "helpless"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": -10,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": true,
+        "flatFooted": false,
+        "loseDexToAC": true,
+        "conditionNotes": "- Helpless: DEX = 0, attackers get +4 melee bonus, subject to coup de grace, rogues can sneak attack",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "condition:confused",
+      "input": {
+        "conditions": [
+          "confused"
+        ],
+        "buffs": [],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Confused: Roll d% each turn: 01-10 attack caster, 11-20 act normal, 21-50 babble, 51-70 flee, 71-100 attack nearest creature",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "buff:enlarged",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "enlarged"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -1,
+        "rangedAtkAdjust": -1,
+        "extraAttacks": [],
+        "cmb": 1,
+        "cmd": 1,
+        "acAdjust": -1,
+        "touchAcAdjust": -1,
+        "ffAcAdjust": -1,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 2,
+        "dexAdjust": -2,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 1,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 5,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Enlarged: +2 STR, -2 DEX, -1 attack/AC, +1 CMB/CMD, reach +5ft, -4 Stealth, larger weapon damage"
+      }
+    },
+    {
+      "name": "buff:bull's strength",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "bull's strength"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 4,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Bull's Strength: +4 enhancement bonus to Strength"
+      }
+    },
+    {
+      "name": "buff:cat's grace",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "cat's grace"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 4,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Cat's Grace: +4 enhancement bonus to Dexterity"
+      }
+    },
+    {
+      "name": "buff:bear's endurance",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "bear's endurance"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 4,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Bear's Endurance: +4 enhancement bonus to Constitution"
+      }
+    },
+    {
+      "name": "buff:fox's cunning",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "fox's cunning"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 4,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Fox's Cunning: +4 enhancement bonus to Intelligence"
+      }
+    },
+    {
+      "name": "buff:owl's wisdom",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "owl's wisdom"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 4,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Owl's Wisdom: +4 enhancement bonus to Wisdom"
+      }
+    },
+    {
+      "name": "buff:eagle's splendor",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "eagle's splendor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 4,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Eagle's Splendor: +4 enhancement bonus to Charisma"
+      }
+    },
+    {
+      "name": "buff:bless",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "bless"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 1,
+        "rangedAtkAdjust": 1,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 1,
+        "refAdjust": 1,
+        "willAdjust": 1,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Bless: +1 morale bonus on attack rolls and saving throws against fear effects"
+      }
+    },
+    {
+      "name": "buff:blessing of fervor",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "blessing of fervor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`"
+      }
+    },
+    {
+      "name": "buff:haste",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "haste"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 1,
+        "rangedAtkAdjust": 1,
+        "extraAttacks": [
+          0
+        ],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 1,
+        "touchAcAdjust": 1,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 1,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1.5,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Haste: +1 attack/AC/Ref, +30ft speed, extra attack at full BAB"
+      }
+    },
+    {
+      "name": "buff:barkskin",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "barkskin"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 2,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 2,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 2,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Barkskin: +2 enhancement bonus to natural armor (does not apply to touch AC)"
+      }
+    },
+    {
+      "name": "buff:magic weapon",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "magic weapon"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 1,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 1,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Magic Weapon: +1 enhancement bonus to weapon attacks and damage"
+      }
+    },
+    {
+      "name": "buff:shield",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "shield"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 4,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 4,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Shield: +4 shield bonus to AC (does not apply to touch AC)"
+      }
+    },
+    {
+      "name": "buff:mage armor",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "mage armor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 4,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 4,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Mage Armor: +4 armor bonus to AC (does not apply to touch AC)"
+      }
+    },
+    {
+      "name": "bof:+30ft. Speed",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "blessing of fervor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": "+30ft. Speed"
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1.5,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`\nCurrent Effect: +30 feet enhancement bonus to speed"
+      }
+    },
+    {
+      "name": "bof:Stand as Swift",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "blessing of fervor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": "Stand as Swift"
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`\nCurrent Effect: Can stand from prone as a swift action"
+      }
+    },
+    {
+      "name": "bof:Extra Attack",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "blessing of fervor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": "Extra Attack"
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [
+          0
+        ],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`\nCurrent Effect: One extra attack at highest base attack bonus. Does not stack with haste."
+      }
+    },
+    {
+      "name": "bof:+2 Atk/AC/Reflex",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "blessing of fervor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": "+2 Atk/AC/Reflex"
+      },
+      "output": {
+        "meleeAtkAdjust": 2,
+        "rangedAtkAdjust": 2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 2,
+        "touchAcAdjust": 2,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 2,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves"
+      }
+    },
+    {
+      "name": "bof:Free Metamagic",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "blessing of fervor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": "Free Metamagic"
+      },
+      "output": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: Apply metamagic (enlarged, extended, silent, or still) to 2nd level or lower spell for free."
+      }
+    },
+    {
+      "name": "haste+bof-extra-attack (no stack)",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "haste",
+          "blessing of fervor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": "Extra Attack"
+      },
+      "output": {
+        "meleeAtkAdjust": 1,
+        "rangedAtkAdjust": 1,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 1,
+        "touchAcAdjust": 1,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 1,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1.5,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Haste: +1 attack/AC/Ref, +30ft speed, extra attack at full BAB\n- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`\nCurrent Effect: One extra attack at highest base attack bonus. Does not stack with haste."
+      }
+    },
+    {
+      "name": "negativeLevels:2",
+      "input": {
+        "conditions": [],
+        "buffs": [],
+        "negativeLevels": 2,
+        "bofChoice": ""
+      },
+      "output": {
+        "meleeAtkAdjust": -2,
+        "rangedAtkAdjust": -2,
+        "extraAttacks": [],
+        "cmb": -2,
+        "cmd": -2,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": -2,
+        "refAdjust": -2,
+        "willAdjust": -2,
+        "hpMaxAdjust": -10,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": -2,
+        "intSkillAdjust": -2,
+        "wisSkillAdjust": -2,
+        "chaSkillAdjust": -2,
+        "skillAdjust": -2,
+        "levelAdjust": 2,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": -2,
+        "dexSkillAdjust": -2,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "- Negative Levels (2): -2 penalty on all d20 rolls, -10 HP, and -1 to effective level per negative level",
+        "buffNotes": ""
+      }
+    },
+    {
+      "name": "live-stack",
+      "input": {
+        "conditions": [],
+        "buffs": [
+          "blessing of fervor"
+        ],
+        "negativeLevels": 0,
+        "bofChoice": "+2 Atk/AC/Reflex"
+      },
+      "output": {
+        "meleeAtkAdjust": 2,
+        "rangedAtkAdjust": 2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 2,
+        "touchAcAdjust": 2,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 2,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves"
+      }
+    }
+  ],
+  "integration": [
+    {
+      "name": "integration:prone",
+      "attacks": {
+        "waveblade": "**Standard Attack:** +1 (1d6+0) (18-20/x2)\n**Full Attack:** +1/-4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +7 (1d2+-1) (20/x2)\n**Full Attack:** +7/+2 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +7 (1d6+-1) (20/x2)\n**Full Attack:** +7/+2 (1d6+-1) (20/x2)"
+      },
+      "ac": {
+        "normalAC": 24,
+        "touchAC": 22,
+        "flatFootedAC": 16,
+        "cmb": 15,
+        "cmd": 34,
+        "conditionEffects": {
+          "meleeAtkAdjust": -4,
+          "rangedAtkAdjust": -4,
+          "extraAttacks": [],
+          "cmb": 0,
+          "cmd": 0,
+          "acAdjust": -4,
+          "touchAcAdjust": -4,
+          "ffAcAdjust": -4,
+          "fortAdjust": 0,
+          "refAdjust": 0,
+          "willAdjust": 0,
+          "hpMaxAdjust": 0,
+          "strAdjust": 0,
+          "dexAdjust": 0,
+          "conAdjust": 0,
+          "intAdjust": 0,
+          "wisAdjust": 0,
+          "chaAdjust": 0,
+          "conSkillAdjust": 0,
+          "intSkillAdjust": 0,
+          "wisSkillAdjust": 0,
+          "chaSkillAdjust": 0,
+          "skillAdjust": 0,
+          "levelAdjust": 0,
+          "perceptionAdjust": 0,
+          "strSkillAdjust": 0,
+          "dexSkillAdjust": 0,
+          "movementAdjust": 1,
+          "sizeAdjust": 0,
+          "naturalArmorAdjust": 0,
+          "damageAdjust": 0,
+          "reachAdjust": 0,
+          "canAct": true,
+          "canFullRound": true,
+          "canStandard": true,
+          "canMove": true,
+          "canAttack": true,
+          "canCast": true,
+          "miss50": false,
+          "helpless": false,
+          "flatFooted": false,
+          "loseDexToAC": false,
+          "conditionNotes": "- Prone: +4 AC vs ranged attacks, -4 vs melee; can't use ranged except crossbows",
+          "buffNotes": ""
+        },
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": -4,
+          "touchAcAdjust": -4,
+          "ffAcAdjust": -4,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "integration:blinded",
+      "attacks": {
+        "waveblade": "**Standard Attack:** +1 (1d6+0) (18-20/x2)\n**Full Attack:** +1/-4 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +7 (1d2+-1) (20/x2)\n**Full Attack:** +7/+2 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +7 (1d6+-1) (20/x2)\n**Full Attack:** +7/+2 (1d6+-1) (20/x2)"
+      },
+      "ac": {
+        "normalAC": 20,
+        "touchAC": 20,
+        "flatFootedAC": 20,
+        "cmb": 9,
+        "cmd": 28,
+        "conditionEffects": {
+          "meleeAtkAdjust": -4,
+          "rangedAtkAdjust": -4,
+          "extraAttacks": [],
+          "cmb": 0,
+          "cmd": 0,
+          "acAdjust": -2,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "fortAdjust": 0,
+          "refAdjust": 0,
+          "willAdjust": 0,
+          "hpMaxAdjust": 0,
+          "strAdjust": 0,
+          "dexAdjust": 0,
+          "conAdjust": 0,
+          "intAdjust": 0,
+          "wisAdjust": 0,
+          "chaAdjust": 0,
+          "conSkillAdjust": 0,
+          "intSkillAdjust": 0,
+          "wisSkillAdjust": 0,
+          "chaSkillAdjust": 0,
+          "skillAdjust": 0,
+          "levelAdjust": 0,
+          "perceptionAdjust": -4,
+          "strSkillAdjust": -4,
+          "dexSkillAdjust": -4,
+          "movementAdjust": 0.5,
+          "sizeAdjust": 0,
+          "naturalArmorAdjust": 0,
+          "damageAdjust": 0,
+          "reachAdjust": 0,
+          "canAct": true,
+          "canFullRound": true,
+          "canStandard": true,
+          "canMove": true,
+          "canAttack": true,
+          "canCast": true,
+          "miss50": true,
+          "helpless": false,
+          "flatFooted": false,
+          "loseDexToAC": true,
+          "conditionNotes": "- Blinded: All sight-based checks auto-fail, 50% miss chance, half speed",
+          "buffNotes": ""
+        },
+        "breakdown": {
+          "dexMod": 0,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": -2,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "loseDexToAC": true
+        }
+      }
+    },
+    {
+      "name": "integration:grappled",
+      "attacks": {
+        "waveblade": "**Standard Attack:** +5 (1d6+0) (18-20/x2)\n**Full Attack:** +5/+0 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +11 (1d2+-1) (20/x2)\n**Full Attack:** +11/+6 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +11 (1d6+-1) (20/x2)\n**Full Attack:** +11/+6 (1d6+-1) (20/x2)"
+      },
+      "ac": {
+        "normalAC": 28,
+        "touchAC": 26,
+        "flatFootedAC": 20,
+        "cmb": 13,
+        "cmd": 32,
+        "conditionEffects": {
+          "meleeAtkAdjust": -2,
+          "rangedAtkAdjust": -2,
+          "extraAttacks": [],
+          "cmb": -2,
+          "cmd": -2,
+          "acAdjust": 0,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "fortAdjust": 0,
+          "refAdjust": 0,
+          "willAdjust": 0,
+          "hpMaxAdjust": 0,
+          "strAdjust": 0,
+          "dexAdjust": -4,
+          "conAdjust": 0,
+          "intAdjust": 0,
+          "wisAdjust": 0,
+          "chaAdjust": 0,
+          "conSkillAdjust": 0,
+          "intSkillAdjust": 0,
+          "wisSkillAdjust": 0,
+          "chaSkillAdjust": 0,
+          "skillAdjust": 0,
+          "levelAdjust": 0,
+          "perceptionAdjust": 0,
+          "strSkillAdjust": 0,
+          "dexSkillAdjust": 0,
+          "movementAdjust": 0,
+          "sizeAdjust": 0,
+          "naturalArmorAdjust": 0,
+          "damageAdjust": 0,
+          "reachAdjust": 0,
+          "canAct": true,
+          "canFullRound": true,
+          "canStandard": true,
+          "canMove": true,
+          "canAttack": true,
+          "canCast": true,
+          "miss50": false,
+          "helpless": false,
+          "flatFooted": false,
+          "loseDexToAC": false,
+          "conditionNotes": "- Grappled: -2 attacks, -4 DEX, can't move, no stealth, can't cast with somatic components unless concentration check",
+          "buffNotes": ""
+        },
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 0,
+          "touchAcAdjust": 0,
+          "ffAcAdjust": 0,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "integration:enlarged",
+      "attacks": {
+        "waveblade": "**Standard Attack:** +7 (1d8+0) (18-20/x2)\n**Full Attack:** +7/+2 (1d8+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +13 (1d3+-1) (20/x2)\n**Full Attack:** +13/+8 (1d3+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +13 (1d8+-1) (20/x2)\n**Full Attack:** +13/+8 (1d8+-1) (20/x2)"
+      },
+      "ac": {
+        "normalAC": 27,
+        "touchAC": 25,
+        "flatFootedAC": 19,
+        "cmb": 16,
+        "cmd": 35,
+        "conditionEffects": {
+          "meleeAtkAdjust": -1,
+          "rangedAtkAdjust": -1,
+          "extraAttacks": [],
+          "cmb": 1,
+          "cmd": 1,
+          "acAdjust": -1,
+          "touchAcAdjust": -1,
+          "ffAcAdjust": -1,
+          "fortAdjust": 0,
+          "refAdjust": 0,
+          "willAdjust": 0,
+          "hpMaxAdjust": 0,
+          "strAdjust": 2,
+          "dexAdjust": -2,
+          "conAdjust": 0,
+          "intAdjust": 0,
+          "wisAdjust": 0,
+          "chaAdjust": 0,
+          "conSkillAdjust": 0,
+          "intSkillAdjust": 0,
+          "wisSkillAdjust": 0,
+          "chaSkillAdjust": 0,
+          "skillAdjust": 0,
+          "levelAdjust": 0,
+          "perceptionAdjust": 0,
+          "strSkillAdjust": 0,
+          "dexSkillAdjust": 0,
+          "movementAdjust": 1,
+          "sizeAdjust": 1,
+          "naturalArmorAdjust": 0,
+          "damageAdjust": 0,
+          "reachAdjust": 5,
+          "canAct": true,
+          "canFullRound": true,
+          "canStandard": true,
+          "canMove": true,
+          "canAttack": true,
+          "canCast": true,
+          "miss50": false,
+          "helpless": false,
+          "flatFooted": false,
+          "loseDexToAC": false,
+          "conditionNotes": "",
+          "buffNotes": "- Enlarged: +2 STR, -2 DEX, -1 attack/AC, +1 CMB/CMD, reach +5ft, -4 Stealth, larger weapon damage"
+        },
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": -1,
+          "touchAcAdjust": -1,
+          "ffAcAdjust": -1,
+          "loseDexToAC": false
+        }
+      }
+    },
+    {
+      "name": "integration:haste",
+      "attacks": {
+        "waveblade": "**Standard Attack:** +11 (1d6+0) (18-20/x2)\n**Full Attack:** +11/+11/+6 (1d6+0) (18-20/x2)",
+        "ranged": "**Standard Attack:** +17 (1d2+-1) (20/x2)\n**Full Attack:** +17/+17/+12 (1d2+-1) (20/x2)",
+        "unarmed": "**Standard Attack:** +17 (1d6+-1) (20/x2)\n**Full Attack:** +17/+17/+12 (1d6+-1) (20/x2)"
+      },
+      "ac": {
+        "normalAC": 29,
+        "touchAC": 27,
+        "flatFootedAC": 20,
+        "cmb": 15,
+        "cmd": 34,
+        "conditionEffects": {
+          "meleeAtkAdjust": 1,
+          "rangedAtkAdjust": 1,
+          "extraAttacks": [
+            0
+          ],
+          "cmb": 0,
+          "cmd": 0,
+          "acAdjust": 1,
+          "touchAcAdjust": 1,
+          "ffAcAdjust": 0,
+          "fortAdjust": 0,
+          "refAdjust": 1,
+          "willAdjust": 0,
+          "hpMaxAdjust": 0,
+          "strAdjust": 0,
+          "dexAdjust": 0,
+          "conAdjust": 0,
+          "intAdjust": 0,
+          "wisAdjust": 0,
+          "chaAdjust": 0,
+          "conSkillAdjust": 0,
+          "intSkillAdjust": 0,
+          "wisSkillAdjust": 0,
+          "chaSkillAdjust": 0,
+          "skillAdjust": 0,
+          "levelAdjust": 0,
+          "perceptionAdjust": 0,
+          "strSkillAdjust": 0,
+          "dexSkillAdjust": 0,
+          "movementAdjust": 1.5,
+          "sizeAdjust": 0,
+          "naturalArmorAdjust": 0,
+          "damageAdjust": 0,
+          "reachAdjust": 0,
+          "canAct": true,
+          "canFullRound": true,
+          "canStandard": true,
+          "canMove": true,
+          "canAttack": true,
+          "canCast": true,
+          "miss50": false,
+          "helpless": false,
+          "flatFooted": false,
+          "loseDexToAC": false,
+          "conditionNotes": "",
+          "buffNotes": "- Haste: +1 attack/AC/Ref, +30ft speed, extra attack at full BAB"
+        },
+        "breakdown": {
+          "dexMod": 6,
+          "chaMod": 6,
+          "strMod": -1,
+          "sizeMod": 0,
+          "monkLvl": 2,
+          "paladinLvl": 4,
+          "bab": 9,
+          "baseAC": 10,
+          "weaponSongBonus": 0,
+          "naturalAC": 2,
+          "deflectionAC": 2,
+          "dodgeAC": 1,
+          "monkACBonus": 6,
+          "paladinACBonus": 1,
+          "fightingDefensivelyBonus": 0,
+          "hastedACBonus": 0,
+          "chargingACPenalty": 0,
+          "normalAcAdjust": 1,
+          "touchAcAdjust": 1,
+          "ffAcAdjust": 0,
+          "loseDexToAC": false
+        }
+      }
+    }
+  ],
+  "classStats": {
+    "adarin": {
+      "Paladin": {
+        "hitDie": "d10",
+        "saves": {
+          "fort": true,
+          "ref": false,
+          "will": true
+        },
+        "bab": 1
+      },
+      "Skald": {
+        "hitDie": "d8",
+        "saves": {
+          "fort": true,
+          "ref": false,
+          "will": true
+        },
+        "bab": 0.75
+      },
+      "Monk (Unchained)": {
+        "hitDie": "d10",
+        "saves": {
+          "fort": true,
+          "ref": true,
+          "will": false
+        },
+        "bab": 1
+      }
+    },
+    "sample": {
+      "Fighter": {
+        "hitDie": "d10",
+        "saves": {
+          "fort": true,
+          "ref": false,
+          "will": false
+        },
+        "bab": 1
+      },
+      "Wizard": {
+        "hitDie": "d6",
+        "saves": {
+          "fort": false,
+          "ref": false,
+          "will": true
+        },
+        "bab": 0.5
+      },
+      "Rogue": {
+        "hitDie": "d8",
+        "saves": {
+          "fort": false,
+          "ref": true,
+          "will": false
+        },
+        "bab": 0.75
+      },
+      "Cleric": {
+        "hitDie": "d8",
+        "saves": {
+          "fort": true,
+          "ref": false,
+          "will": true
+        },
+        "bab": 0.75
+      },
+      "Barbarian (Unchained)": {
+        "hitDie": "d12",
+        "saves": {
+          "fort": true,
+          "ref": false,
+          "will": false
+        },
+        "bab": 1
+      },
+      "Monk (Unchained)": {
+        "hitDie": "d10",
+        "saves": {
+          "fort": true,
+          "ref": true,
+          "will": false
+        },
+        "bab": 1
+      },
+      "Swashbuckler": {
+        "hitDie": "d10",
+        "saves": {
+          "fort": false,
+          "ref": true,
+          "will": false
+        },
+        "bab": 0.75
+      }
+    }
+  },
+  "savesFixture": {
+    "inputs": {
+      "classes": [
+        "Paladin",
+        "Skald",
+        "Monk (Unchained)"
+      ],
+      "classStats": {
+        "Paladin": {
+          "hitDie": "d10",
+          "saves": {
+            "fort": true,
+            "ref": false,
+            "will": true
+          },
+          "bab": 1
+        },
+        "Skald": {
+          "hitDie": "d8",
+          "saves": {
+            "fort": true,
+            "ref": false,
+            "will": true
+          },
+          "bab": 0.75
+        },
+        "Monk (Unchained)": {
+          "hitDie": "d10",
+          "saves": {
+            "fort": true,
+            "ref": true,
+            "will": false
+          },
+          "bab": 1
+        }
+      },
+      "conMod": 2,
+      "dexMod": 6,
+      "wisMod": -1,
+      "chaMod": 6,
+      "paladinLevel": 5,
+      "skaldLevel": 3,
+      "monkunchainedLevel": 2,
+      "resistanceEnhancement": 2,
+      "conditionEffects": {
+        "meleeAtkAdjust": 2,
+        "rangedAtkAdjust": 2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 2,
+        "touchAcAdjust": 2,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 2,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves"
+      }
+    },
+    "storedSaves": {
+      "fort": {
+        "value": 20,
+        "notes": "- +2 against death effects"
+      },
+      "ref": {
+        "value": 21,
+        "notes": "- +2 against death effects\n- Evasion"
+      },
+      "will": {
+        "value": 14,
+        "notes": "- +2 against death effects"
+      }
+    }
+  },
+  "skillsFixture": {
+    "inputs": {
+      "skills": {
+        "Acrobatics": [
+          "dex",
+          5,
+          0,
+          true
+        ],
+        "Appraise": [
+          "int",
+          0,
+          0,
+          true
+        ],
+        "Bluff": [
+          "cha",
+          0,
+          0,
+          true
+        ],
+        "Climb": [
+          "str",
+          0,
+          0,
+          true
+        ],
+        "Craft (any)": [
+          "int",
+          0,
+          0,
+          true
+        ],
+        "Diplomacy": [
+          "cha",
+          6,
+          0,
+          true
+        ],
+        "Disable Device": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Disguise": [
+          "cha",
+          0,
+          0,
+          true
+        ],
+        "Escape Artist": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Fly": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Handle Animal": [
+          "cha",
+          0,
+          0,
+          true
+        ],
+        "Heal": [
+          "wis",
+          1,
+          0,
+          true
+        ],
+        "Intimidate": [
+          "cha",
+          7,
+          0,
+          true
+        ],
+        "Knowledge (arcana)": [
+          "int",
+          1,
+          0,
+          true
+        ],
+        "Knowledge (religion)": [
+          "int",
+          1,
+          0,
+          true
+        ],
+        "Linguistics": [
+          "int",
+          2,
+          0,
+          true
+        ],
+        "Perception": [
+          "wis",
+          9,
+          0,
+          true
+        ],
+        "Perform (Sing)": [
+          "cha",
+          7,
+          0,
+          true
+        ],
+        "Perform (Stringed)": [
+          "cha",
+          7,
+          0,
+          true
+        ],
+        "Profession (any)": [
+          "wis",
+          0,
+          0,
+          true
+        ],
+        "Ride": [
+          "dex",
+          0,
+          0,
+          true
+        ],
+        "Sense Motive": [
+          "wis",
+          0,
+          true
+        ],
+        "Sleight of Hand": [
+          "dex",
+          0,
+          0,
+          false
+        ],
+        "Spellcraft": [
+          "int",
+          1,
+          0,
+          true
+        ],
+        "Stealth": [
+          "dex",
+          1,
+          0,
+          true
+        ],
+        "Survival": [
+          "wis",
+          0,
+          [
+            null
+          ],
+          false
+        ],
+        "Swim": [
+          "str",
+          0,
+          0,
+          true
+        ],
+        "Use Magic Device": [
+          "cha",
+          3,
+          0,
+          true
+        ]
+      },
+      "skillAdjust": 0,
+      "mods": {
+        "str": -1,
+        "dex": 6,
+        "con": 2,
+        "int": 1,
+        "wis": -1,
+        "cha": 6
+      },
+      "versatilePerformance": true,
+      "conditionEffects": {
+        "meleeAtkAdjust": 2,
+        "rangedAtkAdjust": 2,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 2,
+        "touchAcAdjust": 2,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 2,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves"
+      }
+    }
+  },
+  "hwayoung": {
+    "attacks": {
+      "waveblade": "**Standard Attack:** +6 (1d6+-3) (18-20/x2)\n**Full Attack:** +6/+1 (1d6+-3) (18-20/x2)",
+      "ranged": "**Standard Attack:** +12 (1d8+0) (20/x3)\n**Full Attack:** +12/+7 (1d8+0) (20/x3)",
+      "unarmed": "**Standard Attack:** +12 (1d3+-4) (20/x2)\n**Full Attack:** +12/+7 (1d3+-4) (20/x2)"
+    },
+    "storedAttackStrings": {
+      "bite": "**Standard Attack:** +2 (1d3-4) (20/x2)\n**Full Attack:** +2 (1d3-4) (20/x2)",
+      "ray": "**Standard Attack:** +2 (touch) (20/x2)\n**Full Attack:** +2 (touch) (20/x2)"
+    },
+    "ac": {
+      "normalAC": 17,
+      "touchAC": 15,
+      "flatFootedAC": 14,
+      "cmb": 14,
+      "cmd": 20,
+      "conditionEffects": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": ""
+      },
+      "breakdown": {
+        "dexMod": 3,
+        "chaMod": -3,
+        "strMod": -4,
+        "sizeMod": 2,
+        "monkLvl": 0,
+        "paladinLvl": 0,
+        "bab": 9,
+        "baseAC": 12,
+        "weaponSongBonus": 0,
+        "naturalAC": 2,
+        "deflectionAC": 0,
+        "dodgeAC": 0,
+        "monkACBonus": 0,
+        "paladinACBonus": 0,
+        "fightingDefensivelyBonus": 0,
+        "hastedACBonus": 0,
+        "chargingACPenalty": 0,
+        "normalAcAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "loseDexToAC": false
+      }
+    },
+    "input": {
+      "strMod": -4,
+      "dexMod": 3,
+      "conMod": -1,
+      "intMod": -2,
+      "wisMod": 1,
+      "chaMod": -3,
+      "bab": 9,
+      "panachePoints": 0,
+      "paladinLevel": 0,
+      "monkLevel": 0,
+      "sizeMod": 2,
+      "naturalAC": 2,
+      "deflectionAC": 0,
+      "dodgeAC": 0,
+      "acAdjust": 0,
+      "atkAdjust": 0,
+      "dmgAdjust": 0,
+      "rangedAtkAdjust": 0,
+      "rangedDmgAdjust": 0,
+      "unarmedAtkAdjust": 0,
+      "unarmedDmgAdjust": 0,
+      "meleeWeaponEnhancement": 1,
+      "rangedWeaponEnhancement": 0,
+      "smiteEvil": false,
+      "smiteEvilOutsider": false,
+      "charging": false,
+      "flurryOfBlows": false,
+      "fightingDefensively": false,
+      "craneStyle": false,
+      "powerAttack": false,
+      "agileWeapon": false,
+      "preciseStrike": false,
+      "doublePreciseStrike": false,
+      "flanking": false,
+      "hasted": false,
+      "rangedAttackStyle": "Longbow",
+      "weaponSong": "Off",
+      "conditionEffects": {
+        "meleeAtkAdjust": 0,
+        "rangedAtkAdjust": 0,
+        "extraAttacks": [],
+        "cmb": 0,
+        "cmd": 0,
+        "acAdjust": 0,
+        "touchAcAdjust": 0,
+        "ffAcAdjust": 0,
+        "fortAdjust": 0,
+        "refAdjust": 0,
+        "willAdjust": 0,
+        "hpMaxAdjust": 0,
+        "strAdjust": 0,
+        "dexAdjust": 0,
+        "conAdjust": 0,
+        "intAdjust": 0,
+        "wisAdjust": 0,
+        "chaAdjust": 0,
+        "skillAdjust": 0,
+        "levelAdjust": 0,
+        "perceptionAdjust": 0,
+        "strSkillAdjust": 0,
+        "dexSkillAdjust": 0,
+        "conSkillAdjust": 0,
+        "intSkillAdjust": 0,
+        "wisSkillAdjust": 0,
+        "chaSkillAdjust": 0,
+        "movementAdjust": 1,
+        "sizeAdjust": 0,
+        "naturalArmorAdjust": 0,
+        "damageAdjust": 0,
+        "reachAdjust": 0,
+        "canAct": true,
+        "canFullRound": true,
+        "canStandard": true,
+        "canMove": true,
+        "canAttack": true,
+        "canCast": true,
+        "miss50": false,
+        "helpless": false,
+        "flatFooted": false,
+        "loseDexToAC": false,
+        "conditionNotes": "",
+        "buffNotes": ""
+      }
+    }
+  }
+}
