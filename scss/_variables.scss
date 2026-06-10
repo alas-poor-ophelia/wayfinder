@@ -1,0 +1,10 @@
+// Design tokens. Every selector in this plugin is scoped under .minisheet-root
+// so nothing leaks into the rest of Obsidian.
+
+.minisheet-root {
+  --ms-red: #8b0000;
+  --ms-gold: #ca9759;
+  --ms-bronze: rgb(120, 80, 40);
+  --ms-touch: 45px; // minimum touch target (iPad)
+  --ms-sheet-width: 321px;
+}

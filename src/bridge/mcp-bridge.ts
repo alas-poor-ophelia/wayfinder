@@ -1,0 +1,49 @@
+import type { TabName } from "../constants";
+import type { CharacterStub, MiniSheetData } from "../types/data-file";
+import type MiniSheetPlugin from "../main";
+
+/**
+ * window.__minisheet — the surface the MCP server drives via `ob eval`.
+ * `buildStamp` changes every build so the reload tool can prove the
+ * running code actually changed (reload-success-but-stale-code is a
+ * known failure mode).
+ */
+export interface MiniSheetBridge {
+  version: string;
+  buildStamp: string;
+  getState(): MiniSheetData;
+  setTab(tab: TabName | number): void;
+  listCharacters(): { id: string; name: string }[];
+  getCharacter(id?: string): CharacterStub | null;
+  setCharacterField(id: string, dotPath: string, value: unknown): void;
+  /** Calc outputs for a character — wired up in the calc-port milestone. */
+  getComputed(id?: string): unknown;
+  openSheet(): Promise<void>;
+}
+
+declare global {
+  interface Window {
+    __minisheet?: MiniSheetBridge;
+  }
+}
+
+export function installBridge(plugin: MiniSheetPlugin): void {
+  const store = plugin.store;
+  window.__minisheet = {
+    version: plugin.manifest.version,
+    buildStamp: __BUILD_STAMP__,
+    getState: () => JSON.parse(JSON.stringify(store.data.value)),
+    setTab: (tab) => store.setTab(tab),
+    listCharacters: () =>
+      store.data.value.characters.map((c) => ({ id: c.id, name: c.name })),
+    getCharacter: (id) => store.getCharacter(id),
+    setCharacterField: (id, dotPath, value) =>
+      store.setCharacterField(id, dotPath, value),
+    getComputed: () => null,
+    openSheet: () => plugin.activateView(),
+  };
+}
+
+export function removeBridge(): void {
+  delete window.__minisheet;
+}

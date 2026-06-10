@@ -1,0 +1,87 @@
+// Base sheet layout — ported from the v2 base CSS, renamed to .ms-* classes.
+
+.minisheet-root {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.ms-sheet {
+  width: 100%;
+  max-width: var(--ms-sheet-width);
+  margin: 0 auto;
+  font-family: var(--font-interface), sans-serif;
+  color: var(--text-normal);
+}
+
+/* Header */
+.ms-header {
+  text-align: center;
+  padding: 12px 8px 8px;
+}
+
+.ms-title {
+  font-family: "Norwester", sans-serif;
+  font-size: 1.4em;
+  margin: 0;
+  color: var(--text-normal);
+}
+
+.ms-subtitle {
+  font-family: "Taroca", sans-serif;
+  font-size: 0.75em;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Tab bar */
+.ms-tab-bar {
+  display: flex;
+  gap: 2px;
+  padding: 0 4px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.ms-tab {
+  flex: 1;
+  text-align: center;
+  padding: 6px 2px;
+  font-family: "Taroca", sans-serif;
+  font-size: 0.7em;
+  color: var(--text-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  border-bottom: 2px solid transparent;
+  min-height: 32px;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: var(--text-normal);
+  }
+
+  &.is-active {
+    color: var(--ms-red);
+    border-bottom-color: var(--ms-red);
+  }
+}
+
+/* Content area */
+.ms-content {
+  padding: 12px 8px;
+}
+
+.ms-placeholder {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--text-muted);
+  font-size: 0.9em;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 6px;
+}
+
+.ms-muted {
+  font-size: 0.8em;
+  opacity: 0.6;
+}

@@ -1,19 +1,29 @@
 {
   "name": "minisheet",
   "version": "0.1.0",
-  "description": "Pathfinder 1e character sheet system for Obsidian",
+  "description": "Pathfinder 1e character sheet plugin for Obsidian",
   "type": "module",
   "scripts": {
+    "build:css": "sass scss/main.scss styles.css --no-source-map --no-charset",
+    "build:css:watch": "sass scss/main.scss styles.css --no-source-map --no-charset --watch",
+    "build": "bun run build:css && bun esbuild.config.mjs",
+    "build:prod": "bun run build:css && bun esbuild.config.mjs production",
+    "build:watch": "bun esbuild.config.mjs --watch",
+    "deploy": "bun run build && bun scripts/deploy.mjs",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run --config vitest.unit.config.ts",
     "test:e2e": "vitest run",
-    "test:e2e:watch": "vitest",
-    "screenshots": "vitest run --config vitest.config.ts",
     "postinstall": "patch-package"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.1",
+    "@preact/signals": "^2.0.0",
+    "esbuild": "^0.25.0",
     "obsidian": "^1.11.0",
     "obsidian-testing-framework": "^0.1.6",
     "patch-package": "^8.0.1",
+    "preact": "^10.26.0",
+    "sass": "^1.83.0",
     "typescript": "^5.7.0",
     "vitest": "^2.1.4"
   },

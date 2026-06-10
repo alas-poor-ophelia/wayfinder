@@ -9,7 +9,10 @@
 
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { obsidianEval, obsidianEvalJson } from "../cli-bridge.js";
+import {
+  obsidianEvalAwait,
+  obsidianEvalJson,
+} from "../cli-bridge.js";
 
 /** Tab name to frontmatter number mapping */
 const TAB_MAP: Record<string, number> = {
@@ -27,18 +30,18 @@ const TAB_NAMES = Object.keys(TAB_MAP).join(", ");
 const META_BIND_SETTLE_MS = 500;
 
 /**
- * Build eval code to set a single frontmatter key on the active file.
- * Includes a settle delay for Meta Bind re-evaluation.
+ * Build an async eval body (for obsidianEvalAwait) that sets a single
+ * frontmatter key on the active file, with a Meta Bind settle delay.
  */
-function buildSetFrontmatterCode(key: string, value: unknown): string {
+function buildSetFrontmatterBody(key: string, value: unknown): string {
   const valueStr = JSON.stringify(value);
-  return `var f=app.workspace.getActiveFile(); if(!f) throw new Error("No active file"); await app.fileManager.processFrontMatter(f, (fm) => { fm[${JSON.stringify(key)}] = ${valueStr}; }); await new Promise(r => setTimeout(r, ${META_BIND_SETTLE_MS})); JSON.stringify({ok: true, key: ${JSON.stringify(key)}, value: ${valueStr}})`;
+  return `var f=app.workspace.getActiveFile(); if(!f) throw new Error("No active file"); await app.fileManager.processFrontMatter(f, function(fm) { fm[${JSON.stringify(key)}] = ${valueStr}; }); await new Promise(function(r){ setTimeout(r, ${META_BIND_SETTLE_MS}); }); return {ok: true};`;
 }
 
 export function registerFrontmatterTools(server: McpServer): void {
   server.tool(
-    "minisheet_set_tab",
-    `Switch the MiniSheet to a named tab. Valid tabs: ${TAB_NAMES}. Sets the selectedTab frontmatter property and waits for Meta Bind to re-render.`,
+    "minisheet_legacy_set_tab",
+    `LEGACY (old Meta Bind sheet only): switch tab by writing selectedTab frontmatter. Valid tabs: ${TAB_NAMES}. For the standalone plugin use minisheet_set_tab instead.`,
     {
       tab: z
         .string()
@@ -59,7 +62,7 @@ export function registerFrontmatterTools(server: McpServer): void {
       }
 
       try {
-        await obsidianEval(buildSetFrontmatterCode("selectedTab", tabNum));
+        await obsidianEvalAwait(buildSetFrontmatterBody("selectedTab", tabNum));
         return {
           content: [
             {
@@ -117,7 +120,7 @@ export function registerFrontmatterTools(server: McpServer): void {
     },
     async ({ key, value }) => {
       try {
-        await obsidianEval(buildSetFrontmatterCode(key, value));
+        await obsidianEvalAwait(buildSetFrontmatterBody(key, value));
         return {
           content: [
             {
@@ -154,8 +157,8 @@ export function registerFrontmatterTools(server: McpServer): void {
       try {
         const data: Record<string, string | number | boolean> = JSON.parse(dataJson);
         const dataStr = JSON.stringify(data);
-        const code = `var f=app.workspace.getActiveFile(); if(!f) throw new Error("No active file"); var d=${dataStr}; await app.fileManager.processFrontMatter(f, (fm) => { for (var k in d) fm[k] = d[k]; }); await new Promise(r => setTimeout(r, ${META_BIND_SETTLE_MS})); JSON.stringify({ok: true, keys: Object.keys(d)})`;
-        await obsidianEval(code);
+        const body = `var f=app.workspace.getActiveFile(); if(!f) throw new Error("No active file"); var d=${dataStr}; await app.fileManager.processFrontMatter(f, function(fm) { for (var k in d) fm[k] = d[k]; }); await new Promise(function(r){ setTimeout(r, ${META_BIND_SETTLE_MS}); }); return {ok: true};`;
+        await obsidianEvalAwait(body);
         return {
           content: [
             {

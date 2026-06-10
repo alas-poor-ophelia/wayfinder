@@ -3,3 +3,7 @@ mcp/node_modules/
 mcp/screenshots/
 .claude/
 tests/fixtures/test-vault/MiniSheet/
+
+# Build artifacts (deployed to vault, not committed)
+main.js
+styles.css

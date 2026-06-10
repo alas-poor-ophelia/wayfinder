@@ -14,6 +14,7 @@ import {
   obsidianScreenshot,
   obsidianReloadPlugin,
   obsidianEval,
+  obsidianEvalAwait,
 } from "../cli-bridge.js";
 
 const SCREENSHOT_DIR = path.resolve(
@@ -22,8 +23,11 @@ const SCREENSHOT_DIR = path.resolve(
   "screenshots"
 );
 
-/** MiniSheet plugin IDs that can be reloaded */
-const PLUGIN_IDS = ["datacore", "obsidian-meta-bind-plugin", "js-engine"];
+/** The standalone plugin's manifest id (= reload id) */
+const MINISHEET_PLUGIN_ID = "minisheet";
+
+/** Legacy plugin IDs (the old Meta Bind sheet), reloadable by explicit id */
+const LEGACY_PLUGIN_IDS = ["datacore", "obsidian-meta-bind-plugin", "js-engine"];
 
 export function registerViewTools(server: McpServer): void {
   server.tool(
@@ -107,29 +111,98 @@ export function registerViewTools(server: McpServer): void {
 
   server.tool(
     "minisheet_reload",
-    "Reload one or all MiniSheet plugins (datacore, meta-bind, js-engine)",
+    "Reload the minisheet plugin from disk, verifying via buildStamp that the RUNNING code actually changed. Pass a legacy pluginId (datacore, obsidian-meta-bind-plugin, js-engine) to reload the old stack instead.",
     {
       pluginId: z
         .string()
         .optional()
         .describe(
-          "Specific plugin ID to reload (datacore, obsidian-meta-bind-plugin, js-engine). Omit to reload all."
+          "Omit to reload the minisheet plugin (with buildStamp verification). Or a legacy id: datacore, obsidian-meta-bind-plugin, js-engine."
         ),
     },
     async ({ pluginId }) => {
-      const ids = pluginId ? [pluginId] : PLUGIN_IDS;
-      const results: string[] = [];
-      for (const id of ids) {
+      // Legacy path: plain CLI reload for the old Meta Bind stack.
+      if (pluginId && pluginId !== MINISHEET_PLUGIN_ID) {
+        if (!LEGACY_PLUGIN_IDS.includes(pluginId)) {
+          return {
+            content: [
+              {
+                type: "text" as const,
+                text: `Unknown plugin id "${pluginId}". Omit for minisheet, or use: ${LEGACY_PLUGIN_IDS.join(", ")}`,
+              },
+            ],
+            isError: true,
+          };
+        }
         try {
-          const result = await obsidianReloadPlugin(id);
-          results.push(`${id}: ${result || "OK"}`);
+          const result = await obsidianReloadPlugin(pluginId);
+          return {
+            content: [
+              { type: "text" as const, text: `${pluginId}: ${result || "OK"}` },
+            ],
+          };
         } catch (err: any) {
-          results.push(`${id}: ERROR - ${err.message}`);
+          return {
+            content: [
+              { type: "text" as const, text: `${pluginId}: ERROR - ${err.message}` },
+            ],
+            isError: true,
+          };
         }
       }
-      return {
-        content: [{ type: "text" as const, text: results.join("\n") }],
-      };
+
+      // Minisheet path: full unload/load from disk + buildStamp proof.
+      // plugin:reload / enable+disable do NOT reliably re-read main.js,
+      // and a "successful" reload running stale code is a known failure.
+      try {
+        const result = await obsidianEvalAwait<{
+          before: string | null;
+          after: string | null;
+        }>(
+          `var before = window.__minisheet ? window.__minisheet.buildStamp : null; ` +
+            `await app.plugins.unloadPlugin("${MINISHEET_PLUGIN_ID}"); ` +
+            `await app.plugins.loadPlugin("${MINISHEET_PLUGIN_ID}"); ` +
+            `var after = window.__minisheet ? window.__minisheet.buildStamp : null; ` +
+            `return {before: before, after: after};`
+        );
+        if (!result.after) {
+          return {
+            content: [
+              {
+                type: "text" as const,
+                text: `RELOAD FAILED: plugin did not come back up (no window.__minisheet after load). Check minisheet_errors.`,
+              },
+            ],
+            isError: true,
+          };
+        }
+        if (result.before !== null && result.after === result.before) {
+          return {
+            content: [
+              {
+                type: "text" as const,
+                text: `RELOAD STALE: buildStamp unchanged (${result.after}). The running code did NOT change -- did you run \`bun run deploy\` after building?`,
+              },
+            ],
+            isError: true,
+          };
+        }
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: `Reloaded minisheet. buildStamp ${result.before ?? "(none)"} -> ${result.after} (verified fresh code).`,
+            },
+          ],
+        };
+      } catch (err: any) {
+        return {
+          content: [
+            { type: "text" as const, text: `Reload error: ${err.message}` },
+          ],
+          isError: true,
+        };
+      }
     }
   );
 

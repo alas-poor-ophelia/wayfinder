@@ -1,0 +1,10 @@
+{
+	"id": "minisheet",
+	"name": "MiniSheet",
+	"version": "0.1.0",
+	"minAppVersion": "1.4.11",
+	"description": "Pathfinder 1e character sheet for the sidebar, optimized for iPad.",
+	"author": "alas, poor ophelia",
+	"authorUrl": "https://github.com/alas-poor-ophelia",
+	"isDesktopOnly": false
+}
