@@ -1,0 +1,114 @@
+// Configure-character overlay surface.
+
+.ms-config {
+  padding: 8px;
+}
+
+.ms-config__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.ms-config__title {
+  font-family: "Norwester", sans-serif;
+  font-size: 1.1em;
+  margin: 0;
+}
+
+.ms-config__close,
+.ms-config__remove {
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  min-width: 32px;
+  min-height: 32px;
+
+  &:hover {
+    color: var(--text-normal);
+  }
+}
+
+.ms-config__section {
+  margin-bottom: 14px;
+}
+
+.ms-config__section-title {
+  font-family: "Taroca", sans-serif;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ms-gold);
+  margin: 0 0 6px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding-bottom: 2px;
+}
+
+.ms-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ms-field__label {
+  flex: 0 0 80px;
+  font-size: 0.8em;
+  color: var(--text-muted);
+}
+
+.ms-field__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 32px;
+}
+
+.ms-field__input--number {
+  max-width: 70px;
+}
+
+.ms-config__abilities {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+
+  .ms-field__label {
+    flex-basis: 36px;
+  }
+}
+
+.ms-config__class-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+
+  select {
+    flex: 1;
+    min-width: 0;
+  }
+
+  input {
+    width: 54px;
+  }
+}
+
+.ms-config__class-stats {
+  font-size: 0.7em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.ms-config__add {
+  min-height: 32px;
+}
+
+.ms-config__derived {
+  margin-top: 6px;
+  font-family: "Taroca", sans-serif;
+  font-size: 0.8em;
+  color: var(--text-muted);
+}

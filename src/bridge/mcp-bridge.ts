@@ -1,5 +1,6 @@
 import type { TabName } from "../constants";
-import type { CharacterStub, MiniSheetData } from "../types/data-file";
+import type { CharacterRecord } from "../types/character";
+import type { MiniSheetData } from "../types/data-file";
 import type MiniSheetPlugin from "../main";
 
 /**
@@ -14,8 +15,11 @@ export interface MiniSheetBridge {
   getState(): MiniSheetData;
   setTab(tab: TabName | number): void;
   listCharacters(): { id: string; name: string }[];
-  getCharacter(id?: string): CharacterStub | null;
+  getCharacter(id?: string): CharacterRecord | null;
   setCharacterField(id: string, dotPath: string, value: unknown): void;
+  newCharacter(name: string): string;
+  setActiveCharacter(id: string): void;
+  setConfigOpen(open: boolean): void;
   /** Calc outputs for a character — wired up in the calc-port milestone. */
   getComputed(id?: string): unknown;
   openSheet(): Promise<void>;
@@ -39,6 +43,9 @@ export function installBridge(plugin: MiniSheetPlugin): void {
     getCharacter: (id) => store.getCharacter(id),
     setCharacterField: (id, dotPath, value) =>
       store.setCharacterField(id, dotPath, value),
+    newCharacter: (name) => store.addCharacter(name).id,
+    setActiveCharacter: (id) => store.setActiveCharacter(id),
+    setConfigOpen: (open) => store.setConfigOpen(open),
     getComputed: () => null,
     openSheet: () => plugin.activateView(),
   };

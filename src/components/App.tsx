@@ -1,5 +1,6 @@
 import type { MiniSheetStore } from "../state/store";
 import { TABS, TAB_LABELS } from "../constants";
+import { ConfigSurface } from "./config/ConfigSurface";
 
 interface AppProps {
   store: MiniSheetStore;
@@ -11,6 +12,14 @@ export function App({ store, version }: AppProps) {
   const active = data.ui.selectedTab;
   const character = store.getCharacter();
 
+  if (data.ui.configOpen && character) {
+    return (
+      <div class="ms-sheet">
+        <ConfigSurface store={store} character={character} />
+      </div>
+    );
+  }
+
   return (
     <div class="ms-sheet">
       <header class="ms-header">
@@ -18,6 +27,15 @@ export function App({ store, version }: AppProps) {
         <div class="ms-subtitle">
           v{version} · {__BUILD_STAMP__}
         </div>
+        {character && (
+          <button
+            class="ms-header__gear"
+            aria-label="Configure character"
+            onClick={() => store.setConfigOpen(true)}
+          >
+            ⚙
+          </button>
+        )}
       </header>
       <nav class="ms-tab-bar">
         {TABS.map((tab) => (
@@ -31,10 +49,19 @@ export function App({ store, version }: AppProps) {
         ))}
       </nav>
       <main class="ms-content">
-        <div class="ms-placeholder">
-          <div>{TAB_LABELS[active]} tab</div>
-          <div class="ms-muted">scaffold — content lands milestone by milestone</div>
-        </div>
+        {character ? (
+          <div class="ms-placeholder">
+            <div>{TAB_LABELS[active]} tab</div>
+            <div class="ms-muted">content lands milestone by milestone</div>
+          </div>
+        ) : (
+          <div class="ms-placeholder">
+            <div>No character yet</div>
+            <div class="ms-muted">
+              Run the “MiniSheet: New character” command to create one
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -1,15 +1,5 @@
 import type { TabName } from "../constants";
-
-/**
- * Root shape of the plugin's data.json.
- * `characters` records get their full schema in the state-core milestone;
- * until then the store treats them as opaque objects with id/name.
- */
-export interface CharacterStub {
-  id: string;
-  name: string;
-  [key: string]: unknown;
-}
+import type { CharacterRecord } from "./character";
 
 export interface UiState {
   selectedTab: TabName;
@@ -21,11 +11,12 @@ export interface MiniSheetSettings {
   rulesFolder: string;
 }
 
+/** Root shape of the plugin's data.json. */
 export interface MiniSheetData {
   schemaVersion: number;
   settings: MiniSheetSettings;
   ui: UiState;
-  characters: CharacterStub[];
+  characters: CharacterRecord[];
 }
 
 export const DEFAULT_DATA: MiniSheetData = {

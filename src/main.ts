@@ -1,6 +1,7 @@
 import { Plugin, WorkspaceLeaf } from "obsidian";
 import { installBridge, removeBridge } from "./bridge/mcp-bridge";
 import { VIEW_TYPE_MINISHEET } from "./constants";
+import { TextPromptModal } from "./modals";
 import { MiniSheetSettingTab } from "./settings";
 import { MiniSheetStore } from "./state/store";
 import { SheetView } from "./views/SheetView";
@@ -25,6 +26,28 @@ export default class MiniSheetPlugin extends Plugin {
       id: "open-sheet",
       name: "Open sheet",
       callback: () => void this.activateView(),
+    });
+
+    this.addCommand({
+      id: "new-character",
+      name: "New character",
+      callback: () => {
+        new TextPromptModal(this.app, "New character", "Name", (name) => {
+          this.store.addCharacter(name);
+          this.store.setConfigOpen(true);
+          void this.activateView();
+        }).open();
+      },
+    });
+
+    this.addCommand({
+      id: "configure-character",
+      name: "Configure character",
+      callback: () => {
+        if (!this.store.getCharacter()) return;
+        this.store.setConfigOpen(true);
+        void this.activateView();
+      },
     });
 
     this.addSettingTab(new MiniSheetSettingTab(this.app, this));

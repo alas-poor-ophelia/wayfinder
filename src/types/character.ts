@@ -1,6 +1,7 @@
 /**
- * Core character data types for MiniSheet.
- * These mirror the frontmatter structure of character sheet notes.
+ * Character record schema — the plugin's clean data model.
+ * Derived values (mods, BAB, AC, saves, attack strings, condition effects)
+ * are NEVER stored; they're computed by src/calc/ from this record.
  */
 
 export interface AbilityScores {
@@ -12,144 +13,220 @@ export interface AbilityScores {
   cha: number;
 }
 
-export interface AbilityModifiers {
-  strMod: number;
-  dexMod: number;
-  conMod: number;
-  intMod: number;
-  wisMod: number;
-  chaMod: number;
-}
+export type AbilityKey = keyof AbilityScores;
 
-export interface ClassLevel {
-  name: string;
+export const ABILITY_KEYS: AbilityKey[] = ["str", "dex", "con", "int", "wis", "cha"];
+
+export interface ClassEntry {
+  className: string; // key into CLASS_STATS
   level: number;
-  hitDie: number;
-  /** "good" or "poor" for each save */
-  fortSave: "good" | "poor";
-  refSave: "good" | "poor";
-  willSave: "good" | "poor";
-  bab: "full" | "three-quarter" | "half";
-}
-
-export interface ACComponents {
-  naturalAC: number;
-  dodgeAC: number;
-  deflectionAC: number;
-  sizeMod: number;
-  acAdjust: number;
-  showCMBCMD: boolean;
-}
-
-export interface HPState {
-  hp: number;
-  hpMax: number;
-  tempHp: number;
-  hpEditable: boolean;
-  hpMod: number;
-}
-
-export interface SaveValues {
-  fort: { value: number; notes: string };
-  ref: { value: number; notes: string };
-  will: { value: number; notes: string };
-}
-
-export interface ResourcePool {
-  name: string;
-  current: number;
-  max: number;
-  label?: string;
-  footer?: string;
 }
 
 export interface CombatToggles {
   powerAttack: boolean;
   fightingDefensively: boolean;
   craneStyle: boolean;
+  agileWeapon: boolean;
   flurryOfBlows: boolean;
-  weaponSong: string; // "Off" | "Inspire" | "Defending" etc.
-  smite: boolean;
-  smiteDouble: boolean;
+  flanking: boolean;
+  charging: boolean;
+  smiteEvil: boolean;
+  smiteEvilOutsider: boolean;
   preciseStrike: boolean;
-  preciseStrikeDouble: boolean;
+  doublePreciseStrike: boolean;
+  versatilePerformance: boolean;
+  /** "Off" | "Enhancement" | "Defending" | "Flaming" | ... */
+  weaponSong: string;
+  /** "Shuriken" | "Longbow" | "Ray" */
+  rangedAttackStyle: string;
 }
 
-export interface ConditionEffects {
-  acAdjust: number;
-  fortAdjust: number;
-  refAdjust: number;
-  willAdjust: number;
-  hpMaxAdjust: number;
-  naturalArmorAdjust: number;
-  conditionNotes: string[];
-  buffNotes: string[];
+export interface SkillEntry {
+  ability: AbilityKey;
+  ranks: number;
+  misc: number;
+  classSkill: boolean;
 }
 
-/** Tab indices matching minisheet_set_tab mapping */
-export type TabName = "combat" | "skills" | "spells" | "reference" | "adjustments" | "settings";
-export const TAB_INDEX: Record<TabName, number> = {
-  combat: 1,
-  skills: 2,
-  spells: 3,
-  reference: 4,
-  adjustments: 5,
-  settings: 6,
-};
+export interface ResourcePool {
+  id: string;
+  name: string;
+  current: number;
+  max: number;
+  /** small text under the pips, e.g. "2d6 (+4 self)" */
+  footer?: string;
+}
 
-/**
- * Full character frontmatter shape.
- * Properties are read from the active note's frontmatter via dc.useCurrentFile().
- */
-export interface Character {
-  // Identity
+export interface WeaponProfile {
+  id: string;
+  name: string;
+  kind: "melee" | "ranged" | "unarmed";
+  damageDie: string; // "" for rays (bonus damage only)
+  critRange: string; // "20" | "18-20" ...
+  critMult: string; // "2" | "3" ...
+}
+
+export interface HPState {
+  current: number;
+  max: number;
+  temp: number;
+}
+
+export interface ACState {
+  natural: number;
+  dodge: number;
+  deflection: number;
+  sizeMod: number;
+  showCMBCMD: boolean;
+}
+
+export interface AdjustmentState {
+  atk: number;
+  dmg: number;
+  rangedAtk: number;
+  rangedDmg: number;
+  unarmedAtk: number;
+  unarmedDmg: number;
+  ac: number;
+  init: number;
+  skill: number;
+  /** temporary increases/decreases to ability scores */
+  ability: Partial<AbilityScores>;
+  /** permanent drain */
+  drain: Partial<AbilityScores>;
+  /** temporary ability damage */
+  damage: Partial<AbilityScores>;
+  negativeLevels: number;
+}
+
+export interface EnhancementState {
+  meleeWeapon: number;
+  rangedWeapon: number;
+  /** resistance bonus to saves (cloak of resistance etc.) */
+  resistance: number;
+}
+
+export interface SharedResourceLink {
+  /** resource id on this (linked) character */
+  linkedResourceId: string;
+  /** resource id on the master character */
+  masterResourceId: string;
+  /** units of master pool consumed per linked-pool unit ratio (master:linked) */
+  masterUnits: number;
+  linkedUnits: number;
+}
+
+export interface CharacterLink {
+  masterId: string;
+  /** derive hpMax from master (floor(master hpMax / 2) in the old sheet) */
+  hpMaxFromMaster: boolean;
+  sharedResources: SharedResourceLink[];
+}
+
+export interface RuleLink {
+  /** vault path of the rules note */
+  path: string;
+  category?: string;
+}
+
+export interface InitiativeState {
+  miscBonus: number;
+  familiarBonus: number;
+}
+
+export interface CharacterRecord {
+  id: string;
   name: string;
   characterType: "pc" | "familiar";
-
-  // Navigation
-  selectedTab: number;
-
-  // Ability scores
-  abilities: AbilityScores;
-  modifiers: AbilityModifiers;
-
-  // Health
-  hp: number;
-  hpMax: number;
-  tempHp: number;
-  hpEditable: boolean;
-  hpMod: number;
-
-  // AC
-  naturalAC: number;
-  dodgeAC: number;
-  deflectionAC: number;
-  sizeMod: number;
-  acAdjust: number;
-  showCMBCMD: boolean;
-
-  // Combat
-  bab: number;
-  initiative: number;
+  race: string;
+  bannerImage?: string;
+  baseAbilities: AbilityScores;
+  classes: ClassEntry[];
+  hp: HPState;
+  ac: ACState;
+  energyRes: Record<string, number>;
+  initiative: InitiativeState;
   speed: string;
-  combatToggles: CombatToggles;
-
-  // Saves
-  resistanceBonus: number;
-
-  // Status
+  toggles: CombatToggles;
+  enhancements: EnhancementState;
+  adjustments: AdjustmentState;
   conditions: string[];
   buffs: string[];
-  negativeLevels: number;
-  conditionEffects: ConditionEffects;
-
-  // Classes
-  classes: ClassLevel[];
-  totalLevel: number;
-
-  // Resources
+  /** blessing of fervor choice, when that buff is active */
+  bofChoice: string;
+  panache: { current: number; max: number };
+  skills: Record<string, SkillEntry>;
   resources: ResourcePool[];
+  weapons: WeaponProfile[];
+  link?: CharacterLink;
+  ruleLinks: RuleLink[];
+}
 
-  // Skills (keyed by skill name)
-  skills: Record<string, { ranks: number; misc: number; classSkill: boolean }>;
+export function defaultToggles(): CombatToggles {
+  return {
+    powerAttack: false,
+    fightingDefensively: false,
+    craneStyle: false,
+    agileWeapon: false,
+    flurryOfBlows: false,
+    flanking: false,
+    charging: false,
+    smiteEvil: false,
+    smiteEvilOutsider: false,
+    preciseStrike: false,
+    doublePreciseStrike: false,
+    versatilePerformance: false,
+    weaponSong: "Off",
+    rangedAttackStyle: "Longbow",
+  };
+}
+
+export function createDefaultCharacter(id: string, name: string): CharacterRecord {
+  return {
+    id,
+    name,
+    characterType: "pc",
+    race: "",
+    baseAbilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+    classes: [],
+    hp: { current: 0, max: 0, temp: 0 },
+    ac: { natural: 0, dodge: 0, deflection: 0, sizeMod: 0, showCMBCMD: false },
+    energyRes: {},
+    initiative: { miscBonus: 0, familiarBonus: 0 },
+    speed: "30ft",
+    toggles: defaultToggles(),
+    enhancements: { meleeWeapon: 0, rangedWeapon: 0, resistance: 0 },
+    adjustments: {
+      atk: 0,
+      dmg: 0,
+      rangedAtk: 0,
+      rangedDmg: 0,
+      unarmedAtk: 0,
+      unarmedDmg: 0,
+      ac: 0,
+      init: 0,
+      skill: 0,
+      ability: {},
+      drain: {},
+      damage: {},
+      negativeLevels: 0,
+    },
+    conditions: [],
+    buffs: [],
+    bofChoice: "",
+    panache: { current: 0, max: 0 },
+    skills: {},
+    resources: [],
+    weapons: [
+      {
+        id: "melee",
+        name: "Melee",
+        kind: "melee",
+        damageDie: "1d6",
+        critRange: "20",
+        critMult: "2",
+      },
+    ],
+    ruleLinks: [],
+  };
 }
