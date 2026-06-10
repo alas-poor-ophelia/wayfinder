@@ -5007,7 +5007,41 @@
         "conditionNotes": "",
         "buffNotes": "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves"
       }
-    }
+    },
+    "expectedTotals": {
+      "Acrobatics": 14,
+      "Appraise": 1,
+      "Bluff": 16,
+      "Climb": -1,
+      "Craft (any)": 1,
+      "Diplomacy": 15,
+      "Disable Device": 6,
+      "Disguise": 6,
+      "Escape Artist": 6,
+      "Fly": 6,
+      "Handle Animal": 6,
+      "Heal": 3,
+      "Intimidate": 16,
+      "Knowledge (arcana)": 7,
+      "Knowledge (religion)": 7,
+      "Linguistics": 6,
+      "Perception": 11,
+      "Perform (Sing)": 16,
+      "Perform (Stringed)": 16,
+      "Profession (any)": -1,
+      "Ride": 6,
+      "Sense Motive": 16,
+      "Sleight of Hand": 6,
+      "Spellcraft": 5,
+      "Stealth": 10,
+      "Survival": -1,
+      "Swim": -1,
+      "Use Magic Device": 12
+    },
+    "notes": [
+      "Bluff and Sense Motive display (uses Perform) when versatilePerformance is on and Perform total is used",
+      "Old version renders Survival total with a stray undefined suffix (rendering bug, total is -1)"
+    ]
   },
   "hwayoung": {
     "attacks": {

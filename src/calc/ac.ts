@@ -1,0 +1,106 @@
+/**
+ * AC / CMB / CMD — clean port of ACDisplayCalculator.calculateACValues
+ * (ac-renderer.js). Pure data in/out; rendering lives in components.
+ */
+
+export interface ACConditionEffects {
+  loseDexToAC?: boolean;
+  flatFooted?: boolean;
+  acAdjust?: number;
+  touchAcAdjust?: number;
+  ffAcAdjust?: number;
+  cmb?: number;
+  cmd?: number;
+}
+
+export interface ACInput {
+  dexMod?: number;
+  chaMod?: number;
+  strMod?: number;
+  sizeMod?: number;
+  weaponSong?: string;
+  naturalAC?: unknown;
+  deflectionAC?: unknown;
+  dodgeAC?: unknown;
+  monkLevel?: unknown;
+  paladinLevel?: unknown;
+  hasted?: boolean;
+  charging?: boolean;
+  fightingDefensively?: boolean;
+  craneStyle?: boolean;
+  acAdjust?: unknown;
+  bab?: number;
+  conditionEffects?: ACConditionEffects;
+}
+
+export interface ACValues {
+  normalAC: number;
+  touchAC: number;
+  flatFootedAC: number;
+  cmb: number;
+  cmd: number;
+}
+
+export function calculateACValues(input: ACInput): ACValues {
+  let dexMod = input.dexMod || 0;
+  const chaMod = input.chaMod || 0;
+  const strMod = input.strMod || 0;
+  const sizeMod = input.sizeMod || 0;
+  const ce = input.conditionEffects || {};
+
+  const weaponSongBonus = input.weaponSong === "Defending" ? 1 : 0;
+  const baseAC = 10 + sizeMod + weaponSongBonus;
+  const naturalAC = Number(input.naturalAC) || 0;
+  const deflectionAC = Number(input.deflectionAC) || 0;
+  const dodgeAC = Number(input.dodgeAC) || 0;
+
+  // Scaled Fist monk: CHA to AC when unarmored; +1 at level 4, +1 per 4 after.
+  const monkLvl = Number(input.monkLevel) || 0;
+  let monkACBonus = monkLvl > 0 ? chaMod : 0;
+  if (monkLvl >= 4) {
+    monkACBonus += 1 + Math.floor((monkLvl - 4) / 4);
+  }
+
+  // Virtuous Bravo paladin: dodge bonus at level 3, +1 per 4 after.
+  const paladinLvl = Number(input.paladinLevel) || 0;
+  let paladinACBonus = 0;
+  if (paladinLvl >= 3) {
+    paladinACBonus += Math.floor((paladinLvl - 3) / 4) + 1;
+  }
+
+  const hastedACBonus = input.hasted ? 1 : 0;
+  const chargingACPenalty = input.charging ? -2 : 0;
+
+  // Fighting defensively: +2, +1 with Crane Style, +1 for 3+ Acrobatics
+  // ranks (hardcoded assumption carried over from the old sheet).
+  let fightingDefensivelyBonus = 0;
+  if (input.fightingDefensively) {
+    fightingDefensivelyBonus = 2;
+    if (input.craneStyle) fightingDefensivelyBonus += 1;
+    fightingDefensivelyBonus += 1;
+  }
+
+  const loseDexToAC = ce.loseDexToAC || ce.flatFooted || false;
+  if (loseDexToAC) dexMod = 0;
+
+  const userAcAdjust = Number(input.acAdjust) || 0;
+  const normalAcAdjust = userAcAdjust + chargingACPenalty + (Number(ce.acAdjust) || 0);
+  const touchAcAdjust = userAcAdjust + chargingACPenalty + (Number(ce.touchAcAdjust) || 0);
+  const ffAcAdjust = userAcAdjust + chargingACPenalty + (Number(ce.ffAcAdjust) || 0);
+
+  const normalAC =
+    baseAC + dexMod + naturalAC + deflectionAC + monkACBonus + paladinACBonus +
+    fightingDefensivelyBonus + dodgeAC + hastedACBonus + normalAcAdjust;
+  const touchAC =
+    baseAC + dexMod + deflectionAC + monkACBonus + paladinACBonus +
+    fightingDefensivelyBonus + dodgeAC + hastedACBonus + touchAcAdjust;
+  const flatFootedAC = baseAC + naturalAC + deflectionAC + monkACBonus + ffAcAdjust;
+
+  const bab = input.bab || 0;
+  const cmb = bab + dexMod + sizeMod + (ce.cmb || 0);
+  const cmd =
+    10 + bab + strMod + dexMod + sizeMod + deflectionAC + monkACBonus +
+    paladinACBonus + dodgeAC + (ce.cmd || 0);
+
+  return { normalAC, touchAC, flatFootedAC, cmb, cmd };
+}

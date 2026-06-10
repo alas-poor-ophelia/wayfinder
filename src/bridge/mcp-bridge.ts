@@ -1,3 +1,4 @@
+import { computeAll } from "../calc";
 import type { TabName } from "../constants";
 import type { CharacterRecord } from "../types/character";
 import type { MiniSheetData } from "../types/data-file";
@@ -46,7 +47,10 @@ export function installBridge(plugin: MiniSheetPlugin): void {
     newCharacter: (name) => store.addCharacter(name).id,
     setActiveCharacter: (id) => store.setActiveCharacter(id),
     setConfigOpen: (open) => store.setConfigOpen(open),
-    getComputed: () => null,
+    getComputed: (id) => {
+      const record = store.getCharacter(id);
+      return record ? computeAll(record) : null;
+    },
     openSheet: () => plugin.activateView(),
   };
 }
