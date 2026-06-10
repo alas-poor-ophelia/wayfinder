@@ -112,3 +112,55 @@
   font-size: 0.8em;
   color: var(--text-muted);
 }
+
+.ms-config__skill-row,
+.ms-config__resource-row,
+.ms-config__rule-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 3px 0;
+  font-size: 0.85em;
+}
+
+.ms-config__skill-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-config__skill-ability {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  width: 28px;
+}
+
+.ms-config__skill-num {
+  width: 48px;
+  min-height: 28px;
+}
+
+.ms-config__skill-legend {
+  font-size: 0.7em;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.ms-config__resource-footer {
+  max-width: 90px;
+}
+
+.ms-config__rule-path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8em;
+}
+
+.ms-config__rule-category {
+  max-width: 90px;
+}

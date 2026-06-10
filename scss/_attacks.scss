@@ -1,0 +1,61 @@
+// Attack Blocks — ported from MiniSheet.css lines 642-665
+// ([!sheet-atk-block] callout). The Obsidian callout becomes a native
+// <details class="ms-atk-block"> with a <summary> title.
+// Old callout color was rgb(144, 108, 70) — a lighter shade of the bronze
+// family; kept verbatim rather than substituting var(--ms-bronze).
+
+.minisheet-root {
+  .ms-atk-block {
+    background-color: transparent;
+    border: 1px solid rgba(144, 108, 70, 0.3);
+    border-radius: 4px;
+    // TODO(verify): old callout inherited Obsidian's --callout-radius; 4px
+    // chosen to match the rest of the sheet.
+    padding: 2px;
+    margin: 4px 0;
+  }
+
+  .ms-atk-block__title {
+    color: rgba(144, 108, 70, 0.9);
+    font-family: "Norwester", sans-serif;
+    font-size: 20px;
+    padding: 2px 4px;
+    margin: 0;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    /* Hide the default disclosure marker */
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    /* Collapse chevron — stands in for the old callout fold icon */
+    &::after {
+      content: "";
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      background-color: rgba(144, 108, 70, 0.9);
+      -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+      mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      transform: rotate(-90deg);
+      transition: transform 0.15s ease-in-out;
+    }
+  }
+
+  .ms-atk-block[open] > .ms-atk-block__title::after {
+    transform: rotate(0deg);
+  }
+
+  .ms-atk-block__body {
+    padding: 2px 4px;
+    margin: 0;
+  }
+}

@@ -1,0 +1,65 @@
+// Rules cards — ported from the old [!rules] callout (MiniSheet.css ~2338-2410):
+// saddle-brown border, gradient title bar, parchment texture, Crimson Text body.
+
+.minisheet-root {
+  .ms-rule-card {
+    border: 3px solid #8b4513;
+    border-radius: 8px;
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+    margin: 1em 3px 0.75em;
+    padding: 8px;
+
+    // parchment texture overlay
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.1) 1px, transparent 1px),
+        radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.08) 1px, transparent 1px),
+        radial-gradient(circle at 40% 80%, rgba(139, 69, 19, 0.06) 1px, transparent 1px);
+      pointer-events: none;
+      border-radius: 5px;
+    }
+  }
+
+  .ms-rule-card__title {
+    display: block;
+    background: linear-gradient(90deg, #8b4513, #a0522d);
+    color: #f4f1e8;
+    font-family: "Norwester", "Times New Roman", serif;
+    font-weight: bold;
+    font-size: 1.1em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    padding: 6px 12px;
+    margin: -8px -8px 8px;
+    border-radius: 5px 5px 0 0;
+    border-bottom: 2px solid #654321;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  .ms-rule-card__body {
+    color: #ffffff;
+    font-family: "Crimson Text", "Georgia", serif;
+    line-height: 1.5;
+    padding: 0 2px;
+
+    p {
+      margin: 0.5em 0;
+      text-align: justify;
+    }
+
+    strong {
+      color: #8b4513;
+      font-weight: bold;
+    }
+  }
+}

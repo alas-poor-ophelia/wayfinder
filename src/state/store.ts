@@ -33,7 +33,11 @@ export class MiniSheetStore {
         ...raw,
         settings: { ...DEFAULT_DATA.settings, ...raw.settings },
         ui: { ...DEFAULT_DATA.ui, ...raw.ui },
-        characters: raw.characters ?? [],
+        // schema-forward: records saved before a field existed get defaults
+        characters: (raw.characters ?? []).map((c) => ({
+          ...createDefaultCharacter(c.id, c.name),
+          ...c,
+        })),
       };
     }
   }

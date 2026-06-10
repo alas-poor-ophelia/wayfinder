@@ -542,3 +542,19 @@ export function calculateConditionEffects(input: ConditionInput): ConditionEffec
 
   return effects;
 }
+
+/** All selectable condition names (the adjustments tab picker). */
+export const CONDITION_NAMES = [
+  "blinded", "confused", "dazed", "deafened", "entangled", "exhausted",
+  "fatigued", "flat-footed", "frightened", "grappled", "helpless",
+  "nauseated", "panicked", "paralyzed", "prone", "shaken", "sickened",
+  "staggered", "stunned",
+];
+
+/** All selectable buff names (the adjustments tab picker). */
+export const BUFF_NAMES = [
+  "enlarged", "haste", "blessing of fervor", "bull's strength",
+  "cat's grace", "bear's endurance", "fox's cunning", "owl's wisdom",
+  "eagle's splendor", "bless", "barkskin", "magic weapon", "shield",
+  "mage armor",
+];

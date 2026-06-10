@@ -1,0 +1,79 @@
+// HP blood droplet — geometry ported from MiniSheet.css lines 232-481.
+
+.minisheet-root {
+  .ms-hp {
+    position: relative;
+    width: 80px;
+    height: 70px;
+    margin-top: 5px;
+  }
+
+  .ms-hp__droplet {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    background-color: var(--ms-red);
+    clip-path: path("M35,0 C25,20 0,30 0,50 C0,75 25,70 35,70 C45,70 70,75 70,50 C70,30 45,20 35,0");
+    border-radius: 0 0 35px 35px;
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.3);
+    font-family: serif;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 75px;
+    box-sizing: border-box;
+    padding: 0 5px;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      filter: brightness(1.1);
+    }
+  }
+
+  .ms-hp__temp {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #ffcccc;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .ms-hp__controls {
+    position: absolute;
+    left: 78px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    z-index: 5;
+  }
+
+  .ms-hp__amount {
+    width: 54px;
+    text-align: center;
+  }
+
+  .ms-hp__buttons {
+    display: flex;
+    gap: 2px;
+  }
+
+  .ms-hp__btn {
+    height: 30px;
+    width: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+  }
+}

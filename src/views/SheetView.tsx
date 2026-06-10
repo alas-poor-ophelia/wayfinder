@@ -27,10 +27,7 @@ export class SheetView extends ItemView {
 
   async onOpen(): Promise<void> {
     this.root = this.contentEl.createDiv({ cls: "minisheet-root" });
-    render(
-      <App store={this.plugin.store} version={this.plugin.manifest.version} />,
-      this.root
-    );
+    render(<App plugin={this.plugin} store={this.plugin.store} />, this.root);
   }
 
   async onClose(): Promise<void> {

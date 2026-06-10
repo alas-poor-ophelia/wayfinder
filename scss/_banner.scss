@@ -1,0 +1,45 @@
+// Banner — ported from banner.css (the [!banner] callout treatment).
+// 225px cover image with radial edge-fuzz + bottom-fade mask, absolutely
+// positioned at the top of the sheet; content overlaps it via padding-top.
+
+.minisheet-root {
+  .ms-banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    isolation: isolate; /* Create stacking context */
+    // TODO(verify): old callout used z-index -1 behind the note content; if
+    // the banner disappears behind the pane background in the plugin view,
+    // switch to z-index: 0 and raise the sheet content above it.
+  }
+
+  .ms-banner__img {
+    display: block;
+    width: 100%;
+    height: 225px;
+    object-fit: cover; /* Maintain aspect ratio while filling container */
+    object-position: center center;
+
+    /* Radial edge fuzzing + bottom fade using multiple mask layers */
+    mask-image:
+      radial-gradient(ellipse at center, black 25%, transparent 100%),
+      linear-gradient(to bottom, black calc(100% - 85px), transparent);
+    -webkit-mask-image:
+      radial-gradient(ellipse at center, black 25%, transparent 100%),
+      linear-gradient(to bottom, black calc(100% - 85px), transparent);
+
+    /* Combine masks using intersection */
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+  }
+
+  /* Content overlap — old: padding-top 170px (Adarin) / 160px (Hwayoung),
+     leaving ~55px of the 225px image overlapped by content. The banner sits
+     in a .ms-banner-area wrapper, so key off the sheet modifier class. */
+  .ms-sheet--with-banner {
+    position: relative;
+    padding-top: 150px;
+  }
+}

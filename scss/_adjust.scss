@@ -1,0 +1,99 @@
+// Adjustments tab — rest button, condition/buff chips, adjust inputs.
+
+.minisheet-root {
+  .ms-adjust {
+    padding: 4px 8px;
+  }
+
+  .ms-adjust__rest {
+    display: block;
+    width: 100%;
+    min-height: var(--ms-touch);
+    margin-bottom: 10px;
+    background: var(--ms-red);
+    color: white;
+    font-family: "Norwester", sans-serif;
+    font-size: 1.1em;
+    letter-spacing: 0.08em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+      filter: brightness(1.15);
+    }
+  }
+
+  .ms-adjust__section {
+    margin-bottom: 10px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 6px;
+  }
+
+  .ms-adjust__title {
+    font-family: "Taroca", sans-serif;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ms-gold);
+    cursor: pointer;
+  }
+
+  .ms-adjust__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px 0;
+  }
+
+  .ms-chip {
+    font-size: 0.75em;
+    padding: 6px 10px;
+    min-height: 30px;
+    border-radius: 14px;
+    border: 1px solid var(--background-modifier-border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+
+    &.is-on {
+      background: var(--ms-red);
+      border-color: var(--ms-red);
+      color: white;
+    }
+  }
+
+  .ms-adjust__row {
+    display: flex;
+    gap: 8px;
+    padding-top: 6px;
+
+    .ms-field {
+      flex-direction: column;
+      align-items: stretch;
+
+      .ms-field__label {
+        flex-basis: auto;
+      }
+    }
+  }
+
+  .ms-adjust__stat-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+  }
+
+  .ms-adjust__stat-label {
+    font-family: "Taroca", sans-serif;
+    font-size: 0.8em;
+    width: 34px;
+  }
+
+  .ms-adjust__stat-input {
+    width: 64px;
+    min-height: 30px;
+  }
+}

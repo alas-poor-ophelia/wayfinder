@@ -1,0 +1,94 @@
+// Condition & Buff Notes — ported from MiniSheet.css lines 1925-2067.
+// Old Meta Bind checkbox-container circles become real buttons; the
+// data-internal-value reveal hack becomes a .is-open class on the body panel.
+
+.minisheet-root {
+  .ms-cond-notes {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    // TODO(verify): old icons were absolutely pinned to the top-right of the
+    // sheet (condition at top: 0, buff at top: 30px, both right: 10px),
+    // stacked vertically; here they sit in a flex row at the component's
+    // position — adjust if the design needs the vertical stack.
+  }
+
+  /* Circle icon buttons — gold "!" for conditions, blue "*" for buffs */
+  .ms-cond-notes__icon {
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .ms-cond-notes__icon--condition {
+    background-color: #CD951D;
+  }
+
+  .ms-cond-notes__icon--buff {
+    background-color: #5A7D9A;
+  }
+
+  /* Expanding notes panel — old .condition-notes overlay */
+  .ms-cond-notes__body {
+    display: none;
+    position: absolute;
+    top: 30px; /* Position below the toggle */
+    right: 10px; /* Align with the toggle */
+    width: 240px;
+    background-color: black;
+    border: 1px solid darkgoldenrod;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 10px;
+    z-index: 1000;
+
+    &.is-open {
+      display: block;
+    }
+
+    li {
+      margin-left: 20px;
+      margin-right: 5px;
+    }
+  }
+
+  /* Buff variant — old buff panel: blue border, slightly wider/lower */
+  .ms-cond-notes__body--buff {
+    top: 58px;
+    right: 2px;
+    width: 250px;
+    border-color: #5A7D9A;
+  }
+
+  /* Hand-rendered bullet glyphs inside the notes markdown */
+  .ms-cond-notes .fake-bullet {
+    position: relative;
+    bottom: 4px;
+    font-size: 9px;
+    color: #863737;
+    margin-left: 5px;
+    margin-right: 8px;
+  }
+
+  /* Remove (✕) button — old .remove-condition-button */
+  .ms-cond-notes__remove {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    top: 2px;
+    padding: 0;
+  }
+}

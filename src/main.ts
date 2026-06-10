@@ -3,16 +3,21 @@ import { installBridge, removeBridge } from "./bridge/mcp-bridge";
 import { VIEW_TYPE_MINISHEET } from "./constants";
 import { importLegacy } from "./import/legacy-import";
 import { ImportSummaryModal, NotePickModal, TextPromptModal } from "./modals";
+import { RulesIndex } from "./rules/index";
 import { MiniSheetSettingTab } from "./settings";
 import { MiniSheetStore } from "./state/store";
 import { SheetView } from "./views/SheetView";
 
 export default class MiniSheetPlugin extends Plugin {
   store!: MiniSheetStore;
+  rulesIndex!: RulesIndex;
 
   async onload(): Promise<void> {
     this.store = new MiniSheetStore(this);
     await this.store.load();
+
+    this.rulesIndex = new RulesIndex(this);
+    this.rulesIndex.init();
 
     this.registerView(
       VIEW_TYPE_MINISHEET,
@@ -114,6 +119,17 @@ export default class MiniSheetPlugin extends Plugin {
     });
     if (!configFile) {
       warnings.unshift(`No companion config note found under ${folder}/components/`);
+    }
+    // Re-imports must not clobber fields the importer doesn't know about.
+    const existing = this.store.getCharacter(id);
+    if (existing) {
+      if (!record.bannerImage && existing.bannerImage) {
+        record.bannerImage = existing.bannerImage;
+      }
+      if (record.ruleLinks.length === 0 && existing.ruleLinks.length > 0) {
+        record.ruleLinks = existing.ruleLinks;
+      }
+      if (existing.link) record.link = existing.link;
     }
     this.store.upsertCharacter(record);
     await this.store.flush();

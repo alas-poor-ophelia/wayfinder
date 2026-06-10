@@ -1,0 +1,69 @@
+// Skills list — layout + ability color coding (icons live in _skills-icons.scss).
+
+$ability-colors: (
+  "str": #c62828,
+  "dex": #f9a825,
+  "con": #2e7d32,
+  "int": #1565c0,
+  "wis": #00897b,
+  "cha": #8e24aa,
+);
+
+.minisheet-root {
+  .ms-skills {
+    padding: 4px;
+  }
+
+  .ms-skill {
+    display: grid;
+    grid-template-columns: 20px 1fr auto;
+    grid-template-areas:
+      "icon name total"
+      ".    mods mods";
+    align-items: center;
+    column-gap: 6px;
+    padding: 3px 4px;
+    border-radius: 4px;
+    margin: 1px 0;
+  }
+
+  .ms-skill__icon {
+    grid-area: icon;
+    width: 17px;
+    height: 17px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+  .ms-skill__name {
+    grid-area: name;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .ms-skill__total {
+    grid-area: total;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .ms-skill__mods {
+    grid-area: mods;
+    font-size: 0.72em;
+    color: var(--text-muted);
+
+    .ms-skill__class {
+      margin-right: 4px;
+    }
+  }
+
+  @each $ability, $color in $ability-colors {
+    .ms-skill--#{$ability} {
+      .ms-skill__name,
+      .ms-skill__total {
+        color: $color;
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+// Combat tab layout glue (positions; component visuals live in their partials).
+
+.minisheet-root {
+  // gear pseudo-tab (the old settings tab slot); config is an overlay now
+  .ms-tab--config {
+    font-size: 17px;
+    color: var(--text-muted);
+    filter: grayscale(100%) brightness(1.4);
+
+    &:hover {
+      color: var(--text-normal);
+    }
+  }
+
+  .ms-resources__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 12px;
+  }
+
+  .ms-combat__vitals {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 8px;
+  }
+
+  .ms-combat__statline {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 4px 8px;
+  }
+
+  .ms-combat__saves {
+    padding: 4px 8px;
+  }
+}

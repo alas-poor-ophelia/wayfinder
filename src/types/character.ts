@@ -158,6 +158,8 @@ export interface CharacterRecord {
   /** blessing of fervor choice, when that buff is active */
   bofChoice: string;
   panache: { current: number; max: number };
+  /** free-text notes shown on each save's tooltip */
+  saveNotes: { fort: string; ref: string; will: string };
   skills: Record<string, SkillEntry>;
   resources: ResourcePool[];
   weapons: WeaponProfile[];
@@ -218,6 +220,7 @@ export function createDefaultCharacter(id: string, name: string): CharacterRecor
     buffs: [],
     bofChoice: "",
     panache: { current: 0, max: 0 },
+    saveNotes: { fort: "", ref: "", will: "" },
     skills: {},
     resources: [],
     weapons: [

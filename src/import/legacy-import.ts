@@ -285,6 +285,15 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     negativeLevels: num(sheet.negativeLevels),
   };
 
+  // --- save notes (hardcoded text in the old MiniSheetSaves block) ---
+  if (input.characterType === "pc") {
+    record.saveNotes = {
+      fort: "- +2 against death effects",
+      ref: "- +2 against death effects\n- Evasion",
+      will: "- +2 against death effects",
+    };
+  }
+
   // --- conditions / buffs ---
   record.conditions = Array.isArray(sheet.conditions) ? (sheet.conditions as string[]) : [];
   record.buffs = Array.isArray(sheet.buffs) ? (sheet.buffs as string[]) : [];
@@ -328,6 +337,24 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     });
   }
   record.resources = resources;
+
+  // --- spell slots (minimal: the old spellbook computed maxima; only
+  // current counts live in frontmatter, so max defaults to current) ---
+  for (const [key, value] of Object.entries(sheet)) {
+    const m = key.match(/^level(\d+)SpellSlotsCurrent$/);
+    if (!m) continue;
+    const lvl = Number(m[1]);
+    const current = num(value);
+    resources.push({
+      id: `spellSlotsL${lvl}`,
+      name: `Level ${lvl} Slots`,
+      current,
+      max: Math.max(current, 1),
+    });
+    warnings.push(
+      `Spell slot max for level ${lvl} is not stored in frontmatter; defaulted to ${Math.max(current, 1)} — adjust in config`
+    );
+  }
 
   // --- weapons ---
   record.weapons = [

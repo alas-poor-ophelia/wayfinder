@@ -1,0 +1,78 @@
+// Resource Trackers (pips) — ported from MiniSheet.css lines 1688-1924.
+// Old Meta Bind select-option pips (.mb-select-input-element) become real
+// <button class="ms-pip"> elements; the ::before label hack becomes a real
+// .ms-resource__label element styled the same way (Taroca, white, centered).
+// Per-resource modifier classes are kept available (ms-resource--panache,
+// --lay-on-hands, --lay-on-paws, --channel-energy, --smite-evil, --weapon-song,
+// --spellbook-preps, --spellbook-hybrid-casts, --plume-of-panache,
+// --quickrunners, --avenging-bracers) but styling is generic.
+
+.minisheet-root {
+  /* Container — old: flex wrap centered across the JS Engine render child */
+  .ms-resources {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  /* Individual tracker group */
+  .ms-resource {
+    flex: 0 0 auto;
+    position: relative;
+    margin: 10px 6px 4px;
+    min-width: 90px;
+    // TODO(verify): the old sheet gave each tracker a bespoke min-width
+    // (80-118px) and margins per resource; 90px generic default chosen here.
+  }
+
+  /* Label — old ::before content on the tracker */
+  .ms-resource__label {
+    font-size: 12px;
+    font-family: "Taroca", serif;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    color: white;
+  }
+
+  /* Pip row — old .mb-input-type-select.tracker geometry */
+  .ms-resource__pips {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1px;
+    width: fit-content;
+    max-width: 120px;
+    margin: 0 auto;
+  }
+
+  /* Pips — old .mb-select-input-element option blocks */
+  .ms-pip {
+    width: fit-content;
+    min-width: 0;
+    margin: 0;
+    padding: var(--size-4-2);
+    border: 2px solid grey;
+    border-radius: 2px;
+    background-color: transparent;
+    box-shadow: none;
+    cursor: pointer;
+    line-height: 0;
+
+    /* Filled pip — old .is-selected (and everything before it) */
+    &.is-filled {
+      background-color: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+  }
+
+  /* Footer (dice/notes line) — old absolutely-positioned .mb-view-inline */
+  .ms-resource__footer {
+    font-size: 9px;
+    white-space: nowrap;
+    text-align: center;
+  }
+}

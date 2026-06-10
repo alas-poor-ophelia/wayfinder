@@ -1,0 +1,37 @@
+// Rules tab chrome (search bar, category groups) — cards live in _rules.scss.
+
+.minisheet-root {
+  .ms-rules {
+    padding: 4px 6px;
+  }
+
+  .ms-rules__search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .ms-rules__input {
+    flex: 1;
+    min-width: 0;
+    min-height: 34px;
+  }
+
+  .ms-rules__all {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8em;
+    color: var(--text-muted);
+  }
+
+  .ms-rules__category {
+    font-family: "Taroca", sans-serif;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ms-gold);
+    margin: 10px 0 2px;
+  }
+}

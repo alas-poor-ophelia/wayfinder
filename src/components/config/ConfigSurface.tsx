@@ -1,10 +1,19 @@
+import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord, ClassEntry } from "../../types/character";
 import { ABILITY_KEYS } from "../../types/character";
 import { CLASS_NAMES, getClassStats, totalBab, totalLevel } from "../../calc/class-stats";
 import { NumberField, SelectField, TextField } from "../common/fields";
+import {
+  EnergyResEditor,
+  MiscConfigEditor,
+  ResourcesEditor,
+  RuleLinksEditor,
+  SkillsEditor,
+} from "./editors";
 
 interface ConfigSurfaceProps {
+  plugin: MiniSheetPlugin;
   store: MiniSheetStore;
   character: CharacterRecord;
 }
@@ -18,7 +27,7 @@ const ABILITY_LABELS: Record<string, string> = {
   cha: "CHA",
 };
 
-export function ConfigSurface({ store, character }: ConfigSurfaceProps) {
+export function ConfigSurface({ plugin, store, character }: ConfigSurfaceProps) {
   const set = (path: string, value: unknown) =>
     store.setCharacterField(character.id, path, value);
 
@@ -100,6 +109,12 @@ export function ConfigSurface({ store, character }: ConfigSurfaceProps) {
           />
         </div>
       </section>
+
+      <MiscConfigEditor store={store} character={character} />
+      <EnergyResEditor store={store} character={character} />
+      <SkillsEditor store={store} character={character} />
+      <ResourcesEditor store={store} character={character} />
+      <RuleLinksEditor store={store} character={character} plugin={plugin} />
     </div>
   );
 }

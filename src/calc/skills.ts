@@ -38,6 +38,45 @@ export interface SkillRow {
   usesPerform: boolean;
 }
 
+/** The standard PF1e skill list with governing abilities (new-character default). */
+export const STANDARD_SKILLS: Record<string, AbilityKey> = {
+  Acrobatics: "dex",
+  Appraise: "int",
+  Bluff: "cha",
+  Climb: "str",
+  "Craft (any)": "int",
+  Diplomacy: "cha",
+  "Disable Device": "dex",
+  Disguise: "cha",
+  "Escape Artist": "dex",
+  Fly: "dex",
+  "Handle Animal": "cha",
+  Heal: "wis",
+  Intimidate: "cha",
+  "Knowledge (arcana)": "int",
+  "Knowledge (dungeon)": "int",
+  "Knowledge (engineering)": "int",
+  "Knowledge (geography)": "int",
+  "Knowledge (history)": "int",
+  "Knowledge (local)": "int",
+  "Knowledge (nature)": "int",
+  "Knowledge (nobility)": "int",
+  "Knowledge (planes)": "int",
+  "Knowledge (religion)": "int",
+  Linguistics: "int",
+  Perception: "wis",
+  "Perform (any)": "cha",
+  "Profession (any)": "wis",
+  Ride: "dex",
+  "Sense Motive": "wis",
+  "Sleight of Hand": "dex",
+  Spellcraft: "int",
+  Stealth: "dex",
+  Survival: "wis",
+  Swim: "str",
+  "Use Magic Device": "cha",
+};
+
 function bardicBonus(skillName: string, skaldLevel: number): number {
   return skillName.startsWith("Knowledge") && skaldLevel > 0
     ? Math.max(1, Math.ceil(skaldLevel / 2))

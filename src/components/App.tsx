@@ -1,13 +1,21 @@
-import type { MiniSheetStore } from "../state/store";
+import { computeAll } from "../calc";
 import { TABS, TAB_LABELS } from "../constants";
+import type MiniSheetPlugin from "../main";
+import type { MiniSheetStore } from "../state/store";
+import { Banner } from "./combat/Banner";
+import { CombatTab } from "./combat/CombatTab";
+import { AdjustmentsTab } from "./adjust/AdjustmentsTab";
 import { ConfigSurface } from "./config/ConfigSurface";
+import { RulesTab } from "./rules/RulesTab";
+import { SkillsTab } from "./skills/SkillsTab";
+import { SpellSlotsTab } from "./spells/SpellSlotsTab";
 
 interface AppProps {
+  plugin: MiniSheetPlugin;
   store: MiniSheetStore;
-  version: string;
 }
 
-export function App({ store, version }: AppProps) {
+export function App({ plugin, store }: AppProps) {
   const data = store.data.value;
   const active = data.ui.selectedTab;
   const character = store.getCharacter();
@@ -15,52 +23,64 @@ export function App({ store, version }: AppProps) {
   if (data.ui.configOpen && character) {
     return (
       <div class="ms-sheet">
-        <ConfigSurface store={store} character={character} />
+        <ConfigSurface plugin={plugin} store={store} character={character} />
       </div>
     );
   }
 
-  return (
-    <div class="ms-sheet">
-      <header class="ms-header">
-        <h1 class="ms-title">{character?.name ?? "MiniSheet"}</h1>
-        <div class="ms-subtitle">
-          v{version} · {__BUILD_STAMP__}
-        </div>
-        {character && (
-          <button
-            class="ms-header__gear"
-            aria-label="Configure character"
-            onClick={() => store.setConfigOpen(true)}
-          >
-            ⚙
-          </button>
-        )}
-      </header>
-      <nav class="ms-tab-bar">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            class={`ms-tab${tab === active ? " is-active" : ""}`}
-            onClick={() => store.setTab(tab)}
-          >
-            {TAB_LABELS[tab]}
-          </button>
-        ))}
-      </nav>
-      <main class="ms-content">
-        {character ? (
-          <div class="ms-placeholder">
-            <div>{TAB_LABELS[active]} tab</div>
-            <div class="ms-muted">content lands milestone by milestone</div>
-          </div>
-        ) : (
+  if (!character) {
+    return (
+      <div class="ms-sheet">
+        <main class="ms-content">
           <div class="ms-placeholder">
             <div>No character yet</div>
             <div class="ms-muted">
               Run the “MiniSheet: New character” command to create one
             </div>
           </div>
+        </main>
+      </div>
+    );
+  }
+
+  const computed = computeAll(character);
+
+  return (
+    <div class="ms-sheet ms-sheet--with-banner">
+      <Banner plugin={plugin} store={store} character={character} />
+      <nav class="ms-tab-bar">
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            class={`ms-tab ms-tab--${tab}${tab === active ? " is-active" : ""}`}
+            aria-label={TAB_LABELS[tab]}
+            onClick={() => store.setTab(tab)}
+          />
+        ))}
+        <button
+          class="ms-tab ms-tab--config"
+          aria-label="Configure character"
+          onClick={() => store.setConfigOpen(true)}
+        >
+          ⚙
+        </button>
+      </nav>
+      <main class="ms-content">
+        {active === "combat" ? (
+          <CombatTab
+            plugin={plugin}
+            store={store}
+            character={character}
+            computed={computed}
+          />
+        ) : active === "skills" ? (
+          <SkillsTab computed={computed} />
+        ) : active === "adjustments" ? (
+          <AdjustmentsTab store={store} character={character} computed={computed} />
+        ) : active === "rules" ? (
+          <RulesTab plugin={plugin} store={store} character={character} />
+        ) : (
+          <SpellSlotsTab store={store} character={character} />
         )}
       </main>
     </div>
