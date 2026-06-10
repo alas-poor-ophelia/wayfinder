@@ -42,7 +42,10 @@ function classLevel(character: CharacterRecord, match: string): number {
     .reduce((sum, c) => sum + (c.level || 0), 0);
 }
 
-export function computeAll(character: CharacterRecord): ComputedCharacter {
+export function computeAll(
+  character: CharacterRecord,
+  master?: CharacterRecord | null
+): ComputedCharacter {
   const effects = calculateConditionEffects({
     conditions: character.conditions,
     buffs: character.buffs,
@@ -65,7 +68,11 @@ export function computeAll(character: CharacterRecord): ComputedCharacter {
     damage: character.adjustments.damage,
   });
 
-  const bab = character.babOverride ?? totalBab(character.classes);
+  const masterBab =
+    character.link?.babFromMaster && master
+      ? master.babOverride ?? totalBab(master.classes)
+      : null;
+  const bab = masterBab ?? character.babOverride ?? totalBab(character.classes);
   const paladinLevel = classLevel(character, "paladin");
   const monkLevel = classLevel(character, "monk");
   const skaldLevel = classLevel(character, "skald");
@@ -169,7 +176,10 @@ export function computeAll(character: CharacterRecord): ComputedCharacter {
     saves,
     skills,
     initiative,
-    hpMaxEffective: character.hp.max + (effects.hpMaxAdjust || 0),
+    hpMaxEffective:
+      (character.link?.hpMaxFromMaster && master
+        ? Math.floor(master.hp.max / 2)
+        : character.hp.max) + (effects.hpMaxAdjust || 0),
     movementMultiplier: effects.movementAdjust ?? 1,
   };
 }

@@ -49,7 +49,9 @@ export function installBridge(plugin: MiniSheetPlugin): void {
     setConfigOpen: (open) => store.setConfigOpen(open),
     getComputed: (id) => {
       const record = store.getCharacter(id);
-      return record ? computeAll(record) : null;
+      if (!record) return null;
+      const master = record.link ? store.getCharacter(record.link.masterId) : null;
+      return computeAll(record, master);
     },
     openSheet: () => plugin.activateView(),
   };

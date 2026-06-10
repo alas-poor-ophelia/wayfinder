@@ -55,6 +55,17 @@ export interface ResourcePool {
   max: number;
   /** small text under the pips, e.g. "2d6 (+4 self)" */
   footer?: string;
+  /**
+   * Derived pool: displays floor(source.current / divisor) and writes back
+   * source.current = value * divisor. Replaces the old bidirectional
+   * ResourceSyncManager (all pools derive from one source of truth).
+   */
+  derived?: {
+    /** defaults to this character */
+    sourceCharacterId?: string;
+    sourceResourceId: string;
+    divisor: number;
+  };
 }
 
 export interface WeaponProfile {
@@ -106,21 +117,12 @@ export interface EnhancementState {
   resistance: number;
 }
 
-export interface SharedResourceLink {
-  /** resource id on this (linked) character */
-  linkedResourceId: string;
-  /** resource id on the master character */
-  masterResourceId: string;
-  /** units of master pool consumed per linked-pool unit ratio (master:linked) */
-  masterUnits: number;
-  linkedUnits: number;
-}
-
 export interface CharacterLink {
   masterId: string;
-  /** derive hpMax from master (floor(master hpMax / 2) in the old sheet) */
+  /** derive hpMax from master: floor(master hpMax / 2) */
   hpMaxFromMaster: boolean;
-  sharedResources: SharedResourceLink[];
+  /** familiar BAB mirrors the master's */
+  babFromMaster: boolean;
 }
 
 export interface RuleLink {

@@ -49,7 +49,9 @@ export function CombatTab({ store, character, computed }: CombatTabProps) {
       </div>
       <Resources store={store} character={character} />
       <AttackBlocks store={store} character={character} attacks={computed.attacks} />
-      <CombatToggles store={store} character={character} />
+      {character.characterType !== "familiar" && (
+        <CombatToggles store={store} character={character} />
+      )}
     </div>
   );
 }

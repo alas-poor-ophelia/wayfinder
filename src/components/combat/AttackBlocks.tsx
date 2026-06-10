@@ -73,10 +73,12 @@ export function AttackBlocks({ store, character, attacks }: AttackBlocksProps) {
         </div>
         <AttackText text={attacks.ranged} />
       </details>
-      <details class="ms-atk-block">
-        <summary class="ms-atk-block__title">Unarmed Strike</summary>
-        <AttackText text={attacks.unarmed} />
-      </details>
+      {character.characterType !== "familiar" && (
+        <details class="ms-atk-block">
+          <summary class="ms-atk-block__title">Unarmed Strike</summary>
+          <AttackText text={attacks.unarmed} />
+        </details>
+      )}
     </div>
   );
 }

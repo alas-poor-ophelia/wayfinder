@@ -1,3 +1,4 @@
+import { resolvePool } from "../../state/links";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 import { Tracker } from "../combat/Resources";
@@ -27,13 +28,7 @@ export function SpellSlotsTab({
   return (
     <div class="ms-spells">
       {slots.map(({ pool, idx }) => (
-        <Tracker
-          key={pool.id}
-          pool={pool}
-          onSet={(value) =>
-            store.setCharacterField(character.id, `resources.${idx}.current`, value)
-          }
-        />
+        <Tracker key={pool.id} pool={resolvePool(store, character, pool, idx)} />
       ))}
     </div>
   );

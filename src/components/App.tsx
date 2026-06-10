@@ -43,7 +43,8 @@ export function App({ plugin, store }: AppProps) {
     );
   }
 
-  const computed = computeAll(character);
+  const master = character.link ? store.getCharacter(character.link.masterId) : null;
+  const computed = computeAll(character, master);
 
   return (
     <div class="ms-sheet ms-sheet--with-banner">
