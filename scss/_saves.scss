@@ -34,6 +34,21 @@
     cursor: help;
   }
 
+  /* The value is a <button> for tap-to-show-notes, but renders as plain
+     text — the old sheet had no box around the numbers. */
+  .ms-save__value {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    box-shadow: none;
+    min-height: 0;
+    height: auto;
+    font: inherit;
+    color: inherit;
+    cursor: help;
+  }
+
   .ms-save::before {
     content: "";
     position: absolute;

@@ -51,7 +51,7 @@ export function Resources({ store, character }: ResourcesProps) {
 
   return (
     <details class="ms-resources" open>
-      <summary class="ms-resources__title">Resources</summary>
+      <summary class="ms-resources__toggle" aria-label="Toggle resources" />
       <div class="ms-resources__list">
         {pools.map((pool) => (
           <Tracker key={pool.id} pool={pool} />

@@ -25,6 +25,10 @@
     /* Circle styling */
     width: var(--ms-touch);
     height: var(--ms-touch);
+    min-width: 0;
+    min-height: 0;
+    flex: 0 0 auto;
+    aspect-ratio: 1;
     border-radius: 50%;
     background-color: var(--ms-red);
     transition: background-color 0.2s ease;

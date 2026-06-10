@@ -1,3 +1,4 @@
+import { Menu } from "obsidian";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 
@@ -48,6 +49,21 @@ export function CombatToggles({ store, character }: CombatTogglesProps) {
 
   const songOn = t.weaponSong !== "Off";
 
+  // Native <select> popups clip at the 45px control width; an Obsidian
+  // Menu renders the song choices properly and feels right on touch.
+  const openSongMenu = (e: MouseEvent) => {
+    const menu = new Menu();
+    for (const song of ["Off", ...WEAPON_SONGS]) {
+      menu.addItem((item) =>
+        item
+          .setTitle(song)
+          .setChecked(song === t.weaponSong)
+          .onClick(() => set("toggles.weaponSong", song))
+      );
+    }
+    menu.showAtMouseEvent(e);
+  };
+
   return (
     <div class="ms-toggles-area">
       <div class="ms-toggles">
@@ -60,7 +76,8 @@ export function CombatToggles({ store, character }: CombatTogglesProps) {
           class={`ms-toggle ms-toggle--weapon-song${songOn ? " is-on" : ""}`}
           aria-label="weapon song"
           aria-pressed={songOn}
-          onClick={() => set("toggles.weaponSong", songOn ? "Off" : "Enhancement")}
+          title={songOn ? `Weapon Song: ${t.weaponSong}` : "Weapon Song"}
+          onClick={(e) => openSongMenu(e as unknown as MouseEvent)}
         />
         <button
           class={`ms-toggle ms-toggle--precise-strike${t.preciseStrike ? " is-on" : ""}${t.doublePreciseStrike ? " is-double" : ""}`}
@@ -85,19 +102,12 @@ export function CombatToggles({ store, character }: CombatTogglesProps) {
         />
       </div>
       {songOn && (
-        <select
-          class="ms-toggle-song-select dropdown"
-          value={t.weaponSong}
-          onChange={(e) =>
-            set("toggles.weaponSong", (e.target as HTMLSelectElement).value)
-          }
+        <button
+          class="ms-toggle-song-label"
+          onClick={(e) => openSongMenu(e as unknown as MouseEvent)}
         >
-          {WEAPON_SONGS.map((song) => (
-            <option key={song} value={song} selected={song === t.weaponSong}>
-              {song}
-            </option>
-          ))}
-        </select>
+          {t.weaponSong}
+        </button>
       )}
     </div>
   );
