@@ -142,6 +142,9 @@ export interface CharacterRecord {
   bannerImage?: string;
   baseAbilities: AbilityScores;
   classes: ClassEntry[];
+  /** Familiars have no classes; their BAB mirrors the master's (link wiring
+   *  replaces this in the multi-character milestone). */
+  babOverride?: number;
   hp: HPState;
   ac: ACState;
   energyRes: Record<string, number>;

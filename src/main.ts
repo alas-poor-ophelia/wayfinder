@@ -1,7 +1,8 @@
-import { Plugin, WorkspaceLeaf } from "obsidian";
+import { Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { installBridge, removeBridge } from "./bridge/mcp-bridge";
 import { VIEW_TYPE_MINISHEET } from "./constants";
-import { TextPromptModal } from "./modals";
+import { importLegacy } from "./import/legacy-import";
+import { ImportSummaryModal, NotePickModal, TextPromptModal } from "./modals";
 import { MiniSheetSettingTab } from "./settings";
 import { MiniSheetStore } from "./state/store";
 import { SheetView } from "./views/SheetView";
@@ -50,6 +51,16 @@ export default class MiniSheetPlugin extends Plugin {
       },
     });
 
+    this.addCommand({
+      id: "import-legacy-sheet",
+      name: "Import legacy sheet",
+      callback: () => {
+        new NotePickModal(this.app, "Pick the old Mini Sheet note", (file) => {
+          void this.importLegacySheet(file);
+        }).open();
+      },
+    });
+
     this.addSettingTab(new MiniSheetSettingTab(this.app, this));
 
     installBridge(this);
@@ -58,6 +69,56 @@ export default class MiniSheetPlugin extends Plugin {
   onunload(): void {
     removeBridge();
     void this.store.flush();
+  }
+
+  /**
+   * Import an old Meta Bind sheet (sheet note + its companion config note
+   * under <folder>/components/*MiniSheetConfig.md) into plugin state.
+   */
+  async importLegacySheet(sheetFile: TFile): Promise<void> {
+    const cache = this.app.metadataCache.getFileCache(sheetFile);
+    const sheet = cache?.frontmatter
+      ? (JSON.parse(JSON.stringify(cache.frontmatter)) as Record<string, unknown>)
+      : null;
+    if (!sheet) {
+      new Notice(`No frontmatter found on ${sheetFile.path}`);
+      return;
+    }
+
+    const folder = sheetFile.parent?.path ?? "";
+    const configFile = this.app.vault
+      .getMarkdownFiles()
+      .find(
+        (f) =>
+          f.path.startsWith(`${folder}/components/`) &&
+          f.basename.endsWith("MiniSheetConfig")
+      );
+    const config = configFile
+      ? ((JSON.parse(
+          JSON.stringify(
+            this.app.metadataCache.getFileCache(configFile)?.frontmatter ?? {}
+          )
+        ) as Record<string, unknown>) ?? {})
+      : {};
+
+    const name = sheetFile.basename.replace(/\s*Mini Sheet$/i, "");
+    const id = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const characterType = "masterLevel" in sheet || "masterLevel" in config ? "familiar" : "pc";
+
+    const { record, warnings } = importLegacy({
+      id,
+      name,
+      characterType,
+      sheet,
+      config,
+    });
+    if (!configFile) {
+      warnings.unshift(`No companion config note found under ${folder}/components/`);
+    }
+    this.store.upsertCharacter(record);
+    await this.store.flush();
+    new ImportSummaryModal(this.app, { name, warnings }).open();
+    void this.activateView();
   }
 
   async activateView(): Promise<void> {

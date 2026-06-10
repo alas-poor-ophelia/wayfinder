@@ -1,4 +1,58 @@
-import { App, Modal, Setting } from "obsidian";
+import { App, FuzzySuggestModal, Modal, Setting, TFile } from "obsidian";
+
+/** Pick a markdown note (used to choose the legacy sheet to import). */
+export class NotePickModal extends FuzzySuggestModal<TFile> {
+  private onChoose: (file: TFile) => void;
+
+  constructor(app: App, placeholder: string, onChoose: (file: TFile) => void) {
+    super(app);
+    this.setPlaceholder(placeholder);
+    this.onChoose = onChoose;
+  }
+
+  getItems(): TFile[] {
+    const all = this.app.vault.getMarkdownFiles();
+    const sheets = all.filter((f) => f.basename.includes("Mini Sheet"));
+    return sheets.length > 0 ? sheets : all;
+  }
+
+  getItemText(file: TFile): string {
+    return file.path;
+  }
+
+  onChooseItem(file: TFile): void {
+    this.onChoose(file);
+  }
+}
+
+/** Shows the result of a legacy import. */
+export class ImportSummaryModal extends Modal {
+  private summary: { name: string; warnings: string[] };
+
+  constructor(app: App, summary: { name: string; warnings: string[] }) {
+    super(app);
+    this.summary = summary;
+  }
+
+  onOpen(): void {
+    this.titleEl.setText(`Imported: ${this.summary.name}`);
+    if (this.summary.warnings.length === 0) {
+      this.contentEl.createEl("p", { text: "No warnings — clean import." });
+    } else {
+      this.contentEl.createEl("p", {
+        text: `${this.summary.warnings.length} warning(s):`,
+      });
+      const ul = this.contentEl.createEl("ul");
+      for (const w of this.summary.warnings) {
+        ul.createEl("li", { text: w });
+      }
+    }
+  }
+
+  onClose(): void {
+    this.contentEl.empty();
+  }
+}
 
 /** Simple one-field text prompt. */
 export class TextPromptModal extends Modal {

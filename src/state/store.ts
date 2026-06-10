@@ -114,6 +114,20 @@ export class MiniSheetStore {
     return record;
   }
 
+  /** Insert or replace a full character record (used by legacy import). */
+  upsertCharacter(record: CharacterRecord): void {
+    const d = this.data.value;
+    const idx = d.characters.findIndex((c) => c.id === record.id);
+    const characters = [...d.characters];
+    if (idx === -1) characters.push(record);
+    else characters[idx] = record;
+    this.commit({
+      ...d,
+      characters,
+      ui: { ...d.ui, activeCharacterId: record.id },
+    });
+  }
+
   removeCharacter(id: string): void {
     const d = this.data.value;
     const characters = d.characters.filter((c) => c.id !== id);

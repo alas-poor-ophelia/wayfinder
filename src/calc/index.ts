@@ -65,7 +65,7 @@ export function computeAll(character: CharacterRecord): ComputedCharacter {
     damage: character.adjustments.damage,
   });
 
-  const bab = totalBab(character.classes);
+  const bab = character.babOverride ?? totalBab(character.classes);
   const paladinLevel = classLevel(character, "paladin");
   const monkLevel = classLevel(character, "monk");
   const skaldLevel = classLevel(character, "skald");
