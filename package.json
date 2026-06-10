@@ -11,17 +11,12 @@
     "build:watch": "bun esbuild.config.mjs --watch",
     "deploy": "bun run build && bun scripts/deploy.mjs",
     "typecheck": "tsc --noEmit",
-    "test:unit": "vitest run --config vitest.unit.config.ts",
-    "test:e2e": "vitest run",
-    "postinstall": "patch-package"
+    "test:unit": "vitest run --config vitest.unit.config.ts"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.1",
     "@preact/signals": "^2.0.0",
     "esbuild": "^0.25.0",
     "obsidian": "^1.11.0",
-    "obsidian-testing-framework": "^0.1.6",
-    "patch-package": "^8.0.1",
     "preact": "^10.26.0",
     "sass": "^1.83.0",
     "typescript": "^5.7.0",
