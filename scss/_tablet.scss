@@ -24,7 +24,13 @@
   .ms-resources__group,
   .ms-header__gear,
   .ms-config__close,
-  .ms-config__remove
+  .ms-config__remove,
+  .ms-spellbtn,
+  .ms-spellbook-callout__title,
+  .ms-metamagic__add,
+  .ms-metamagic__remove,
+  .ms-spellbook-config__gear,
+  .ms-spellbook__db-btn
 ) {
   padding: 0;
   box-shadow: none;
@@ -119,4 +125,53 @@
 
 .is-tablet button.ms-config__add {
   padding: 4px 12px;
+}
+
+/* Spellbook buttons — keep the legacy 30px square + at-will grey.
+   background-color only (the wand/infinity icons are background-images). */
+.is-tablet button.ms-spellbtn {
+  width: 30px;
+  height: 30px;
+  min-width: 0;
+  min-height: 0;
+  background-color: var(--color-accent);
+  border: 1px solid grey;
+}
+
+.is-tablet button.ms-spellbtn.is-at-will {
+  background-color: #333333;
+}
+
+.is-tablet button.ms-spellbook-callout__title {
+  min-height: 0;
+  background-color: transparent;
+}
+
+.is-tablet button:is(.ms-metamagic__add, .ms-metamagic__remove) {
+  min-height: 0;
+}
+
+.is-tablet button.ms-metamagic__add {
+  width: 28px;
+  height: 28px;
+  background-color: var(--color-accent);
+}
+
+.is-tablet button.ms-metamagic__remove {
+  width: 18px;
+  height: 18px;
+  background-color: transparent;
+}
+
+.is-tablet button:is(.ms-spellbook-config__gear, .ms-spellbook__db-btn) {
+  width: 1.8em;
+  height: 1.8em;
+  min-height: 0;
+  background-color: #444;
+}
+
+.is-tablet button.ms-spellbook-config__action {
+  padding: 0.4em 0.8em;
+  background-color: #8b0000;
+  box-shadow: none;
 }
