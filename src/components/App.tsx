@@ -8,7 +8,7 @@ import { AdjustmentsTab } from "./adjust/AdjustmentsTab";
 import { ConfigSurface } from "./config/ConfigSurface";
 import { RulesTab } from "./rules/RulesTab";
 import { SkillsTab } from "./skills/SkillsTab";
-import { SpellSlotsTab } from "./spells/SpellSlotsTab";
+import { SpellsTab } from "./spells/SpellsTab";
 
 interface AppProps {
   plugin: MiniSheetPlugin;
@@ -79,7 +79,12 @@ export function App({ plugin, store }: AppProps) {
         ) : active === "rules" ? (
           <RulesTab plugin={plugin} store={store} character={character} />
         ) : (
-          <SpellSlotsTab store={store} character={character} />
+          <SpellsTab
+            plugin={plugin}
+            store={store}
+            character={character}
+            computed={computed}
+          />
         )}
       </main>
     </div>

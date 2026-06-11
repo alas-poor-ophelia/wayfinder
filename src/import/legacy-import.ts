@@ -331,15 +331,15 @@ export function importSpellbook(
     }
   }
 
-  // Global selected metamagic: the legacy code read the ROOT selectedMetamagic
-  // key; the file also carries spellLevelSettings.selectedGlobalMetamagic
-  // written by an older build. The root key (what the running code used) wins.
-  const rootSelected = str(raw.selectedMetamagic);
-  sb.globalMetamagic.selected = rootSelected;
+  // Global selected metamagic: the legacy dropdown and its "+" button bind
+  // spellLevelSettings.selectedGlobalMetamagic — that key wins. (A root
+  // selectedMetamagic key also exists, read only by a dead accessor.)
   const nestedSelected = str(sls?.selectedGlobalMetamagic);
-  if (nestedSelected && nestedSelected !== rootSelected) {
+  const rootSelected = str(raw.selectedMetamagic);
+  sb.globalMetamagic.selected = nestedSelected || rootSelected;
+  if (nestedSelected && rootSelected && nestedSelected !== rootSelected) {
     warnings.push(
-      `spellbook: spellLevelSettings.selectedGlobalMetamagic ("${nestedSelected}") differs from the root selectedMetamagic ("${rootSelected}") the legacy code read; root wins`
+      `spellbook: root selectedMetamagic ("${rootSelected}") differs from the UI-bound spellLevelSettings.selectedGlobalMetamagic ("${nestedSelected}"); the UI binding wins`
     );
   }
 

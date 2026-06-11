@@ -112,14 +112,14 @@ describe("importSpellbook (Adarin live frontmatter)", () => {
     expect(spellbook.levels.level9.remaining).toBeNull();
   });
 
-  it("global metamagic: the root selectedMetamagic key wins (warned on drift)", () => {
+  it("global metamagic: the UI-bound nested selectedGlobalMetamagic wins", () => {
     const { spellbook, warnings } = run();
-    // root selectedMetamagic is "" in the live file; the nested
-    // spellLevelSettings.selectedGlobalMetamagic ("Silent Spell (+1 level)")
-    // was written by an older build and the legacy code never read it
-    expect(spellbook.globalMetamagic.selected).toBe("");
+    // The legacy dropdown binds spellLevelSettings.selectedGlobalMetamagic
+    // ("Silent Spell (+1 level)" in the live file); the root selectedMetamagic
+    // key ("") was only read by a dead accessor. Empty root = no drift warning.
+    expect(spellbook.globalMetamagic.selected).toBe("Silent Spell (+1 level)");
     expect(spellbook.globalMetamagic.active).toEqual([]);
-    expect(warnings.some((w) => w.includes("selectedGlobalMetamagic"))).toBe(true);
+    expect(warnings.some((w) => w.includes("selectedGlobalMetamagic"))).toBe(false);
   });
 
   it("imports empty preparations and the three SLAs from spellPreparations.sla", () => {

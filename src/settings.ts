@@ -27,5 +27,20 @@ export class MiniSheetSettingTab extends PluginSettingTab {
             this.plugin.store.updateSettings({ rulesFolder: value });
           })
       );
+
+    new Setting(containerEl)
+      .setName("Spells folder")
+      .setDesc(
+        "Vault folder containing spell notes (one note per spell). " +
+          "Spell name links on the spells tab resolve into this folder."
+      )
+      .addText((text) =>
+        text
+          .setPlaceholder("MiniSheet/z_Components/database/spells")
+          .setValue(this.plugin.store.data.value.settings.spellsFolder)
+          .onChange((value) => {
+            this.plugin.store.updateSettings({ spellsFolder: value });
+          })
+      );
   }
 }

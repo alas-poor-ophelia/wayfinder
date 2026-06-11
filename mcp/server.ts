@@ -14,6 +14,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { registerViewTools } from "./tools/view-tools.js";
 import { registerFrontmatterTools } from "./tools/frontmatter-tools.js";
 import { registerStateTools } from "./tools/state-tools.js";
+import { registerSpellTools } from "./tools/spell-tools.js";
 
 const server = new McpServer({
   name: "minisheet",
@@ -24,6 +25,7 @@ const server = new McpServer({
 registerViewTools(server);
 registerFrontmatterTools(server); // legacy old-sheet tools; retire after fixtures capture
 registerStateTools(server);
+registerSpellTools(server);
 
 // Connect via stdio
 const transport = new StdioServerTransport();

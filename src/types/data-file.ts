@@ -9,6 +9,8 @@ export interface UiState {
 
 export interface MiniSheetSettings {
   rulesFolder: string;
+  /** vault folder holding the spell notes (one markdown note per spell) */
+  spellsFolder: string;
 }
 
 /** Root shape of the plugin's data.json. */
@@ -25,6 +27,7 @@ export const DEFAULT_DATA: MiniSheetData = {
   schemaVersion: 2,
   settings: {
     rulesFolder: "Rules",
+    spellsFolder: "MiniSheet/z_Components/database/spells",
   },
   ui: {
     selectedTab: "combat",

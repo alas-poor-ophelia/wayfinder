@@ -1,8 +1,40 @@
 import { computeAll } from "../calc";
 import type { TabName } from "../constants";
+import {
+  addGlobalMetamagic,
+  castSla,
+  castSpontaneous,
+  removeGlobalMetamagic,
+  resetSpellbook,
+  setGlobalMetamagicSelected,
+  setLevelRemaining,
+  setSlaRemaining,
+} from "../state/spellbook-actions";
 import type { CharacterRecord } from "../types/character";
 import type { MiniSheetData } from "../types/data-file";
+import type { SpellbookState, SpellLevel } from "../types/spellbook";
 import type MiniSheetPlugin from "../main";
+
+export type SpellActionName =
+  | "cast"
+  | "castSla"
+  | "setRemaining"
+  | "setSlaRemaining"
+  | "selectGlobalMetamagic"
+  | "addGlobalMetamagic"
+  | "removeGlobalMetamagic"
+  | "reset";
+
+export interface SpellActionPayload {
+  level?: number;
+  slaIndex?: number;
+  value?: number;
+  metamagic?: string;
+  index?: number;
+  resetMetamagics?: boolean;
+  resetPreparations?: boolean;
+  resetSLAs?: boolean;
+}
 
 /**
  * window.__minisheet — the surface the MCP server drives via `ob eval`.
@@ -24,6 +56,10 @@ export interface MiniSheetBridge {
   /** Calc outputs for a character — wired up in the calc-port milestone. */
   getComputed(id?: string): unknown;
   openSheet(): Promise<void>;
+  /** Spellbook state for a character (null when none / no spellbook). */
+  getSpellbook(id?: string): SpellbookState | null;
+  /** Drive a spellbook mutation by name (the spells tab's action set). */
+  spellAction(id: string, action: SpellActionName, payload?: SpellActionPayload): void;
 }
 
 declare global {
@@ -54,6 +90,58 @@ export function installBridge(plugin: MiniSheetPlugin): void {
       return computeAll(record, master);
     },
     openSheet: () => plugin.activateView(),
+    getSpellbook: (id) => {
+      const record = store.getCharacter(id);
+      return record?.spellbook
+        ? (JSON.parse(JSON.stringify(record.spellbook)) as SpellbookState)
+        : null;
+    },
+    spellAction: (id, action, payload = {}) => {
+      const record = store.getCharacter(id);
+      if (!record) throw new Error(`No character with id "${id}"`);
+      const master = record.link ? store.getCharacter(record.link.masterId) : null;
+      const bonus = computeAll(record, master).spellbook?.castingStatBonus ?? 0;
+      const level = (payload.level ?? 0) as SpellLevel;
+      switch (action) {
+        case "cast":
+          castSpontaneous(store, record, level, bonus);
+          break;
+        case "castSla":
+          castSla(store, record, payload.slaIndex ?? 0);
+          break;
+        case "setRemaining":
+          setLevelRemaining(store, record, level, payload.value ?? 0);
+          break;
+        case "setSlaRemaining":
+          setSlaRemaining(store, record, payload.slaIndex ?? 0, payload.value ?? 0);
+          break;
+        case "selectGlobalMetamagic":
+          setGlobalMetamagicSelected(store, record, payload.metamagic ?? "");
+          break;
+        case "addGlobalMetamagic": {
+          if (payload.metamagic) {
+            setGlobalMetamagicSelected(store, record, payload.metamagic);
+          }
+          // re-fetch: the mutation above replaced the record object, and
+          // addGlobalMetamagic reads `selected` from the record it's given
+          const fresh = store.getCharacter(id);
+          if (fresh) addGlobalMetamagic(store, fresh);
+          break;
+        }
+        case "removeGlobalMetamagic":
+          removeGlobalMetamagic(store, record, payload.index ?? 0);
+          break;
+        case "reset":
+          resetSpellbook(store, record, bonus, {
+            resetMetamagics: payload.resetMetamagics,
+            resetPreparations: payload.resetPreparations,
+            resetSLAs: payload.resetSLAs,
+          });
+          break;
+        default:
+          throw new Error(`Unknown spell action: ${String(action)}`);
+      }
+    },
   };
 }
 
