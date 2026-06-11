@@ -34,6 +34,7 @@ import type {
 } from "../types/spellbook";
 import {
   createDefaultSpellbook,
+  createSlotOnlySpellbook,
   getSpellLevelKey,
   SPELL_LEVELS,
 } from "../types/spellbook";
@@ -621,26 +622,26 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   // --- spell slots ---
   // With a spellbook note, the full spellbook replaces the old fallback
   // pools (slot maxima are computed, remaining counts live in the
-  // spellbook state). Without one, keep the minimal pool import.
+  // spellbook state). Without one, build a slot-only spellbook (schema v5
+  // home of the old spellSlotsL* resource pools).
   if (input.spellbook) {
     record.spellbook = importSpellbook(input.spellbook, record, warnings);
   } else {
     // minimal: the old spellbook computed maxima; only current counts live
     // in frontmatter, so max defaults to current
+    const slots: { level: SpellLevel; current: number; max: number }[] = [];
     for (const [key, value] of Object.entries(sheet)) {
       const m = key.match(/^level(\d+)SpellSlotsCurrent$/);
       if (!m) continue;
-      const lvl = Number(m[1]);
+      const lvl = clampSpellLevel(Number(m[1]));
       const current = num(value);
-      resources.push({
-        id: `spellSlotsL${lvl}`,
-        name: `Level ${lvl} Slots`,
-        current,
-        max: Math.max(current, 1),
-      });
+      slots.push({ level: lvl, current, max: Math.max(current, 1) });
       warnings.push(
         `Spell slot max for level ${lvl} is not stored in frontmatter; defaulted to ${Math.max(current, 1)} — adjust in config`
       );
+    }
+    if (slots.length > 0) {
+      record.spellbook = createSlotOnlySpellbook(slots);
     }
   }
 

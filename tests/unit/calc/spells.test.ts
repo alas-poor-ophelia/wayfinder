@@ -249,6 +249,23 @@ describe("computeSpellbook (Adarin live integration)", () => {
     expect(computed.levels[1].arcanistCasts).toBe(getArcanistCasts("arcanist", 7, 1, 4));
   });
 
+  it("slotOverrides replace computed maxima (slot-only books, schema v5)", () => {
+    const { spellbook } = adarinSpellbookState();
+    const slotOnly = {
+      ...spellbook,
+      castingClass: "",
+      slotOverrides: { level1: 3, level4: 2 },
+    };
+    const computed = computeSpellbook({
+      spellbook: slotOnly,
+      classes: [],
+      mods: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 5 },
+    });
+    expect(computed.levels[1].maxSlots).toBe(3); // override, not table/bonus
+    expect(computed.levels[4].maxSlots).toBe(2);
+    expect(computed.levels[2].maxSlots).toBe(0); // no override, invalid class
+  });
+
   it("yields zero slots (not a crash) for classes outside the slot tables", () => {
     // (Was "alchemist" until the RAW tables landed 2026-06 — alchemist now
     // has real slots, so a true non-caster plays the unknown class.)

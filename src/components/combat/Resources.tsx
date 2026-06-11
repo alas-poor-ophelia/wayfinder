@@ -35,8 +35,6 @@ export function Resources({ store, character }: ResourcesProps) {
   const pools: ResolvedPool[] = [];
 
   character.resources.forEach((pool, idx) => {
-    // spell slots render on the spells tab, not in the combat resources crease
-    if (pool.id.startsWith("spellSlots")) return;
     pools.push(resolvePool(store, character, pool, idx));
   });
 

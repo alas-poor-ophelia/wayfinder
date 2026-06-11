@@ -93,6 +93,13 @@ export interface SpellbookState {
   metamagicFeats?: string[];
   /** "level0".."level9" */
   levels: Record<string, SpellLevelState>;
+  /**
+   * Manual per-level slot maxima ("level0".."level9"), schema v5. When a
+   * key is present it replaces the computed table max for that level —
+   * the home of the old spellSlotsL* resource pools (slot-only books use
+   * castingClass "" so the tables contribute nothing).
+   */
+  slotOverrides?: Record<string, number>;
   /** spontaneous casters' global metamagic */
   globalMetamagic: { selected: string; active: string[] };
   /** prepared/hybrid casters: "level0".."level9" */
@@ -113,6 +120,25 @@ export function defaultSpellLevelState(): SpellLevelState {
     selectedMetamagic: "",
     activeMetamagics: [],
   };
+}
+
+/**
+ * Slot-only spellbook (schema v5): replaces the old spellSlotsL* resource
+ * pools. castingClass "" is deliberately invalid — computed table slots
+ * stay 0 and slotOverrides carry the manual maxima.
+ */
+export function createSlotOnlySpellbook(
+  slots: { level: SpellLevel; current: number; max: number }[]
+): SpellbookState {
+  const book = createDefaultSpellbook("", "cha");
+  const overrides: Record<string, number> = {};
+  for (const { level, current, max } of slots) {
+    const key = getSpellLevelKey(level);
+    overrides[key] = max;
+    book.levels[key].remaining = current;
+  }
+  book.slotOverrides = overrides;
+  return book;
 }
 
 export function createDefaultSpellbook(

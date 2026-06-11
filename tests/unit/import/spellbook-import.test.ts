@@ -186,7 +186,8 @@ describe("importLegacy with a spellbook note", () => {
     expect(record.resources.some((r) => r.id.startsWith("spellSlots"))).toBe(false);
   });
 
-  it("keeps the minimal slot pools when no spellbook note exists", () => {
+  it("builds a slot-only spellbook when no spellbook note exists (schema v5)", () => {
+    // (Until v5 this emitted spellSlotsL* resource pools instead.)
     const { record, warnings } = importLegacy({
       id: "x",
       name: "X",
@@ -194,8 +195,11 @@ describe("importLegacy with a spellbook note", () => {
       sheet: { level1SpellSlotsCurrent: 3 },
       config: {},
     });
-    expect(record.spellbook).toBeUndefined();
-    expect(record.resources.some((r) => r.id === "spellSlotsL1")).toBe(true);
+    expect(record.resources.some((r) => r.id.startsWith("spellSlots"))).toBe(false);
+    expect(record.spellbook).toBeDefined();
+    expect(record.spellbook!.castingClass).toBe("");
+    expect(record.spellbook!.slotOverrides).toEqual({ level1: 3 });
+    expect(record.spellbook!.levels.level1.remaining).toBe(3);
     expect(warnings.some((w) => w.includes("Spell slot max"))).toBe(true);
   });
 });

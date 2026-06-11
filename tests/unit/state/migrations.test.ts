@@ -7,6 +7,7 @@ import { describe, expect, it } from "vitest";
 import { migrateData } from "../../../src/state/migrations";
 import { createDefaultCharacter, type CharacterRecord } from "../../../src/types/character";
 import type { MiniSheetData } from "../../../src/types/data-file";
+import { createDefaultSpellbook } from "../../../src/types/spellbook";
 
 function v3Adarin(): CharacterRecord {
   const c = createDefaultCharacter("adarin", "Adarin");
@@ -80,5 +81,47 @@ describe("migrateData v3 -> v4", () => {
 
   it("tolerates missing characters", () => {
     expect(migrateData({ schemaVersion: 3 })).toEqual({ schemaVersion: 3 });
+  });
+});
+
+describe("migrateData v4 -> v5 (spell slots into the spellbook)", () => {
+  it("converts spellSlotsL* pools to a slot-only spellbook", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.resources = [
+      { id: "spellSlotsL1", name: "Level 1 Slots", current: 2, max: 4 },
+      { id: "spellSlotsL2", name: "Level 2 Slots", current: 1, max: 2 },
+      { id: "layOnHands", name: "Lay on Hands", current: 8, max: 8 },
+    ];
+    const out = migrateData(v3Data([c]));
+    const rec = out.characters![0];
+    expect(rec.resources.map((r) => r.id)).toEqual(["layOnHands"]);
+    expect(rec.spellbook).toBeDefined();
+    expect(rec.spellbook!.castingClass).toBe("");
+    expect(rec.spellbook!.slotOverrides).toEqual({ level1: 4, level2: 2 });
+    expect(rec.spellbook!.levels.level1.remaining).toBe(2);
+    expect(rec.spellbook!.levels.level2.remaining).toBe(1);
+  });
+
+  it("folds pool currents into an existing spellbook's uninitialized levels only", () => {
+    // a real caster: computed maxima stay authoritative, no overrides
+    const c = createDefaultCharacter("x", "X");
+    c.spellbook = createDefaultSpellbook("skald", "cha");
+    c.spellbook!.levels.level1.remaining = 5; // already initialized
+    c.resources = [
+      { id: "spellSlotsL1", name: "Level 1 Slots", current: 2, max: 4 },
+      { id: "spellSlotsL2", name: "Level 2 Slots", current: 1, max: 2 },
+    ];
+    const out = migrateData(v3Data([c]));
+    const rec = out.characters![0];
+    expect(rec.resources).toEqual([]);
+    expect(rec.spellbook!.slotOverrides).toBeUndefined();
+    expect(rec.spellbook!.levels.level1.remaining).toBe(5); // untouched
+    expect(rec.spellbook!.levels.level2.remaining).toBe(1); // folded
+  });
+
+  it("leaves characters without slot pools alone", () => {
+    const c = v3Adarin();
+    const out = migrateData(v3Data([c]));
+    expect(out.characters![0].spellbook).toBeUndefined();
   });
 });

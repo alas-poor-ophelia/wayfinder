@@ -32,6 +32,12 @@ export function SpellsTab({
   if (!sb || !computed.spellbook) {
     return <SpellSlotsTab store={store} character={character} />;
   }
+  // slot-only book (schema v5): no caster class, maxima from slotOverrides
+  if (sb.castingClass === "") {
+    return (
+      <SpellSlotsTab store={store} character={character} computed={computed.spellbook} />
+    );
+  }
 
   const spellbookComputed = computed.spellbook;
   const paradigm = spellbookComputed.paradigm;

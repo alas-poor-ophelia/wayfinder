@@ -8,6 +8,11 @@
 
 import type { CharacterRecord, ResourcePool } from "../types/character";
 import type { MiniSheetData } from "../types/data-file";
+import {
+  createSlotOnlySpellbook,
+  getSpellLevelKey,
+  type SpellLevel,
+} from "../types/spellbook";
 
 /** Pools the old sheet hardcoded as item-granted (Resources.tsx had a
  *  literal ITEM_POOL_IDS set until schema v4 introduced pool.kind). */
@@ -21,6 +26,7 @@ export function migrateData(raw: Partial<MiniSheetData>): Partial<MiniSheetData>
   const version = typeof raw.schemaVersion === "number" ? raw.schemaVersion : 0;
   let data = raw;
   if (version < 4) data = migrateToV4(data);
+  if (version < 5) data = migrateToV5(data);
   return data;
 }
 
@@ -69,4 +75,43 @@ function migrateCharacterToV4(record: CharacterRecord): CharacterRecord {
   delete next.panache;
 
   return { ...next, resources };
+}
+
+/**
+ * v5: spellSlotsL* resource pools move into the spellbook. Characters
+ * without one get a slot-only book (castingClass "" → table contributes
+ * nothing; slotOverrides carry the maxima). Characters WITH a spellbook
+ * never had these pools rendered — their `current` is folded into any
+ * uninitialized level remaining, computed maxima stay authoritative.
+ */
+function migrateToV5(raw: Partial<MiniSheetData>): Partial<MiniSheetData> {
+  if (!raw.characters) return raw;
+  return { ...raw, characters: raw.characters.map(migrateCharacterToV5) };
+}
+
+const SPELL_SLOT_POOL = /^spellSlotsL(\d)$/;
+
+function migrateCharacterToV5(record: CharacterRecord): CharacterRecord {
+  const slotPools = (record.resources ?? []).filter((r) => SPELL_SLOT_POOL.test(r.id));
+  if (slotPools.length === 0) return record;
+
+  const resources = record.resources.filter((r) => !SPELL_SLOT_POOL.test(r.id));
+  const slots = slotPools.map((pool) => ({
+    level: Number(SPELL_SLOT_POOL.exec(pool.id)![1]) as SpellLevel,
+    current: pool.current,
+    max: pool.max,
+  }));
+
+  if (!record.spellbook) {
+    return { ...record, resources, spellbook: createSlotOnlySpellbook(slots) };
+  }
+
+  const spellbook = structuredClone(record.spellbook);
+  for (const { level, current } of slots) {
+    const key = getSpellLevelKey(level);
+    if (spellbook.levels[key] && spellbook.levels[key].remaining == null) {
+      spellbook.levels[key].remaining = current;
+    }
+  }
+  return { ...record, resources, spellbook };
 }

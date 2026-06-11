@@ -36,6 +36,9 @@ export function maxSlotsFor(
   castingStatBonus: number
 ): number {
   const sb = requireSpellbook(character);
+  // manual override (schema v5) replaces the computed table max
+  const override = sb.slotOverrides?.[getSpellLevelKey(level)];
+  if (override !== undefined) return override;
   if (!isValidCasterClass(sb.castingClass)) return 0;
   const casterLevel = Math.min(
     Math.max(resolveCasterLevel(sb, character.classes), 1),

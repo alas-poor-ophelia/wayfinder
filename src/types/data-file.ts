@@ -92,7 +92,9 @@ export const DEFAULT_DATA: MiniSheetData = {
   // v3: optional CharacterRecord.inventory + MiniSheetData.partyInventory
   // v4: ResourcePool gains kind/formula; top-level panache field becomes a
   // resources[] pool (real migration — see src/state/migrations.ts)
-  schemaVersion: 4,
+  // v5: spellSlotsL* resource pools migrate into the spellbook
+  // (SpellbookState.slotOverrides; slot-only books use castingClass "")
+  schemaVersion: 5,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

@@ -811,6 +811,10 @@ export function computeSpellbook(
           ) || 0;
       }
     }
+    // manual override (schema v5) replaces the computed table max — this
+    // is where the old spellSlotsL* resource pools live now
+    const override = spellbook.slotOverrides?.[getSpellLevelKey(level)];
+    if (override !== undefined) maxSlots = override;
     const levelState = spellbook.levels[getSpellLevelKey(level)];
     const stored = levelState?.remaining;
     const remaining = stored === null || stored === undefined ? maxSlots : stored;
