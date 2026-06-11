@@ -40,6 +40,9 @@ export class MiniSheetSettingTab extends PluginSettingTab {
           .setValue(this.plugin.store.data.value.settings.spellsFolder)
           .onChange((value) => {
             this.plugin.store.updateSettings({ spellsFolder: value });
+            // the index only watches vault events; a folder change must
+            // trigger its own rebuild
+            this.plugin.spellIndex.rebuild();
           })
       );
   }
