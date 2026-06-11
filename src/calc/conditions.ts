@@ -378,97 +378,29 @@ function processBlessingOfFervor(
   notes.push(bofNote);
 }
 
-/** Buff handlers — keyed by exact (lowercase) buff name, as in legacy. */
+/**
+ * Buff handlers — RAW FIX (2026-06): only machinery that is not
+ * modifier-shaped remains here (size/reach, the BoF choice, haste's speed
+ * and extra attack). Plain stat buffs live in src/data/buffs.ts as typed
+ * modifiers and resolve through the modifier engine in computeAll.
+ */
 const BUFF_EFFECTS: Record<string, BuffHandler> = {
   enlarged: (effects, notes) => processEnlarged(effects, notes),
 
   "enlarge person": (effects, notes) => processEnlarged(effects, notes),
 
-  "bull's strength": (effects, notes) => {
-    effects.strAdjust += 4;
-    notes.push("- Bull's Strength: +4 enhancement bonus to Strength");
-  },
-
-  "cat's grace": (effects, notes) => {
-    effects.dexAdjust += 4;
-    notes.push("- Cat's Grace: +4 enhancement bonus to Dexterity");
-  },
-
-  "bear's endurance": (effects, notes) => {
-    effects.conAdjust += 4;
-    notes.push("- Bear's Endurance: +4 enhancement bonus to Constitution");
-  },
-
-  "fox's cunning": (effects, notes) => {
-    effects.intAdjust += 4;
-    notes.push("- Fox's Cunning: +4 enhancement bonus to Intelligence");
-  },
-
-  "owl's wisdom": (effects, notes) => {
-    effects.wisAdjust += 4;
-    notes.push("- Owl's Wisdom: +4 enhancement bonus to Wisdom");
-  },
-
-  "eagle's splendor": (effects, notes) => {
-    effects.chaAdjust += 4;
-    notes.push("- Eagle's Splendor: +4 enhancement bonus to Charisma");
-  },
-
-  bless: (effects, notes) => {
-    effects.meleeAtkAdjust += 1;
-    effects.rangedAtkAdjust += 1;
-    effects.fortAdjust += 1;
-    effects.refAdjust += 1;
-    effects.willAdjust += 1;
-    notes.push("- Bless: +1 morale bonus on attack rolls and saving throws against fear effects");
-  },
-
   "blessing of fervor": (effects, notes, buffs, bofChoice) =>
     processBlessingOfFervor(effects, notes, buffs, bofChoice),
 
-  haste: (effects, notes, buffs) => {
-    effects.meleeAtkAdjust += 1;
-    effects.rangedAtkAdjust += 1;
-    effects.acAdjust += 1;
-    effects.touchAcAdjust += 1;
-    effects.refAdjust += 1;
+  haste: (effects) => {
+    // The +1s are typed modifiers in the buff registry; speed and the
+    // extra attack stay here. RAW FIX (2026-06): haste always grants its
+    // extra attack — the legacy handlers each deferred to the other, so
+    // haste + BoF "Extra Attack" produced ZERO extra attacks (captured
+    // fixture); BoF's handler still skips when haste is active, so the
+    // two sources correctly yield exactly one.
     effects.movementAdjust = 1.5;
-
-    // Extra attack at full BAB — only if blessing of fervor isn't also active
-    // (extra attacks from the two sources don't stack).
-    if (!buffs.includes("blessing of fervor")) {
-      effects.extraAttacks.push(0);
-    }
-
-    notes.push("- Haste: +1 attack/AC/Ref, +30ft speed, extra attack at full BAB");
-  },
-
-  barkskin: (effects, notes) => {
-    effects.naturalArmorAdjust += 2;
-    // Natural armor applies to normal and flat-footed AC, but NOT touch AC
-    effects.acAdjust += 2;
-    effects.ffAcAdjust += 2;
-    notes.push("- Barkskin: +2 enhancement bonus to natural armor (does not apply to touch AC)");
-  },
-
-  "magic weapon": (effects, notes) => {
-    effects.meleeAtkAdjust += 1;
-    effects.damageAdjust += 1;
-    notes.push("- Magic Weapon: +1 enhancement bonus to weapon attacks and damage");
-  },
-
-  shield: (effects, notes) => {
-    // Shield bonus applies to normal and flat-footed AC, but NOT touch AC
-    effects.acAdjust += 4;
-    effects.ffAcAdjust += 4;
-    notes.push("- Shield: +4 shield bonus to AC (does not apply to touch AC)");
-  },
-
-  "mage armor": (effects, notes) => {
-    // Armor bonus applies to normal and flat-footed AC, but NOT touch AC
-    effects.acAdjust += 4;
-    effects.ffAcAdjust += 4;
-    notes.push("- Mage Armor: +4 armor bonus to AC (does not apply to touch AC)");
+    effects.extraAttacks.push(0);
   },
 };
 
@@ -551,10 +483,5 @@ export const CONDITION_NAMES = [
   "staggered", "stunned",
 ];
 
-/** All selectable buff names (the adjustments tab picker). */
-export const BUFF_NAMES = [
-  "enlarged", "haste", "blessing of fervor", "bull's strength",
-  "cat's grace", "bear's endurance", "fox's cunning", "owl's wisdom",
-  "eagle's splendor", "bless", "barkskin", "magic weapon", "shield",
-  "mage armor",
-];
+// (The selectable buff list moved to src/data/buffs.ts — BUFF_DEFS — when
+// buffs became typed modifiers; the adjustments tab renders from there.)

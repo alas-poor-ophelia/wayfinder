@@ -7,6 +7,7 @@ import { findRaceByName, getRaceData, RACE_DATA, RACE_KEYS } from "../../data/ra
 import type { RaceData } from "../../data/types";
 import { NumberField, SelectField, TextField } from "../common/fields";
 import {
+  CustomBuffsEditor,
   EnergyResEditor,
   MiscConfigEditor,
   ResourcesEditor,
@@ -136,6 +137,7 @@ export function ConfigSurface({ plugin, store, character }: ConfigSurfaceProps) 
       <EnergyResEditor store={store} character={character} />
       <SkillsEditor store={store} character={character} />
       <ResourcesEditor store={store} character={character} />
+      <CustomBuffsEditor store={store} character={character} />
       <RuleLinksEditor store={store} character={character} plugin={plugin} />
     </div>
   );

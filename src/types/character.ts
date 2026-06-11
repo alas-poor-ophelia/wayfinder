@@ -4,6 +4,7 @@
  * are NEVER stored; they're computed by src/calc/ from this record.
  */
 
+import type { Modifier } from "../calc/modifiers";
 import type { InventoryState } from "./inventory";
 import type { SpellbookState } from "./spellbook";
 
@@ -197,7 +198,10 @@ export interface CharacterRecord {
   enhancements: EnhancementState;
   adjustments: AdjustmentState;
   conditions: string[];
+  /** active buff toggles: registry keys (src/data/buffs.ts) or custom ids */
   buffs: string[];
+  /** user-defined buffs (config surface) — typed modifiers like gear */
+  customBuffs?: { id: string; name: string; modifiers: Modifier[] }[];
   /** blessing of fervor choice, when that buff is active */
   bofChoice: string;
   /** DEPRECATED (schema v4): panache migrated into resources[] as a pool

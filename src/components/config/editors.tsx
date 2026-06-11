@@ -11,6 +11,7 @@ import type {
 } from "../../types/character";
 import { ABILITY_KEYS } from "../../types/character";
 import { NotePickModal } from "../../modals";
+import { ModifierEditor } from "../common/ModifierEditor";
 
 interface EditorProps {
   store: MiniSheetStore;
@@ -183,6 +184,74 @@ function ResourceFormulaEditor({
         </div>
       )}
     </div>
+  );
+}
+
+/** Custom buffs: user-defined typed modifiers, toggled as chips on the
+ *  adjustments tab alongside the registry buffs. */
+export function CustomBuffsEditor({ store, character }: EditorProps) {
+  const buffs = character.customBuffs ?? [];
+  const set = (value: CharacterRecord["customBuffs"]) =>
+    store.setCharacterField(character.id, "customBuffs", value);
+
+  return (
+    <section class="ms-config__section">
+      <h3 class="ms-config__section-title">Custom buffs</h3>
+      {buffs.map((buff, idx) => (
+        <div class="ms-config__resource" key={buff.id}>
+          <div class="ms-config__resource-row">
+            <input
+              class="ms-field__input"
+              type="text"
+              aria-label="Buff name"
+              value={buff.name}
+              onInput={(e) =>
+                set(
+                  buffs.map((b, i) =>
+                    i === idx ? { ...b, name: (e.target as HTMLInputElement).value } : b
+                  )
+                )
+              }
+            />
+            <button
+              class="ms-config__remove"
+              aria-label={`Remove ${buff.name}`}
+              onClick={() => {
+                set(buffs.filter((_, i) => i !== idx));
+                // drop a dangling toggle if the buff was active
+                if (character.buffs.includes(buff.id)) {
+                  store.setCharacterField(
+                    character.id,
+                    "buffs",
+                    character.buffs.filter((k) => k !== buff.id)
+                  );
+                }
+              }}
+            >
+              ✕
+            </button>
+          </div>
+          <ModifierEditor
+            modifiers={buff.modifiers}
+            source={buff.name || "Custom buff"}
+            onChange={(modifiers) =>
+              set(buffs.map((b, i) => (i === idx ? { ...b, modifiers } : b)))
+            }
+          />
+        </div>
+      ))}
+      <button
+        class="ms-config__add"
+        onClick={() =>
+          set([
+            ...buffs,
+            { id: `buff-${Date.now().toString(36)}`, name: "New buff", modifiers: [] },
+          ])
+        }
+      >
+        + Add custom buff
+      </button>
+    </section>
   );
 }
 

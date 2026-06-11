@@ -33,6 +33,7 @@ import {
   type Modifier,
   type ModifierTarget,
 } from "./modifiers";
+import { getBuffDef } from "../data/buffs";
 import { getRaceData, racialAbilityMods } from "../data/races";
 import type { RaceData } from "../data/types";
 
@@ -122,7 +123,33 @@ export function computeAll(
   cfg("attack.ranged", "enhancement", Number(character.enhancements.rangedWeapon) || 0);
   cfg("save.all", "resistance", Number(character.enhancements.resistance) || 0);
 
-  const combined = [...racialMods, ...gearMods, ...configMods];
+  // Active buffs: registry entries (typed modifiers + display notes) and
+  // user-defined custom buffs. Special machinery (enlarge, BoF, haste's
+  // speed/extra attack) already flowed through calculateConditionEffects.
+  const buffMods: Modifier[] = [];
+  const buffNoteLines: string[] = [];
+  for (const key of character.buffs) {
+    const def = getBuffDef(key);
+    if (def) {
+      buffMods.push(...def.modifiers);
+      if (def.note) buffNoteLines.push(def.note);
+      continue;
+    }
+    const custom = character.customBuffs?.find((b) => b.id === key);
+    if (custom) {
+      for (const m of custom.modifiers) {
+        if (!m || typeof m.value !== "number" || !m.target || !m.type) continue;
+        buffMods.push({ ...m, source: m.source || custom.name });
+      }
+    }
+  }
+  if (buffNoteLines.length) {
+    effects.buffNotes = [effects.buffNotes, ...buffNoteLines]
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  const combined = [...racialMods, ...gearMods, ...configMods, ...buffMods];
   const combinedFor = (target: string): number =>
     combined.length ? resolveModifiers(combined, target).total : 0;
 

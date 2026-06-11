@@ -1,4 +1,5 @@
-import { CONDITION_NAMES, BUFF_NAMES } from "../../calc/conditions";
+import { CONDITION_NAMES } from "../../calc/conditions";
+import { BUFF_DEFS } from "../../data/buffs";
 import type { ComputedCharacter } from "../../calc";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
@@ -62,13 +63,22 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
       <details class="ms-adjust__section">
         <summary class="ms-adjust__title">Buffs</summary>
         <div class="ms-adjust__chips">
-          {BUFF_NAMES.map((name) => (
+          {BUFF_DEFS.map((def) => (
             <button
-              key={name}
-              class={`ms-chip${character.buffs.includes(name) ? " is-on" : ""}`}
-              onClick={() => toggleIn("buffs", name)}
+              key={def.key}
+              class={`ms-chip${character.buffs.includes(def.key) ? " is-on" : ""}`}
+              onClick={() => toggleIn("buffs", def.key)}
             >
-              {name}
+              {def.key}
+            </button>
+          ))}
+          {(character.customBuffs ?? []).map((buff) => (
+            <button
+              key={buff.id}
+              class={`ms-chip ms-chip--custom${character.buffs.includes(buff.id) ? " is-on" : ""}`}
+              onClick={() => toggleIn("buffs", buff.id)}
+            >
+              {buff.name}
             </button>
           ))}
         </div>
