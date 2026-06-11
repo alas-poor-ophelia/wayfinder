@@ -1,12 +1,11 @@
-// Condition & Buff Notes — ported from MiniSheet.css lines 1925-2067.
-// Old Meta Bind checkbox-container circles become real buttons; the
-// data-internal-value reveal hack becomes a .is-open class on the body panel.
+// Active effects — unified conditions + buffs panel (replaces the legacy
+// two-dot overlay ported from MiniSheet.css lines 1925-2067). One counter
+// button pinned top-right of the combat content: gold = conditions only,
+// blue = buffs only, split gradient = both. The panel is conditionally
+// rendered by Preact (no display:none/.is-open machinery — that pattern
+// shipped broken: the JSX never added the class, so the panel never showed).
 
 .minisheet-root {
-  /* Old: icons absolutely pinned top-right of the combat content —
-     condition at top 0, buff at top 30px, both right 10px (the 8px content
-     padding plus 2px here). Each icon keeps its fixed slot even when the
-     other is absent, exactly like the legacy absolute positioning. */
   .ms-cond-notes {
     position: absolute;
     top: 0;
@@ -15,23 +14,7 @@
     z-index: 20;
   }
 
-  .ms-cond-notes__icons {
-    position: relative;
-  }
-
-  .ms-cond-notes__icon--condition {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-
-  .ms-cond-notes__icon--buff {
-    position: absolute;
-    top: 30px;
-    right: 0;
-  }
-
-  /* Circle icon buttons — gold "!" for conditions, blue "*" for buffs */
+  /* Counter button — legacy condition gold / buff blue identity kept */
   .ms-cond-notes__icon {
     box-sizing: border-box;
     width: 24px;
@@ -49,71 +32,91 @@
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 18px;
+    font-size: 13px;
     font-weight: bold;
     line-height: 1;
     cursor: pointer;
+
+    &.is-conditions {
+      background-color: #CD951D;
+    }
+
+    &.is-buffs {
+      background-color: #5A7D9A;
+    }
+
+    &.is-mixed {
+      background-image: linear-gradient(135deg, #CD951D 50%, #5A7D9A 50%);
+    }
   }
 
-  .ms-cond-notes__icon--condition {
-    background-color: #CD951D;
-  }
-
-  .ms-cond-notes__icon--buff {
-    background-color: #5A7D9A;
-
-    /* the asterisk glyph sits at cap height; shift it to the visual center */
-    padding-top: 9px;
-  }
-
-  /* Expanding notes panel — old .condition-notes overlay */
+  /* Unified panel below the button */
   .ms-cond-notes__body {
-    display: none;
     position: absolute;
-    top: 30px; /* Position below the toggle */
-    right: 0; /* Align with the icon column */
-    width: 240px;
+    top: 30px;
+    right: 0;
+    width: 250px;
     background-color: black;
-    border: 1px solid darkgoldenrod;
+    border: 1px solid var(--ms-bronze);
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     padding: 10px;
     z-index: 1000;
-
-    &.is-open {
-      display: block;
-    }
-
-    li {
-      margin-left: 20px;
-      margin-right: 5px;
-    }
   }
 
-  /* Buff variant — old buff panel: blue border, slightly wider/lower */
-  .ms-cond-notes__body--buff {
-    top: 58px;
-    right: 0;
-    width: 250px;
-    border-color: #5A7D9A;
+  .ms-cond-notes__group + .ms-cond-notes__group {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--background-modifier-border);
   }
 
-  /* Hand-rendered bullet glyphs inside the notes markdown */
-  .ms-cond-notes .fake-bullet {
-    position: relative;
-    bottom: 4px;
-    font-size: 9px;
-    color: #863737;
-    margin-left: 5px;
-    margin-right: 8px;
+  .ms-cond-notes__group-title {
+    font-family: "Taroca", sans-serif;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 4px;
+  }
+
+  .ms-cond-notes__group--conditions .ms-cond-notes__group-title {
+    color: #CD951D;
+  }
+
+  .ms-cond-notes__group--buffs .ms-cond-notes__group-title {
+    color: #5A7D9A;
+  }
+
+  .ms-cond-notes__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    min-height: 24px;
+  }
+
+  .ms-cond-notes__name {
+    flex: 1;
+    min-width: 0;
+    text-transform: capitalize;
+  }
+
+  /* Calc notes — \n-separated lines from conditionNotes/buffNotes */
+  .ms-cond-notes__text {
+    white-space: pre-line;
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .ms-cond-notes__bof {
+    width: 100%;
+    margin: 4px 0;
   }
 
   /* Remove (✕) button — old .remove-condition-button */
   .ms-cond-notes__remove {
-    position: relative;
     height: 20px;
     width: 20px;
-    top: 2px;
     padding: 0;
   }
 }
