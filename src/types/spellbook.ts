@@ -49,6 +49,8 @@ export interface SpellLevelState {
    * legacy wrote null, which its renderers displayed as a full tracker.
    */
   remaining: number | null;
+  /** hybrid (arcanist) second pool — legacy totalCastsRemaining */
+  castsRemaining?: number | null;
   /** the metamagic dropdown's current pick (persisted UI state) */
   selectedMetamagic: string;
   /** per-level active metamagic (prepared/hybrid paradigms) */
@@ -98,7 +100,12 @@ export function getSpellLevelKey(level: SpellLevel | number): string {
 }
 
 export function defaultSpellLevelState(): SpellLevelState {
-  return { remaining: null, selectedMetamagic: "", activeMetamagics: [] };
+  return {
+    remaining: null,
+    castsRemaining: null,
+    selectedMetamagic: "",
+    activeMetamagics: [],
+  };
 }
 
 export function createDefaultSpellbook(

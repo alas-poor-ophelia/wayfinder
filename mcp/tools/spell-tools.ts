@@ -18,6 +18,13 @@ const ACTIONS = [
   "selectGlobalMetamagic",
   "addGlobalMetamagic",
   "removeGlobalMetamagic",
+  "prepare",
+  "castPrepared",
+  "removePrep",
+  "setCastsRemaining",
+  "selectLevelMetamagic",
+  "addLevelMetamagic",
+  "removeLevelMetamagic",
   "reset",
 ] as const;
 
@@ -52,10 +59,12 @@ export function registerSpellTools(server: McpServer): void {
   server.tool(
     "minisheet_spell_action",
     `Drive a spellbook mutation. Actions: ${ACTIONS.join(", ")}. ` +
-      `Payload fields by action: cast/setRemaining take level (0-9) and value; ` +
+      `Payload fields by action: cast/setRemaining/setCastsRemaining take level (0-9) and value; ` +
       `castSla/setSlaRemaining take slaIndex and value; ` +
-      `selectGlobalMetamagic/addGlobalMetamagic take metamagic (option string); ` +
-      `removeGlobalMetamagic takes index; reset takes resetMetamagics/resetSLAs booleans.`,
+      `selectGlobalMetamagic/addGlobalMetamagic/selectLevelMetamagic/addLevelMetamagic take metamagic (and level for the level forms); ` +
+      `removeGlobalMetamagic/removeLevelMetamagic take index (and level); ` +
+      `prepare takes spellId; castPrepared/removePrep take level (STORAGE level) and prepIndex; ` +
+      `reset takes resetMetamagics/resetPreparations/resetSLAs booleans.`,
     {
       characterId: z.string().describe("Character id"),
       action: z.enum(ACTIONS).describe("Spell action name"),

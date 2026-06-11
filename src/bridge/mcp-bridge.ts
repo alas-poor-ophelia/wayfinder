@@ -2,11 +2,18 @@ import { computeAll } from "../calc";
 import type { TabName } from "../constants";
 import {
   addGlobalMetamagic,
+  addLevelMetamagic,
+  castPrepared,
   castSla,
   castSpontaneous,
+  prepareSpell,
   removeGlobalMetamagic,
+  removeLevelMetamagic,
+  removePreparation,
   resetSpellbook,
+  setCastsRemaining,
   setGlobalMetamagicSelected,
+  setLevelMetamagicSelected,
   setLevelRemaining,
   setSlaRemaining,
 } from "../state/spellbook-actions";
@@ -23,6 +30,13 @@ export type SpellActionName =
   | "selectGlobalMetamagic"
   | "addGlobalMetamagic"
   | "removeGlobalMetamagic"
+  | "prepare"
+  | "castPrepared"
+  | "removePrep"
+  | "setCastsRemaining"
+  | "selectLevelMetamagic"
+  | "addLevelMetamagic"
+  | "removeLevelMetamagic"
   | "reset";
 
 export interface SpellActionPayload {
@@ -31,6 +45,8 @@ export interface SpellActionPayload {
   value?: number;
   metamagic?: string;
   index?: number;
+  spellId?: string;
+  prepIndex?: number;
   resetMetamagics?: boolean;
   resetPreparations?: boolean;
   resetSLAs?: boolean;
@@ -130,6 +146,32 @@ export function installBridge(plugin: MiniSheetPlugin): void {
         }
         case "removeGlobalMetamagic":
           removeGlobalMetamagic(store, record, payload.index ?? 0);
+          break;
+        case "prepare":
+          prepareSpell(store, record, payload.spellId ?? "", bonus);
+          break;
+        case "castPrepared":
+          castPrepared(store, record, level, payload.prepIndex ?? 0, bonus);
+          break;
+        case "removePrep":
+          removePreparation(store, record, level, payload.prepIndex ?? 0);
+          break;
+        case "setCastsRemaining":
+          setCastsRemaining(store, record, level, payload.value ?? 0);
+          break;
+        case "selectLevelMetamagic":
+          setLevelMetamagicSelected(store, record, level, payload.metamagic ?? "");
+          break;
+        case "addLevelMetamagic": {
+          if (payload.metamagic) {
+            setLevelMetamagicSelected(store, record, level, payload.metamagic);
+          }
+          const freshRecord = store.getCharacter(id);
+          if (freshRecord) addLevelMetamagic(store, freshRecord, level);
+          break;
+        }
+        case "removeLevelMetamagic":
+          removeLevelMetamagic(store, record, level, payload.index ?? 0);
           break;
         case "reset":
           resetSpellbook(store, record, bonus, {

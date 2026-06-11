@@ -4,15 +4,18 @@ import type { CharacterRecord } from "../../types/character";
 import type MiniSheetPlugin from "../../main";
 import { SPELL_LEVELS } from "../../types/spellbook";
 import { GlobalMetamagic } from "./GlobalMetamagic";
+import { PreparedKnownSection, PreparedLevelSection } from "./PreparedSections";
 import { SlaSection } from "./SlaSection";
+import { SpellbookConfig } from "./SpellbookConfig";
 import { SpellLevelSection } from "./SpellLevelSection";
 import { SpellSlotsTab } from "./SpellSlotsTab";
 
 /**
  * The spells tab. Characters with a spellbook get the full port (legacy
- * section order: SLAs, then known spells per level; the config gear lands
- * with the prepared/hybrid milestone). Characters without one (Hwayoung)
- * keep the minimal slot-tracker view.
+ * section order: config, SLAs, then per-level sections — spontaneous shows
+ * Known only; prepared/hybrid interleave Known and Prepared per the UI
+ * spec). Characters without one (Hwayoung) keep the minimal slot-tracker
+ * view.
  */
 export function SpellsTab({
   plugin,
@@ -30,31 +33,49 @@ export function SpellsTab({
     return <SpellSlotsTab store={store} character={character} />;
   }
 
-  const paradigm = computed.spellbook.paradigm;
+  const spellbookComputed = computed.spellbook;
+  const paradigm = spellbookComputed.paradigm;
 
   return (
     <div class="ms-spellbook">
+      <SpellbookConfig
+        store={store}
+        character={character}
+        castingStatBonus={spellbookComputed.castingStatBonus}
+      />
       <SlaSection plugin={plugin} store={store} character={character} />
-      {paradigm === "spontaneous" && (
+      {paradigm !== "prepared" && (
         <GlobalMetamagic store={store} character={character} />
       )}
-      {paradigm === "spontaneous" &&
-        SPELL_LEVELS.map((level) => (
-          <SpellLevelSection
-            key={level}
-            plugin={plugin}
-            store={store}
-            character={character}
-            computed={computed.spellbook!}
-            level={level}
-          />
-        ))}
-      {paradigm !== "spontaneous" && (
-        <div class="ms-placeholder">
-          <div>Prepared/hybrid spellbook</div>
-          <div class="ms-muted">This casting paradigm lands with the next milestone</div>
-        </div>
-      )}
+      {paradigm === "spontaneous"
+        ? SPELL_LEVELS.map((level) => (
+            <SpellLevelSection
+              key={level}
+              plugin={plugin}
+              store={store}
+              character={character}
+              computed={spellbookComputed}
+              level={level}
+            />
+          ))
+        : SPELL_LEVELS.map((level) => (
+            <div key={level}>
+              <PreparedKnownSection
+                plugin={plugin}
+                store={store}
+                character={character}
+                computed={spellbookComputed}
+                level={level}
+              />
+              <PreparedLevelSection
+                plugin={plugin}
+                store={store}
+                character={character}
+                computed={spellbookComputed}
+                level={level}
+              />
+            </div>
+          ))}
     </div>
   );
 }

@@ -98,12 +98,14 @@ describe("importSpellbook (Adarin live frontmatter)", () => {
     const { spellbook } = run();
     expect(spellbook.levels.level1).toEqual({
       remaining: 3,
+      castsRemaining: null,
       selectedMetamagic: "Still Spell (+1 level)",
       activeMetamagics: ["Still Spell (+1 level)"],
     });
     // level2 carries vestigial spellSlots: 1 in the file — dropped
     expect(spellbook.levels.level2).toEqual({
       remaining: 1,
+      castsRemaining: null,
       selectedMetamagic: "Extend Spell (+1 level)",
       activeMetamagics: [],
     });

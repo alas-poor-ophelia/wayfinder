@@ -8,9 +8,16 @@
  * a refilled tracker.
  */
 
-import { getSpellSlots, isValidCasterClass, resolveCasterLevel } from "../calc/spells";
-import type { CharacterRecord } from "../types/character";
-import type { KnownSpell, SpellLevel } from "../types/spellbook";
+import {
+  getArcanistCasts,
+  getCasterConfig,
+  getSpellSlots,
+  isValidCasterClass,
+  resolveCasterLevel,
+  totalMetamagicAdjustment,
+} from "../calc/spells";
+import type { AbilityKey, CharacterRecord } from "../types/character";
+import type { KnownSpell, SpellLevel, SpellPreparation } from "../types/spellbook";
 import { getSpellLevelKey } from "../types/spellbook";
 import type { MiniSheetStore } from "./store";
 
@@ -163,6 +170,271 @@ export function setSectionCollapsed(
   );
 }
 
+function clampLevel(level: number): SpellLevel {
+  return Math.min(Math.max(level, 0), 9) as SpellLevel;
+}
+
+/** Hybrid max casts (arcanist second pool) — casts DO use the stat bonus. */
+export function maxCastsFor(
+  character: CharacterRecord,
+  level: SpellLevel,
+  castingStatBonus: number
+): number {
+  const sb = requireSpellbook(character);
+  if (!isValidCasterClass(sb.castingClass)) return 0;
+  const casterLevel = Math.min(
+    Math.max(resolveCasterLevel(sb, character.classes), 1),
+    20
+  );
+  return getArcanistCasts(sb.castingClass, casterLevel, level, castingStatBonus);
+}
+
+/**
+ * Prepare a known spell (prepared + hybrid paradigms). Port of the legacy
+ * prepare buttons:
+ * - prepared: same (spellId, adjustedLevel, sorted metamagic) increments
+ *   count, else a new entry is appended; a preparation slot at the adjusted
+ *   level is consumed immediately (slots are spent by PREPARING).
+ * - hybrid: entries are unique per (spellId, sorted metamagic) — no count
+ *   increment; the slot is consumed at the FINAL level (adjusted + any
+ *   global metamagics not already on the preparation).
+ */
+export function prepareSpell(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  spellId: string,
+  castingStatBonus: number
+): void {
+  const sb = requireSpellbook(character);
+  const spell = sb.spells.find((s) => s.id === spellId);
+  if (!spell) throw new Error(`No spell with id "${spellId}" in spellbook`);
+  const paradigm = getCasterConfig(sb.castingClass).type;
+  const levelMetamagics =
+    sb.levels[getSpellLevelKey(spell.baseLevel)]?.activeMetamagics ?? [];
+  const adjustedLevel = clampLevel(
+    spell.baseLevel + totalMetamagicAdjustment(levelMetamagics)
+  );
+  const storageKey = getSpellLevelKey(adjustedLevel);
+  const preps = sb.preparations[storageKey] ?? [];
+  const sortedMeta = JSON.stringify([...levelMetamagics].sort());
+
+  let nextPreps: SpellPreparation[];
+  let slotLevel = adjustedLevel;
+  if (paradigm === "hybrid") {
+    const exists = preps.some(
+      (p) =>
+        p.spellId === spellId &&
+        JSON.stringify([...p.metamagic].sort()) === sortedMeta
+    );
+    if (exists) return; // hybrid preparations are unique
+    nextPreps = [
+      ...preps,
+      { spellId, adjustedLevel, metamagic: levelMetamagics, count: 1 },
+    ];
+    const nonDupGlobals = sb.globalMetamagic.active.filter(
+      (g) => !levelMetamagics.includes(g)
+    );
+    slotLevel = clampLevel(adjustedLevel + totalMetamagicAdjustment(nonDupGlobals));
+  } else {
+    const idx = preps.findIndex(
+      (p) =>
+        p.spellId === spellId &&
+        p.adjustedLevel === adjustedLevel &&
+        JSON.stringify([...p.metamagic].sort()) === sortedMeta
+    );
+    if (idx >= 0) {
+      nextPreps = [...preps];
+      nextPreps[idx] = { ...nextPreps[idx], count: nextPreps[idx].count + 1 };
+    } else {
+      nextPreps = [
+        ...preps,
+        { spellId, adjustedLevel, metamagic: levelMetamagics, count: 1 },
+      ];
+    }
+  }
+
+  const next = structuredClone(sb);
+  next.preparations[storageKey] = nextPreps;
+  const slotKey = getSpellLevelKey(slotLevel);
+  const stored = next.levels[slotKey]?.remaining;
+  const current = stored ?? maxSlotsFor(character, slotLevel, castingStatBonus);
+  if (next.levels[slotKey]) {
+    next.levels[slotKey].remaining = Math.max(0, current - 1);
+  }
+  store.setCharacterField(character.id, "spellbook", next);
+}
+
+/**
+ * Cast a prepared spell.
+ * - prepared: decrement the preparation's count (entry removed at 0); the
+ *   slot was already consumed at prepare time.
+ * - hybrid: decrement the level's casts pool (floor 0); the preparation
+ *   stays. Cantrips (display level 0) are no-ops, like legacy.
+ */
+export function castPrepared(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  storageLevel: SpellLevel,
+  prepIndex: number,
+  castingStatBonus: number
+): void {
+  const sb = requireSpellbook(character);
+  const paradigm = getCasterConfig(sb.castingClass).type;
+  const storageKey = getSpellLevelKey(storageLevel);
+  const preps = sb.preparations[storageKey] ?? [];
+  const prep = preps[prepIndex];
+  if (!prep) return;
+
+  if (paradigm === "hybrid") {
+    const nonDupGlobals = sb.globalMetamagic.active.filter(
+      (g) => !prep.metamagic.includes(g)
+    );
+    const displayLevel = clampLevel(
+      storageLevel + totalMetamagicAdjustment(nonDupGlobals)
+    );
+    if (displayLevel === 0) return; // legacy: cantrip cast is a no-op
+    const key = getSpellLevelKey(displayLevel);
+    const stored = sb.levels[key]?.castsRemaining;
+    const current =
+      stored === null || stored === undefined
+        ? maxCastsFor(character, displayLevel, castingStatBonus)
+        : stored;
+    store.setCharacterField(
+      character.id,
+      `spellbook.levels.${key}.castsRemaining`,
+      Math.max(0, current - 1)
+    );
+    return;
+  }
+
+  const nextPreps = [...preps];
+  if (prep.count <= 1) {
+    nextPreps.splice(prepIndex, 1);
+  } else {
+    nextPreps[prepIndex] = { ...prep, count: prep.count - 1 };
+  }
+  store.setCharacterField(
+    character.id,
+    `spellbook.preparations.${storageKey}`,
+    nextPreps
+  );
+}
+
+/** Remove an entire preparation entry (legacy: no slot refund). */
+export function removePreparation(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  storageLevel: SpellLevel,
+  prepIndex: number
+): void {
+  const sb = requireSpellbook(character);
+  const storageKey = getSpellLevelKey(storageLevel);
+  const preps = [...(sb.preparations[storageKey] ?? [])];
+  if (prepIndex < 0 || prepIndex >= preps.length) return;
+  preps.splice(prepIndex, 1);
+  store.setCharacterField(
+    character.id,
+    `spellbook.preparations.${storageKey}`,
+    preps
+  );
+}
+
+export function setCastsRemaining(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  level: SpellLevel,
+  value: number
+): void {
+  requireSpellbook(character);
+  store.setCharacterField(
+    character.id,
+    `spellbook.levels.${getSpellLevelKey(level)}.castsRemaining`,
+    Math.max(0, value)
+  );
+}
+
+// ---- per-level metamagic (prepared/hybrid known sections) ----
+
+export function setLevelMetamagicSelected(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  level: SpellLevel,
+  value: string
+): void {
+  requireSpellbook(character);
+  store.setCharacterField(
+    character.id,
+    `spellbook.levels.${getSpellLevelKey(level)}.selectedMetamagic`,
+    value
+  );
+}
+
+export function addLevelMetamagic(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  level: SpellLevel
+): void {
+  const sb = requireSpellbook(character);
+  const state = sb.levels[getSpellLevelKey(level)];
+  if (!state) return;
+  const selected = state.selectedMetamagic;
+  if (!selected || state.activeMetamagics.includes(selected)) return;
+  store.setCharacterField(
+    character.id,
+    `spellbook.levels.${getSpellLevelKey(level)}.activeMetamagics`,
+    [...state.activeMetamagics, selected]
+  );
+}
+
+export function removeLevelMetamagic(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  level: SpellLevel,
+  index: number
+): void {
+  const sb = requireSpellbook(character);
+  const state = sb.levels[getSpellLevelKey(level)];
+  if (!state) return;
+  store.setCharacterField(
+    character.id,
+    `spellbook.levels.${getSpellLevelKey(level)}.activeMetamagics`,
+    state.activeMetamagics.filter((_, i) => i !== index)
+  );
+}
+
+// ---- spellbook config (gear flyout) ----
+
+export function setCastingClass(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  castingClass: string
+): void {
+  requireSpellbook(character);
+  store.setCharacterField(
+    character.id,
+    "spellbook.castingClass",
+    castingClass.toLowerCase()
+  );
+}
+
+export function setCastingStat(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  stat: AbilityKey
+): void {
+  requireSpellbook(character);
+  store.setCharacterField(character.id, "spellbook.castingStat", stat);
+}
+
+export function setCasterLevelOverride(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  value: number | undefined
+): void {
+  requireSpellbook(character);
+  store.setCharacterField(character.id, "spellbook.casterLevelOverride", value);
+}
+
 export interface ResetFlags {
   resetMetamagics?: boolean;
   resetPreparations?: boolean;
@@ -170,10 +442,15 @@ export interface ResetFlags {
 }
 
 /**
- * Legacy resetAllPreparationCounts for spontaneous casters: every level's
- * remaining back to max (legacy wrote null when max was 0 — we keep null
- * there too, meaning "untracked"), optionally clear global metamagics and
- * refill SLA uses. Prepared/hybrid extensions land with that milestone.
+ * Legacy resetAllPreparationCounts: every level's remaining (and, for
+ * hybrid, casts remaining) back to max — legacy wrote null when max was 0,
+ * kept here as "untracked". Optional flags clear metamagics (global +
+ * per-level), preparations, and refill SLA uses.
+ *
+ * Deliberate divergence: the legacy prepared renderer's resetPreparations
+ * wrote vestigial `spells[].preparations` fields and never actually cleared
+ * spellPreparations (a bug); we clear the preparation lists, matching the
+ * hybrid renderer's correct behavior.
  */
 export function resetSpellbook(
   store: MiniSheetStore,
@@ -182,15 +459,28 @@ export function resetSpellbook(
   flags: ResetFlags = {}
 ): void {
   const sb = requireSpellbook(character);
+  const paradigm = getCasterConfig(sb.castingClass).type;
   const next = structuredClone(sb);
   for (let level = 0 as SpellLevel; level <= 9; level++) {
-    const max = maxSlotsFor(character, level as SpellLevel, castingStatBonus);
     const key = getSpellLevelKey(level);
     if (!next.levels[key]) continue;
+    const max = maxSlotsFor(character, level as SpellLevel, castingStatBonus);
     next.levels[key].remaining = max > 0 ? max : null;
+    if (paradigm === "hybrid") {
+      const maxCasts = maxCastsFor(character, level as SpellLevel, castingStatBonus);
+      next.levels[key].castsRemaining = maxCasts > 0 ? maxCasts : null;
+    }
+    if (flags.resetMetamagics) {
+      next.levels[key].activeMetamagics = [];
+    }
   }
   if (flags.resetMetamagics) {
     next.globalMetamagic.active = [];
+  }
+  if (flags.resetPreparations) {
+    for (let level = 0; level <= 9; level++) {
+      next.preparations[getSpellLevelKey(level)] = [];
+    }
   }
   if (flags.resetSLAs ?? true) {
     next.slas = next.slas.map((sla) =>

@@ -320,6 +320,8 @@ export function importSpellbook(
       sb.levels[getSpellLevelKey(level)] = {
         remaining:
           typeof e.totalRemaining === "number" ? e.totalRemaining : null,
+        castsRemaining:
+          typeof e.totalCastsRemaining === "number" ? e.totalCastsRemaining : null,
         selectedMetamagic: str(e.selectedMetamagic),
         activeMetamagics: Array.isArray(e.activeMetamagics)
           ? e.activeMetamagics.map(String)

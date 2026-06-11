@@ -586,6 +586,8 @@ export interface SpellLevelComputed {
   dc: number;
   /** arcanist only: casts/day pool (separate from preparation slots) */
   arcanistCasts?: number;
+  /** arcanist only: stored casts remaining (null → max) */
+  castsRemaining?: number;
 }
 
 export interface SpellbookComputed {
@@ -656,13 +658,23 @@ export function computeSpellbook(
           ) || 0;
       }
     }
-    const stored = spellbook.levels[getSpellLevelKey(level)]?.remaining;
+    const levelState = spellbook.levels[getSpellLevelKey(level)];
+    const stored = levelState?.remaining;
     const remaining = stored === null || stored === undefined ? maxSlots : stored;
+    const storedCasts = levelState?.castsRemaining;
     return {
       maxSlots,
       remaining,
       dc: calculateSpellDC(level, castingStatBonus),
-      ...(arcanistCasts !== undefined ? { arcanistCasts } : {}),
+      ...(arcanistCasts !== undefined
+        ? {
+            arcanistCasts,
+            castsRemaining:
+              storedCasts === null || storedCasts === undefined
+                ? arcanistCasts
+                : storedCasts,
+          }
+        : {}),
     };
   });
 
