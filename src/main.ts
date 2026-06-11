@@ -110,15 +110,32 @@ export default class MiniSheetPlugin extends Plugin {
     const id = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     const characterType = "masterLevel" in sheet || "masterLevel" in config ? "familiar" : "pc";
 
+    // The legacy spellbook note lives elsewhere in the vault
+    // (z_Components/spellbooks/<Name>SpellBook.md); match by basename.
+    const spellbookFile = this.app.vault
+      .getMarkdownFiles()
+      .find((f) => f.basename === `${name}SpellBook`);
+    const spellbook = spellbookFile
+      ? (JSON.parse(
+          JSON.stringify(
+            this.app.metadataCache.getFileCache(spellbookFile)?.frontmatter ?? {}
+          )
+        ) as Record<string, unknown>)
+      : undefined;
+
     const { record, warnings } = importLegacy({
       id,
       name,
       characterType,
       sheet,
       config,
+      spellbook,
     });
     if (!configFile) {
       warnings.unshift(`No companion config note found under ${folder}/components/`);
+    }
+    if (!spellbookFile && characterType === "pc") {
+      warnings.push(`No ${name}SpellBook note found in the vault; spellbook not imported`);
     }
     // Re-imports must not clobber fields the importer doesn't know about.
     const existing = this.store.getCharacter(id);

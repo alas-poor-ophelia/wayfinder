@@ -16,7 +16,19 @@ import type {
   ResourcePool,
   SkillEntry,
 } from "../types/character";
-import { createDefaultCharacter } from "../types/character";
+import { ABILITY_KEYS, createDefaultCharacter } from "../types/character";
+import type {
+  KnownSpell,
+  SlaEntry,
+  SpellbookState,
+  SpellLevel,
+  SpellPreparation,
+} from "../types/spellbook";
+import {
+  createDefaultSpellbook,
+  getSpellLevelKey,
+  SPELL_LEVELS,
+} from "../types/spellbook";
 
 export interface LegacyImportInput {
   id: string;
@@ -24,6 +36,8 @@ export interface LegacyImportInput {
   characterType: "pc" | "familiar";
   sheet: Record<string, unknown>;
   config: Record<string, unknown>;
+  /** frontmatter of the legacy `<Name>SpellBook.md` note, when one exists */
+  spellbook?: Record<string, unknown>;
 }
 
 export interface LegacyImportResult {
@@ -163,6 +177,226 @@ function dual(
     warnings.push(`${field}: config note says ${cv}, sheet note says ${sv}; used ${cv}`);
   }
   return cv ?? sv;
+}
+
+function clampSpellLevel(value: unknown): SpellLevel {
+  const n = Math.min(Math.max(num(value), 0), 9);
+  return n as SpellLevel;
+}
+
+function importKnownSpells(raw: unknown, warnings: string[]): KnownSpell[] {
+  if (!Array.isArray(raw)) {
+    warnings.push("spellbook: no spells[] array found");
+    return [];
+  }
+  const out: KnownSpell[] = [];
+  for (const entry of raw as Record<string, unknown>[]) {
+    if (!entry || typeof entry !== "object" || entry.id === undefined || !entry.name) {
+      warnings.push(
+        `spellbook: spell entry without id/name skipped (${JSON.stringify(entry).slice(0, 60)})`
+      );
+      continue;
+    }
+    const spell: KnownSpell = {
+      id: String(entry.id),
+      name: String(entry.name),
+      baseLevel: clampSpellLevel(entry.baseLevel),
+      known: entry.known === true || entry.known === "true",
+      range: str(entry.range),
+      castingTime: str(entry.castingTime),
+      components: str(entry.components),
+      saveType: str(entry.saveType),
+      // legacy mixes booleans and strings like "yes (harmless)" — keep raw
+      sr: typeof entry.sr === "boolean" || typeof entry.sr === "string"
+        ? entry.sr
+        : false,
+    };
+    if (typeof entry.originalId === "string") spell.originalId = entry.originalId;
+    if (typeof entry.duration === "string") spell.duration = entry.duration;
+    if (typeof entry.school === "string") spell.school = entry.school;
+    if (typeof entry.source === "string") spell.source = entry.source;
+    if (Array.isArray(entry.classes)) spell.classes = entry.classes.map(String);
+    out.push(spell);
+  }
+  return out;
+}
+
+function importPreparations(
+  raw: unknown,
+  level: SpellLevel,
+  warnings: string[]
+): SpellPreparation[] {
+  if (!Array.isArray(raw)) return [];
+  const out: SpellPreparation[] = [];
+  for (const entry of raw as Record<string, unknown>[]) {
+    if (!entry || typeof entry !== "object" || entry.spellId === undefined) {
+      warnings.push(`spellbook: malformed preparation at level ${level} skipped`);
+      continue;
+    }
+    out.push({
+      spellId: String(entry.spellId),
+      adjustedLevel:
+        entry.adjustedLevel === undefined
+          ? level
+          : clampSpellLevel(entry.adjustedLevel),
+      metamagic: Array.isArray(entry.metamagic)
+        ? entry.metamagic.map(String)
+        : [],
+      count: Math.max(num(entry.count), 1),
+    });
+  }
+  return out;
+}
+
+/**
+ * Convert the legacy spellbook note's frontmatter into SpellbookState.
+ * Lenient like the rest of the importer: malformed entries warn and skip,
+ * derived values (castingStatBonus, slot maxima) are checked against the
+ * stored legacy values but never stored.
+ */
+export function importSpellbook(
+  raw: Record<string, unknown>,
+  record: CharacterRecord,
+  warnings: string[]
+): SpellbookState {
+  const castingClass = str(raw.castingClass);
+  if (!castingClass) {
+    warnings.push("spellbook: no castingClass; defaulted to wizard");
+  }
+  const klass = (castingClass || "wizard").toLowerCase();
+
+  let castingStat = str(raw.castingStat).toLowerCase();
+  if (!ABILITY_KEYS.includes(castingStat as AbilityKey)) {
+    warnings.push(
+      `spellbook: castingStat "${castingStat}" unrecognized; defaulted to int`
+    );
+    castingStat = "int";
+  }
+
+  const sb = createDefaultSpellbook(klass, castingStat as AbilityKey);
+
+  // casterLevel: stored as an override only when it disagrees with the
+  // matching class entry (the class level is the derived default)
+  if (raw.casterLevel !== undefined && raw.casterLevel !== "" && raw.casterLevel !== null) {
+    const storedCL = num(raw.casterLevel);
+    const classCL = record.classes
+      .filter((c) => c.className.toLowerCase().includes(klass))
+      .reduce((sum, c) => sum + (c.level || 0), 0);
+    if (classCL !== storedCL) {
+      sb.casterLevelOverride = storedCL;
+      warnings.push(
+        `spellbook: casterLevel ${storedCL} disagrees with ${klass} class level ${classCL}; kept as override`
+      );
+    }
+  }
+
+  // castingStatBonus is derived from abilities now (reacts to damage/buffs);
+  // the legacy stored value is only checked for drift
+  if (raw.castingStatBonus !== undefined && raw.castingStatBonus !== "" && raw.castingStatBonus !== null) {
+    const stored = num(raw.castingStatBonus);
+    const base = record.baseAbilities[castingStat as AbilityKey];
+    const derived = Math.floor((base - 10) / 2);
+    if (stored !== derived) {
+      warnings.push(
+        `spellbook: stored castingStatBonus ${stored} differs from derived ${castingStat} mod ${derived}; the derived value wins`
+      );
+    }
+  }
+
+  sb.spells = importKnownSpells(raw.spells, warnings);
+
+  // --- per-level settings ---
+  const sls =
+    raw.spellLevelSettings && typeof raw.spellLevelSettings === "object"
+      ? (raw.spellLevelSettings as Record<string, unknown>)
+      : undefined;
+  if (sls) {
+    for (const level of SPELL_LEVELS) {
+      const entry = sls[getSpellLevelKey(level)];
+      if (!entry || typeof entry !== "object") continue;
+      const e = entry as Record<string, unknown>;
+      // vestigial keys (spellSlots, totalPrepared) are dropped: the legacy
+      // code never read them and maxima are derived
+      sb.levels[getSpellLevelKey(level)] = {
+        remaining:
+          typeof e.totalRemaining === "number" ? e.totalRemaining : null,
+        selectedMetamagic: str(e.selectedMetamagic),
+        activeMetamagics: Array.isArray(e.activeMetamagics)
+          ? e.activeMetamagics.map(String)
+          : [],
+      };
+    }
+    if (Array.isArray(sls.globalActiveMetamagics)) {
+      sb.globalMetamagic.active = sls.globalActiveMetamagics.map(String);
+    }
+  }
+
+  // Global selected metamagic: the legacy code read the ROOT selectedMetamagic
+  // key; the file also carries spellLevelSettings.selectedGlobalMetamagic
+  // written by an older build. The root key (what the running code used) wins.
+  const rootSelected = str(raw.selectedMetamagic);
+  sb.globalMetamagic.selected = rootSelected;
+  const nestedSelected = str(sls?.selectedGlobalMetamagic);
+  if (nestedSelected && nestedSelected !== rootSelected) {
+    warnings.push(
+      `spellbook: spellLevelSettings.selectedGlobalMetamagic ("${nestedSelected}") differs from the root selectedMetamagic ("${rootSelected}") the legacy code read; root wins`
+    );
+  }
+
+  // --- preparations + SLAs (both live under spellPreparations) ---
+  const preps =
+    raw.spellPreparations && typeof raw.spellPreparations === "object"
+      ? (raw.spellPreparations as Record<string, unknown>)
+      : undefined;
+  if (preps) {
+    for (const level of SPELL_LEVELS) {
+      sb.preparations[getSpellLevelKey(level)] = importPreparations(
+        preps[getSpellLevelKey(level)],
+        level,
+        warnings
+      );
+    }
+    if (Array.isArray(preps.sla)) {
+      const slas: SlaEntry[] = [];
+      for (const entry of preps.sla as Record<string, unknown>[]) {
+        if (!entry || typeof entry !== "object" || entry.spellId === undefined) {
+          warnings.push("spellbook: malformed SLA entry skipped");
+          continue;
+        }
+        const spellId = String(entry.spellId);
+        const linked = sb.spells.find((s) => s.id === spellId);
+        if (!linked) {
+          warnings.push(
+            `spellbook: SLA references spell id ${spellId} not in spells[]`
+          );
+        } else if (
+          typeof entry.spellName === "string" &&
+          entry.spellName !== linked.name
+        ) {
+          warnings.push(
+            `spellbook: SLA name "${entry.spellName}" drifted from spell ${spellId} ("${linked.name}"); the spells[] name wins`
+          );
+        }
+        slas.push({
+          spellId,
+          casts: num(entry.casts),
+          castsRemaining: num(entry.castsRemaining),
+        });
+      }
+      sb.slas = slas;
+    }
+  }
+
+  // --- collapse state (legacy calloutStates, mixed key forms kept as-is) ---
+  if (raw.calloutStates && typeof raw.calloutStates === "object") {
+    for (const [key, value] of Object.entries(
+      raw.calloutStates as Record<string, unknown>
+    )) {
+      sb.sectionCollapsed[key] = value === true || value === "true";
+    }
+  }
+
+  return sb;
 }
 
 export function importLegacy(input: LegacyImportInput): LegacyImportResult {
@@ -338,22 +572,30 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   }
   record.resources = resources;
 
-  // --- spell slots (minimal: the old spellbook computed maxima; only
-  // current counts live in frontmatter, so max defaults to current) ---
-  for (const [key, value] of Object.entries(sheet)) {
-    const m = key.match(/^level(\d+)SpellSlotsCurrent$/);
-    if (!m) continue;
-    const lvl = Number(m[1]);
-    const current = num(value);
-    resources.push({
-      id: `spellSlotsL${lvl}`,
-      name: `Level ${lvl} Slots`,
-      current,
-      max: Math.max(current, 1),
-    });
-    warnings.push(
-      `Spell slot max for level ${lvl} is not stored in frontmatter; defaulted to ${Math.max(current, 1)} — adjust in config`
-    );
+  // --- spell slots ---
+  // With a spellbook note, the full spellbook replaces the old fallback
+  // pools (slot maxima are computed, remaining counts live in the
+  // spellbook state). Without one, keep the minimal pool import.
+  if (input.spellbook) {
+    record.spellbook = importSpellbook(input.spellbook, record, warnings);
+  } else {
+    // minimal: the old spellbook computed maxima; only current counts live
+    // in frontmatter, so max defaults to current
+    for (const [key, value] of Object.entries(sheet)) {
+      const m = key.match(/^level(\d+)SpellSlotsCurrent$/);
+      if (!m) continue;
+      const lvl = Number(m[1]);
+      const current = num(value);
+      resources.push({
+        id: `spellSlotsL${lvl}`,
+        name: `Level ${lvl} Slots`,
+        current,
+        max: Math.max(current, 1),
+      });
+      warnings.push(
+        `Spell slot max for level ${lvl} is not stored in frontmatter; defaulted to ${Math.max(current, 1)} — adjust in config`
+      );
+    }
   }
 
   // --- weapons ---

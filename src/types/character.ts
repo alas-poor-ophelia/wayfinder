@@ -4,6 +4,8 @@
  * are NEVER stored; they're computed by src/calc/ from this record.
  */
 
+import type { SpellbookState } from "./spellbook";
+
 export interface AbilityScores {
   str: number;
   dex: number;
@@ -167,6 +169,8 @@ export interface CharacterRecord {
   weapons: WeaponProfile[];
   link?: CharacterLink;
   ruleLinks: RuleLink[];
+  /** absent = non-caster (Hwayoung keeps her static SLA content) */
+  spellbook?: SpellbookState;
 }
 
 export function defaultToggles(): CombatToggles {

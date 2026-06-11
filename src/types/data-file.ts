@@ -20,7 +20,9 @@ export interface MiniSheetData {
 }
 
 export const DEFAULT_DATA: MiniSheetData = {
-  schemaVersion: 1,
+  // v2: CharacterRecord gains optional `spellbook` (schema-forward merge in
+  // store.load() needs no migration code for optional fields)
+  schemaVersion: 2,
   settings: {
     rulesFolder: "Rules",
   },

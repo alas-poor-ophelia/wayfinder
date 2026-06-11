@@ -19,6 +19,7 @@ import {
 } from "./conditions";
 import { calculateSaves, type SaveValues } from "./saves";
 import { calculateSkills, type SkillRow } from "./skills";
+import { computeSpellbook, type SpellbookComputed } from "./spells";
 
 export interface ComputedCharacter {
   mods: AbilityScores;
@@ -34,6 +35,8 @@ export interface ComputedCharacter {
   hpMaxEffective: number;
   /** speed multiplier from conditions (1 = normal) */
   movementMultiplier: number;
+  /** present only for characters with a spellbook */
+  spellbook?: SpellbookComputed;
 }
 
 function classLevel(character: CharacterRecord, match: string): number {
@@ -166,6 +169,14 @@ export function computeAll(
     character.initiative.familiarBonus +
     character.adjustments.init;
 
+  const spellbook = character.spellbook
+    ? computeSpellbook({
+        spellbook: character.spellbook,
+        classes: character.classes,
+        mods,
+      })
+    : undefined;
+
   return {
     mods,
     bab,
@@ -181,5 +192,6 @@ export function computeAll(
         ? Math.floor(master.hp.max / 2)
         : character.hp.max) + (effects.hpMaxAdjust || 0),
     movementMultiplier: effects.movementAdjust ?? 1,
+    ...(spellbook ? { spellbook } : {}),
   };
 }
