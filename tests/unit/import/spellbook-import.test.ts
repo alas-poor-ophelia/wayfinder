@@ -114,6 +114,18 @@ describe("importSpellbook (Adarin live frontmatter)", () => {
     expect(spellbook.levels.level9.remaining).toBeNull();
   });
 
+  it("derives owned metamagic feats from every metamagic the file mentions", () => {
+    const { spellbook, warnings } = run();
+    // level1 selected+active Still, level2 selected Extend, nested global
+    // selected Silent — the root selectedMetamagic is empty
+    expect(spellbook.metamagicFeats).toEqual([
+      "Still Spell (+1 level)",
+      "Extend Spell (+1 level)",
+      "Silent Spell (+1 level)",
+    ]);
+    expect(warnings.some((w) => w.includes("metamagic feats derived"))).toBe(true);
+  });
+
   it("global metamagic: the UI-bound nested selectedGlobalMetamagic wins", () => {
     const { spellbook, warnings } = run();
     // The legacy dropdown binds spellLevelSettings.selectedGlobalMetamagic

@@ -157,6 +157,16 @@ export function SpellTable({
                     e.preventDefault();
                     void plugin.app.workspace.openLinkText(doc.path, "", true);
                   }}
+                  onMouseOver={(e) => {
+                    plugin.app.workspace.trigger("hover-link", {
+                      event: e,
+                      source: "minisheet",
+                      hoverParent: { hoverPopover: null },
+                      targetEl: e.currentTarget as HTMLElement,
+                      linktext: doc.path,
+                      sourcePath: "",
+                    });
+                  }}
                 >
                   {doc.name}
                 </a>

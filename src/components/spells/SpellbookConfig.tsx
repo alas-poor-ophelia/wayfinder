@@ -1,10 +1,11 @@
 import { useState } from "preact/hooks";
-import { CASTER_CONFIGS } from "../../calc/spells";
+import { CASTER_CONFIGS, METAMAGIC_OPTIONS } from "../../calc/spells";
 import {
   resetSpellbook,
   setCasterLevelOverride,
   setCastingClass,
   setCastingStat,
+  toggleMetamagicFeat,
 } from "../../state/spellbook-actions";
 import type { MiniSheetStore } from "../../state/store";
 import type { AbilityKey, CharacterRecord } from "../../types/character";
@@ -97,6 +98,28 @@ export function SpellbookConfig({
               }}
             />
           </label>
+          <div class="ms-spellbook-config__separator" />
+          <div class="ms-spellbook-config__section-title">Metamagic feats</div>
+          <div class="ms-spellbook-config__feats">
+            {METAMAGIC_OPTIONS.map((feat) => {
+              const owned = (sb.metamagicFeats ?? []).includes(feat);
+              return (
+                <label key={feat} class={`ms-spellbook-config__feat${owned ? " is-owned" : ""}`}>
+                  <input
+                    type="checkbox"
+                    checked={owned}
+                    onChange={() => toggleMetamagicFeat(store, character, feat)}
+                  />
+                  <span class="ms-spellbook-config__feat-name">
+                    {feat.split(" (")[0]}
+                  </span>
+                  <span class="ms-spellbook-config__feat-cost">
+                    {feat.match(/\(([^)]+)\)/)?.[1] ?? ""}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
           <div class="ms-spellbook-config__separator" />
           <button
             class="ms-spellbook-config__action"

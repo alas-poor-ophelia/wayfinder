@@ -84,6 +84,13 @@ export interface SpellbookState {
    */
   casterLevelOverride?: number;
   spells: KnownSpell[];
+  /**
+   * Metamagic feats the character actually has (subset of the 5 legacy
+   * options). The metamagic pickers offer only these and hide entirely
+   * when the list is empty. Legacy offered all 5 unconditionally; this
+   * is a deliberate refinement.
+   */
+  metamagicFeats?: string[];
   /** "level0".."level9" */
   levels: Record<string, SpellLevelState>;
   /** spontaneous casters' global metamagic */
@@ -122,6 +129,7 @@ export function createDefaultSpellbook(
     castingClass,
     castingStat,
     spells: [],
+    metamagicFeats: [],
     levels,
     globalMetamagic: { selected: "", active: [] },
     preparations,

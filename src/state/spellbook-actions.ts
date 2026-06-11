@@ -402,6 +402,21 @@ export function removeLevelMetamagic(
   );
 }
 
+/** Toggle ownership of a metamagic feat (spellbook config UI). */
+export function toggleMetamagicFeat(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  feat: string
+): void {
+  const sb = requireSpellbook(character);
+  const feats = sb.metamagicFeats ?? [];
+  store.setCharacterField(
+    character.id,
+    "spellbook.metamagicFeats",
+    feats.includes(feat) ? feats.filter((f) => f !== feat) : [...feats, feat]
+  );
+}
+
 // ---- spellbook config (gear flyout) ----
 
 export function setCastingClass(

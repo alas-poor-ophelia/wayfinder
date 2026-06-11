@@ -333,6 +333,30 @@ export function importSpellbook(
     }
   }
 
+  // Metamagic feats: legacy had no concept of "owned" feats (all 5 options
+  // were always offered). Derive the owned set from every metamagic the
+  // file actually mentions so the existing UI state stays reachable.
+  const featMentions = new Set<string>();
+  for (const levelState of Object.values(sb.levels)) {
+    if (levelState.selectedMetamagic) featMentions.add(levelState.selectedMetamagic);
+    for (const m of levelState.activeMetamagics) featMentions.add(m);
+  }
+  if (sls) {
+    const nested = str(sls.selectedGlobalMetamagic);
+    if (nested) featMentions.add(nested);
+    if (Array.isArray(sls.globalActiveMetamagics)) {
+      for (const m of sls.globalActiveMetamagics) featMentions.add(String(m));
+    }
+  }
+  const rootSel = str(raw.selectedMetamagic);
+  if (rootSel) featMentions.add(rootSel);
+  sb.metamagicFeats = [...featMentions];
+  if (sb.metamagicFeats.length > 0) {
+    warnings.push(
+      `spellbook: metamagic feats derived from the metamagics the legacy file mentions (${sb.metamagicFeats.length}); adjust in the spellbook config`
+    );
+  }
+
   // Global selected metamagic: the legacy dropdown and its "+" button bind
   // spellLevelSettings.selectedGlobalMetamagic — that key wins. (A root
   // selectedMetamagic key also exists, read only by a dead accessor.)

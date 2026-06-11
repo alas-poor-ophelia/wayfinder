@@ -1,4 +1,3 @@
-import { METAMAGIC_OPTIONS } from "../../calc/spells";
 import {
   addLevelMetamagic,
   removeLevelMetamagic,
@@ -27,6 +26,8 @@ export function LevelMetamagic({
   const state = character.spellbook?.levels[getSpellLevelKey(level)];
   if (!state) return null;
   const active = state.activeMetamagics;
+  const feats = character.spellbook?.metamagicFeats ?? [];
+  if (feats.length === 0 && active.length === 0) return null;
 
   return (
     <CollapseSection
@@ -37,34 +38,36 @@ export function LevelMetamagic({
       variant="sub"
       defaultCollapsed={active.length === 0}
     >
-      <div class="ms-metamagic__picker">
-        <select
-          class="dropdown ms-metamagic__select"
-          value={state.selectedMetamagic}
-          onChange={(e) =>
-            setLevelMetamagicSelected(
-              store,
-              character,
-              level,
-              (e.target as HTMLSelectElement).value
-            )
-          }
-        >
-          <option value=""></option>
-          {METAMAGIC_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <button
-          class="ms-metamagic__add"
-          aria-label={`Add level ${level} metamagic`}
-          onClick={() => addLevelMetamagic(store, character, level)}
-        >
-          +
-        </button>
-      </div>
+      {feats.length > 0 && (
+        <div class="ms-metamagic__picker">
+          <select
+            class="dropdown ms-metamagic__select"
+            value={state.selectedMetamagic}
+            onChange={(e) =>
+              setLevelMetamagicSelected(
+                store,
+                character,
+                level,
+                (e.target as HTMLSelectElement).value
+              )
+            }
+          >
+            <option value=""></option>
+            {feats.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <button
+            class="ms-metamagic__add"
+            aria-label={`Add level ${level} metamagic`}
+            onClick={() => addLevelMetamagic(store, character, level)}
+          >
+            +
+          </button>
+        </div>
+      )}
       <div class="ms-metamagic__active">
         <label>Active Metamagics:</label>
         {active.length === 0 ? (

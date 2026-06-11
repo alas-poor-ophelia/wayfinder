@@ -1,4 +1,3 @@
-import { METAMAGIC_OPTIONS } from "../../calc/spells";
 import {
   addGlobalMetamagic,
   removeGlobalMetamagic,
@@ -13,8 +12,11 @@ import { CollapseSection } from "./CollapseSection";
  * createGlobalMetamagicSelector. (In the final legacy composition this
  * section had lost its mount point and never rendered; the machinery and
  * its calloutStates key survived, so the port restores it. Collapsed by
- * default when no metamagics are active, exactly as the legacy code
- * would have shown it.)
+ * default when no metamagics are active.)
+ *
+ * The picker offers only the feats the character owns (spellbook config);
+ * with no feats the whole section hides — active pills still show if a
+ * stale metamagic remains applied.
  */
 export function GlobalMetamagic({
   store,
@@ -26,6 +28,8 @@ export function GlobalMetamagic({
   const sb = character.spellbook;
   if (!sb) return null;
   const active = sb.globalMetamagic.active;
+  const feats = sb.metamagicFeats ?? [];
+  if (feats.length === 0 && active.length === 0) return null;
 
   return (
     <CollapseSection
@@ -35,33 +39,35 @@ export function GlobalMetamagic({
       variant="sub"
       defaultCollapsed={active.length === 0}
     >
-      <div class="ms-metamagic__picker">
-        <select
-          class="dropdown ms-metamagic__select"
-          value={sb.globalMetamagic.selected}
-          onChange={(e) =>
-            setGlobalMetamagicSelected(
-              store,
-              character,
-              (e.target as HTMLSelectElement).value
-            )
-          }
-        >
-          <option value=""></option>
-          {METAMAGIC_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <button
-          class="ms-metamagic__add"
-          aria-label="Add metamagic"
-          onClick={() => addGlobalMetamagic(store, character)}
-        >
-          +
-        </button>
-      </div>
+      {feats.length > 0 && (
+        <div class="ms-metamagic__picker">
+          <select
+            class="dropdown ms-metamagic__select"
+            value={sb.globalMetamagic.selected}
+            onChange={(e) =>
+              setGlobalMetamagicSelected(
+                store,
+                character,
+                (e.target as HTMLSelectElement).value
+              )
+            }
+          >
+            <option value=""></option>
+            {feats.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <button
+            class="ms-metamagic__add"
+            aria-label="Add metamagic"
+            onClick={() => addGlobalMetamagic(store, character)}
+          >
+            +
+          </button>
+        </div>
+      )}
       <div class="ms-metamagic__active">
         <label>Active Metamagics:</label>
         {active.length === 0 ? (

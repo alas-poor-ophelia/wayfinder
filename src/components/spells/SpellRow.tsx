@@ -39,6 +39,16 @@ export function SpellLink({
         e.preventDefault();
         void plugin.app.workspace.openLinkText(path, "", false);
       }}
+      onMouseOver={(e) => {
+        plugin.app.workspace.trigger("hover-link", {
+          event: e,
+          source: "minisheet",
+          hoverParent: { hoverPopover: null },
+          targetEl: e.currentTarget as HTMLElement,
+          linktext: path,
+          sourcePath: "",
+        });
+      }}
     >
       {name}
     </a>

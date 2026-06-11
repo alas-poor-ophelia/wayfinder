@@ -1,6 +1,6 @@
 import { Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { installBridge, removeBridge } from "./bridge/mcp-bridge";
-import { VIEW_TYPE_MINISHEET, VIEW_TYPE_SPELL_DB } from "./constants";
+import { PLUGIN_ID, VIEW_TYPE_MINISHEET, VIEW_TYPE_SPELL_DB } from "./constants";
 import { importLegacy } from "./import/legacy-import";
 import { ImportSummaryModal, NotePickModal, TextPromptModal } from "./modals";
 import { RulesIndex } from "./rules/index";
@@ -84,6 +84,13 @@ export default class MiniSheetPlugin extends Plugin {
     });
 
     this.addSettingTab(new MiniSheetSettingTab(this.app, this));
+
+    // spell-name links in the sheet + database trigger hover-link events;
+    // registering the source makes Page Preview honor them (no Ctrl needed)
+    this.registerHoverLinkSource(PLUGIN_ID, {
+      display: "MiniSheet",
+      defaultMod: false,
+    });
 
     installBridge(this);
   }
