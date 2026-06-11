@@ -13,6 +13,7 @@ import {
   WAND_MAX_CHARGES,
   isContainer,
 } from "../../types/inventory";
+import { ModifierEditor } from "../common/ModifierEditor";
 
 type Draft = Omit<InventoryItem, "id">;
 
@@ -188,6 +189,30 @@ export function ItemEditor({
           </datalist>
         </label>
       )}
+      <details class="ms-inv-editor__bonuses" open={!!draft.modifiers?.length}>
+        <summary>Bonuses {draft.modifiers?.length ? `(${draft.modifiers.length})` : ""}</summary>
+        <label class="ms-inv-editor__equipped">
+          <input
+            type="checkbox"
+            checked={!!draft.equipped}
+            onChange={(e) =>
+              patch({ equipped: (e.target as HTMLInputElement).checked })
+            }
+          />
+          Equipped (bonuses apply only while equipped)
+        </label>
+        <ModifierEditor
+          modifiers={draft.modifiers ?? []}
+          source={draft.name || "Item"}
+          onChange={(modifiers) =>
+            patch({ modifiers: modifiers.length ? modifiers : undefined })
+          }
+        />
+        <div class="ms-inv-editor__bonus-hint">
+          Weapon enhancement: use type “enhancement” on an attack target —
+          damage follows automatically (melee/ranged).
+        </div>
+      </details>
       <label class="ms-inv-editor__field">
         Note
         <textarea

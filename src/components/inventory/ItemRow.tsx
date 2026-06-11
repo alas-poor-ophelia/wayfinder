@@ -40,6 +40,7 @@ export function ItemRow({
   onDelete,
   onUse,
   onToggle,
+  onEquip,
 }: {
   row: DisplayRow;
   allItems: InventoryItem[];
@@ -47,6 +48,7 @@ export function ItemRow({
   onDelete: () => void;
   onUse: () => void;
   onToggle: () => void;
+  onEquip?: () => void;
 }) {
   const { item, level, expanded, childCount } = row;
   const container = isContainer(item);
@@ -71,6 +73,17 @@ export function ItemRow({
         <span class={`ms-inv-badge ms-inv-badge--${TYPE_FAMILY[item.type]}`}>
           {item.type}
         </span>
+        {!!item.modifiers?.length && onEquip && (
+          <button
+            class={`ms-inv-row__equip${item.equipped ? " is-on" : ""}`}
+            aria-label={`${item.equipped ? "Unequip" : "Equip"} ${item.name}`}
+            aria-pressed={!!item.equipped}
+            title={item.equipped ? "Equipped (bonuses active)" : "Not equipped"}
+            onClick={onEquip}
+          >
+            {item.equipped ? "◉" : "○"}
+          </button>
+        )}
         <button class="ms-inv-row__edit" aria-label={`Edit ${item.name}`} onClick={onEdit} />
         <button
           class="ms-inv-row__delete"

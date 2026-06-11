@@ -38,3 +38,27 @@
     text-align: center;
   }
 }
+
+.ms-modifier-notes {
+  margin: 2px 8px;
+  font-family: "Taroca", sans-serif;
+  font-size: 0.78em;
+  color: var(--text-muted);
+
+  &__title {
+    cursor: pointer;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    color: var(--ms-gold);
+  }
+
+  &__line {
+    padding: 1px 0 1px 10px;
+
+    &.is-suppressed {
+      opacity: 0.55;
+      text-decoration: line-through;
+    }
+  }
+}

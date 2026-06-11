@@ -86,6 +86,26 @@ export function CombatTab({ store, character, computed }: CombatTabProps) {
           racialNotes={computed.racial?.saveNotes}
         />
       </div>
+      {computed.modifierReport && (
+        <details class="ms-modifier-notes">
+          <summary class="ms-modifier-notes__title">
+            Modifiers (
+            {computed.modifierReport.conditional.length +
+              computed.modifierReport.suppressed.length}
+            )
+          </summary>
+          {computed.modifierReport.conditional.map((note) => (
+            <div key={note} class="ms-modifier-notes__line">
+              {note}
+            </div>
+          ))}
+          {computed.modifierReport.suppressed.map((note) => (
+            <div key={note} class="ms-modifier-notes__line is-suppressed">
+              {note} — suppressed
+            </div>
+          ))}
+        </details>
+      )}
       <Resources store={store} character={character} />
       <AttackBlocks store={store} character={character} attacks={computed.attacks} />
       {character.characterType !== "familiar" && (

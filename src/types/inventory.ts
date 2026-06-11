@@ -5,6 +5,8 @@
  * `currency` keys). Derived values (totals, load) are never stored.
  */
 
+import type { Modifier } from "../calc/modifiers";
+
 /** Legacy party list (16 types — the character manager lacked Scroll;
  *  the superset is safe for both scopes). */
 export const ITEM_TYPES = [
@@ -49,6 +51,10 @@ export interface InventoryItem {
   charges: number | null;
   /** party scope only: who carries it (character name or free text) */
   owner?: string | null;
+  /** worn/wielded — only equipped items feed their modifiers to computeAll */
+  equipped?: boolean;
+  /** typed stat bonuses the item grants while equipped (modifier engine) */
+  modifiers?: Modifier[];
 }
 
 export interface CurrencyState {

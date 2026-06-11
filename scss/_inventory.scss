@@ -556,3 +556,93 @@
     color: var(--text-on-accent);
   }
 }
+
+.ms-inv-row__equip {
+  background: none;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  min-width: 32px;
+  min-height: 32px;
+  color: var(--text-muted);
+
+  &.is-on {
+    color: var(--ms-gold);
+  }
+}
+
+.ms-inv-editor__bonuses {
+  margin: 4px 0;
+  font-size: 0.85em;
+
+  > summary {
+    cursor: pointer;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    color: var(--ms-gold);
+  }
+}
+
+.ms-inv-editor__equipped {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  font-size: 0.9em;
+}
+
+.ms-inv-editor__bonus-hint {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.ms-modedit {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__target {
+    max-width: 120px;
+    min-height: 32px;
+  }
+
+  &__type {
+    max-width: 100px;
+    min-height: 32px;
+  }
+
+  &__value {
+    width: 48px;
+    min-height: 32px;
+  }
+
+  &__condition {
+    flex: 1;
+    min-width: 80px;
+    min-height: 32px;
+  }
+
+  &__remove {
+    background: none;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  &__add {
+    align-self: flex-start;
+    min-height: 32px;
+  }
+}

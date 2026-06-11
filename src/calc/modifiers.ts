@@ -49,6 +49,7 @@ export type ModifierTarget =
   | `save.${"fort" | "ref" | "will" | "all"}`
   | `skill.${string}`
   | `attack.${"melee" | "ranged" | "unarmed" | "all"}`
+  | `damage.${"melee" | "ranged" | "unarmed" | "all"}`
   | `ac.${"natural" | "all"}`
   | "initiative"
   | "cmb"
@@ -97,11 +98,8 @@ export function modifiersFor(mods: Modifier[], target: string): Modifier[] {
   return mods.filter((m) => targetMatches(m.target, target));
 }
 
-export function resolveModifiers(
-  mods: Modifier[],
-  target: string
-): ResolvedModifiers {
-  const relevant = modifiersFor(mods, target);
+/** The stacking pass over an already-filtered modifier set. */
+function resolveSet(relevant: Modifier[]): ResolvedModifiers {
   const conditional = relevant.filter((m) => m.condition);
   const active = relevant.filter((m) => !m.condition);
 
@@ -133,6 +131,82 @@ export function resolveModifiers(
     suppressed,
     conditional,
   };
+}
+
+export function resolveModifiers(
+  mods: Modifier[],
+  target: string
+): ResolvedModifiers {
+  return resolveSet(modifiersFor(mods, target));
+}
+
+/** AC bonus types excluded from touch AC (the legacy `naturalAC` bucket). */
+const TOUCH_EXCLUDED: ReadonlySet<BonusType> = new Set([
+  "natural",
+  "armor",
+  "shield",
+]);
+
+export interface ResolvedAcModifiers {
+  /**
+   * Bucket totals matching the legacy calculateACValues inputs:
+   *  - naturalLike → `naturalAC` (normal + flat-footed, never touch):
+   *    natural/armor/shield types plus anything targeting ac.natural
+   *  - dodge → `dodgeAC` (normal + touch, lost flat-footed)
+   *  - deflectionLike → `deflectionAC` (applies to all three ACs):
+   *    deflection, insight, luck, morale, sacred, ... and untyped
+   */
+  naturalLike: number;
+  dodge: number;
+  deflectionLike: number;
+  applied: Modifier[];
+  suppressed: Modifier[];
+  conditional: Modifier[];
+}
+
+/**
+ * Resolve every AC-targeted modifier (ac.all + ac.natural in ONE stacking
+ * pass, so e.g. racial natural armor and an amulet's enhancement-to-natural
+ * resolve against each other), then partition the survivors into the three
+ * legacy AC input buckets by touch/flat-footed applicability.
+ */
+export function resolveAcModifiers(mods: Modifier[]): ResolvedAcModifiers {
+  const acMods = mods.filter(
+    (m) => m.target === "ac.all" || m.target === "ac.natural"
+  );
+  const { applied, suppressed, conditional } = resolveSet(acMods);
+  let naturalLike = 0;
+  let dodge = 0;
+  let deflectionLike = 0;
+  for (const m of applied) {
+    if (m.target === "ac.natural" || TOUCH_EXCLUDED.has(m.type)) {
+      naturalLike += m.value;
+    } else if (m.type === "dodge") {
+      dodge += m.value;
+    } else {
+      deflectionLike += m.value;
+    }
+  }
+  return { naturalLike, dodge, deflectionLike, applied, suppressed, conditional };
+}
+
+/**
+ * Split a resolution into the surviving weapon-enhancement value and the
+ * rest — attacks.ts takes enhancement through its own input (where it also
+ * feeds damage and the legacy weapon-song interplay), everything else rides
+ * the adjust inputs.
+ */
+export function splitEnhancement(resolved: ResolvedModifiers): {
+  enhancement: number;
+  rest: number;
+} {
+  let enhancement = 0;
+  let rest = 0;
+  for (const m of resolved.applied) {
+    if (m.type === "enhancement") enhancement += m.value;
+    else rest += m.value;
+  }
+  return { enhancement, rest };
 }
 
 /** "+2 racial bonus vs poison (Dwarf: Hardy)" */

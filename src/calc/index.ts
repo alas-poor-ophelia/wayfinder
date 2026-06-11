@@ -4,7 +4,7 @@
  * the old sheet's component wiring.
  */
 
-import type { AbilityScores, CharacterRecord } from "../types/character";
+import { ABILITY_KEYS, type AbilityScores, type CharacterRecord } from "../types/character";
 import { inventoryTotals } from "../types/inventory";
 import { abilityMods, effectiveScores, type AbilityModInput } from "./abilities";
 import { computeEncumbrance, type EncumbranceComputed } from "./encumbrance";
@@ -23,7 +23,16 @@ import { calculateSaves, type SaveValues } from "./saves";
 import { calculateSkills, type SkillRow } from "./skills";
 import { computeSpellbook, type SpellbookComputed } from "./spells";
 import { computeXp, type XpComputed } from "./xp";
-import { conditionalNotes, describeModifier, resolveModifiers } from "./modifiers";
+import {
+  conditionalNotes,
+  describeModifier,
+  resolveAcModifiers,
+  resolveModifiers,
+  splitEnhancement,
+  type BonusType,
+  type Modifier,
+  type ModifierTarget,
+} from "./modifiers";
 import { getRaceData, racialAbilityMods } from "../data/races";
 import type { RaceData } from "../data/types";
 
@@ -58,6 +67,12 @@ export interface ComputedCharacter {
     /** situational save modifiers, pre-formatted for the save tooltips */
     saveNotes: { fort: string[]; ref: string[]; will: string[] };
   };
+  /** present when any typed modifiers (racial/gear/config) are in play —
+   *  situational riders and same-type-suppressed bonuses, pre-formatted */
+  modifierReport?: {
+    conditional: string[];
+    suppressed: string[];
+  };
 }
 
 function classLevel(character: CharacterRecord, match: string): number {
@@ -81,12 +96,48 @@ export function computeAll(
   // (all legacy saves) compute byte-for-byte as before.
   const race = character.raceKey ? getRaceData(character.raceKey) : null;
   const racialMods = race ? race.modifiers : [];
-  const racialFor = (target: string): number =>
-    racialMods.length ? resolveModifiers(racialMods, target).total : 0;
+
+  // Equipped gear: typed modifiers from inventory items. Persisted data —
+  // tolerate and skip malformed entries.
+  const gearMods: Modifier[] = [];
+  for (const item of character.inventory?.items ?? []) {
+    if (!item.equipped || !Array.isArray(item.modifiers)) continue;
+    for (const m of item.modifiers) {
+      if (!m || typeof m.value !== "number" || !m.target || !m.type) continue;
+      gearMods.push({ ...m, source: m.source || item.name });
+    }
+  }
+
+  // The legacy loose config fields participate in RAW stacking as typed
+  // modifiers (zero values skipped — no report noise, byte-parity when
+  // nothing else targets the same stat).
+  const configMods: Modifier[] = [];
+  const cfg = (target: ModifierTarget, type: BonusType, value: number) => {
+    if (value) configMods.push({ target, type, value, source: "Config" });
+  };
+  cfg("ac.natural", "natural", Number(character.ac.natural) || 0);
+  cfg("ac.all", "deflection", Number(character.ac.deflection) || 0);
+  cfg("ac.all", "dodge", Number(character.ac.dodge) || 0);
+  cfg("attack.melee", "enhancement", Number(character.enhancements.meleeWeapon) || 0);
+  cfg("attack.ranged", "enhancement", Number(character.enhancements.rangedWeapon) || 0);
+  cfg("save.all", "resistance", Number(character.enhancements.resistance) || 0);
+
+  const combined = [...racialMods, ...gearMods, ...configMods];
+  const combinedFor = (target: string): number =>
+    combined.length ? resolveModifiers(combined, target).total : 0;
+
+  // ability.* modifiers (belts, headbands...) resolve through the engine
+  // and ride a dedicated offset channel into the ability math
+  const typedAbility = combined.length
+    ? Object.fromEntries(
+        ABILITY_KEYS.map((k) => [k, resolveModifiers(combined, `ability.${k}`).total])
+      )
+    : undefined;
 
   const abilityInput: AbilityModInput = {
     base: character.baseAbilities,
     racial: race ? racialAbilityMods(race, character.raceAbilityChoice) : undefined,
+    typed: typedAbility,
     adjust: character.adjustments.ability,
     conditionAdjust: {
       str: effects.strAdjust,
@@ -111,15 +162,20 @@ export function computeAll(
   const monkLevel = classLevel(character, "monk");
   const skaldLevel = classLevel(character, "skald");
 
+  // One stacking pass over every AC-targeted modifier, partitioned into
+  // the legacy input buckets (naturalAC: excluded from touch; deflectionAC:
+  // applies everywhere; dodgeAC: lost flat-footed).
+  const acResolved = resolveAcModifiers(combined);
+
   const ac = calculateACValues({
     dexMod: mods.dex,
     chaMod: mods.cha,
     strMod: mods.str,
     sizeMod: character.ac.sizeMod,
     weaponSong: character.toggles.weaponSong,
-    naturalAC: character.ac.natural + racialFor("ac.natural"),
-    deflectionAC: character.ac.deflection,
-    dodgeAC: character.ac.dodge,
+    naturalAC: acResolved.naturalLike,
+    deflectionAC: acResolved.deflectionLike,
+    dodgeAC: acResolved.dodge,
     monkLevel,
     paladinLevel,
     // The old sheet's separate `hasted` flag was never bound (haste works
@@ -133,6 +189,16 @@ export function computeAll(
     conditionEffects: effects,
   });
 
+  // Attack/damage modifiers: surviving weapon enhancement rides the legacy
+  // enhancement inputs (which feed damage + weapon-song interplay); every
+  // other type rides the adjust inputs. Unarmed has no enhancement input,
+  // so its attack total flows whole; damage uses .rest so an explicit
+  // enhancement-typed damage modifier can't double-count with the input.
+  const meleeAtk = splitEnhancement(resolveModifiers(combined, "attack.melee"));
+  const rangedAtk = splitEnhancement(resolveModifiers(combined, "attack.ranged"));
+  const meleeDmg = splitEnhancement(resolveModifiers(combined, "damage.melee"));
+  const rangedDmg = splitEnhancement(resolveModifiers(combined, "damage.ranged"));
+
   const attacks = calculateAttackStrings({
     strMod: mods.str,
     dexMod: mods.dex,
@@ -140,14 +206,16 @@ export function computeAll(
     bab,
     paladinLevel,
     monkLevel,
-    atkAdjust: character.adjustments.atk,
-    dmgAdjust: character.adjustments.dmg,
-    rangedAtkAdjust: character.adjustments.rangedAtk,
-    rangedDmgAdjust: character.adjustments.rangedDmg,
-    unarmedAtkAdjust: character.adjustments.unarmedAtk,
-    unarmedDmgAdjust: character.adjustments.unarmedDmg,
-    meleeWeaponEnhancement: character.enhancements.meleeWeapon,
-    rangedWeaponEnhancement: character.enhancements.rangedWeapon,
+    atkAdjust: character.adjustments.atk + meleeAtk.rest,
+    dmgAdjust: character.adjustments.dmg + meleeDmg.rest,
+    rangedAtkAdjust: character.adjustments.rangedAtk + rangedAtk.rest,
+    rangedDmgAdjust: character.adjustments.rangedDmg + rangedDmg.rest,
+    unarmedAtkAdjust:
+      character.adjustments.unarmedAtk + combinedFor("attack.unarmed"),
+    unarmedDmgAdjust:
+      character.adjustments.unarmedDmg + combinedFor("damage.unarmed"),
+    meleeWeaponEnhancement: meleeAtk.enhancement,
+    rangedWeaponEnhancement: rangedAtk.enhancement,
     smiteEvil: character.toggles.smiteEvil,
     smiteEvilOutsider: character.toggles.smiteEvilOutsider,
     charging: character.toggles.charging,
@@ -172,22 +240,26 @@ export function computeAll(
     conditionEffects: { ...effects } as AttackConditionEffects,
   });
 
+  // Resistance now stacks in the engine (config field + cloaks take max),
+  // so the legacy resistanceEnhancement input stays 0 and the resolved
+  // per-save totals are added on top — same math when only one source.
+  const fortR = resolveModifiers(combined, "save.fort");
+  const refR = resolveModifiers(combined, "save.ref");
+  const willR = resolveModifiers(combined, "save.will");
   const baseSaves = calculateSaves({
     classes: character.classes,
     conMod: mods.con,
     dexMod: mods.dex,
     wisMod: mods.wis,
     chaMod: mods.cha,
-    resistanceEnhancement: character.enhancements.resistance,
+    resistanceEnhancement: 0,
     conditionEffects: effects,
   });
-  const saves: SaveValues = race
-    ? {
-        fort: baseSaves.fort + racialFor("save.fort"),
-        ref: baseSaves.ref + racialFor("save.ref"),
-        will: baseSaves.will + racialFor("save.will"),
-      }
-    : baseSaves;
+  const saves: SaveValues = {
+    fort: baseSaves.fort + fortR.total,
+    ref: baseSaves.ref + refR.total,
+    will: baseSaves.will + willR.total,
+  };
 
   const baseSkills = calculateSkills({
     skills: character.skills,
@@ -205,9 +277,9 @@ export function computeAll(
     versatilePerformance: character.toggles.versatilePerformance,
     armorCheckPenalty: 0,
   });
-  const skills = race
+  const skills = combined.length
     ? baseSkills.map((row) => {
-        const bonus = racialFor(`skill.${row.name}`);
+        const bonus = combinedFor(`skill.${row.name}`);
         return bonus
           ? { ...row, total: row.total + bonus, otherMod: row.otherMod + bonus }
           : row;
@@ -219,7 +291,7 @@ export function computeAll(
     character.initiative.miscBonus +
     character.initiative.familiarBonus +
     character.adjustments.init +
-    racialFor("initiative");
+    combinedFor("initiative");
 
   const spellbook = character.spellbook
     ? computeSpellbook({
@@ -242,6 +314,31 @@ export function computeAll(
       ? computeXp(character.xp, character.classes)
       : undefined;
 
+  // Situational riders + same-type-suppressed bonuses across the targets
+  // computeAll actually resolves, pre-formatted for UI note lines.
+  let modifierReport: ComputedCharacter["modifierReport"];
+  if (combined.length) {
+    const suppressedNotes = new Set<string>(
+      acResolved.suppressed.map(describeModifier)
+    );
+    const reportTargets = [
+      "attack.melee", "attack.ranged", "attack.unarmed",
+      "damage.melee", "damage.ranged", "damage.unarmed",
+      "save.fort", "save.ref", "save.will", "initiative",
+      ...ABILITY_KEYS.map((k) => `ability.${k}`),
+    ];
+    for (const target of reportTargets) {
+      for (const m of resolveModifiers(combined, target).suppressed) {
+        suppressedNotes.add(describeModifier(m));
+      }
+    }
+    const conditional = conditionalNotes(combined);
+    const suppressed = [...suppressedNotes];
+    if (conditional.length || suppressed.length) {
+      modifierReport = { conditional, suppressed };
+    }
+  }
+
   return {
     mods,
     scores,
@@ -261,6 +358,7 @@ export function computeAll(
     ...(spellbook ? { spellbook } : {}),
     ...(encumbrance ? { encumbrance } : {}),
     ...(xp ? { xp } : {}),
+    ...(modifierReport ? { modifierReport } : {}),
     ...(race
       ? {
           racial: {

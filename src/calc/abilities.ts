@@ -19,6 +19,9 @@ export interface AbilityModInput {
   /** racial ability adjustments — only when the character has a raceKey
    *  (legacy characters bake these into base and pass nothing here) */
   racial?: Partial<Record<AbilityKey, unknown>>;
+  /** modifier-engine resolved ability bonuses (equipped gear: belts,
+   *  headbands...) — already stacked, just an offset here */
+  typed?: Partial<Record<AbilityKey, unknown>>;
   drain?: Partial<Record<AbilityKey, unknown>>;
   damage?: Partial<Record<AbilityKey, unknown>>;
 }
@@ -40,7 +43,8 @@ export function effectiveScores(input: AbilityModInput): AbilityScores {
     const offset =
       num(input.adjust?.[key]) +
       num(input.conditionAdjust?.[key]) +
-      num(input.racial?.[key]) -
+      num(input.racial?.[key]) +
+      num(input.typed?.[key]) -
       num(input.drain?.[key]) -
       num(input.damage?.[key]);
     out[key] = input.base[key] + offset;

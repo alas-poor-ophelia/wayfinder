@@ -1,6 +1,7 @@
 import {
   removeItem,
   spendCharge,
+  updateItem,
   type InventoryScope,
 } from "../../state/inventory-actions";
 import type { MiniSheetStore } from "../../state/store";
@@ -38,6 +39,9 @@ export function InventoryList({
           onDelete={() => removeItem(store, scope, row.item.id)}
           onUse={() => spendCharge(store, scope, row.item.id)}
           onToggle={() => onToggle(row.item.id)}
+          onEquip={() =>
+            updateItem(store, scope, row.item.id, { equipped: !row.item.equipped })
+          }
         />
       ))}
     </div>
