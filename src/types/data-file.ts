@@ -7,7 +7,8 @@ export interface UiState {
   activeCharacterId: string | null;
   /** main-pane spell database view state (filters persist like all UI state) */
   spellDb?: SpellDbState;
-  /** combat tab subtab; characters without inventory always render "main" */
+  /** combat tab subtab (GEAR shows for every character; empty inventories
+   *  default in memory and are stored only once mutated) */
   combatSub?: "main" | "inventory";
   /** main-pane party inventory view state (persists like spellDb) */
   partyInv?: PartyInvState;

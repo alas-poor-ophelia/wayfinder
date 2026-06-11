@@ -3,6 +3,7 @@ import type { ComputedCharacter } from "../../calc";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 import { DEFAULT_PARTY_INV, type PartyInvState } from "../../types/data-file";
+import { createDefaultInventory } from "../../types/inventory";
 import { InventoryPanel } from "./InventoryPanel";
 
 /**
@@ -21,12 +22,11 @@ export function InventorySubtab({
   computed: ComputedCharacter;
 }) {
   const [filters, setFilters] = useState<PartyInvState>({ ...DEFAULT_PARTY_INV });
-  if (!character.inventory) return null; // guarded by CombatTab
   return (
     <InventoryPanel
       store={store}
       scope={{ kind: "character", id: character.id }}
-      inventory={character.inventory}
+      inventory={character.inventory ?? createDefaultInventory()}
       variant="sidebar"
       encumbrance={computed.encumbrance}
       filters={filters}

@@ -15,6 +15,7 @@
 import {
   NOTE_MAX_LENGTH,
   WAND_MAX_CHARGES,
+  createDefaultInventory,
   newItemId,
   type CurrencyState,
   type InventoryItem,
@@ -139,10 +140,9 @@ export function readInventory(
   if (scope.kind === "party") return store.getPartyInventory();
   const record = store.getCharacter(scope.id);
   if (!record) throw new Error(`No character with id "${scope.id}"`);
-  if (!record.inventory) {
-    throw new Error(`Character "${scope.id}" has no inventory`);
-  }
-  return record.inventory;
+  // Like the party pool: default to empty, stored only once mutated —
+  // the first write through writeInventory births character.inventory.
+  return record.inventory ?? createDefaultInventory();
 }
 
 export function writeInventory(

@@ -21,14 +21,9 @@ interface CombatTabProps {
 }
 
 export function CombatTab({ store, character, computed }: CombatTabProps) {
-  // Hwayoung guard: no inventory -> no subtab bar, always render main.
-  // Render-time fallback only — never mutate ui.combatSub during render.
-  const hasInventory = !!character.inventory;
-  const sub = hasInventory
-    ? store.data.value.ui.combatSub ?? "main"
-    : "main";
+  const sub = store.data.value.ui.combatSub ?? "main";
 
-  const subtabBar = hasInventory && (
+  const subtabBar = (
     <nav class="ms-subtab-bar">
       <button
         class={`ms-subtab${sub === "main" ? " is-active" : ""}`}
