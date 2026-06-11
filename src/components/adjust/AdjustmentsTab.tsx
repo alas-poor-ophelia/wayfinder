@@ -4,6 +4,7 @@ import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 import { ABILITY_KEYS } from "../../types/character";
 import { NumberField } from "../common/fields";
+import { XpTracker } from "./XpTracker";
 
 interface AdjustmentsTabProps {
   store: MiniSheetStore;
@@ -132,6 +133,8 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
           </div>
         ))}
       </details>
+
+      <XpTracker store={store} character={character} computed={computed} />
     </div>
   );
 }

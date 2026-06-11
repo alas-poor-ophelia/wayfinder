@@ -1,5 +1,6 @@
 import { Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { installBridge, removeBridge } from "./bridge/mcp-bridge";
+import { num } from "./calc/abilities";
 import {
   PLUGIN_ID,
   VIEW_TYPE_MINISHEET,
@@ -214,6 +215,12 @@ export default class MiniSheetPlugin extends Plugin {
       record.inventory = inv.inventory;
       warnings.push(...inv.warnings.map((w) => `inventory: ${w}`));
     }
+    // The legacy XP tracker binds the CONFIG note's `xp` key. Zero means
+    // the tracker was never used (legacy initialXP) — skip it, like empty
+    // inventories; "Track XP" on the Adjust tab opts back in.
+    if (configFile && characterType === "pc" && num(config.xp) > 0) {
+      record.xp = num(config.xp);
+    }
     // Re-imports must not clobber fields the importer doesn't know about.
     const existing = this.store.getCharacter(id);
     if (existing) {
@@ -226,6 +233,9 @@ export default class MiniSheetPlugin extends Plugin {
       if (existing.link) record.link = existing.link;
       if (!record.inventory && existing.inventory) {
         record.inventory = existing.inventory;
+      }
+      if (record.xp === undefined && existing.xp !== undefined) {
+        record.xp = existing.xp;
       }
     }
     this.store.upsertCharacter(record);

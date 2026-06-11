@@ -1,0 +1,145 @@
+// XP tracker (Adjustments tab) — legacy XpTracker.jsx geometry preserved:
+// 245px centered column, 20px bar with #C14343 fill (parity hex), 28px
+// controls. The mismatch dot on the level label is new UX.
+
+.minisheet-root {
+  .ms-xp {
+    max-width: 245px;
+    margin: 10px auto 0;
+    padding-top: 8px;
+    border-top: 1px solid var(--background-modifier-border);
+    font-family: "Taroca", serif;
+  }
+
+  .ms-xp--untracked {
+    text-align: center;
+  }
+
+  .ms-xp__enable {
+    height: 32px;
+    padding: 0 14px;
+    font-family: "Taroca", serif;
+    font-size: 0.78em;
+    letter-spacing: 0.06em;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background-color: var(--background-secondary);
+    color: var(--text-muted);
+    box-shadow: none;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--text-normal);
+      border-color: var(--ms-gold);
+    }
+  }
+
+  .ms-xp__current {
+    text-align: center;
+    font-size: 0.85em;
+    color: var(--text-normal);
+    margin-bottom: 4px;
+  }
+
+  .ms-xp__levels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .ms-xp__level {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8em;
+    font-weight: 600;
+
+    &--next {
+      color: var(--text-muted);
+    }
+
+    &.has-mismatch::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ms-gold);
+      box-shadow: 0 0 5px color-mix(in srgb, var(--ms-gold) 60%, transparent);
+    }
+  }
+
+  .ms-xp__bar {
+    position: relative;
+    height: 20px;
+    border-radius: 10px;
+    background: var(--background-modifier-border);
+    overflow: hidden;
+  }
+
+  .ms-xp__fill {
+    height: 100%;
+    border-radius: 10px;
+    background: #c14343; // legacy parity hex
+    box-shadow: 0 0 10px rgba(193, 67, 67, 0.3);
+    transition: width 0.3s ease;
+  }
+
+  .ms-xp__percent {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 0.75em;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+
+  .ms-xp__next {
+    margin-top: 4px;
+    text-align: center;
+    font-size: 0.75em;
+    color: var(--text-muted);
+  }
+
+  .ms-xp__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .ms-xp__minus,
+  .ms-xp__plus {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--text-on-accent);
+    box-shadow: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .ms-xp__minus {
+    background-color: var(--background-modifier-error);
+  }
+
+  .ms-xp__plus {
+    background-color: var(--ms-gold);
+  }
+
+  .ms-xp__input {
+    width: 80px;
+    height: 28px;
+    text-align: center;
+  }
+}

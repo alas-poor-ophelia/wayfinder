@@ -33,10 +33,25 @@
   .ms-spellbook__db-btn,
   .ms-inv-row__expand,
   .ms-inv-row__edit,
-  .ms-inv-row__delete
+  .ms-inv-row__delete,
+  .ms-xp__minus,
+  .ms-xp__plus
 ) {
   padding: 0;
   box-shadow: none;
+}
+
+/* XP ± buttons grow to touch size; longhand background-color only */
+.is-tablet button.ms-xp__minus {
+  width: 35px;
+  height: 32px;
+  background-color: var(--background-modifier-error);
+}
+
+.is-tablet button.ms-xp__plus {
+  width: 35px;
+  height: 32px;
+  background-color: var(--ms-gold);
 }
 
 /* Inventory buttons keep their _inventory.scss geometry on tablet; only

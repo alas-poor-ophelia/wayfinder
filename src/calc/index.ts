@@ -22,6 +22,7 @@ import {
 import { calculateSaves, type SaveValues } from "./saves";
 import { calculateSkills, type SkillRow } from "./skills";
 import { computeSpellbook, type SpellbookComputed } from "./spells";
+import { computeXp, type XpComputed } from "./xp";
 
 export interface ComputedCharacter {
   mods: AbilityScores;
@@ -41,6 +42,8 @@ export interface ComputedCharacter {
   spellbook?: SpellbookComputed;
   /** present only for characters with an inventory */
   encumbrance?: EncumbranceComputed;
+  /** present only for characters tracking XP */
+  xp?: XpComputed;
 }
 
 function classLevel(character: CharacterRecord, match: string): number {
@@ -190,6 +193,11 @@ export function computeAll(
       )
     : undefined;
 
+  const xp =
+    character.xp !== undefined
+      ? computeXp(character.xp, character.classes)
+      : undefined;
+
   return {
     mods,
     bab,
@@ -207,5 +215,6 @@ export function computeAll(
     movementMultiplier: effects.movementAdjust ?? 1,
     ...(spellbook ? { spellbook } : {}),
     ...(encumbrance ? { encumbrance } : {}),
+    ...(xp ? { xp } : {}),
   };
 }

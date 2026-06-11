@@ -175,6 +175,8 @@ export interface CharacterRecord {
   /** absent = no inventory subtab (Hwayoung). NOT in createDefaultCharacter:
    *  the schema-forward merge in store.load() would inject it everywhere. */
   inventory?: InventoryState;
+  /** absent = XP not tracked; familiars never track. Same default hazard. */
+  xp?: number;
 }
 
 export function defaultToggles(): CombatToggles {
