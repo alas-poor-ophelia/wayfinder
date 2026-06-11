@@ -295,16 +295,16 @@ export const BASE_CLASSES: ClassData[] = [
   },
   // Source: https://aonprd.com/ClassDisplay.aspx?ItemName=Shifter and
   // https://www.d20pfsrd.com/classes/base-classes/shifter/
-  // DISCREPANCY (double-checked, both sources): published shifter is d10
-  // with FULL BAB; the fixture-locked CLASS_STATS has d8 / 0.75. Per the
-  // registry contract, CLASS_STATS wins here — entry matches CLASS_STATS.
+  // RAW FIX (2026-06): legacy CLASS_STATS had d8 / 0.75 BAB; published
+  // shifter is d10 with FULL BAB (double-checked, both sources). Both
+  // registries now carry RAW.
   {
     key: "Shifter",
     name: "Shifter",
     category: "base",
     source: "Ultimate Wilderness",
-    hitDie: 8,
-    bab: "threeQuarters",
+    hitDie: 10,
+    bab: "full",
     saves: { fort: "good", ref: "good", will: "poor" },
     skillRanksPerLevel: 4,
     classSkills: [
@@ -420,9 +420,9 @@ export const BASE_CLASSES: ClassData[] = [
   },
   // Source: https://aonprd.com/ClassDisplay.aspx?ItemName=Vigilante and
   // https://www.d20pfsrd.com/classes/base-classes/vigilante/
-  // DISCREPANCY (double-checked, both sources): published vigilante has
-  // good Ref AND Will saves; the fixture-locked CLASS_STATS has Will poor.
-  // Per the registry contract, CLASS_STATS wins — entry matches CLASS_STATS.
+  // RAW FIX (2026-06): legacy CLASS_STATS had Will poor; published
+  // vigilante has good Ref AND Will saves (double-checked, both sources).
+  // Both registries now carry RAW.
   {
     key: "Vigilante",
     name: "Vigilante",
@@ -430,7 +430,7 @@ export const BASE_CLASSES: ClassData[] = [
     source: "Ultimate Intrigue",
     hitDie: 8,
     bab: "threeQuarters",
-    saves: { fort: "poor", ref: "good", will: "poor" },
+    saves: { fort: "poor", ref: "good", will: "good" },
     skillRanksPerLevel: 6,
     classSkills: [
       "Acrobatics",

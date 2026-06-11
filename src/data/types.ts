@@ -5,8 +5,9 @@
  * Sourcing: game mechanics are Open Game Content under the OGL 1.0a
  * (see LICENSES/OGL-1.0a.txt). Values transcribed from the Pathfinder
  * Roleplaying Game Reference Document (legacy.aonprd.com) / d20pfsrd.com,
- * cross-validated against the fixture-locked CLASS_STATS registry by
- * tests/unit/data/class-data.test.ts.
+ * cross-validated against the CLASS_STATS registry by
+ * tests/unit/data/class-data.test.ts. Both registries carry published RAW
+ * values; deliberate departures from the legacy data are marked RAW FIX.
  */
 
 import type { AbilityKey, AbilityScores } from "../types/character";

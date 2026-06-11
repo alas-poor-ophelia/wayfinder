@@ -1,6 +1,11 @@
 /**
- * PF1e class progression data — clean port of ClassStatsLookup.js.
+ * PF1e class progression data — ported from ClassStatsLookup.js.
  * Pure data + lookups; no Obsidian imports.
+ *
+ * Eight entries deliberately depart from the legacy lookup: the old data
+ * contradicted the published class tables, and the RAW values were adopted
+ * in 2026-06 (see the RAW FIX comments and the "RAW corrections" test
+ * block in tests/unit/data/class-data.test.ts for PRD citations).
  */
 
 export interface ClassStats {
@@ -16,20 +21,24 @@ export const CLASS_STATS: Record<string, ClassStats> = {
   Barbarian: { hitDie: "d12", saves: { fort: true, ref: false, will: false }, bab: 1.0 },
   "Barbarian (Unchained)": { hitDie: "d12", saves: { fort: true, ref: false, will: false }, bab: 1.0 },
   Bard: { hitDie: "d8", saves: { fort: false, ref: true, will: true }, bab: 0.75 },
-  Bloodrager: { hitDie: "d10", saves: { fort: true, ref: false, will: true }, bab: 1.0 },
+  // RAW FIX (2026-06): legacy had Will good; ACG table is Fort good only
+  Bloodrager: { hitDie: "d10", saves: { fort: true, ref: false, will: false }, bab: 1.0 },
   Brawler: { hitDie: "d10", saves: { fort: true, ref: true, will: false }, bab: 1.0 },
   Cavalier: { hitDie: "d10", saves: { fort: true, ref: false, will: false }, bab: 1.0 },
   Cleric: { hitDie: "d8", saves: { fort: true, ref: false, will: true }, bab: 0.75 },
   Druid: { hitDie: "d8", saves: { fort: true, ref: false, will: true }, bab: 0.75 },
   Fighter: { hitDie: "d10", saves: { fort: true, ref: false, will: false }, bab: 1.0 },
   Gunslinger: { hitDie: "d10", saves: { fort: true, ref: true, will: false }, bab: 1.0 },
-  Hunter: { hitDie: "d8", saves: { fort: true, ref: false, will: true }, bab: 0.75 },
+  // RAW FIX (2026-06): legacy had Fort/Will good; ACG table is Fort/Ref good
+  Hunter: { hitDie: "d8", saves: { fort: true, ref: true, will: false }, bab: 0.75 },
   Inquisitor: { hitDie: "d8", saves: { fort: true, ref: false, will: true }, bab: 0.75 },
   Investigator: { hitDie: "d8", saves: { fort: false, ref: true, will: true }, bab: 0.75 },
-  Kineticist: { hitDie: "d8", saves: { fort: true, ref: false, will: true }, bab: 0.75 },
+  // RAW FIX (2026-06): legacy had Fort/Will good; OA table is Fort/Ref good
+  Kineticist: { hitDie: "d8", saves: { fort: true, ref: true, will: false }, bab: 0.75 },
   Magus: { hitDie: "d8", saves: { fort: true, ref: false, will: true }, bab: 0.75 },
   Medium: { hitDie: "d8", saves: { fort: false, ref: false, will: true }, bab: 0.75 },
-  Mesmerist: { hitDie: "d8", saves: { fort: false, ref: false, will: true }, bab: 0.75 },
+  // RAW FIX (2026-06): legacy had Will good only; OA table is Ref/Will good
+  Mesmerist: { hitDie: "d8", saves: { fort: false, ref: true, will: true }, bab: 0.75 },
   Monk: { hitDie: "d8", saves: { fort: true, ref: true, will: true }, bab: 0.75 },
   "Monk (Unchained)": { hitDie: "d10", saves: { fort: true, ref: true, will: false }, bab: 1.0 },
   Ninja: { hitDie: "d8", saves: { fort: false, ref: true, will: false }, bab: 0.75 },
@@ -43,16 +52,20 @@ export const CLASS_STATS: Record<string, ClassStats> = {
   "Rogue (Unchained)": { hitDie: "d8", saves: { fort: false, ref: true, will: false }, bab: 0.75 },
   Samurai: { hitDie: "d10", saves: { fort: true, ref: false, will: false }, bab: 1.0 },
   Shaman: { hitDie: "d8", saves: { fort: false, ref: false, will: true }, bab: 0.75 },
-  Shifter: { hitDie: "d8", saves: { fort: true, ref: true, will: false }, bab: 0.75 },
+  // RAW FIX (2026-06): legacy had d8 / 0.75 BAB; UW table is d10 / full BAB
+  Shifter: { hitDie: "d10", saves: { fort: true, ref: true, will: false }, bab: 1.0 },
   Skald: { hitDie: "d8", saves: { fort: true, ref: false, will: true }, bab: 0.75 },
   Slayer: { hitDie: "d10", saves: { fort: true, ref: true, will: false }, bab: 1.0 },
   Sorcerer: { hitDie: "d6", saves: { fort: false, ref: false, will: true }, bab: 0.5 },
-  Spiritualist: { hitDie: "d8", saves: { fort: false, ref: false, will: true }, bab: 0.75 },
+  // RAW FIX (2026-06): legacy had Will good only; OA table is Fort/Will good
+  Spiritualist: { hitDie: "d8", saves: { fort: true, ref: false, will: true }, bab: 0.75 },
   Summoner: { hitDie: "d8", saves: { fort: false, ref: false, will: true }, bab: 0.75 },
   "Summoner (Unchained)": { hitDie: "d8", saves: { fort: false, ref: false, will: true }, bab: 0.75 },
-  Swashbuckler: { hitDie: "d10", saves: { fort: false, ref: true, will: false }, bab: 0.75 },
+  // RAW FIX (2026-06): legacy had 0.75 BAB; ACG table is full BAB
+  Swashbuckler: { hitDie: "d10", saves: { fort: false, ref: true, will: false }, bab: 1.0 },
   "Vampire Hunter": { hitDie: "d8", saves: { fort: false, ref: true, will: true }, bab: 1.0 },
-  Vigilante: { hitDie: "d8", saves: { fort: false, ref: true, will: false }, bab: 0.75 },
+  // RAW FIX (2026-06): legacy had Ref good only; UI table is Ref/Will good
+  Vigilante: { hitDie: "d8", saves: { fort: false, ref: true, will: true }, bab: 0.75 },
   Warpriest: { hitDie: "d8", saves: { fort: true, ref: false, will: true }, bab: 0.75 },
   Witch: { hitDie: "d6", saves: { fort: false, ref: false, will: true }, bab: 0.5 },
   Wizard: { hitDie: "d6", saves: { fort: false, ref: false, will: true }, bab: 0.5 },

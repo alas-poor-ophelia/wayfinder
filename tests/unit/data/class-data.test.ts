@@ -7,7 +7,8 @@
 import { describe, expect, it } from "vitest";
 import { CLASS_DATA, classResources, getClassData, unionClassSkills } from "../../../src/data/classes";
 import { BAB_RATE } from "../../../src/data/types";
-import { CLASS_STATS } from "../../../src/calc/class-stats";
+import { CLASS_STATS, totalBab } from "../../../src/calc/class-stats";
+import { calculateSaves } from "../../../src/calc/saves";
 import { SPELL_TABLES } from "../../../src/calc/spells";
 import { STANDARD_SKILLS } from "../../../src/calc/skills";
 
@@ -101,6 +102,74 @@ describe("core class spot-checks (PRD-verified)", () => {
     expect(pool("Cleric", "channelEnergy").max(10, mods({ cha: 2 }))).toBe(5);
     // Wild shape: from 4th, 1 use then +1 per 2 levels → L8 = 3
     expect(pool("Druid", "wildShape").max(8, MODS0)).toBe(3);
+  });
+});
+
+/**
+ * RAW corrections (PRD-verified). These eight classes shipped with legacy
+ * CLASS_STATS values that contradict the published tables; the 2026-06
+ * expedition adopted RAW deliberately. Each expectation is transcribed by
+ * hand from the cited legacy.aonprd.com class table (L1/L20 rows), never
+ * from the registries under test.
+ */
+describe("RAW corrections (PRD-verified)", () => {
+  type Raw = {
+    hitDie: 6 | 8 | 10 | 12;
+    bab: "full" | "threeQuarters" | "half";
+    saves: { fort: boolean; ref: boolean; will: boolean };
+  };
+  // citation: legacy.aonprd.com class table, L1 saves row (+2 = good, +0 = poor)
+  const RAW_FIXES: Record<string, Raw> = {
+    // advancedClassGuide/classes/bloodrager.html — d10, full BAB, L1 F+2/R+0/W+0
+    Bloodrager: { hitDie: 10, bab: "full", saves: { fort: true, ref: false, will: false } },
+    // advancedClassGuide/classes/hunter.html — d8, 3/4 BAB, L1 F+2/R+2/W+0
+    Hunter: { hitDie: 8, bab: "threeQuarters", saves: { fort: true, ref: true, will: false } },
+    // occultAdventures/occultClasses/kineticist.html — d8, 3/4 BAB, L1 F+2/R+2/W+0
+    Kineticist: { hitDie: 8, bab: "threeQuarters", saves: { fort: true, ref: true, will: false } },
+    // occultAdventures/occultClasses/mesmerist.html — d8, 3/4 BAB, L1 F+0/R+2/W+2
+    Mesmerist: { hitDie: 8, bab: "threeQuarters", saves: { fort: false, ref: true, will: true } },
+    // occultAdventures/occultClasses/spiritualist.html — d8, 3/4 BAB, L1 F+2/R+0/W+2
+    Spiritualist: { hitDie: 8, bab: "threeQuarters", saves: { fort: true, ref: false, will: true } },
+    // ultimateIntrigue/vigilante.html — d8, 3/4 BAB, L1 F+0/R+2/W+2
+    Vigilante: { hitDie: 8, bab: "threeQuarters", saves: { fort: false, ref: true, will: true } },
+    // ultimateWilderness/classes/shifter.html — d10, FULL BAB, L1 F+2/R+2/W+0
+    Shifter: { hitDie: 10, bab: "full", saves: { fort: true, ref: true, will: false } },
+    // advancedClassGuide/classes/swashbuckler.html — d10, FULL BAB, L1 F+0/R+2/W+0
+    Swashbuckler: { hitDie: 10, bab: "full", saves: { fort: false, ref: true, will: false } },
+  };
+
+  for (const [key, raw] of Object.entries(RAW_FIXES)) {
+    it(`${key}: CLASS_DATA and CLASS_STATS both carry the published values`, () => {
+      const data = getClassData(key)!;
+      expect(data.hitDie).toBe(raw.hitDie);
+      expect(data.bab).toBe(raw.bab);
+      expect(data.saves.fort === "good").toBe(raw.saves.fort);
+      expect(data.saves.ref === "good").toBe(raw.saves.ref);
+      expect(data.saves.will === "good").toBe(raw.saves.will);
+      const stats = CLASS_STATS[key];
+      expect(stats.hitDie).toBe(`d${raw.hitDie}`);
+      expect(stats.bab).toBe(BAB_RATE[raw.bab]);
+      expect(stats.saves).toEqual(raw.saves);
+    });
+  }
+
+  it("RAW values take effect in totalBab/calculateSaves", () => {
+    // Swashbuckler L5: full BAB → +5 (legacy 0.75 gave +3)
+    expect(totalBab([{ className: "Swashbuckler", level: 5 }])).toBe(5);
+    // Shifter L4: full BAB → +4 (legacy 0.75 gave +3)
+    expect(totalBab([{ className: "Shifter", level: 4 }])).toBe(4);
+    // Hunter L4: good Ref → 2 + 2 = +4 (legacy poor gave +1)
+    const hunter = calculateSaves({ classes: [{ className: "Hunter", level: 4 }] });
+    expect(hunter.ref).toBe(4);
+    // Hunter L4: poor Will → floor(4/3) = +1 (legacy good gave +4)
+    expect(hunter.will).toBe(1);
+    // Bloodrager L6: poor Will → +2 (legacy good gave +5)
+    const bloodrager = calculateSaves({ classes: [{ className: "Bloodrager", level: 6 }] });
+    expect(bloodrager.will).toBe(2);
+    // Mesmerist L6: good Will → +5, poor Fort → +2
+    const mesmerist = calculateSaves({ classes: [{ className: "Mesmerist", level: 6 }] });
+    expect(mesmerist.will).toBe(5);
+    expect(mesmerist.fort).toBe(2);
   });
 });
 

@@ -3,9 +3,9 @@
  * spellings. Values verified against aonprd.com (ClassDisplay.aspx pages),
  * cross-checked with d20pfsrd.com where noted. OGC.
  *
- * Where a verified PRD value disagrees with the fixture-locked CLASS_STATS
- * registry, the entry matches CLASS_STATS (the math contract) and the
- * discrepancy is documented in a comment — CLASS_STATS is never edited here.
+ * Entries carry the published RAW values. Where the legacy CLASS_STATS
+ * registry used to disagree, both registries were corrected to RAW in
+ * 2026-06 (see the RAW FIX comments here and in src/calc/class-stats.ts).
  */
 
 import type { ClassData } from "../types";
@@ -61,10 +61,9 @@ export const HYBRID_CLASSES: ClassData[] = [
     source: "Advanced Class Guide",
     hitDie: 10,
     bab: "full",
-    // DISCREPANCY: the ACG/PRD table has good Fort ONLY (L1 F+2/R+0/W+0,
-    // L20 F+12/R+6/W+6); CLASS_STATS also marks Will good. Kept matching
-    // CLASS_STATS per the fixture contract.
-    saves: { fort: "good", ref: "poor", will: "good" },
+    // RAW FIX (2026-06): legacy CLASS_STATS also marked Will good; the
+    // ACG/PRD table has good Fort ONLY (L1 F+2/R+0/W+0, L20 F+12/R+6/W+6).
+    saves: { fort: "good", ref: "poor", will: "poor" },
     skillRanksPerLevel: 4,
     classSkills: [
       "Acrobatics",
@@ -140,10 +139,9 @@ export const HYBRID_CLASSES: ClassData[] = [
     source: "Advanced Class Guide",
     hitDie: 8,
     bab: "threeQuarters",
-    // DISCREPANCY: the ACG/PRD table has good Fort AND Ref, poor Will
-    // (L1 F+2/R+2/W+0, L20 F+12/R+12/W+6); CLASS_STATS has Fort/Will good.
-    // Kept matching CLASS_STATS per the fixture contract.
-    saves: { fort: "good", ref: "poor", will: "good" },
+    // RAW FIX (2026-06): legacy CLASS_STATS had Fort/Will good; the ACG/PRD
+    // table has good Fort AND Ref, poor Will (L1 F+2/R+2/W+0, L20 F+12/R+12/W+6).
+    saves: { fort: "good", ref: "good", will: "poor" },
     skillRanksPerLevel: 6,
     classSkills: [
       "Climb",
@@ -357,10 +355,9 @@ export const HYBRID_CLASSES: ClassData[] = [
     category: "hybrid",
     source: "Advanced Class Guide",
     hitDie: 10,
-    // DISCREPANCY: the ACG/PRD table gives the swashbuckler FULL BAB
-    // (L1 +1, L20 +20/+15/+10/+5); CLASS_STATS stores 0.75. Kept matching
-    // CLASS_STATS per the fixture contract.
-    bab: "threeQuarters",
+    // RAW FIX (2026-06): legacy CLASS_STATS stored 0.75; the ACG/PRD table
+    // gives the swashbuckler FULL BAB (L1 +1, L20 +20/+15/+10/+5).
+    bab: "full",
     saves: { fort: "poor", ref: "good", will: "poor" },
     skillRanksPerLevel: 4,
     classSkills: [

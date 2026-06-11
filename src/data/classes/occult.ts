@@ -8,8 +8,8 @@ import { ALL_KNOWLEDGE } from "../types";
 
 export const OCCULT_CLASSES: ClassData[] = [
   // https://legacy.aonprd.com/occultAdventures/classes/kineticist.html
-  // DISCREPANCY: PRD gives good Fort + Ref, poor Will; the fixture-locked
-  // CLASS_STATS registry has good Fort + Will. Matching CLASS_STATS here.
+  // RAW FIX (2026-06): legacy CLASS_STATS had good Fort + Will; the PRD
+  // gives good Fort + Ref, poor Will. Both registries now carry RAW.
   {
     key: "Kineticist",
     name: "Kineticist",
@@ -17,7 +17,7 @@ export const OCCULT_CLASSES: ClassData[] = [
     source: "Occult Adventures",
     hitDie: 8,
     bab: "threeQuarters",
-    saves: { fort: "good", ref: "poor", will: "good" },
+    saves: { fort: "good", ref: "good", will: "poor" },
     skillRanksPerLevel: 4,
     classSkills: [
       "Acrobatics",
@@ -78,8 +78,8 @@ export const OCCULT_CLASSES: ClassData[] = [
     },
   },
   // https://legacy.aonprd.com/occultAdventures/classes/mesmerist.html
-  // DISCREPANCY: PRD gives good Ref + Will; the fixture-locked CLASS_STATS
-  // registry has Will only. Matching CLASS_STATS here.
+  // RAW FIX (2026-06): legacy CLASS_STATS had Will good only; the PRD
+  // gives good Ref + Will. Both registries now carry RAW.
   {
     key: "Mesmerist",
     name: "Mesmerist",
@@ -87,7 +87,7 @@ export const OCCULT_CLASSES: ClassData[] = [
     source: "Occult Adventures",
     hitDie: 8,
     bab: "threeQuarters",
-    saves: { fort: "poor", ref: "poor", will: "good" },
+    saves: { fort: "poor", ref: "good", will: "good" },
     skillRanksPerLevel: 6,
     classSkills: [
       "Appraise",
@@ -221,8 +221,8 @@ export const OCCULT_CLASSES: ClassData[] = [
     ],
   },
   // https://legacy.aonprd.com/occultAdventures/classes/spiritualist.html
-  // DISCREPANCY: PRD gives good Fort + Will; the fixture-locked CLASS_STATS
-  // registry has Will only. Matching CLASS_STATS here.
+  // RAW FIX (2026-06): legacy CLASS_STATS had Will good only; the PRD
+  // gives good Fort + Will. Both registries now carry RAW.
   {
     key: "Spiritualist",
     name: "Spiritualist",
@@ -230,7 +230,7 @@ export const OCCULT_CLASSES: ClassData[] = [
     source: "Occult Adventures",
     hitDie: 8,
     bab: "threeQuarters",
-    saves: { fort: "poor", ref: "poor", will: "good" },
+    saves: { fort: "good", ref: "poor", will: "good" },
     skillRanksPerLevel: 4,
     classSkills: [
       "Bluff",

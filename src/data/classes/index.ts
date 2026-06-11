@@ -1,9 +1,10 @@
 /**
- * The PF1e class data registry. Layered ON TOP of the fixture-locked
- * CLASS_STATS (src/calc/class-stats.ts) — that registry stays the math
- * contract for BAB/saves; this one adds class skills, skill ranks,
- * casting metadata, and resource-pool formulas. Consistency between the
- * two is enforced by tests/unit/data/class-data.test.ts.
+ * The PF1e class data registry. Layered ON TOP of CLASS_STATS
+ * (src/calc/class-stats.ts) — that registry stays the math contract for
+ * BAB/saves; this one adds class skills, skill ranks, casting metadata,
+ * and resource-pool formulas. Consistency between the two is enforced by
+ * tests/unit/data/class-data.test.ts. Both carry published RAW values
+ * (legacy departures corrected 2026-06, marked RAW FIX).
  */
 
 import type { AbilityScores, ClassEntry } from "../../types/character";
