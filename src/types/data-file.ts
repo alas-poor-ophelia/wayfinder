@@ -90,7 +90,9 @@ export const DEFAULT_DATA: MiniSheetData = {
   // v2: CharacterRecord gains optional `spellbook` (schema-forward merge in
   // store.load() needs no migration code for optional fields)
   // v3: optional CharacterRecord.inventory + MiniSheetData.partyInventory
-  schemaVersion: 3,
+  // v4: ResourcePool gains kind/formula; top-level panache field becomes a
+  // resources[] pool (real migration — see src/state/migrations.ts)
+  schemaVersion: 4,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

@@ -26,7 +26,7 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
 
   const rest = () => {
     set("hp.current", Math.min(computed.hpMaxEffective, character.hp.current + computed.totalLevel));
-    set("panache.current", character.panache.max);
+    // panache refills with the rest of the pools (a resources[] entry since v4)
     character.resources.forEach((pool, idx) => {
       set(`resources.${idx}.current`, pool.max);
     });

@@ -379,9 +379,9 @@ export const HYBRID_CLASSES: ClassData[] = [
     ],
     resources: [
       {
-        // id intentionally "panache": the sheet has a legacy top-level
-        // panache field, and the store skips this pool during sync — the
-        // definition documents the formula.
+        // id intentionally "panache": matches the pool the schema-v4
+        // migration creates from the legacy top-level field, so the store
+        // syncs max from this formula for actual swashbucklers.
         id: "panache",
         name: "Panache",
         // Cha modifier (minimum 1) at the start of each day.

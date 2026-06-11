@@ -15,6 +15,8 @@ export interface ResolvedPool {
   current: number;
   max: number;
   footer?: string;
+  /** item-granted pools render on the Items tab; absent = "class" */
+  kind?: "class" | "item";
   set(value: number): void;
 }
 
@@ -31,6 +33,7 @@ export function resolvePool(
       current: pool.current,
       max: pool.max,
       footer: pool.footer,
+      kind: pool.kind,
       set: (value) =>
         store.setCharacterField(character.id, `resources.${index}.current`, value),
     };
@@ -52,6 +55,7 @@ export function resolvePool(
       current: 0,
       max: 0,
       footer: pool.footer,
+      kind: pool.kind,
       set: () => undefined,
     };
   }
@@ -62,6 +66,7 @@ export function resolvePool(
     current: Math.floor(source.current / divisor),
     max: Math.floor(source.max / divisor),
     footer: pool.footer,
+    kind: pool.kind,
     set: (value) => {
       const next = Math.max(0, Math.min(source.max, value * divisor));
       store.setCharacterField(

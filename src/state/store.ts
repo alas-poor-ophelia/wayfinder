@@ -18,8 +18,10 @@ import {
   type InventoryState,
 } from "../types/inventory";
 import { computeAll } from "../calc";
+import { evaluateResourceFormula } from "../calc/resources";
 import { classResources, unionClassSkills } from "../data/classes";
 import { getRaceData } from "../data/races";
+import { migrateData } from "./migrations";
 
 const SAVE_DEBOUNCE_MS = 500;
 
@@ -40,7 +42,10 @@ export class MiniSheetStore {
   }
 
   async load(): Promise<void> {
-    const raw = (await this.plugin.loadData()) as Partial<MiniSheetData> | null;
+    const loaded = (await this.plugin.loadData()) as Partial<MiniSheetData> | null;
+    // migrate BEFORE the merge below — it stamps the current schemaVersion
+    // over the loaded one, so migrateData must read the original
+    const raw = loaded ? migrateData(loaded) : null;
     if (raw) {
       this.data.value = {
         ...DEFAULT_DATA,
@@ -289,16 +294,16 @@ export class MiniSheetStore {
   }
 
   /** Upsert resource pools granted by the character's classes, with maxima
-   *  recomputed from current level + ability mods. Existing pools keep
-   *  their `current` (clamped); unknown pools are never touched. */
+   *  recomputed from current level + ability mods, then recompute every
+   *  formula-driven pool. Existing pools keep their `current` (clamped);
+   *  unknown manual pools are never touched. */
   syncClassResources(id: string): void {
     const record = this.getCharacter(id);
     if (!record) throw new Error(`No character with id "${id}"`);
-    const mods = computeAll(record).mods;
+    const computed = computeAll(record);
+    const mods = computed.mods;
     const resources = [...record.resources];
     for (const pool of classResources(record.classes, mods)) {
-      // panache lives in the legacy top-level field, not the pool list
-      if (pool.id === "panache") continue;
       const idx = resources.findIndex((r) => r.id === pool.id);
       if (idx === -1) {
         resources.push({
@@ -316,6 +321,14 @@ export class MiniSheetStore {
           current: Math.min(existing.current, pool.max),
         };
       }
+    }
+    // user-defined formulas win over (and extend beyond) class defs
+    const ctx = { classes: record.classes, mods, scores: computed.scores };
+    for (let i = 0; i < resources.length; i++) {
+      const pool = resources[i];
+      if (!pool.formula) continue;
+      const max = evaluateResourceFormula(pool.formula, ctx);
+      resources[i] = { ...pool, max, current: Math.min(pool.current, max) };
     }
     this.updateCharacter(id, { resources });
   }

@@ -110,6 +110,8 @@ interface PoolSpec {
   name: string;
   currentKeys: string[];
   maxKeys: string[];
+  /** item-granted pools render on the Items tab (schema v4 pool.kind) */
+  kind?: "item";
   footer?: (sheet: Record<string, unknown>, config: Record<string, unknown>) => string | undefined;
 }
 
@@ -151,12 +153,14 @@ const POOL_SPECS: PoolSpec[] = [
     name: "Plume of Panache",
     currentKeys: ["plumeofPanacheCurrent", "plumeOfPanacheCurrent"],
     maxKeys: ["plumeOfPanacheMax"],
+    kind: "item",
   },
   {
     id: "quickrunners",
     name: "Quickrunner's Shirt",
     currentKeys: ["quickrunnersCurrent"],
     maxKeys: ["quickrunnersMax"],
+    kind: "item",
   },
   {
     id: "layOnPaws",
@@ -567,25 +571,32 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   record.buffs = Array.isArray(sheet.buffs) ? (sheet.buffs as string[]) : [];
   record.bofChoice = str(sheet.bofChoice);
 
-  // --- panache (split across notes with disagreeing values) ---
-  const panacheCurrent = dual("panacheCurrent", sheet, config, warnings);
-  const panachePoints = dual("panachePoints", sheet, config, warnings);
-  const panacheMax = dual("panacheMax", sheet, config, warnings);
-  record.panache = {
-    current: panacheCurrent ?? panachePoints ?? 0,
-    max: panacheMax ?? 0,
-  };
-  if (panacheCurrent !== undefined && panachePoints !== undefined && panacheCurrent !== panachePoints) {
-    warnings.push(
-      `panacheCurrent (${panacheCurrent}) and panachePoints (${panachePoints}) disagree; used ${panacheCurrent}`
-    );
-  }
-
   // --- skills ---
   record.skills = importSkills(sheet.skills, warnings);
 
   // --- resources ---
   const resources: ResourcePool[] = [];
+
+  // panache (split across notes with disagreeing values) — a resources[]
+  // pool since schema v4, rendered first like the legacy crease
+  const panacheCurrent = dual("panacheCurrent", sheet, config, warnings);
+  const panachePoints = dual("panachePoints", sheet, config, warnings);
+  const panacheMax = dual("panacheMax", sheet, config, warnings);
+  if (panacheCurrent !== undefined && panachePoints !== undefined && panacheCurrent !== panachePoints) {
+    warnings.push(
+      `panacheCurrent (${panacheCurrent}) and panachePoints (${panachePoints}) disagree; used ${panacheCurrent}`
+    );
+  }
+  if (panacheMax !== undefined || panacheCurrent !== undefined || panachePoints !== undefined) {
+    resources.push({
+      id: "panache",
+      name: "Panache",
+      current: panacheCurrent ?? panachePoints ?? 0,
+      max: panacheMax ?? 0,
+      footer: "points",
+    });
+  }
+
   for (const spec of POOL_SPECS) {
     let current: number | undefined;
     for (const key of spec.currentKeys) {
@@ -601,6 +612,7 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
       name: spec.name,
       current: current ?? 0,
       max: max ?? 0,
+      ...(spec.kind ? { kind: spec.kind } : {}),
       footer: spec.footer?.(sheet, config),
     });
   }

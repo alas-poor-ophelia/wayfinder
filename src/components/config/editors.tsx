@@ -2,11 +2,14 @@ import { STANDARD_SKILLS } from "../../calc/skills";
 import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type {
+  AbilityKey,
   CharacterRecord,
+  ResourceFormula,
   ResourcePool,
   RuleLink,
   SkillEntry,
 } from "../../types/character";
+import { ABILITY_KEYS } from "../../types/character";
 import { NotePickModal } from "../../modals";
 
 interface EditorProps {
@@ -82,6 +85,107 @@ export function SkillsEditor({ store, character }: EditorProps) {
   );
 }
 
+const FORMULA_SOURCES: { value: "" | ResourceFormula["source"]; label: string }[] = [
+  { value: "", label: "Manual max" },
+  { value: "classLevel", label: "Class level" },
+  { value: "characterLevel", label: "Character level" },
+  { value: "abilityMod", label: "Ability bonus" },
+  { value: "abilityScore", label: "Ability score" },
+];
+
+function ResourceFormulaEditor({
+  pool,
+  classes,
+  onChange,
+}: {
+  pool: ResourcePool;
+  classes: string[];
+  onChange(formula: ResourceFormula | undefined): void;
+}) {
+  const formula = pool.formula;
+  const patch = (p: Partial<ResourceFormula>) =>
+    onChange({ source: "characterLevel", ...formula, ...p });
+  const numInput = (
+    label: string,
+    key: "multiplier" | "divisor" | "flatBonus" | "minimum",
+    fallback: number
+  ) => (
+    <label class="ms-config__formula-num">
+      <span>{label}</span>
+      <input
+        type="number"
+        aria-label={`${pool.name} formula ${label}`}
+        value={formula?.[key] ?? fallback}
+        onInput={(e) => {
+          const n = Number((e.target as HTMLInputElement).value);
+          if (!Number.isNaN(n)) patch({ [key]: n });
+        }}
+      />
+    </label>
+  );
+
+  return (
+    <div class="ms-config__formula-row">
+      <select
+        class="ms-field__input"
+        aria-label={`${pool.name} max source`}
+        value={formula?.source ?? ""}
+        onChange={(e) => {
+          const v = (e.target as HTMLSelectElement).value;
+          onChange(
+            v === "" ? undefined : { ...formula, source: v as ResourceFormula["source"] }
+          );
+        }}
+      >
+        {FORMULA_SOURCES.map((s) => (
+          <option key={s.value} value={s.value}>
+            {s.label}
+          </option>
+        ))}
+      </select>
+      {formula?.source === "classLevel" && (
+        <select
+          class="ms-field__input"
+          aria-label={`${pool.name} formula class`}
+          value={formula.className ?? ""}
+          onChange={(e) => patch({ className: (e.target as HTMLSelectElement).value })}
+        >
+          <option value="">(pick class)</option>
+          {classes.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      )}
+      {(formula?.source === "abilityMod" || formula?.source === "abilityScore") && (
+        <select
+          class="ms-field__input"
+          aria-label={`${pool.name} formula ability`}
+          value={formula.ability ?? "str"}
+          onChange={(e) =>
+            patch({ ability: (e.target as HTMLSelectElement).value as AbilityKey })
+          }
+        >
+          {ABILITY_KEYS.map((k) => (
+            <option key={k} value={k}>
+              {k.toUpperCase()}
+            </option>
+          ))}
+        </select>
+      )}
+      {formula && (
+        <div class="ms-config__formula-nums">
+          {numInput("×", "multiplier", 1)}
+          {numInput("÷", "divisor", 1)}
+          {numInput("+", "flatBonus", 0)}
+          {numInput("min", "minimum", 0)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function ResourcesEditor({ store, character }: EditorProps) {
   const set = (path: string, value: unknown) =>
     store.setCharacterField(character.id, path, value);
@@ -91,68 +195,77 @@ export function ResourcesEditor({ store, character }: EditorProps) {
       i === idx ? { ...r, ...patch } : r
     );
     set("resources", next);
+    // formula/kind edits should take effect immediately
+    if ("formula" in patch) store.syncClassResources(character.id);
   };
+
+  const classNames = character.classes.map((c) => c.className).filter(Boolean);
 
   return (
     <section class="ms-config__section">
       <h3 class="ms-config__section-title">Resources</h3>
-      <div class="ms-config__abilities">
-        <label class="ms-field">
-          <span class="ms-field__label">Panache max</span>
-          <input
-            class="ms-field__input ms-field__input--number"
-            type="number"
-            min={0}
-            value={character.panache.max}
-            onInput={(e) => {
-              const n = Number((e.target as HTMLInputElement).value);
-              if (!Number.isNaN(n)) set("panache.max", n);
-            }}
-          />
-        </label>
-      </div>
       {character.resources.map((pool, idx) => (
-        <div class="ms-config__resource-row" key={pool.id}>
-          <input
-            class="ms-field__input"
-            type="text"
-            aria-label="Resource name"
-            value={pool.name}
-            onInput={(e) => update(idx, { name: (e.target as HTMLInputElement).value })}
+        <div class="ms-config__resource" key={pool.id}>
+          <div class="ms-config__resource-row">
+            <input
+              class="ms-field__input"
+              type="text"
+              aria-label="Resource name"
+              value={pool.name}
+              onInput={(e) => update(idx, { name: (e.target as HTMLInputElement).value })}
+            />
+            <input
+              class="ms-config__skill-num"
+              type="number"
+              aria-label={`${pool.name} max`}
+              min={0}
+              value={pool.max}
+              disabled={!!pool.formula}
+              title={pool.formula ? "Max is computed by the formula below" : undefined}
+              onInput={(e) => {
+                const n = Number((e.target as HTMLInputElement).value);
+                if (!Number.isNaN(n)) update(idx, { max: n });
+              }}
+            />
+            <input
+              class="ms-field__input ms-config__resource-footer"
+              type="text"
+              placeholder="footer"
+              aria-label={`${pool.name} footer`}
+              value={pool.footer ?? ""}
+              onInput={(e) =>
+                update(idx, { footer: (e.target as HTMLInputElement).value || undefined })
+              }
+            />
+            <button
+              class={`ms-config__resource-kind${pool.kind === "item" ? " is-item" : ""}`}
+              aria-label={`${pool.name}: ${pool.kind === "item" ? "item" : "class"} resource`}
+              aria-pressed={pool.kind === "item"}
+              title={pool.kind === "item" ? "Item resource (Items tab)" : "Class resource"}
+              onClick={() =>
+                update(idx, { kind: pool.kind === "item" ? undefined : "item" })
+              }
+            >
+              {pool.kind === "item" ? "🎒" : "⚔"}
+            </button>
+            <button
+              class="ms-config__remove"
+              aria-label={`Remove ${pool.name}`}
+              onClick={() =>
+                set(
+                  "resources",
+                  character.resources.filter((_, i) => i !== idx)
+                )
+              }
+            >
+              ✕
+            </button>
+          </div>
+          <ResourceFormulaEditor
+            pool={pool}
+            classes={classNames}
+            onChange={(formula) => update(idx, { formula })}
           />
-          <input
-            class="ms-config__skill-num"
-            type="number"
-            aria-label={`${pool.name} max`}
-            min={0}
-            value={pool.max}
-            onInput={(e) => {
-              const n = Number((e.target as HTMLInputElement).value);
-              if (!Number.isNaN(n)) update(idx, { max: n });
-            }}
-          />
-          <input
-            class="ms-field__input ms-config__resource-footer"
-            type="text"
-            placeholder="footer"
-            aria-label={`${pool.name} footer`}
-            value={pool.footer ?? ""}
-            onInput={(e) =>
-              update(idx, { footer: (e.target as HTMLInputElement).value || undefined })
-            }
-          />
-          <button
-            class="ms-config__remove"
-            aria-label={`Remove ${pool.name}`}
-            onClick={() =>
-              set(
-                "resources",
-                character.resources.filter((_, i) => i !== idx)
-              )
-            }
-          >
-            ✕
-          </button>
         </div>
       ))}
       <button

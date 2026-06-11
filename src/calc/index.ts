@@ -29,6 +29,9 @@ import type { RaceData } from "../data/types";
 
 export interface ComputedCharacter {
   mods: AbilityScores;
+  /** effective ability scores (post adjust/drain/damage) — resource
+   *  formulas with source "abilityScore" read these */
+  scores: AbilityScores;
   bab: number;
   totalLevel: number;
   conditionEffects: ConditionEffects;
@@ -97,6 +100,7 @@ export function computeAll(
     damage: character.adjustments.damage,
   };
   const mods = abilityMods(abilityInput);
+  const scores = effectiveScores(abilityInput);
 
   const masterBab =
     character.link?.babFromMaster && master
@@ -157,7 +161,12 @@ export function computeAll(
     flanking: character.toggles.flanking,
     rangedAttackStyle: character.toggles.rangedAttackStyle,
     weaponSong: character.toggles.weaponSong,
-    panachePoints: character.panache.current,
+    // schema v4: panache is a resources[] pool; the optional field is the
+    // pre-migration fallback
+    panachePoints:
+      character.resources.find((r) => r.id === "panache")?.current ??
+      character.panache?.current ??
+      0,
     // attacks' input type carries an index signature; the concrete
     // ConditionEffects interface satisfies it structurally
     conditionEffects: { ...effects } as AttackConditionEffects,
@@ -223,7 +232,7 @@ export function computeAll(
   // coin weight excluded, matching the legacy weight totals
   const encumbrance = character.inventory
     ? computeEncumbrance(
-        effectiveScores(abilityInput).str,
+        scores.str,
         inventoryTotals(character.inventory.items).totalWeight
       )
     : undefined;
@@ -235,6 +244,7 @@ export function computeAll(
 
   return {
     mods,
+    scores,
     bab,
     totalLevel: totalLevel(character.classes),
     conditionEffects: effects,

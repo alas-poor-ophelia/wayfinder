@@ -51,6 +51,34 @@ export interface SkillEntry {
   classSkill: boolean;
 }
 
+export type ResourceFormulaSource =
+  | "classLevel"
+  | "characterLevel"
+  | "abilityMod"
+  | "abilityScore";
+
+/**
+ * Structured max formula for a resource pool:
+ *   max(minimum, floor(base * multiplier / divisor) + flatBonus)
+ * where base is the referenced property. No expression parser by design —
+ * the config editor builds these from dropdowns.
+ */
+export interface ResourceFormula {
+  source: ResourceFormulaSource;
+  /** for "classLevel": case-insensitive substring match on class names */
+  className?: string;
+  /** for "abilityMod" / "abilityScore" */
+  ability?: AbilityKey;
+  /** default 1 */
+  multiplier?: number;
+  /** default 1 */
+  divisor?: number;
+  /** default 0 */
+  flatBonus?: number;
+  /** default 0 */
+  minimum?: number;
+}
+
 export interface ResourcePool {
   id: string;
   name: string;
@@ -58,6 +86,10 @@ export interface ResourcePool {
   max: number;
   /** small text under the pips, e.g. "2d6 (+4 self)" */
   footer?: string;
+  /** item-granted pools render on the Items tab; absent = "class" */
+  kind?: "class" | "item";
+  /** when present, max is recomputed by the store on every resource sync */
+  formula?: ResourceFormula;
   /**
    * Derived pool: displays floor(source.current / divisor) and writes back
    * source.current = value * divisor. Replaces the old bidirectional
@@ -168,7 +200,10 @@ export interface CharacterRecord {
   buffs: string[];
   /** blessing of fervor choice, when that buff is active */
   bofChoice: string;
-  panache: { current: number; max: number };
+  /** DEPRECATED (schema v4): panache migrated into resources[] as a pool
+   *  with id "panache". Optional only so pre-migration records type-check;
+   *  migrateData() deletes it on load. */
+  panache?: { current: number; max: number };
   /** free-text notes shown on each save's tooltip */
   saveNotes: { fort: string; ref: string; will: string };
   skills: Record<string, SkillEntry>;
@@ -237,7 +272,6 @@ export function createDefaultCharacter(id: string, name: string): CharacterRecor
     conditions: [],
     buffs: [],
     bofChoice: "",
-    panache: { current: 0, max: 0 },
     saveNotes: { fort: "", ref: "", will: "" },
     skills: {},
     resources: [],

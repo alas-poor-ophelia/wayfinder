@@ -8,10 +8,6 @@ interface ResourcesProps {
   character: CharacterRecord;
 }
 
-// The old sheet split the resource crease into class resources (swirl tab)
-// and item resources (backpack tab); membership was hardcoded per note.
-const ITEM_POOL_IDS = new Set(["plumeOfPanache", "quickrunners", "avengingBracers"]);
-
 export function Tracker({ pool }: { pool: ResolvedPool }) {
   if (pool.max <= 0) return null;
   const pips = [];
@@ -38,15 +34,6 @@ export function Resources({ store, character }: ResourcesProps) {
   const [group, setGroup] = useState<"combat" | "items">("combat");
   const pools: ResolvedPool[] = [];
 
-  if (character.panache.max > 0) {
-    pools.push({
-      id: "panache",
-      name: "Panache",
-      current: character.panache.current,
-      max: character.panache.max,
-      set: (value) => store.setCharacterField(character.id, "panache.current", value),
-    });
-  }
   character.resources.forEach((pool, idx) => {
     // spell slots render on the spells tab, not in the combat resources crease
     if (pool.id.startsWith("spellSlots")) return;
@@ -55,8 +42,10 @@ export function Resources({ store, character }: ResourcesProps) {
 
   if (pools.length === 0) return null;
 
-  const itemPools = pools.filter((p) => ITEM_POOL_IDS.has(p.id));
-  const combatPools = pools.filter((p) => !ITEM_POOL_IDS.has(p.id));
+  // The old sheet split the crease into class resources (swirl tab) and
+  // item resources (backpack tab); membership now rides on pool.kind.
+  const itemPools = pools.filter((p) => p.kind === "item");
+  const combatPools = pools.filter((p) => p.kind !== "item");
   const hasBoth = itemPools.length > 0 && combatPools.length > 0;
   const shown = hasBoth ? (group === "items" ? itemPools : combatPools) : pools;
 

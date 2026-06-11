@@ -152,6 +152,64 @@
   max-width: 90px;
 }
 
+.ms-config__resource {
+  margin: 4px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--background-modifier-border);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.ms-config__resource-kind {
+  background: none;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  min-width: 32px;
+  min-height: 32px;
+  opacity: 0.6;
+
+  &.is-item,
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.ms-config__formula-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin: 2px 0 2px 8px;
+  font-size: 0.8em;
+
+  select {
+    max-width: 130px;
+    min-height: 32px;
+  }
+}
+
+.ms-config__formula-nums {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ms-config__formula-num {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--text-muted);
+  font-family: "Taroca", sans-serif;
+
+  input {
+    width: 44px;
+    min-height: 28px;
+  }
+}
+
 .ms-config__rule-path {
   flex: 1;
   min-width: 0;

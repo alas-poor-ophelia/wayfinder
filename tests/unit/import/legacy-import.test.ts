@@ -72,7 +72,8 @@ describe("importLegacy(Adarin) -> computeAll", () => {
     const expected = calculateAttackStrings({
       ...(fixtures.attacksLive.input as never as Record<string, unknown>),
       paladinLevel: 5,
-      panachePoints: adarin.record.panache.current,
+      // panache is a resources[] pool since schema v4
+      panachePoints: adarin.record.resources.find((r) => r.id === "panache")!.current,
     } as never);
     expect(computed.attacks).toEqual(expected);
   });
@@ -88,11 +89,19 @@ describe("importLegacy(Adarin) -> computeAll", () => {
   });
 
   it("imports resources and panache", () => {
-    expect(adarin.record.panache.max).toBeGreaterThan(0);
+    // panache imports as a pool (schema v4), rendered first like the
+    // legacy crease; the deprecated top-level field is never written
+    const panache = adarin.record.resources.find((r) => r.id === "panache");
+    expect(panache?.max).toBeGreaterThan(0);
+    expect(adarin.record.resources[0]?.id).toBe("panache");
+    expect(adarin.record.panache).toBeUndefined();
     const ids = adarin.record.resources.map((r) => r.id);
     expect(ids).toContain("layOnHands");
     expect(ids).toContain("smiteEvil");
     expect(ids).toContain("weaponSongRounds");
+    // item-granted pools carry kind for the Items tab
+    expect(adarin.record.resources.find((r) => r.id === "plumeOfPanache")?.kind).toBe("item");
+    expect(adarin.record.resources.find((r) => r.id === "quickrunners")?.kind).toBe("item");
   });
 
   it("imports identity and misc fields", () => {
