@@ -13,8 +13,9 @@ function metamagicNames(metamagics: string[]): string {
     .join(", ");
 }
 
-/** Spell name as an internal link to the spell note (legacy createSpellLink
- *  hardcoded the database folder; ours comes from settings). */
+/** Spell name as an internal link to the spell note. Resolves through the
+ *  SpellIndex by name when possible (legacy createSpellLink hardcoded the
+ *  database folder; the folder path is the fallback). */
 export function SpellLink({
   plugin,
   name,
@@ -24,7 +25,9 @@ export function SpellLink({
   name: string;
   cls?: string;
 }) {
-  const path = `${plugin.store.data.value.settings.spellsFolder}/${name}.md`;
+  const indexed = plugin.spellIndex?.byName.get(name.toLowerCase());
+  const path =
+    indexed?.path ?? `${plugin.store.data.value.settings.spellsFolder}/${name}.md`;
   return (
     <a
       class={`internal-link spell-link ${cls}`.trim()}

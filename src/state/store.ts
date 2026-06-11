@@ -5,7 +5,12 @@ import {
   createDefaultCharacter,
   type CharacterRecord,
 } from "../types/character";
-import { DEFAULT_DATA, type MiniSheetData } from "../types/data-file";
+import {
+  DEFAULT_DATA,
+  DEFAULT_SPELL_DB,
+  type MiniSheetData,
+  type SpellDbState,
+} from "../types/data-file";
 
 const SAVE_DEBOUNCE_MS = 500;
 
@@ -83,6 +88,20 @@ export class MiniSheetStore {
     this.commit({
       ...this.data.value,
       ui: { ...this.data.value.ui, configOpen: open },
+    });
+  }
+
+  spellDb(): SpellDbState {
+    return { ...DEFAULT_SPELL_DB, ...this.data.value.ui.spellDb };
+  }
+
+  updateSpellDb(patch: Partial<SpellDbState>): void {
+    this.commit({
+      ...this.data.value,
+      ui: {
+        ...this.data.value.ui,
+        spellDb: { ...this.spellDb(), ...patch },
+      },
     });
   }
 

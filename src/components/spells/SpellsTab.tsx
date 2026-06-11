@@ -38,11 +38,21 @@ export function SpellsTab({
 
   return (
     <div class="ms-spellbook">
-      <SpellbookConfig
-        store={store}
-        character={character}
-        castingStatBonus={spellbookComputed.castingStatBonus}
-      />
+      <div class="ms-spellbook__toolbar">
+        <button
+          class="ms-spellbook__db-btn"
+          aria-label="Open spell database"
+          title="Open spell database"
+          onClick={() => void plugin.activateSpellDbView()}
+        >
+          📖
+        </button>
+        <SpellbookConfig
+          store={store}
+          character={character}
+          castingStatBonus={spellbookComputed.castingStatBonus}
+        />
+      </div>
       <SlaSection plugin={plugin} store={store} character={character} />
       {paradigm !== "prepared" && (
         <GlobalMetamagic store={store} character={character} />

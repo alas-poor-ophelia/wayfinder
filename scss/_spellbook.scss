@@ -369,21 +369,46 @@
     gap: 12px;
   }
 
+  /* ---- toolbar (spell DB shortcut + config gear) ---- */
+  .ms-spellbook__toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+    min-height: 26px;
+  }
+
+  .ms-spellbook__db-btn {
+    width: 1.8em;
+    height: 1.8em;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #444;
+    font-size: 1.1em;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+
+    &:hover {
+      background: #555;
+    }
+  }
+
   /* ---- config gear + flyout (legacy config-gear-icon / config-flyout-menu) ---- */
   .ms-spellbook-config {
     position: relative;
     display: flex;
     justify-content: flex-end;
-    min-height: 8px;
   }
 
   .ms-spellbook-config__gear {
     cursor: pointer;
     font-size: 1.2em;
-    position: absolute;
-    top: -4px;
-    right: 0;
-    z-index: 50;
     background: #444;
     border: none;
     border-radius: 50%;

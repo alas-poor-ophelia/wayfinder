@@ -5,7 +5,43 @@ export interface UiState {
   selectedTab: TabName;
   activeCharacterId: string | null;
   configOpen: boolean;
+  /** main-pane spell database view state (filters persist like all UI state) */
+  spellDb?: SpellDbState;
 }
+
+export interface SpellDbState {
+  search: string;
+  classes: string[];
+  levels: number[];
+  school: string;
+  componentsFilter: string;
+  source: string;
+  sr: "" | "yes" | "no";
+  eschewOnly: boolean;
+  knownOnly: boolean;
+  sortKey: string;
+  sortDir: "asc" | "desc";
+  page: number;
+  targetCharacterId: string | null;
+  filtersOpen: boolean;
+}
+
+export const DEFAULT_SPELL_DB: SpellDbState = {
+  search: "",
+  classes: [],
+  levels: [],
+  school: "",
+  componentsFilter: "",
+  source: "",
+  sr: "",
+  eschewOnly: false,
+  knownOnly: false,
+  sortKey: "name",
+  sortDir: "asc",
+  page: 0,
+  targetCharacterId: null,
+  filtersOpen: false,
+};
 
 export interface MiniSheetSettings {
   rulesFolder: string;

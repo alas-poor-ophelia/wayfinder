@@ -1,0 +1,158 @@
+// Main-pane spell database — utilitarian, Obsidian-native styling.
+// Scoped under .minisheet-spelldb-root (NOT .minisheet-root) so the
+// sheet skin never leaks into this view.
+
+.minisheet-spelldb-root {
+  padding: 8px 12px;
+
+  .ms-spelldb__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .ms-spelldb__search {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .ms-spelldb__count {
+    color: var(--text-muted);
+    font-size: var(--font-ui-small);
+  }
+
+  .ms-spelldb__target {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    font-size: var(--font-ui-small);
+    color: var(--text-muted);
+  }
+
+  .ms-spelldb__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: var(--background-secondary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+  }
+
+  .ms-spelldb__filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 150px;
+  }
+
+  .ms-spelldb__filter-title {
+    font-weight: 600;
+    font-size: var(--font-ui-small);
+    color: var(--text-normal);
+  }
+
+  .ms-spelldb__checks {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 180px;
+    overflow-y: auto;
+    font-size: var(--font-ui-small);
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    &--row {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-height: none;
+    }
+  }
+
+  .ms-spelldb__flag {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-ui-small);
+  }
+
+  .ms-spelldb__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-ui-small);
+
+    th {
+      text-align: left;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      padding: 4px 8px;
+      border-bottom: 2px solid var(--background-modifier-border);
+      position: sticky;
+      top: 0;
+      background: var(--background-primary);
+    }
+
+    td {
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--background-modifier-border);
+      vertical-align: top;
+    }
+
+    tr.is-known td {
+      background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+    }
+  }
+
+  .ms-spelldb__add-col {
+    width: 36px;
+  }
+
+  .ms-spelldb__add,
+  .ms-spelldb__remove {
+    min-width: 26px;
+    height: 26px;
+    padding: 0 4px;
+    border-radius: 4px;
+    border: 1px solid var(--background-modifier-border);
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .ms-spelldb__add {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+  }
+
+  .ms-spelldb__remove {
+    background: var(--background-secondary);
+    color: var(--text-error);
+  }
+
+  .ms-spelldb__school {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 0.85em;
+    white-space: nowrap;
+  }
+
+  .ms-spelldb__pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px;
+    color: var(--text-muted);
+  }
+}

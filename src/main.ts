@@ -1,16 +1,19 @@
 import { Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { installBridge, removeBridge } from "./bridge/mcp-bridge";
-import { VIEW_TYPE_MINISHEET } from "./constants";
+import { VIEW_TYPE_MINISHEET, VIEW_TYPE_SPELL_DB } from "./constants";
 import { importLegacy } from "./import/legacy-import";
 import { ImportSummaryModal, NotePickModal, TextPromptModal } from "./modals";
 import { RulesIndex } from "./rules/index";
 import { MiniSheetSettingTab } from "./settings";
+import { SpellIndex } from "./spells/index";
 import { MiniSheetStore } from "./state/store";
 import { SheetView } from "./views/SheetView";
+import { SpellDatabaseView } from "./views/SpellDatabaseView";
 
 export default class MiniSheetPlugin extends Plugin {
   store!: MiniSheetStore;
   rulesIndex!: RulesIndex;
+  spellIndex!: SpellIndex;
 
   async onload(): Promise<void> {
     this.store = new MiniSheetStore(this);
@@ -19,9 +22,17 @@ export default class MiniSheetPlugin extends Plugin {
     this.rulesIndex = new RulesIndex(this);
     this.rulesIndex.init();
 
+    this.spellIndex = new SpellIndex(this);
+    this.spellIndex.init();
+
     this.registerView(
       VIEW_TYPE_MINISHEET,
       (leaf) => new SheetView(leaf, this)
+    );
+
+    this.registerView(
+      VIEW_TYPE_SPELL_DB,
+      (leaf) => new SpellDatabaseView(leaf, this)
     );
 
     this.addRibbonIcon("shield", "Open MiniSheet", () => {
@@ -54,6 +65,12 @@ export default class MiniSheetPlugin extends Plugin {
         this.store.setConfigOpen(true);
         void this.activateView();
       },
+    });
+
+    this.addCommand({
+      id: "open-spell-database",
+      name: "Open spell database",
+      callback: () => void this.activateSpellDbView(),
     });
 
     this.addCommand({
@@ -162,6 +179,18 @@ export default class MiniSheetPlugin extends Plugin {
       leaf = workspace.getRightLeaf(false);
       if (!leaf) return;
       await leaf.setViewState({ type: VIEW_TYPE_MINISHEET, active: true });
+    }
+    await workspace.revealLeaf(leaf);
+  }
+
+  /** Open (or reveal) the spell database in the main pane. */
+  async activateSpellDbView(): Promise<void> {
+    const { workspace } = this.app;
+    let leaf: WorkspaceLeaf | null =
+      workspace.getLeavesOfType(VIEW_TYPE_SPELL_DB)[0] ?? null;
+    if (!leaf) {
+      leaf = workspace.getLeaf("tab");
+      await leaf.setViewState({ type: VIEW_TYPE_SPELL_DB, active: true });
     }
     await workspace.revealLeaf(leaf);
   }

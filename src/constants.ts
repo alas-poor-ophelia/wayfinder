@@ -1,5 +1,6 @@
 export const PLUGIN_ID = "minisheet";
 export const VIEW_TYPE_MINISHEET = "minisheet-view";
+export const VIEW_TYPE_SPELL_DB = "minisheet-spell-db";
 
 /** Tab order for the sheet. Config is an overlay, not a tab. */
 export const TABS = ["combat", "skills", "spells", "rules", "adjustments"] as const;

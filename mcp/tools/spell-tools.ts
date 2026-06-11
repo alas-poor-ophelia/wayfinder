@@ -94,4 +94,39 @@ export function registerSpellTools(server: McpServer): void {
       }
     }
   );
+
+  server.tool(
+    "minisheet_open_spelldb",
+    "Open (or reveal) the main-pane spell database view.",
+    {},
+    async () => {
+      try {
+        await obsidianEvalWithPayload(
+          BRIDGE_GUARD + `window.__minisheet.openSpellDb(); JSON.stringify({ok:true})`,
+          {}
+        );
+        return textResult("Spell database opened.");
+      } catch (err: any) {
+        return textResult(`Failed to open spell database: ${err.message}`, true);
+      }
+    }
+  );
+
+  server.tool(
+    "minisheet_spelldb_state",
+    "Get the spell database view state: filters, target character, total/filtered counts, first-page spell names. Also reports spell index stats.",
+    {},
+    async () => {
+      try {
+        const state = await obsidianEvalWithPayload(
+          BRIDGE_GUARD +
+            `JSON.stringify({ db: window.__minisheet.getSpellDbState(), index: window.__minisheet.spellIndexStats() })`,
+          {}
+        );
+        return textResult(JSON.stringify(state, null, 2));
+      } catch (err: any) {
+        return textResult(`Failed to get spell DB state: ${err.message}`, true);
+      }
+    }
+  );
 }

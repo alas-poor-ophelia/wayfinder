@@ -1,4 +1,8 @@
 import { computeAll } from "../calc";
+import {
+  filterSpells,
+  sortSpells,
+} from "../components/spelldb/SpellDatabaseApp";
 import type { TabName } from "../constants";
 import {
   addGlobalMetamagic,
@@ -76,6 +80,12 @@ export interface MiniSheetBridge {
   getSpellbook(id?: string): SpellbookState | null;
   /** Drive a spellbook mutation by name (the spells tab's action set). */
   spellAction(id: string, action: SpellActionName, payload?: SpellActionPayload): void;
+  /** Open the main-pane spell database view. */
+  openSpellDb(): Promise<void>;
+  /** Filter/sort state + result stats from the spell database view. */
+  getSpellDbState(): unknown;
+  /** Spell index health: count, folder, last rebuild duration. */
+  spellIndexStats(): { count: number; folder: string; rebuildMs: number };
 }
 
 declare global {
@@ -184,6 +194,36 @@ export function installBridge(plugin: MiniSheetPlugin): void {
           throw new Error(`Unknown spell action: ${String(action)}`);
       }
     },
+    openSpellDb: () => plugin.activateSpellDbView(),
+    getSpellDbState: () => {
+      const db = store.spellDb();
+      const docs = plugin.spellIndex.docs.value;
+      const characters = store.data.value.characters.filter((c) => c.spellbook);
+      const target =
+        characters.find((c) => c.id === db.targetCharacterId) ??
+        characters.find((c) => c.id === store.data.value.ui.activeCharacterId) ??
+        characters[0] ??
+        null;
+      const knownIds = new Set<string>();
+      if (target?.spellbook) {
+        for (const s of target.spellbook.spells) {
+          if (s.known) knownIds.add(s.originalId ?? s.id);
+        }
+      }
+      const filtered = sortSpells(filterSpells(docs, db, knownIds), db);
+      return {
+        filters: db,
+        targetCharacterId: target?.id ?? null,
+        totalDocs: docs.length,
+        filteredCount: filtered.length,
+        firstPageNames: filtered.slice(0, 50).map((d) => d.name),
+      };
+    },
+    spellIndexStats: () => ({
+      count: plugin.spellIndex.docs.value.length,
+      folder: plugin.spellIndex.folder(),
+      rebuildMs: plugin.spellIndex.lastRebuildMs.value,
+    }),
   };
 }
 
