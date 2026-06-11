@@ -1,12 +1,18 @@
 import { Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { installBridge, removeBridge } from "./bridge/mcp-bridge";
-import { PLUGIN_ID, VIEW_TYPE_MINISHEET, VIEW_TYPE_SPELL_DB } from "./constants";
-import { importLegacy } from "./import/legacy-import";
+import {
+  PLUGIN_ID,
+  VIEW_TYPE_MINISHEET,
+  VIEW_TYPE_PARTY_INV,
+  VIEW_TYPE_SPELL_DB,
+} from "./constants";
+import { importLegacy, importLegacyInventory } from "./import/legacy-import";
 import { ImportSummaryModal, NotePickModal, TextPromptModal } from "./modals";
 import { RulesIndex } from "./rules/index";
 import { MiniSheetSettingTab } from "./settings";
 import { SpellIndex } from "./spells/index";
 import { MiniSheetStore } from "./state/store";
+import { PartyInventoryView } from "./views/PartyInventoryView";
 import { SheetView } from "./views/SheetView";
 import { SpellDatabaseView } from "./views/SpellDatabaseView";
 
@@ -33,6 +39,11 @@ export default class MiniSheetPlugin extends Plugin {
     this.registerView(
       VIEW_TYPE_SPELL_DB,
       (leaf) => new SpellDatabaseView(leaf, this)
+    );
+
+    this.registerView(
+      VIEW_TYPE_PARTY_INV,
+      (leaf) => new PartyInventoryView(leaf, this)
     );
 
     this.addRibbonIcon("shield", "Open MiniSheet", () => {
@@ -74,12 +85,46 @@ export default class MiniSheetPlugin extends Plugin {
     });
 
     this.addCommand({
+      id: "open-party-inventory",
+      name: "Open party inventory",
+      callback: () => void this.activatePartyInvView(),
+    });
+
+    this.addCommand({
       id: "import-legacy-sheet",
       name: "Import legacy sheet",
       callback: () => {
         new NotePickModal(this.app, "Pick the old Mini Sheet note", (file) => {
           void this.importLegacySheet(file);
         }).open();
+      },
+    });
+
+    this.addCommand({
+      id: "import-party-inventory",
+      name: "Import legacy party inventory",
+      callback: () => {
+        new NotePickModal(
+          this.app,
+          "Pick the note holding the party inventory frontmatter",
+          (file) => void this.importInventoryNote(file, "party")
+        ).open();
+      },
+    });
+
+    this.addCommand({
+      id: "import-character-inventory",
+      name: "Import legacy inventory (active character)",
+      callback: () => {
+        if (!this.store.getCharacter()) {
+          new Notice("No active character to import into");
+          return;
+        }
+        new NotePickModal(
+          this.app,
+          "Pick the note holding the inventory frontmatter",
+          (file) => void this.importInventoryNote(file, "character")
+        ).open();
       },
     });
 
@@ -161,6 +206,14 @@ export default class MiniSheetPlugin extends Plugin {
     if (!spellbookFile && characterType === "pc") {
       warnings.push(`No ${name}SpellBook note found in the vault; spellbook not imported`);
     }
+    // The legacy inventory UI binds the CONFIG note's frontmatter, so pick
+    // inventory up from there when present (empty stays absent — the
+    // inventory subtab only renders for characters that have one).
+    if (configFile && Array.isArray(config.inventory) && config.inventory.length > 0) {
+      const inv = importLegacyInventory(config, { scope: "character" });
+      record.inventory = inv.inventory;
+      warnings.push(...inv.warnings.map((w) => `inventory: ${w}`));
+    }
     // Re-imports must not clobber fields the importer doesn't know about.
     const existing = this.store.getCharacter(id);
     if (existing) {
@@ -171,11 +224,45 @@ export default class MiniSheetPlugin extends Plugin {
         record.ruleLinks = existing.ruleLinks;
       }
       if (existing.link) record.link = existing.link;
+      if (!record.inventory && existing.inventory) {
+        record.inventory = existing.inventory;
+      }
     }
     this.store.upsertCharacter(record);
     await this.store.flush();
     new ImportSummaryModal(this.app, { name, warnings }).open();
     void this.activateView();
+  }
+
+  /** Import legacy inventory/currency frontmatter into the party pool or
+   *  the active character (one-time migration; data lives in data.json). */
+  async importInventoryNote(file: TFile, scope: "party" | "character"): Promise<void> {
+    const cache = this.app.metadataCache.getFileCache(file);
+    const raw = cache?.frontmatter
+      ? (JSON.parse(JSON.stringify(cache.frontmatter)) as Record<string, unknown>)
+      : null;
+    if (!raw) {
+      new Notice(`No frontmatter found on ${file.path}`);
+      return;
+    }
+    const { inventory, warnings } = importLegacyInventory(raw, {
+      scope: scope === "party" ? "party" : "character",
+    });
+    let name: string;
+    if (scope === "party") {
+      this.store.setPartyInventory(inventory);
+      name = "Party inventory";
+    } else {
+      const character = this.store.getCharacter();
+      if (!character) {
+        new Notice("No active character to import into");
+        return;
+      }
+      this.store.setCharacterField(character.id, "inventory", inventory);
+      name = `${character.name} inventory`;
+    }
+    await this.store.flush();
+    new ImportSummaryModal(this.app, { name, warnings }).open();
   }
 
   async activateView(): Promise<void> {
@@ -198,6 +285,18 @@ export default class MiniSheetPlugin extends Plugin {
     if (!leaf) {
       leaf = workspace.getLeaf("tab");
       await leaf.setViewState({ type: VIEW_TYPE_SPELL_DB, active: true });
+    }
+    await workspace.revealLeaf(leaf);
+  }
+
+  /** Open (or reveal) the party inventory in the main pane. */
+  async activatePartyInvView(): Promise<void> {
+    const { workspace } = this.app;
+    let leaf: WorkspaceLeaf | null =
+      workspace.getLeavesOfType(VIEW_TYPE_PARTY_INV)[0] ?? null;
+    if (!leaf) {
+      leaf = workspace.getLeaf("tab");
+      await leaf.setViewState({ type: VIEW_TYPE_PARTY_INV, active: true });
     }
     await workspace.revealLeaf(leaf);
   }

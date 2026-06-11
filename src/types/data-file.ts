@@ -1,5 +1,6 @@
 import type { TabName } from "../constants";
 import type { CharacterRecord } from "./character";
+import type { InventoryState } from "./inventory";
 
 export interface UiState {
   selectedTab: TabName;
@@ -7,7 +8,33 @@ export interface UiState {
   configOpen: boolean;
   /** main-pane spell database view state (filters persist like all UI state) */
   spellDb?: SpellDbState;
+  /** combat tab subtab; characters without inventory always render "main" */
+  combatSub?: "main" | "inventory";
+  /** main-pane party inventory view state (persists like spellDb) */
+  partyInv?: PartyInvState;
 }
+
+export interface PartyInvState {
+  search: string;
+  type: string;
+  containerFilter: string;
+  owner: string;
+  sortKey: "name" | "count" | "weight" | "value" | "type";
+  sortDir: "asc" | "desc";
+  currencyOpen: boolean;
+  controlsOpen: boolean;
+}
+
+export const DEFAULT_PARTY_INV: PartyInvState = {
+  search: "",
+  type: "",
+  containerFilter: "",
+  owner: "",
+  sortKey: "name",
+  sortDir: "asc",
+  currencyOpen: true,
+  controlsOpen: true,
+};
 
 export interface SpellDbState {
   search: string;
@@ -55,12 +82,15 @@ export interface MiniSheetData {
   settings: MiniSheetSettings;
   ui: UiState;
   characters: CharacterRecord[];
+  /** shared party loot; absent until first import/use */
+  partyInventory?: InventoryState;
 }
 
 export const DEFAULT_DATA: MiniSheetData = {
   // v2: CharacterRecord gains optional `spellbook` (schema-forward merge in
   // store.load() needs no migration code for optional fields)
-  schemaVersion: 2,
+  // v3: optional CharacterRecord.inventory + MiniSheetData.partyInventory
+  schemaVersion: 3,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

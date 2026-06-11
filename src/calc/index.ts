@@ -5,7 +5,9 @@
  */
 
 import type { AbilityScores, CharacterRecord } from "../types/character";
-import { abilityMods } from "./abilities";
+import { inventoryTotals } from "../types/inventory";
+import { abilityMods, effectiveScores, type AbilityModInput } from "./abilities";
+import { computeEncumbrance, type EncumbranceComputed } from "./encumbrance";
 import { calculateACValues, type ACValues } from "./ac";
 import {
   calculateAttackStrings,
@@ -37,6 +39,8 @@ export interface ComputedCharacter {
   movementMultiplier: number;
   /** present only for characters with a spellbook */
   spellbook?: SpellbookComputed;
+  /** present only for characters with an inventory */
+  encumbrance?: EncumbranceComputed;
 }
 
 function classLevel(character: CharacterRecord, match: string): number {
@@ -56,7 +60,7 @@ export function computeAll(
     bofChoice: character.bofChoice,
   });
 
-  const mods = abilityMods({
+  const abilityInput: AbilityModInput = {
     base: character.baseAbilities,
     adjust: character.adjustments.ability,
     conditionAdjust: {
@@ -69,7 +73,8 @@ export function computeAll(
     },
     drain: character.adjustments.drain,
     damage: character.adjustments.damage,
-  });
+  };
+  const mods = abilityMods(abilityInput);
 
   const masterBab =
     character.link?.babFromMaster && master
@@ -177,6 +182,14 @@ export function computeAll(
       })
     : undefined;
 
+  // coin weight excluded, matching the legacy weight totals
+  const encumbrance = character.inventory
+    ? computeEncumbrance(
+        effectiveScores(abilityInput).str,
+        inventoryTotals(character.inventory.items).totalWeight
+      )
+    : undefined;
+
   return {
     mods,
     bab,
@@ -193,5 +206,6 @@ export function computeAll(
         : character.hp.max) + (effects.hpMaxAdjust || 0),
     movementMultiplier: effects.movementAdjust ?? 1,
     ...(spellbook ? { spellbook } : {}),
+    ...(encumbrance ? { encumbrance } : {}),
   };
 }

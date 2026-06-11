@@ -17,6 +17,14 @@ import type {
   SkillEntry,
 } from "../types/character";
 import { ABILITY_KEYS, createDefaultCharacter } from "../types/character";
+import type { InventoryItem, InventoryState } from "../types/inventory";
+import {
+  NOTE_MAX_LENGTH,
+  WAND_MAX_CHARGES,
+  createDefaultInventory,
+  newItemId,
+  normalizeItemType,
+} from "../types/inventory";
 import type {
   KnownSpell,
   SlaEntry,
@@ -637,4 +645,116 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   ];
 
   return { record, warnings };
+}
+
+export interface InventoryImportResult {
+  inventory: InventoryState;
+  warnings: string[];
+}
+
+/**
+ * Import legacy `inventory` + `currency` frontmatter keys (the shape the
+ * Datacore InventoryManager(-Party).jsx scripts read/write). Lenient like
+ * the sheet import; every coercion is surfaced as a warning.
+ *
+ * H-546 guard: the legacy UIs bind specific notes (the per-character
+ * manager hardcodes the *MiniSheetConfig note; the party manager's host
+ * note lives only in the play vault) — an empty source very likely means
+ * the wrong note was picked, so that warning leads.
+ */
+export function importLegacyInventory(
+  raw: Record<string, unknown>,
+  opts: { scope: "character" | "party" }
+): InventoryImportResult {
+  const warnings: string[] = [];
+  const inventory = createDefaultInventory();
+
+  const cur = raw.currency;
+  if (cur && typeof cur === "object") {
+    const c = cur as Record<string, unknown>;
+    inventory.currency = {
+      copper: Math.max(0, num(c.copper)),
+      silver: Math.max(0, num(c.silver)),
+      gold: Math.max(0, num(c.gold)),
+      platinum: Math.max(0, num(c.platinum)),
+    };
+  } else {
+    warnings.push("No currency found on the note; coins start at 0");
+  }
+
+  const rawItems = Array.isArray(raw.inventory) ? raw.inventory : [];
+  if (!Array.isArray(raw.inventory)) {
+    warnings.push("No inventory array found on the note");
+  }
+
+  const items: InventoryItem[] = [];
+  for (const [index, entry] of rawItems.entries()) {
+    if (!entry || typeof entry !== "object") {
+      warnings.push(`Item ${index + 1}: not an object; skipped`);
+      continue;
+    }
+    const it = entry as Record<string, unknown>;
+    const name = str(it.name).trim();
+    if (!name) {
+      warnings.push(`Item ${index + 1}: missing name; skipped`);
+      continue;
+    }
+    let id = str(it.id);
+    if (!id) {
+      id = newItemId();
+      warnings.push(`"${name}": missing id; generated ${id}`);
+    }
+    const rawType = str(it.type, "Other");
+    let type = normalizeItemType(rawType);
+    if (!type) {
+      warnings.push(`"${name}": unknown type "${rawType}"; imported as Other`);
+      type = "Other";
+    }
+    let note = typeof it.note === "string" && it.note.trim() ? it.note.trim() : null;
+    if (note && note.length > NOTE_MAX_LENGTH) {
+      note = note.slice(0, NOTE_MAX_LENGTH);
+      warnings.push(`"${name}": note truncated to ${NOTE_MAX_LENGTH} characters`);
+    }
+    let charges: number | null = null;
+    if (type === "Wand") {
+      charges = Math.min(Math.max(0, num(it.charges)), WAND_MAX_CHARGES);
+    } else if (it.charges !== null && it.charges !== undefined && num(it.charges) > 0) {
+      warnings.push(`"${name}": charges on a non-wand (${String(it.charges)}); dropped`);
+    }
+    items.push({
+      id,
+      name,
+      type,
+      count: Math.max(1, Math.floor(num(it.count) || 1)),
+      weight: Math.max(0, num(it.weight)),
+      value: Math.max(0, num(it.value)),
+      containerId: typeof it.containerId === "string" && it.containerId ? it.containerId : null,
+      note,
+      charges,
+      ...(opts.scope === "party"
+        ? { owner: typeof it.owner === "string" && it.owner.trim() ? it.owner.trim() : null }
+        : {}),
+    });
+  }
+
+  // orphaned container references -> top level
+  const ids = new Set(items.map((i) => i.id));
+  for (const item of items) {
+    if (item.containerId && !ids.has(item.containerId)) {
+      warnings.push(
+        `"${item.name}": container "${item.containerId}" not in import; moved to top level`
+      );
+      item.containerId = null;
+    }
+  }
+
+  if (items.length === 0) {
+    warnings.unshift(
+      "0 items found on this note — verify it is the note the legacy inventory UI binds " +
+        "(the dev vault's AdarinMiniSheetConfig.md is empty; live data may sit on a different note)"
+    );
+  }
+
+  inventory.items = items;
+  return { inventory, warnings };
 }

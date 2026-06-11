@@ -4,6 +4,7 @@
  * are NEVER stored; they're computed by src/calc/ from this record.
  */
 
+import type { InventoryState } from "./inventory";
 import type { SpellbookState } from "./spellbook";
 
 export interface AbilityScores {
@@ -171,6 +172,9 @@ export interface CharacterRecord {
   ruleLinks: RuleLink[];
   /** absent = non-caster (Hwayoung keeps her static SLA content) */
   spellbook?: SpellbookState;
+  /** absent = no inventory subtab (Hwayoung). NOT in createDefaultCharacter:
+   *  the schema-forward merge in store.load() would inject it everywhere. */
+  inventory?: InventoryState;
 }
 
 export function defaultToggles(): CombatToggles {

@@ -7,10 +7,16 @@ import {
 } from "../types/character";
 import {
   DEFAULT_DATA,
+  DEFAULT_PARTY_INV,
   DEFAULT_SPELL_DB,
   type MiniSheetData,
+  type PartyInvState,
   type SpellDbState,
 } from "../types/data-file";
+import {
+  createDefaultInventory,
+  type InventoryState,
+} from "../types/inventory";
 
 const SAVE_DEBOUNCE_MS = 500;
 
@@ -36,6 +42,8 @@ export class MiniSheetStore {
       this.data.value = {
         ...DEFAULT_DATA,
         ...raw,
+        // optional fields migrate schema-forward; the stamp tracks the code
+        schemaVersion: DEFAULT_DATA.schemaVersion,
         settings: { ...DEFAULT_DATA.settings, ...raw.settings },
         ui: { ...DEFAULT_DATA.ui, ...raw.ui },
         // schema-forward: records saved before a field existed get defaults
@@ -43,6 +51,15 @@ export class MiniSheetStore {
           ...createDefaultCharacter(c.id, c.name),
           ...c,
         })),
+        // absent stays absent (no default injection); present gets shape-merged
+        ...(raw.partyInventory
+          ? {
+              partyInventory: {
+                ...createDefaultInventory(),
+                ...raw.partyInventory,
+              },
+            }
+          : {}),
       };
     }
   }
@@ -103,6 +120,36 @@ export class MiniSheetStore {
         spellDb: { ...this.spellDb(), ...patch },
       },
     });
+  }
+
+  setCombatSub(sub: "main" | "inventory"): void {
+    this.commit({
+      ...this.data.value,
+      ui: { ...this.data.value.ui, combatSub: sub },
+    });
+  }
+
+  partyInv(): PartyInvState {
+    return { ...DEFAULT_PARTY_INV, ...this.data.value.ui.partyInv };
+  }
+
+  updatePartyInv(patch: Partial<PartyInvState>): void {
+    this.commit({
+      ...this.data.value,
+      ui: {
+        ...this.data.value.ui,
+        partyInv: { ...this.partyInv(), ...patch },
+      },
+    });
+  }
+
+  /** Party inventory, defaulting to empty (stored only once mutated). */
+  getPartyInventory(): InventoryState {
+    return this.data.value.partyInventory ?? createDefaultInventory();
+  }
+
+  setPartyInventory(next: InventoryState): void {
+    this.commit({ ...this.data.value, partyInventory: next });
   }
 
   updateSettings(patch: Partial<MiniSheetData["settings"]>): void {

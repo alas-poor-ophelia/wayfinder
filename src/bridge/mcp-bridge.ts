@@ -1,5 +1,9 @@
 import { computeAll } from "../calc";
 import {
+  filterItems,
+  sortItems,
+} from "../components/inventory/InventoryPanel";
+import {
   filterSpells,
   sortSpells,
 } from "../components/spelldb/SpellDatabaseApp";
@@ -21,8 +25,22 @@ import {
   setLevelRemaining,
   setSlaRemaining,
 } from "../state/spellbook-actions";
+import {
+  addItem,
+  removeItem,
+  setCurrency,
+  spendCharge,
+  updateItem,
+  type InventoryScope,
+} from "../state/inventory-actions";
 import type { CharacterRecord } from "../types/character";
 import type { MiniSheetData } from "../types/data-file";
+import type {
+  CurrencyState,
+  InventoryItem,
+  InventoryState,
+} from "../types/inventory";
+import { inventoryTotals } from "../types/inventory";
 import type { SpellbookState, SpellLevel } from "../types/spellbook";
 import type MiniSheetPlugin from "../main";
 
@@ -56,6 +74,22 @@ export interface SpellActionPayload {
   resetSLAs?: boolean;
 }
 
+export type InventoryActionName =
+  | "add"
+  | "update"
+  | "remove"
+  | "spendCharge"
+  | "setCurrency";
+
+export interface InventoryActionPayload {
+  /** "add": full item draft (no id); "update": fields to merge */
+  draft?: Partial<Omit<InventoryItem, "id">>;
+  /** "update" | "remove" | "spendCharge": target item id */
+  itemId?: string;
+  /** "setCurrency": coin fields to set */
+  currency?: Partial<CurrencyState>;
+}
+
 /**
  * window.__minisheet — the surface the MCP server drives via `ob eval`.
  * `buildStamp` changes every build so the reload tool can prove the
@@ -86,6 +120,22 @@ export interface MiniSheetBridge {
   getSpellDbState(): unknown;
   /** Spell index health: count, folder, last rebuild duration. */
   spellIndexStats(): { count: number; folder: string; rebuildMs: number };
+  /** Character inventory (null when no character / no inventory). */
+  getInventory(id?: string): InventoryState | null;
+  /** Shared party inventory (empty default when never used). */
+  getPartyInventory(): InventoryState;
+  /** Drive an inventory mutation; scope is "party" or a character id. */
+  inventoryAction(
+    scope: "party" | (string & {}),
+    action: InventoryActionName,
+    payload?: InventoryActionPayload
+  ): void;
+  /** Combat tab subtab ("main" | "inventory"). */
+  setCombatSub(sub: "main" | "inventory"): void;
+  /** Open the main-pane party inventory view. */
+  openPartyInventory(): Promise<void>;
+  /** Filter state + result stats from the party inventory view. */
+  getPartyInvState(): unknown;
 }
 
 declare global {
@@ -224,6 +274,64 @@ export function installBridge(plugin: MiniSheetPlugin): void {
       folder: plugin.spellIndex.folder(),
       rebuildMs: plugin.spellIndex.lastRebuildMs.value,
     }),
+    getInventory: (id) => {
+      const record = store.getCharacter(id);
+      return record?.inventory
+        ? (JSON.parse(JSON.stringify(record.inventory)) as InventoryState)
+        : null;
+    },
+    getPartyInventory: () =>
+      JSON.parse(JSON.stringify(store.getPartyInventory())) as InventoryState,
+    inventoryAction: (scopeArg, action, payload = {}) => {
+      const scope: InventoryScope =
+        scopeArg === "party"
+          ? { kind: "party" }
+          : { kind: "character", id: scopeArg };
+      switch (action) {
+        case "add":
+          addItem(store, scope, {
+            name: "",
+            type: "Other",
+            count: 1,
+            weight: 0,
+            value: 0,
+            containerId: null,
+            note: null,
+            charges: null,
+            ...payload.draft,
+          });
+          break;
+        case "update":
+          updateItem(store, scope, payload.itemId ?? "", payload.draft ?? {});
+          break;
+        case "remove":
+          removeItem(store, scope, payload.itemId ?? "");
+          break;
+        case "spendCharge":
+          spendCharge(store, scope, payload.itemId ?? "");
+          break;
+        case "setCurrency":
+          setCurrency(store, scope, payload.currency ?? {});
+          break;
+        default:
+          throw new Error(`Unknown inventory action: ${String(action)}`);
+      }
+    },
+    setCombatSub: (sub) => store.setCombatSub(sub),
+    openPartyInventory: () => plugin.activatePartyInvView(),
+    getPartyInvState: () => {
+      const filters = store.partyInv();
+      const inventory = store.getPartyInventory();
+      const filtered = sortItems(filterItems(inventory.items, filters), filters);
+      return {
+        filters,
+        totalItems: inventory.items.length,
+        filteredCount: filtered.length,
+        totals: inventoryTotals(filtered),
+        currency: inventory.currency,
+        firstNames: filtered.slice(0, 50).map((i) => i.name),
+      };
+    },
   };
 }
 

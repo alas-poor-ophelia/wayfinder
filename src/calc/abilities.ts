@@ -29,7 +29,9 @@ export function num(value: unknown): number {
   return Number.isNaN(n) ? 0 : n;
 }
 
-export function abilityMods(input: AbilityModInput): AbilityScores {
+/** Effective scores after offsets (base + adjust + condition - drain - damage).
+ *  Encumbrance keys off the STR score itself, not the mod. */
+export function effectiveScores(input: AbilityModInput): AbilityScores {
   const out = {} as AbilityScores;
   for (const key of ABILITY_KEYS) {
     const offset =
@@ -37,7 +39,16 @@ export function abilityMods(input: AbilityModInput): AbilityScores {
       num(input.conditionAdjust?.[key]) -
       num(input.drain?.[key]) -
       num(input.damage?.[key]);
-    out[key] = Math.floor((input.base[key] + offset - 10) / 2);
+    out[key] = input.base[key] + offset;
+  }
+  return out;
+}
+
+export function abilityMods(input: AbilityModInput): AbilityScores {
+  const scores = effectiveScores(input);
+  const out = {} as AbilityScores;
+  for (const key of ABILITY_KEYS) {
+    out[key] = Math.floor((scores[key] - 10) / 2);
   }
   return out;
 }

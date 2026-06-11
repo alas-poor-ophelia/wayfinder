@@ -1,0 +1,66 @@
+// Main-pane party inventory — Obsidian-native chrome with the project's
+// identity tokens. Scoped under .minisheet-partyinv-root (NOT
+// .minisheet-root) so the sheet skin never leaks in; the shared ms-inv-*
+// component styles live in _inventory.scss.
+
+.minisheet-partyinv-root {
+  // the shared inventory partial expects these tokens in scope
+  --ms-red: #8b0000;
+  --ms-gold: #ca9759;
+  --ms-bronze: rgb(120, 80, 40);
+  --ms-touch: 45px;
+
+  padding: 8px 12px;
+  max-width: 1100px;
+  margin: 0 auto;
+
+  .ms-inv--party {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) 2fr;
+    gap: 12px;
+    align-items: start;
+
+    @media (max-width: 700px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ms-inv__rail {
+    position: sticky;
+    top: 8px;
+  }
+
+  .ms-inv__main {
+    min-width: 0;
+  }
+
+  // roomier rows than the 321px sidebar
+  .ms-inv-row__name {
+    font-size: 0.95em;
+  }
+
+  .ms-inv-badge {
+    font-size: 0.7em;
+  }
+
+  // editor as a centered overlay (same component as the sidebar's
+  // full-surface swap — CSS only, no second code path)
+  .ms-inv-editor__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 40px;
+    background: color-mix(in srgb, var(--background-primary) 60%, transparent);
+
+    .ms-inv-editor {
+      width: min(440px, 92%);
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-s);
+    }
+  }
+}

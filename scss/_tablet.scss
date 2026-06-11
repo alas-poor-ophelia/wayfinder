@@ -30,10 +30,59 @@
   .ms-metamagic__add,
   .ms-metamagic__remove,
   .ms-spellbook-config__gear,
-  .ms-spellbook__db-btn
+  .ms-spellbook__db-btn,
+  .ms-inv-row__expand,
+  .ms-inv-row__edit,
+  .ms-inv-row__delete
 ) {
   padding: 0;
   box-shadow: none;
+}
+
+/* Inventory buttons keep their _inventory.scss geometry on tablet; only
+   re-assert the longhand background-color Obsidian's mobile build stomps
+   (NOT the `background` shorthand — expand/edit/delete draw ::before glyphs). */
+.is-tablet button:is(.ms-inv-row__expand, .ms-inv-row__edit, .ms-inv-row__delete) {
+  background-color: transparent;
+}
+
+.is-tablet button:is(.ms-subtab, .ms-inv-controls__filter, .ms-inv-controls__dir, .ms-inv-controls__clear, .ms-inv-editor__cancel) {
+  padding: 0 10px;
+  box-shadow: none;
+  background-color: var(--background-primary);
+}
+
+.is-tablet button.ms-subtab {
+  padding: 0;
+  background-color: transparent;
+  height: 32px;
+}
+
+.is-tablet button.ms-subtab.is-active {
+  background-color: var(--ms-red);
+}
+
+.is-tablet button:is(.ms-inv-controls__add, .ms-inv-editor__save) {
+  padding: 0 10px;
+  box-shadow: none;
+  background-color: var(--ms-red);
+}
+
+.is-tablet button.ms-inv-row__use {
+  padding: 0 8px;
+  box-shadow: none;
+  height: 26px;
+}
+
+/* row action buttons grow to touch size on tablet */
+.is-tablet button:is(.ms-inv-row__edit, .ms-inv-row__delete) {
+  width: 36px;
+  height: 36px;
+}
+
+.is-tablet button.ms-inv-row__expand {
+  width: 32px;
+  height: 32px;
 }
 
 /* Re-assert backgrounds the mobile build may stomp.

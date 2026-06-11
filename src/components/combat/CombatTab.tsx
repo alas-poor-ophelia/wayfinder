@@ -2,6 +2,7 @@ import type { ComputedCharacter } from "../../calc";
 import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
+import { InventorySubtab } from "../inventory/InventorySubtab";
 import { ACShield } from "./ACShield";
 import { AttackBlocks } from "./AttackBlocks";
 import { CombatToggles } from "./CombatToggles";
@@ -20,8 +21,42 @@ interface CombatTabProps {
 }
 
 export function CombatTab({ store, character, computed }: CombatTabProps) {
+  // Hwayoung guard: no inventory -> no subtab bar, always render main.
+  // Render-time fallback only — never mutate ui.combatSub during render.
+  const hasInventory = !!character.inventory;
+  const sub = hasInventory
+    ? store.data.value.ui.combatSub ?? "main"
+    : "main";
+
+  const subtabBar = hasInventory && (
+    <nav class="ms-subtab-bar">
+      <button
+        class={`ms-subtab${sub === "main" ? " is-active" : ""}`}
+        onClick={() => store.setCombatSub("main")}
+      >
+        Main
+      </button>
+      <button
+        class={`ms-subtab${sub === "inventory" ? " is-active" : ""}`}
+        onClick={() => store.setCombatSub("inventory")}
+      >
+        Gear
+      </button>
+    </nav>
+  );
+
+  if (sub === "inventory") {
+    return (
+      <div class="ms-combat">
+        {subtabBar}
+        <InventorySubtab store={store} character={character} computed={computed} />
+      </div>
+    );
+  }
+
   return (
     <div class="ms-combat">
+      {subtabBar}
       <ConditionNotes
         store={store}
         character={character}
