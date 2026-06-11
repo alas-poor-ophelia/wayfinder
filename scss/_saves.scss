@@ -4,9 +4,11 @@
 
 .minisheet-root {
   /* Saves row: Taroca, centered, flanked by theme flourishes */
+  /* Old: inline-flex shrink-wraps the row, so the flourishes hug the save
+     cluster instead of sitting at the sheet edges; parent centers it. */
   .ms-saves {
     font-family: "Taroca", sans-serif;
-    display: flex;
+    display: inline-flex;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: center;

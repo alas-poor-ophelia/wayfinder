@@ -29,13 +29,15 @@
 }
 
 .minisheet-root {
+  /* Old layout: a centered table of 45x35 cells, 4 columns, with the
+     browser-default 2px border-spacing — the cells read as a fused grid. */
   .ms-toggles {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    // TODO(verify): the old layout was a borderless table of 45x35 cells with
-    // no explicit gap; 4px chosen here as a reasonable touch-friendly gap.
-    gap: 4px;
+    gap: 2px;
+    max-width: calc(4 * var(--ms-touch) + 6px);
+    margin: 0 auto;
   }
 
   /* Base toggle cell — old: 45x35 td + rgba(60,60,80,.3) checkbox container */
@@ -163,6 +165,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 10px; // breathing room below the attack blocks
   }
 
   .ms-toggle-song-label {

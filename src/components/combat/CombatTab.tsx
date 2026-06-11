@@ -40,10 +40,10 @@ export function CombatTab({ store, character, computed }: CombatTabProps) {
           hpMaxEffective={computed.hpMaxEffective}
         />
       </div>
-      <div class="ms-combat__statline">
-        <InitSpeed character={character} computed={computed} />
+      <div class="ms-combat__energy">
         <EnergyRes character={character} />
       </div>
+      <InitSpeed character={character} computed={computed} />
       <div class="ms-combat__saves">
         <Saves character={character} saves={computed.saves} />
       </div>

@@ -5,14 +5,18 @@
 // family; kept verbatim rather than substituting var(--ms-bronze).
 
 .minisheet-root {
+  /* Old: the callouts stacked flush — square corners, no vertical gaps,
+     adjacent blocks sharing a single 1px hairline. */
   .ms-atk-block {
     background-color: transparent;
     border: 1px solid rgba(144, 108, 70, 0.3);
-    border-radius: 4px;
-    // TODO(verify): old callout inherited Obsidian's --callout-radius; 4px
-    // chosen to match the rest of the sheet.
+    border-radius: 0;
     padding: 2px;
-    margin: 4px 0;
+    margin: 0;
+
+    & + .ms-atk-block {
+      border-top: none;
+    }
   }
 
   .ms-atk-block__title {
@@ -25,7 +29,9 @@
     list-style: none;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    /* Old: the fold chevron follows the title text, not the far edge */
+    justify-content: flex-start;
+    gap: 6px;
 
     /* Hide the default disclosure marker */
     &::-webkit-details-marker {

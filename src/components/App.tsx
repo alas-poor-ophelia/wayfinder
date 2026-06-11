@@ -62,9 +62,7 @@ export function App({ plugin, store }: AppProps) {
           class="ms-tab ms-tab--config"
           aria-label="Configure character"
           onClick={() => store.setConfigOpen(true)}
-        >
-          ⚙
-        </button>
+        />
       </nav>
       <main class="ms-content">
         {active === "combat" ? (

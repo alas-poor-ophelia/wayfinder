@@ -52,12 +52,13 @@
   margin-top: 2px;
 }
 
-/* Tab bar */
+/* Tab bar — old: sailKite TabsInObsidian tab cells. Each tab is a bordered
+   cell; the selected one opens its bottom border into the content frame
+   below; the strip's end cells round their outer top corners. */
 .ms-tab-bar {
   display: flex;
-  gap: 2px;
-  padding: 0 4px;
-  border-bottom: 1px solid var(--background-modifier-border);
+  gap: 0;
+  padding: 0;
 }
 
 .ms-tab {
@@ -66,31 +67,43 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  font-family: "Taroca", sans-serif;
-  font-size: 0.7em;
-  color: var(--text-muted);
   cursor: pointer;
-  background: none;
-  border: none;
+  border: 1px solid var(--background-modifier-border);
   border-radius: 0;
+  background-color: color-mix(in srgb, var(--background-primary) 60%, transparent);
   box-shadow: none;
-  border-bottom: 2px solid transparent;
   min-height: 32px;
-  transition: color 0.15s, border-color 0.15s;
+
+  & + .ms-tab {
+    border-left: none;
+  }
+
+  &:first-child {
+    border-top-left-radius: 5px;
+  }
+
+  &:last-child {
+    border-top-right-radius: 5px;
+  }
 
   &:hover {
-    color: var(--text-normal);
+    background-color: var(--background-modifier-hover);
   }
 
   &.is-active {
-    color: var(--ms-red);
-    border-bottom-color: var(--ms-red);
+    background-color: var(--background-secondary);
+    border-bottom-color: transparent;
+    pointer-events: none; /* old: selected tab is inert — no hover wash */
   }
 }
 
-/* Content area */
+/* Content area — old: the tabbed-box callout frame (no top edge; the tab
+   strip's bottom borders complete it) */
 .ms-content {
-  padding: 12px 8px;
+  padding: 8px;
+  border: 1px solid var(--background-modifier-border);
+  border-top: none;
+  border-radius: 0 0 5px 5px;
 }
 
 .ms-placeholder {

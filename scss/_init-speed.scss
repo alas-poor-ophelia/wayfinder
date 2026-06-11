@@ -7,13 +7,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
     font-family: "Taroca", sans-serif;
     font-weight: bold;
     font-size: 1em;
-    // TODO(verify): old layout floated init at 40% and speed at 60% of the
-    // sheet width with negative margins; a centered 32px-gap pair approximates
-    // the same visual rhythm.
   }
 
   .ms-init,

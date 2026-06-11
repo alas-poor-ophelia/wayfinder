@@ -1,17 +1,6 @@
 // Combat tab layout glue (positions; component visuals live in their partials).
 
 .minisheet-root {
-  // gear pseudo-tab (the old settings tab slot); config is an overlay now
-  .ms-tab--config {
-    font-size: 17px;
-    color: var(--text-muted);
-    filter: grayscale(100%) brightness(1.4);
-
-    &:hover {
-      color: var(--text-normal);
-    }
-  }
-
   .ms-resources__list {
     display: flex;
     flex-wrap: wrap;
@@ -19,22 +8,33 @@
     column-gap: 12px;
   }
 
-  .ms-combat__vitals {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 0 8px;
+  // anchor for the absolutely-pinned condition/buff icons
+  .ms-combat {
+    position: relative;
   }
 
-  .ms-combat__statline {
+  /* Old: the AC block was a 55%-wide float; the droplet flowed right after it */
+  .ms-combat__vitals {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-    padding: 4px 8px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0 8px;
+
+    .ms-ac {
+      box-sizing: border-box;
+      width: 55%;
+      flex: 0 0 auto;
+    }
+  }
+
+  /* Energy resistances sit on their own centered line above init/speed */
+  .ms-combat__energy {
+    text-align: center;
+    padding: 2px 8px 0;
   }
 
   .ms-combat__saves {
     padding: 4px 8px;
+    text-align: center;
   }
 }

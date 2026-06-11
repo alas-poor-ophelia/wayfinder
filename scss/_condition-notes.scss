@@ -3,15 +3,32 @@
 // data-internal-value reveal hack becomes a .is-open class on the body panel.
 
 .minisheet-root {
+  /* Old: icons absolutely pinned top-right of the combat content —
+     condition at top 0, buff at top 30px, both right 10px (the 8px content
+     padding plus 2px here). Each icon keeps its fixed slot even when the
+     other is absent, exactly like the legacy absolute positioning. */
   .ms-cond-notes {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    width: 24px;
+    z-index: 20;
+  }
+
+  .ms-cond-notes__icons {
     position: relative;
-    display: flex;
-    justify-content: flex-end;
-    gap: 6px;
-    // TODO(verify): old icons were absolutely pinned to the top-right of the
-    // sheet (condition at top: 0, buff at top: 30px, both right: 10px),
-    // stacked vertically; here they sit in a flex row at the component's
-    // position — adjust if the design needs the vertical stack.
+  }
+
+  .ms-cond-notes__icon--condition {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .ms-cond-notes__icon--buff {
+    position: absolute;
+    top: 30px;
+    right: 0;
   }
 
   /* Circle icon buttons — gold "!" for conditions, blue "*" for buffs */
@@ -54,7 +71,7 @@
     display: none;
     position: absolute;
     top: 30px; /* Position below the toggle */
-    right: 10px; /* Align with the toggle */
+    right: 0; /* Align with the icon column */
     width: 240px;
     background-color: black;
     border: 1px solid darkgoldenrod;
@@ -76,7 +93,7 @@
   /* Buff variant — old buff panel: blue border, slightly wider/lower */
   .ms-cond-notes__body--buff {
     top: 58px;
-    right: 2px;
+    right: 0;
     width: 250px;
     border-color: #5A7D9A;
   }
