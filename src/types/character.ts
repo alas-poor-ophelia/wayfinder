@@ -144,6 +144,12 @@ export interface CharacterRecord {
   name: string;
   characterType: "pc" | "familiar";
   race: string;
+  /** canonical key into RACE_DATA (src/data/races). Absent = race is the
+   *  free-text label only and racial data contributes nothing (legacy
+   *  characters keep their racial bonuses baked into baseAbilities). */
+  raceKey?: string;
+  /** chosen ability for flexible "+2 to any one" races (human etc.) */
+  raceAbilityChoice?: AbilityKey;
   bannerImage?: string;
   baseAbilities: AbilityScores;
   classes: ClassEntry[];

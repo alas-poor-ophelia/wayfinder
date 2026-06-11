@@ -23,6 +23,9 @@ import { calculateSaves, type SaveValues } from "./saves";
 import { calculateSkills, type SkillRow } from "./skills";
 import { computeSpellbook, type SpellbookComputed } from "./spells";
 import { computeXp, type XpComputed } from "./xp";
+import { conditionalNotes, describeModifier, resolveModifiers } from "./modifiers";
+import { getRaceData, racialAbilityMods } from "../data/races";
+import type { RaceData } from "../data/types";
 
 export interface ComputedCharacter {
   mods: AbilityScores;
@@ -44,6 +47,14 @@ export interface ComputedCharacter {
   encumbrance?: EncumbranceComputed;
   /** present only for characters tracking XP */
   xp?: XpComputed;
+  /** present only when the character has a raceKey — race data plus the
+   *  situational racial modifiers that never auto-sum ("vs poison" etc.) */
+  racial?: {
+    race: RaceData;
+    notes: string[];
+    /** situational save modifiers, pre-formatted for the save tooltips */
+    saveNotes: { fort: string[]; ref: string[]; will: string[] };
+  };
 }
 
 function classLevel(character: CharacterRecord, match: string): number {
@@ -63,8 +74,16 @@ export function computeAll(
     bofChoice: character.bofChoice,
   });
 
+  // Racial contributions are opt-in via raceKey: characters without it
+  // (all legacy saves) compute byte-for-byte as before.
+  const race = character.raceKey ? getRaceData(character.raceKey) : null;
+  const racialMods = race ? race.modifiers : [];
+  const racialFor = (target: string): number =>
+    racialMods.length ? resolveModifiers(racialMods, target).total : 0;
+
   const abilityInput: AbilityModInput = {
     base: character.baseAbilities,
+    racial: race ? racialAbilityMods(race, character.raceAbilityChoice) : undefined,
     adjust: character.adjustments.ability,
     conditionAdjust: {
       str: effects.strAdjust,
@@ -94,7 +113,7 @@ export function computeAll(
     strMod: mods.str,
     sizeMod: character.ac.sizeMod,
     weaponSong: character.toggles.weaponSong,
-    naturalAC: character.ac.natural,
+    naturalAC: character.ac.natural + racialFor("ac.natural"),
     deflectionAC: character.ac.deflection,
     dodgeAC: character.ac.dodge,
     monkLevel,
@@ -144,7 +163,7 @@ export function computeAll(
     conditionEffects: { ...effects } as AttackConditionEffects,
   });
 
-  const saves = calculateSaves({
+  const baseSaves = calculateSaves({
     classes: character.classes,
     conMod: mods.con,
     dexMod: mods.dex,
@@ -153,8 +172,15 @@ export function computeAll(
     resistanceEnhancement: character.enhancements.resistance,
     conditionEffects: effects,
   });
+  const saves: SaveValues = race
+    ? {
+        fort: baseSaves.fort + racialFor("save.fort"),
+        ref: baseSaves.ref + racialFor("save.ref"),
+        will: baseSaves.will + racialFor("save.will"),
+      }
+    : baseSaves;
 
-  const skills = calculateSkills({
+  const baseSkills = calculateSkills({
     skills: character.skills,
     abilityMods: mods,
     globalSkillAdjust: character.adjustments.skill + (effects.skillAdjust || 0),
@@ -170,12 +196,21 @@ export function computeAll(
     versatilePerformance: character.toggles.versatilePerformance,
     armorCheckPenalty: 0,
   });
+  const skills = race
+    ? baseSkills.map((row) => {
+        const bonus = racialFor(`skill.${row.name}`);
+        return bonus
+          ? { ...row, total: row.total + bonus, otherMod: row.otherMod + bonus }
+          : row;
+      })
+    : baseSkills;
 
   const initiative =
     mods.dex +
     character.initiative.miscBonus +
     character.initiative.familiarBonus +
-    character.adjustments.init;
+    character.adjustments.init +
+    racialFor("initiative");
 
   const spellbook = character.spellbook
     ? computeSpellbook({
@@ -216,5 +251,18 @@ export function computeAll(
     ...(spellbook ? { spellbook } : {}),
     ...(encumbrance ? { encumbrance } : {}),
     ...(xp ? { xp } : {}),
+    ...(race
+      ? {
+          racial: {
+            race,
+            notes: conditionalNotes(racialMods),
+            saveNotes: {
+              fort: resolveModifiers(racialMods, "save.fort").conditional.map(describeModifier),
+              ref: resolveModifiers(racialMods, "save.ref").conditional.map(describeModifier),
+              will: resolveModifiers(racialMods, "save.will").conditional.map(describeModifier),
+            },
+          },
+        }
+      : {}),
   };
 }

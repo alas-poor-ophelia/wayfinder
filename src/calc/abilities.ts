@@ -16,6 +16,9 @@ export interface AbilityModInput {
   adjust?: Partial<Record<AbilityKey, unknown>>;
   /** condition/buff-derived adjustments (strAdjust... from condition effects) */
   conditionAdjust?: Partial<Record<AbilityKey, unknown>>;
+  /** racial ability adjustments — only when the character has a raceKey
+   *  (legacy characters bake these into base and pass nothing here) */
+  racial?: Partial<Record<AbilityKey, unknown>>;
   drain?: Partial<Record<AbilityKey, unknown>>;
   damage?: Partial<Record<AbilityKey, unknown>>;
 }
@@ -36,7 +39,8 @@ export function effectiveScores(input: AbilityModInput): AbilityScores {
   for (const key of ABILITY_KEYS) {
     const offset =
       num(input.adjust?.[key]) +
-      num(input.conditionAdjust?.[key]) -
+      num(input.conditionAdjust?.[key]) +
+      num(input.racial?.[key]) -
       num(input.drain?.[key]) -
       num(input.damage?.[key]);
     out[key] = input.base[key] + offset;

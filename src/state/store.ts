@@ -17,6 +17,9 @@ import {
   createDefaultInventory,
   type InventoryState,
 } from "../types/inventory";
+import { computeAll } from "../calc";
+import { classResources, unionClassSkills } from "../data/classes";
+import { getRaceData } from "../data/races";
 
 const SAVE_DEBOUNCE_MS = 500;
 
@@ -246,5 +249,74 @@ export class MiniSheetStore {
     const characters = [...d.characters];
     characters[idx] = record;
     this.commit({ ...d, characters });
+  }
+
+  /** Set (or clear) the structured race. Keeps the free-text label in sync
+   *  when picking and drops a stale flexible-ability choice. */
+  setRace(id: string, raceKey: string | null): void {
+    const race = raceKey ? getRaceData(raceKey) : null;
+    const current = this.getCharacter(id);
+    this.updateCharacter(id, {
+      raceKey: race?.key,
+      race: race ? race.name : current?.race ?? "",
+      raceAbilityChoice: race?.flexibleAbility
+        ? current?.raceAbilityChoice
+        : undefined,
+    });
+  }
+
+  /** Flag existing skill entries that are class skills for the character's
+   *  classes. Only flags — never unflags (traits/feats can grant class
+   *  skills we don't know about) and never creates skill rows. */
+  applyClassSkills(id: string): void {
+    const record = this.getCharacter(id);
+    if (!record) throw new Error(`No character with id "${id}"`);
+    const union = unionClassSkills(record.classes);
+    const isClassSkill = (name: string): boolean =>
+      union.has(name) ||
+      ["Craft", "Perform", "Profession"].some(
+        (group) => name.startsWith(group) && union.has(`${group} (any)`)
+      );
+    const skills = Object.fromEntries(
+      Object.entries(record.skills).map(([name, entry]) => [
+        name,
+        isClassSkill(name) && !entry.classSkill
+          ? { ...entry, classSkill: true }
+          : entry,
+      ])
+    );
+    this.updateCharacter(id, { skills });
+  }
+
+  /** Upsert resource pools granted by the character's classes, with maxima
+   *  recomputed from current level + ability mods. Existing pools keep
+   *  their `current` (clamped); unknown pools are never touched. */
+  syncClassResources(id: string): void {
+    const record = this.getCharacter(id);
+    if (!record) throw new Error(`No character with id "${id}"`);
+    const mods = computeAll(record).mods;
+    const resources = [...record.resources];
+    for (const pool of classResources(record.classes, mods)) {
+      // panache lives in the legacy top-level field, not the pool list
+      if (pool.id === "panache") continue;
+      const idx = resources.findIndex((r) => r.id === pool.id);
+      if (idx === -1) {
+        resources.push({
+          id: pool.id,
+          name: pool.name,
+          current: pool.max,
+          max: pool.max,
+          ...(pool.footer ? { footer: pool.footer } : {}),
+        });
+      } else {
+        const existing = resources[idx];
+        resources[idx] = {
+          ...existing,
+          max: pool.max,
+          current: Math.min(existing.current, pool.max),
+        };
+      }
+    }
+    this.updateCharacter(id, { resources });
   }
 }

@@ -80,7 +80,11 @@ export function CombatTab({ store, character, computed }: CombatTabProps) {
       </div>
       <InitSpeed character={character} computed={computed} />
       <div class="ms-combat__saves">
-        <Saves character={character} saves={computed.saves} />
+        <Saves
+          character={character}
+          saves={computed.saves}
+          racialNotes={computed.racial?.saveNotes}
+        />
       </div>
       <Resources store={store} character={character} />
       <AttackBlocks store={store} character={character} attacks={computed.attacks} />

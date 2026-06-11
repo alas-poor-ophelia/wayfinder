@@ -136,6 +136,12 @@ export interface MiniSheetBridge {
   openPartyInventory(): Promise<void>;
   /** Filter state + result stats from the party inventory view. */
   getPartyInvState(): unknown;
+  /** Set (or clear with null) the structured race for a character. */
+  setRace(id: string, raceKey: string | null): void;
+  /** Flag class skills on existing skill rows from the class registry. */
+  applyClassSkills(id: string): void;
+  /** Upsert class-granted resource pools (ki, rage, grit...). */
+  syncClassResources(id: string): void;
 }
 
 declare global {
@@ -318,6 +324,9 @@ export function installBridge(plugin: MiniSheetPlugin): void {
       }
     },
     setCombatSub: (sub) => store.setCombatSub(sub),
+    setRace: (id, raceKey) => store.setRace(id, raceKey),
+    applyClassSkills: (id) => store.applyClassSkills(id),
+    syncClassResources: (id) => store.syncClassResources(id),
     openPartyInventory: () => plugin.activatePartyInvView(),
     getPartyInvState: () => {
       const filters = store.partyInv();

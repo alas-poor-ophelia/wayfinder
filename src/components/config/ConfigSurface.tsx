@@ -1,8 +1,10 @@
 import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord, ClassEntry } from "../../types/character";
-import { ABILITY_KEYS } from "../../types/character";
+import { ABILITY_KEYS, type AbilityKey } from "../../types/character";
 import { CLASS_NAMES, getClassStats, totalBab, totalLevel } from "../../calc/class-stats";
+import { findRaceByName, getRaceData, RACE_DATA, RACE_KEYS } from "../../data/races";
+import type { RaceData } from "../../data/types";
 import { NumberField, SelectField, TextField } from "../common/fields";
 import {
   EnergyResEditor,
@@ -56,6 +58,7 @@ export function ConfigSurface({ plugin, store, character }: ConfigSurfaceProps) 
           value={character.race}
           onChange={(v) => set("race", v)}
         />
+        <RaceDataPicker store={store} character={character} />
         <SelectField
           label="Type"
           value={character.characterType}
@@ -95,6 +98,25 @@ export function ConfigSurface({ plugin, store, character }: ConfigSurfaceProps) 
       />
 
       <section class="ms-config__section">
+        <h3 class="ms-config__section-title">Class data</h3>
+        <button
+          class="ms-config__add"
+          onClick={() => store.applyClassSkills(character.id)}
+        >
+          Mark class skills
+        </button>
+        <button
+          class="ms-config__add"
+          onClick={() => store.syncClassResources(character.id)}
+        >
+          Sync class pools
+        </button>
+        <div class="ms-config__derived">
+          Flags class skills on existing rows · upserts class resource pools
+        </div>
+      </section>
+
+      <section class="ms-config__section">
         <h3 class="ms-config__section-title">Hit points</h3>
         <div class="ms-config__abilities">
           <NumberField
@@ -116,6 +138,71 @@ export function ConfigSurface({ plugin, store, character }: ConfigSurfaceProps) 
       <ResourcesEditor store={store} character={character} />
       <RuleLinksEditor store={store} character={character} plugin={plugin} />
     </div>
+  );
+}
+
+const CUSTOM_RACE = "(custom)";
+const RACE_NAME_OPTIONS = RACE_KEYS.map((k) => RACE_DATA[k].name).sort();
+
+function raceSummary(race: RaceData): string {
+  const mods = race.flexibleAbility
+    ? "+2 to one ability"
+    : ABILITY_KEYS.filter((k) => race.abilityMods[k])
+        .map((k) => {
+          const v = race.abilityMods[k]!;
+          return `${v > 0 ? "+" : ""}${v} ${ABILITY_LABELS[k]}`;
+        })
+        .join(", ");
+  const size = race.size === "small" ? "Small" : "Medium";
+  const VISION_LABELS: Record<string, string> = {
+    "low-light": "low-light vision",
+    darkvision60: "darkvision 60 ft",
+    darkvision120: "darkvision 120 ft",
+  };
+  const vision = race.vision
+    .filter((v) => v !== "normal")
+    .map((v) => VISION_LABELS[v] ?? v)
+    .join(", ");
+  return [mods, size, `${race.speed} ft`, vision].filter(Boolean).join(" · ");
+}
+
+function RaceDataPicker({
+  store,
+  character,
+}: {
+  store: MiniSheetStore;
+  character: CharacterRecord;
+}) {
+  const race = character.raceKey ? getRaceData(character.raceKey) : null;
+  return (
+    <>
+      <SelectField
+        label="Race data"
+        value={race ? race.name : CUSTOM_RACE}
+        options={[CUSTOM_RACE, ...RACE_NAME_OPTIONS]}
+        onChange={(v) =>
+          store.setRace(
+            character.id,
+            v === CUSTOM_RACE ? null : findRaceByName(v)?.key ?? null
+          )
+        }
+      />
+      {race?.flexibleAbility && (
+        <SelectField
+          label="+2 ability"
+          value={character.raceAbilityChoice ?? "—"}
+          options={["—", ...ABILITY_KEYS]}
+          onChange={(v) =>
+            store.setCharacterField(
+              character.id,
+              "raceAbilityChoice",
+              ABILITY_KEYS.includes(v as AbilityKey) ? v : undefined
+            )
+          }
+        />
+      )}
+      {race && <div class="ms-config__derived">{raceSummary(race)}</div>}
+    </>
   );
 }
 
