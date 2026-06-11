@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 import type { ConditionEffects } from "../../calc/conditions";
 import { getBuffDef } from "../../data/buffs";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
+import { useOutsideClose } from "../common/useOutsideClose";
 
 interface ConditionNotesProps {
   store: MiniSheetStore;
@@ -27,18 +28,7 @@ const BOF_CHOICES = [
 export function ConditionNotes({ store, character, effects }: ConditionNotesProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-
-  // close on outside pointerdown (mouse + touch) while open
-  useEffect(() => {
-    if (!open) return;
-    const onPointerDown = (e: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [open]);
+  useOutsideClose(rootRef, open, () => setOpen(false));
 
   const negLevels = character.adjustments.negativeLevels;
   const hasConditions = character.conditions.length > 0 || negLevels > 0;

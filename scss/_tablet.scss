@@ -157,11 +157,24 @@
   height: 70px;
 }
 
+/* HP adjust buttons keep their _hp-droplet.scss geometry; re-assert the
+   longhand background-color the mobile build stomps (XP-button pattern) */
 .is-tablet button.ms-hp__btn {
-  width: 30px;
-  height: 30px;
+  height: 36px;
   min-width: 0;
   min-height: 0;
+}
+
+.is-tablet button.ms-hp__btn--heal {
+  background-color: var(--ms-gold);
+}
+
+.is-tablet button.ms-hp__btn--damage {
+  background-color: var(--ms-red);
+}
+
+.is-tablet button.ms-hp__btn--temp {
+  background-color: #5A7D9A;
 }
 
 .is-tablet button.ms-toggle-song-label {
