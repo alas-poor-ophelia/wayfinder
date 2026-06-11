@@ -152,6 +152,16 @@ export default class MiniSheetPlugin extends Plugin {
   }
 
   /**
+   * data.json changed on disk from outside this session (Obsidian Sync,
+   * another device). Adopt it: without this, a long-running session keeps
+   * stale in-memory state and rewrites it on every save — which is how an
+   * idle iPad session clobbered a night of imports (2026-06-11).
+   */
+  async onExternalSettingsChange(): Promise<void> {
+    await this.store.load();
+  }
+
+  /**
    * Import an old Meta Bind sheet (sheet note + its companion config note
    * under <folder>/components/*MiniSheetConfig.md) into plugin state.
    */

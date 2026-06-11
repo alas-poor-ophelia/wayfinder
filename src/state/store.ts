@@ -42,6 +42,14 @@ export class MiniSheetStore {
   }
 
   async load(): Promise<void> {
+    // re-entrant for onExternalSettingsChange: the external file is the
+    // newer truth, so drop any pending local debounce instead of letting
+    // it fire and clobber what we're about to adopt
+    if (this.saveTimer) {
+      clearTimeout(this.saveTimer);
+      this.saveTimer = null;
+    }
+    this.dirty = false;
     const loaded = (await this.plugin.loadData()) as Partial<MiniSheetData> | null;
     // migrate BEFORE the merge below — it stamps the current schemaVersion
     // over the loaded one, so migrateData must read the original
