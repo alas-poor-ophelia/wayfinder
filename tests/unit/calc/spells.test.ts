@@ -6,6 +6,11 @@
  * spell-calculations.js, metamagic-utils.js, caster-configs.js) inside
  * Obsidian — the port must reproduce every value exactly. Quirks (bonus
  * slots on null base levels, the +17 bonus-table cap) are deliberate.
+ *
+ * EXCEPTION — skald (RAW FIX 2026-06): the legacy table was a bard clone;
+ * the skald slotsMatrix grids were regenerated from the printed ACG table
+ * (96 cells changed, all at L12+ where the tables diverge). PRD anchors
+ * live in spell-tables.test.ts.
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -165,7 +170,10 @@ describe("getCasterConfig", () => {
       const key = cls === "null" ? null : cls;
       expect(getCasterConfig(key)).toEqual(config);
     }
-    expect(Object.keys(CASTER_CONFIGS)).toHaveLength(15);
+    // RAW expansion (2026-06): the legacy registry carried 15 entries; the
+    // 14 new casting classes (incl. shaman/antipaladin) bring it to 29. The
+    // legacy entries above are still matched verbatim.
+    expect(Object.keys(CASTER_CONFIGS)).toHaveLength(29);
   });
 });
 
@@ -242,11 +250,13 @@ describe("computeSpellbook (Adarin live integration)", () => {
   });
 
   it("yields zero slots (not a crash) for classes outside the slot tables", () => {
+    // (Was "alchemist" until the RAW tables landed 2026-06 — alchemist now
+    // has real slots, so a true non-caster plays the unknown class.)
     const { spellbook } = adarinSpellbookState();
-    const odd = { ...spellbook, castingClass: "alchemist" };
+    const odd = { ...spellbook, castingClass: "fighter" };
     const computed = computeSpellbook({
       spellbook: odd,
-      classes: [{ className: "Alchemist", level: 5 }],
+      classes: [{ className: "Fighter", level: 5 }],
       mods: { str: 0, dex: 0, con: 0, int: 3, wis: 0, cha: 0 },
     });
     expect(computed.levels.every((l) => l.maxSlots === 0)).toBe(true);

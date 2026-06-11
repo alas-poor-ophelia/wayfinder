@@ -43,8 +43,8 @@ export const BASE_CLASSES: ClassData[] = [
       ability: "int",
       paradigm: "prepared",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — the extracts/day table
-      // caps at 5 per level (L11 = 5/4/4/2), unlike magus/bard (L11 = 5/5/4/2).
+      // Extracts/day use the shared six-level capped-at-5 table (RAW).
+      tableKey: "alchemist",
     },
     resources: [
       {
@@ -163,8 +163,8 @@ export const BASE_CLASSES: ClassData[] = [
       ability: "wis",
       paradigm: "spontaneous",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — inquisitor shares the
-      // alchemist-style 6-level table (caps at 5), not the bard/magus one.
+      // Shares the six-level capped-at-5 table (RAW), not the bard/magus one.
+      tableKey: "inquisitor",
     },
     resources: [
       {
@@ -250,8 +250,8 @@ export const BASE_CLASSES: ClassData[] = [
       ability: "cha",
       paradigm: "spontaneous",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — omdura uses the
-      // alchemist/inquisitor 6-level table (caps at 5 slots per level).
+      // Shares the six-level capped-at-5 table (RAW).
+      tableKey: "omdura",
     },
     resources: [
       {
@@ -413,9 +413,9 @@ export const BASE_CLASSES: ClassData[] = [
       ability: "wis",
       paradigm: "spontaneous",
       maxSpellLevel: 4,
-      // TODO: no matching SPELL_TABLES entry yet — casting starts at 4th
-      // with 0 base 1st-level slots (L4 = 0, L5 = 1...), unlike the legacy
-      // paladin/ranger table (L4 = 1).
+      // Own RAW table: printed 0s at each onset level (L4 = 0, L5 = 1...),
+      // unlike the legacy paladin/ranger table (L4 = 1); L20 ends 4/4/3/3.
+      tableKey: "vampire hunter",
     },
   },
   // Source: https://aonprd.com/ClassDisplay.aspx?ItemName=Vigilante and

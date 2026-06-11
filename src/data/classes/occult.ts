@@ -72,9 +72,9 @@ export const OCCULT_CLASSES: ClassData[] = [
       ability: "cha",
       paradigm: "spontaneous",
       maxSpellLevel: 4,
-      // TODO: no matching SPELL_TABLES entry yet — nearly the paladin
-      // 4-level table, but the medium's level-20 row is 4/4/3/2 (paladin
-      // is 4/4/3/3).
+      // Shares the bloodrager 4-level table (RAW): onset L4, L20 is
+      // 4/4/3/2 (paladin is 4/4/3/3).
+      tableKey: "medium",
     },
   },
   // https://legacy.aonprd.com/occultAdventures/classes/mesmerist.html
@@ -117,8 +117,8 @@ export const OCCULT_CLASSES: ClassData[] = [
       ability: "cha",
       paradigm: "spontaneous",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — the Occult Adventures
-      // 6-level progression caps at 5 slots (bard/magus tables cap at 6).
+      // Shares the six-level capped-at-5 table (RAW).
+      tableKey: "mesmerist",
     },
     resources: [
       {
@@ -165,8 +165,8 @@ export const OCCULT_CLASSES: ClassData[] = [
       ability: "int",
       paradigm: "spontaneous",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — the Occult Adventures
-      // 6-level progression caps at 5 slots (bard/magus tables cap at 6).
+      // Shares the six-level capped-at-5 table (RAW).
+      tableKey: "occultist",
     },
     resources: [
       {
@@ -205,9 +205,10 @@ export const OCCULT_CLASSES: ClassData[] = [
       ability: "int",
       paradigm: "spontaneous",
       maxSpellLevel: 9,
-      // TODO: no matching SPELL_TABLES entry yet — the psychic uses the
-      // printed sorcerer progression (3 1st-level slots at L1, cap 6); the
-      // registry's "sorcerer" table is the legacy wizard-style clone.
+      // Own RAW table: the printed sorcerer progression (3 1st-level slots
+      // at L1, cap 6); the registry's "sorcerer" table stays the legacy
+      // wizard-style clone.
+      tableKey: "psychic",
     },
     resources: [
       {
@@ -249,8 +250,8 @@ export const OCCULT_CLASSES: ClassData[] = [
       ability: "wis",
       paradigm: "spontaneous",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — the Occult Adventures
-      // 6-level progression caps at 5 slots (bard/magus tables cap at 6).
+      // Shares the six-level capped-at-5 table (RAW).
+      tableKey: "spiritualist",
     },
   },
 ];

@@ -82,8 +82,9 @@ export const HYBRID_CLASSES: ClassData[] = [
       ability: "cha",
       paradigm: "spontaneous",
       maxSpellLevel: 4,
-      // TODO: no matching SPELL_TABLES entry yet — bloodrager matches the
-      // paladin/ranger rows for L4-19 but L20 is 4/4/3/2 (not 4/4/3/3).
+      // Own RAW table: matches paladin/ranger rows for L4-19 but L20 is
+      // 4/4/3/2 (not 4/4/3/3).
+      tableKey: "bloodrager",
     },
     resources: [
       {
@@ -164,9 +165,8 @@ export const HYBRID_CLASSES: ClassData[] = [
       ability: "wis",
       paradigm: "spontaneous",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — hunter's 6-level table
-      // caps at 5/day (L11 is 5/4/4/2, L20 is 5/5/5/5/5/5), unlike the
-      // bard/skald tables which reach 6/day.
+      // Shares the six-level capped-at-5 table (RAW).
+      tableKey: "hunter",
     },
     resources: [
       {
@@ -215,9 +215,8 @@ export const HYBRID_CLASSES: ClassData[] = [
       ability: "int",
       paradigm: "prepared",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — investigator extracts use
-      // the alchemist-style 6-level table capping at 5/day (no cantrips),
-      // unlike the magus table which reaches 6/day.
+      // Extracts/day use the shared six-level capped-at-5 table (RAW).
+      tableKey: "investigator",
     },
     resources: [
       {
@@ -300,10 +299,10 @@ export const HYBRID_CLASSES: ClassData[] = [
       ability: "cha",
       paradigm: "spontaneous",
       maxSpellLevel: 6,
-      // LEGACY QUIRK: SPELL_TABLES.skald is a copy of the bard table
-      // (reaching 6/day), but the printed ACG skald table caps at 5/day
-      // (e.g. L11 is 5/4/4/2, L20 is 5/5/5/5/5/5). The engine table is the
-      // fixture-locked contract, so it stays referenced as-is.
+      // RAW FIX (2026-06): SPELL_TABLES.skald was a bard clone (reaching
+      // 6/day); it now carries the printed ACG progression capping at
+      // 5/day (L11 is 5/4/4/2, L20 is 5/5/5/5/5/5). Identical below L12,
+      // so low-level skalds are unaffected.
       tableKey: "skald",
     },
     resources: [
@@ -429,9 +428,9 @@ export const HYBRID_CLASSES: ClassData[] = [
       ability: "wis",
       paradigm: "prepared",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — warpriest has a unique
-      // 6-level prepared table capping at 5/day with 3-5 prepared orisons
-      // (L1 is 3/1, L20 is 5/5/5/5/5/5/5); no existing table matches.
+      // Own RAW table: six-level capped-at-5 slots plus 3-5 prepared
+      // orisons (L1 is 3/1, L20 is 5/5/5/5/5/5/5).
+      tableKey: "warpriest",
     },
     resources: [
       {

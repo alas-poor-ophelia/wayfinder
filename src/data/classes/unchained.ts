@@ -144,9 +144,9 @@ export const UNCHAINED_CLASSES: ClassData[] = [
       ability: "cha",
       paradigm: "spontaneous",
       maxSpellLevel: 6,
-      // TODO: no matching SPELL_TABLES entry yet — the unchained summoner
-      // uses the standard 6-level spontaneous progression (caps at 5
-      // slots); the registry's "summoner" table is the legacy APG variant.
+      // Shares the six-level capped-at-5 table (RAW); the registry's
+      // "summoner" table stays the legacy APG variant.
+      tableKey: "summoner (unchained)",
     },
     resources: [
       {

@@ -43,6 +43,23 @@ export const CASTER_CONFIGS: Record<string, CasterConfig> = {
   magus: { type: "prepared", usesSpellbook: true, spontaneousCasting: false },
   alchemist: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
   bloodrager: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  // RAW expansion (2026-06): every CLASS_DATA casting class gets an entry
+  // so none silently falls back to the wizard config (paradigm match is
+  // pinned by tests/unit/calc/spell-tables.test.ts).
+  antipaladin: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
+  inquisitor: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  investigator: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
+  hunter: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  medium: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  mesmerist: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  occultist: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  omdura: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  psychic: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  spiritualist: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  warpriest: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
+  shaman: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
+  "vampire hunter": { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  "summoner (unchained)": { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
 };
 
 export function getCasterConfig(castingClass: unknown): CasterConfig {
@@ -53,8 +70,68 @@ export function getCasterConfig(castingClass: unknown): CasterConfig {
 }
 
 /**
+ * RAW tables added 2026-06 (PRD-transcribed; anchor rows pinned by
+ * tests/unit/calc/spell-tables.test.ts). The shared six-level progression
+ * caps at 5/day — printed identically for alchemist, inquisitor,
+ * investigator, hunter, mesmerist, occultist, spiritualist, skald, omdura,
+ * and Summoner (Unchained). Cantrips/knacks/orisons are unlimited for
+ * these classes (column 0 null); the warpriest's prepared-orison counts
+ * get their own table.
+ */
+const SIX_LEVEL_CAPPED5: (number | null)[][] = [
+  [null, 1, null, null, null, null, null],
+  [null, 2, null, null, null, null, null],
+  [null, 3, null, null, null, null, null],
+  [null, 3, 1, null, null, null, null],
+  [null, 4, 2, null, null, null, null],
+  [null, 4, 3, null, null, null, null],
+  [null, 4, 3, 1, null, null, null],
+  [null, 4, 4, 2, null, null, null],
+  [null, 5, 4, 3, null, null, null],
+  [null, 5, 4, 3, 1, null, null],
+  [null, 5, 4, 4, 2, null, null],
+  [null, 5, 5, 4, 3, null, null],
+  [null, 5, 5, 4, 3, 1, null],
+  [null, 5, 5, 4, 4, 2, null],
+  [null, 5, 5, 5, 4, 3, null],
+  [null, 5, 5, 5, 4, 3, 1],
+  [null, 5, 5, 5, 4, 4, 2],
+  [null, 5, 5, 5, 5, 4, 3],
+  [null, 5, 5, 5, 5, 5, 4],
+  [null, 5, 5, 5, 5, 5, 5],
+];
+
+/**
+ * Bloodrager and medium print the same 4-level table: onset at L4, ending
+ * 4/4/3/2 at L20 (the paladin/ranger table ends 4/4/3/3).
+ */
+const FOUR_LEVEL_ONSET4: (number | null)[][] = [
+  [null, null, null, null, null],
+  [null, null, null, null, null],
+  [null, null, null, null, null],
+  [null, 1, null, null, null],
+  [null, 1, null, null, null],
+  [null, 1, null, null, null],
+  [null, 1, 1, null, null],
+  [null, 1, 1, null, null],
+  [null, 2, 1, null, null],
+  [null, 2, 1, 1, null],
+  [null, 2, 1, 1, null],
+  [null, 2, 2, 1, null],
+  [null, 3, 2, 1, 1],
+  [null, 3, 2, 1, 1],
+  [null, 3, 2, 2, 1],
+  [null, 3, 3, 2, 1],
+  [null, 4, 3, 2, 1],
+  [null, 4, 3, 2, 2],
+  [null, 4, 3, 3, 2],
+  [null, 4, 4, 3, 2],
+];
+
+/**
  * Spell progression tables, [classLevel-1][spellLevel] = base slots.
- * null = spell level not available at that class level. Row widths vary by
+ * null = spell level not available at that class level; 0 = printed zero
+ * (slot level open, casting-stat bonus slots apply). Row widths vary by
  * class exactly as in the legacy file (half casters carry 5 columns).
  */
 export const SPELL_TABLES: Record<string, (number | null)[][]> = {
@@ -256,28 +333,12 @@ export const SPELL_TABLES: Record<string, (number | null)[][]> = {
     [null, 6, 6, 6, 5, 5, 4, null, null, null],
     [null, 6, 6, 6, 6, 5, 5, null, null, null],
   ],
-  skald: [
-    [null, 1, null, null, null, null, null, null, null, null],
-    [null, 2, null, null, null, null, null, null, null, null],
-    [null, 3, null, null, null, null, null, null, null, null],
-    [null, 3, 1, null, null, null, null, null, null, null],
-    [null, 4, 2, null, null, null, null, null, null, null],
-    [null, 4, 3, null, null, null, null, null, null, null],
-    [null, 4, 3, 1, null, null, null, null, null, null],
-    [null, 4, 4, 2, null, null, null, null, null, null],
-    [null, 5, 4, 3, null, null, null, null, null, null],
-    [null, 5, 4, 3, 1, null, null, null, null, null],
-    [null, 5, 5, 4, 2, null, null, null, null, null],
-    [null, 6, 5, 4, 3, null, null, null, null, null],
-    [null, 6, 5, 4, 3, 1, null, null, null, null],
-    [null, 6, 6, 5, 4, 2, null, null, null, null],
-    [null, 6, 6, 5, 4, 3, null, null, null, null],
-    [null, 6, 6, 5, 4, 3, 1, null, null, null],
-    [null, 6, 6, 6, 5, 4, 2, null, null, null],
-    [null, 6, 6, 6, 5, 4, 3, null, null, null],
-    [null, 6, 6, 6, 5, 5, 4, null, null, null],
-    [null, 6, 6, 6, 6, 5, 5, null, null, null],
-  ],
+  // RAW FIX (2026-06): the legacy table was a bard clone reaching 6/day;
+  // the printed ACG skald table is the six-level capped-at-5 progression.
+  // Rows L1-L11 are identical to the bard's, so low-level skalds (Adarin)
+  // see no change; the null-base bonus-slot quirk lives in getSpellSlots
+  // and is unaffected.
+  skald: SIX_LEVEL_CAPPED5,
   paladin: [
     [null, null, null, null, null],
     [null, null, null, null, null],
@@ -344,7 +405,99 @@ export const SPELL_TABLES: Record<string, (number | null)[][]> = {
     [null, 6, 6, 6, 5, 5, 4],
     [null, 6, 6, 6, 6, 5, 5],
   ],
+  // --- RAW tables added 2026-06 (see SIX_LEVEL_CAPPED5 above) ---
+  alchemist: SIX_LEVEL_CAPPED5,
+  inquisitor: SIX_LEVEL_CAPPED5,
+  investigator: SIX_LEVEL_CAPPED5,
+  hunter: SIX_LEVEL_CAPPED5,
+  mesmerist: SIX_LEVEL_CAPPED5,
+  occultist: SIX_LEVEL_CAPPED5,
+  spiritualist: SIX_LEVEL_CAPPED5,
+  omdura: SIX_LEVEL_CAPPED5,
+  "summoner (unchained)": SIX_LEVEL_CAPPED5,
+  // Warpriest: same slot columns as SIX_LEVEL_CAPPED5, but orisons are
+  // PREPARED (3 at L1, 4 at L2-5, 5 from L6) — cast freely, never expended.
+  warpriest: [
+    [3, 1, null, null, null, null, null],
+    [4, 2, null, null, null, null, null],
+    [4, 3, null, null, null, null, null],
+    [4, 3, 1, null, null, null, null],
+    [4, 4, 2, null, null, null, null],
+    [5, 4, 3, null, null, null, null],
+    [5, 4, 3, 1, null, null, null],
+    [5, 4, 4, 2, null, null, null],
+    [5, 5, 4, 3, null, null, null],
+    [5, 5, 4, 3, 1, null, null],
+    [5, 5, 4, 4, 2, null, null],
+    [5, 5, 5, 4, 3, null, null],
+    [5, 5, 5, 4, 3, 1, null],
+    [5, 5, 5, 4, 4, 2, null],
+    [5, 5, 5, 5, 4, 3, null],
+    [5, 5, 5, 5, 4, 3, 1],
+    [5, 5, 5, 5, 4, 4, 2],
+    [5, 5, 5, 5, 5, 4, 3],
+    [5, 5, 5, 5, 5, 5, 4],
+    [5, 5, 5, 5, 5, 5, 5],
+  ],
+  bloodrager: FOUR_LEVEL_ONSET4,
+  medium: FOUR_LEVEL_ONSET4,
+  // Vampire hunter: printed ZEROS at each onset level (L4 1st, L7 2nd,
+  // L10 3rd, L13 4th) — slot level open, Wisdom bonus slots apply; ends
+  // 4/4/3/3 at L20 unlike bloodrager/medium.
+  "vampire hunter": [
+    [null, null, null, null, null],
+    [null, null, null, null, null],
+    [null, null, null, null, null],
+    [null, 0, null, null, null],
+    [null, 1, null, null, null],
+    [null, 1, null, null, null],
+    [null, 1, 0, null, null],
+    [null, 1, 1, null, null],
+    [null, 2, 1, null, null],
+    [null, 2, 1, 0, null],
+    [null, 2, 1, 1, null],
+    [null, 2, 2, 1, null],
+    [null, 3, 2, 1, 0],
+    [null, 3, 2, 1, 1],
+    [null, 3, 2, 2, 1],
+    [null, 3, 3, 2, 1],
+    [null, 4, 3, 2, 1],
+    [null, 4, 3, 2, 2],
+    [null, 4, 3, 3, 2],
+    [null, 4, 4, 3, 3],
+  ],
+  // Psychic: the printed spontaneous 9-level progression (3 first-level
+  // slots at L1, caps at 6). The legacy "sorcerer" table is a wizard-style
+  // clone kept for fixture parity; the psychic carries the true numbers.
+  psychic: [
+    [null, 3, null, null, null, null, null, null, null, null],
+    [null, 4, null, null, null, null, null, null, null, null],
+    [null, 5, null, null, null, null, null, null, null, null],
+    [null, 6, 3, null, null, null, null, null, null, null],
+    [null, 6, 4, null, null, null, null, null, null, null],
+    [null, 6, 5, 3, null, null, null, null, null, null],
+    [null, 6, 6, 4, null, null, null, null, null, null],
+    [null, 6, 6, 5, 3, null, null, null, null, null],
+    [null, 6, 6, 6, 4, null, null, null, null, null],
+    [null, 6, 6, 6, 5, 3, null, null, null, null],
+    [null, 6, 6, 6, 6, 4, null, null, null, null],
+    [null, 6, 6, 6, 6, 5, 3, null, null, null],
+    [null, 6, 6, 6, 6, 6, 4, null, null, null],
+    [null, 6, 6, 6, 6, 6, 5, 3, null, null],
+    [null, 6, 6, 6, 6, 6, 6, 4, null, null],
+    [null, 6, 6, 6, 6, 6, 6, 5, 3, null],
+    [null, 6, 6, 6, 6, 6, 6, 6, 4, null],
+    [null, 6, 6, 6, 6, 6, 6, 6, 5, 3],
+    [null, 6, 6, 6, 6, 6, 6, 6, 6, 4],
+    [null, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+  ],
 };
+
+// Classes whose printed slots match an existing table (their CLASS_DATA
+// tableKeys already say so) get name-keyed aliases so the live spellbook
+// path — which resolves by class name — finds them too.
+SPELL_TABLES["antipaladin"] = SPELL_TABLES.paladin;
+SPELL_TABLES["shaman"] = SPELL_TABLES.witch;
 
 /** Arcanist casts/day (separate from preparation slots). */
 export const ARCANIST_CASTS_TABLE: (number | null)[][] = [
