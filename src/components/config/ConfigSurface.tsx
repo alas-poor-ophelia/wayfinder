@@ -19,6 +19,7 @@ interface ConfigSurfaceProps {
   plugin: MiniSheetPlugin;
   store: MiniSheetStore;
   character: CharacterRecord;
+  onClose: () => void;
 }
 
 const ABILITY_LABELS: Record<string, string> = {
@@ -30,7 +31,7 @@ const ABILITY_LABELS: Record<string, string> = {
   cha: "CHA",
 };
 
-export function ConfigSurface({ plugin, store, character }: ConfigSurfaceProps) {
+export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfaceProps) {
   const set = (path: string, value: unknown) =>
     store.setCharacterField(character.id, path, value);
 
@@ -41,7 +42,7 @@ export function ConfigSurface({ plugin, store, character }: ConfigSurfaceProps) 
         <button
           class="ms-config__close"
           aria-label="Close configuration"
-          onClick={() => store.setConfigOpen(false)}
+          onClick={onClose}
         >
           ✕
         </button>

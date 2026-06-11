@@ -5,7 +5,6 @@ import type { MiniSheetStore } from "../state/store";
 import { Banner } from "./combat/Banner";
 import { CombatTab } from "./combat/CombatTab";
 import { AdjustmentsTab } from "./adjust/AdjustmentsTab";
-import { ConfigSurface } from "./config/ConfigSurface";
 import { RulesTab } from "./rules/RulesTab";
 import { SkillsTab } from "./skills/SkillsTab";
 import { SpellsTab } from "./spells/SpellsTab";
@@ -19,14 +18,6 @@ export function App({ plugin, store }: AppProps) {
   const data = store.data.value;
   const active = data.ui.selectedTab;
   const character = store.getCharacter();
-
-  if (data.ui.configOpen && character) {
-    return (
-      <div class="ms-sheet">
-        <ConfigSurface plugin={plugin} store={store} character={character} />
-      </div>
-    );
-  }
 
   if (!character) {
     return (
@@ -61,7 +52,7 @@ export function App({ plugin, store }: AppProps) {
         <button
           class="ms-tab ms-tab--config"
           aria-label="Configure character"
-          onClick={() => store.setConfigOpen(true)}
+          onClick={() => void plugin.activateConfigView()}
         />
       </nav>
       <main class="ms-content">

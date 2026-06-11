@@ -109,13 +109,6 @@ export class MiniSheetStore {
     });
   }
 
-  setConfigOpen(open: boolean): void {
-    this.commit({
-      ...this.data.value,
-      ui: { ...this.data.value.ui, configOpen: open },
-    });
-  }
-
   spellDb(): SpellDbState {
     return { ...DEFAULT_SPELL_DB, ...this.data.value.ui.spellDb };
   }

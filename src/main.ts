@@ -3,6 +3,7 @@ import { installBridge, removeBridge } from "./bridge/mcp-bridge";
 import { num } from "./calc/abilities";
 import {
   PLUGIN_ID,
+  VIEW_TYPE_CONFIG,
   VIEW_TYPE_MINISHEET,
   VIEW_TYPE_PARTY_INV,
   VIEW_TYPE_SPELL_DB,
@@ -13,6 +14,7 @@ import { RulesIndex } from "./rules/index";
 import { MiniSheetSettingTab } from "./settings";
 import { SpellIndex } from "./spells/index";
 import { MiniSheetStore } from "./state/store";
+import { ConfigView } from "./views/ConfigView";
 import { PartyInventoryView } from "./views/PartyInventoryView";
 import { SheetView } from "./views/SheetView";
 import { SpellDatabaseView } from "./views/SpellDatabaseView";
@@ -47,6 +49,11 @@ export default class MiniSheetPlugin extends Plugin {
       (leaf) => new PartyInventoryView(leaf, this)
     );
 
+    this.registerView(
+      VIEW_TYPE_CONFIG,
+      (leaf) => new ConfigView(leaf, this)
+    );
+
     this.addRibbonIcon("shield", "Open MiniSheet", () => {
       void this.activateView();
     });
@@ -63,8 +70,7 @@ export default class MiniSheetPlugin extends Plugin {
       callback: () => {
         new TextPromptModal(this.app, "New character", "Name", (name) => {
           this.store.addCharacter(name);
-          this.store.setConfigOpen(true);
-          void this.activateView();
+          void this.activateConfigView();
         }).open();
       },
     });
@@ -74,8 +80,7 @@ export default class MiniSheetPlugin extends Plugin {
       name: "Configure character",
       callback: () => {
         if (!this.store.getCharacter()) return;
-        this.store.setConfigOpen(true);
-        void this.activateView();
+        void this.activateConfigView();
       },
     });
 
@@ -307,6 +312,18 @@ export default class MiniSheetPlugin extends Plugin {
     if (!leaf) {
       leaf = workspace.getLeaf("tab");
       await leaf.setViewState({ type: VIEW_TYPE_PARTY_INV, active: true });
+    }
+    await workspace.revealLeaf(leaf);
+  }
+
+  /** Open (or reveal) the character configuration in the main pane. */
+  async activateConfigView(): Promise<void> {
+    const { workspace } = this.app;
+    let leaf: WorkspaceLeaf | null =
+      workspace.getLeavesOfType(VIEW_TYPE_CONFIG)[0] ?? null;
+    if (!leaf) {
+      leaf = workspace.getLeaf("tab");
+      await leaf.setViewState({ type: VIEW_TYPE_CONFIG, active: true });
     }
     await workspace.revealLeaf(leaf);
   }

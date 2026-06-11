@@ -106,7 +106,8 @@ export interface MiniSheetBridge {
   setCharacterField(id: string, dotPath: string, value: unknown): void;
   newCharacter(name: string): string;
   setActiveCharacter(id: string): void;
-  setConfigOpen(open: boolean): void;
+  /** Open the main-pane character configuration view. */
+  openConfig(): Promise<void>;
   /** Calc outputs for a character — wired up in the calc-port milestone. */
   getComputed(id?: string): unknown;
   openSheet(): Promise<void>;
@@ -164,7 +165,7 @@ export function installBridge(plugin: MiniSheetPlugin): void {
       store.setCharacterField(id, dotPath, value),
     newCharacter: (name) => store.addCharacter(name).id,
     setActiveCharacter: (id) => store.setActiveCharacter(id),
-    setConfigOpen: (open) => store.setConfigOpen(open),
+    openConfig: () => plugin.activateConfigView(),
     getComputed: (id) => {
       const record = store.getCharacter(id);
       if (!record) return null;

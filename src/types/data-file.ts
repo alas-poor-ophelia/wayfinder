@@ -5,7 +5,6 @@ import type { InventoryState } from "./inventory";
 export interface UiState {
   selectedTab: TabName;
   activeCharacterId: string | null;
-  configOpen: boolean;
   /** main-pane spell database view state (filters persist like all UI state) */
   spellDb?: SpellDbState;
   /** combat tab subtab; characters without inventory always render "main" */
@@ -102,7 +101,6 @@ export const DEFAULT_DATA: MiniSheetData = {
   ui: {
     selectedTab: "combat",
     activeCharacterId: null,
-    configOpen: false,
   },
   characters: [],
 };

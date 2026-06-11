@@ -1,4 +1,19 @@
-// Configure-character overlay surface.
+// Configure-character surface. Rendered in the main-pane ConfigView under
+// .minisheet-config-root (NOT .minisheet-root, so the sheet skin doesn't
+// leak in — party-inv pattern); the ms-config/ms-field styles below are
+// unscoped and apply wherever the surface mounts.
+
+.minisheet-config-root {
+  // the config styles expect these tokens in scope
+  --ms-red: #8b0000;
+  --ms-gold: #ca9759;
+  --ms-bronze: rgb(120, 80, 40);
+  --ms-touch: 45px;
+
+  padding: 8px 12px;
+  max-width: 640px;
+  margin: 0 auto;
+}
 
 .ms-config {
   padding: 8px;
