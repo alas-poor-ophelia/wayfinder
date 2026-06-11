@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import type { ConditionEffects } from "../../calc/conditions";
 import { getBuffDef } from "../../data/buffs";
 import type { MiniSheetStore } from "../../state/store";
@@ -26,6 +26,20 @@ const BOF_CHOICES = [
  */
 export function ConditionNotes({ store, character, effects }: ConditionNotesProps) {
   const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // close on outside pointerdown (mouse + touch) while open
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
+
   const negLevels = character.adjustments.negativeLevels;
   const hasConditions = character.conditions.length > 0 || negLevels > 0;
   const hasBuffs = character.buffs.length > 0;
@@ -47,7 +61,7 @@ export function ConditionNotes({ store, character, effects }: ConditionNotesProp
     key;
 
   return (
-    <div class="ms-cond-notes">
+    <div class="ms-cond-notes" ref={rootRef}>
       <button
         class={`ms-cond-notes__icon ${tone}${open ? " is-open" : ""}`}
         aria-label={`Show active effects (${count})`}
