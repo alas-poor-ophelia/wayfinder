@@ -1,5 +1,6 @@
 import type { TabName } from "../constants";
 import type { CharacterRecord } from "./character";
+import { DEFAULT_CUSTOM_ITEMS_FILENAME } from "./custom-items";
 import type { InventoryState } from "./inventory";
 
 export interface UiState {
@@ -74,6 +75,9 @@ export interface MiniSheetSettings {
   rulesFolder: string;
   /** vault folder holding the spell notes (one markdown note per spell) */
   spellsFolder: string;
+  /** custom-items JSON file, tracked by NAME anywhere in the vault
+   *  (created at the vault root on first save) */
+  customItemsFileName: string;
 }
 
 /** Root shape of the plugin's data.json. */
@@ -102,6 +106,7 @@ export const DEFAULT_DATA: MiniSheetData = {
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",
+    customItemsFileName: DEFAULT_CUSTOM_ITEMS_FILENAME,
   },
   ui: {
     selectedTab: "combat",

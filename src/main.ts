@@ -13,6 +13,7 @@ import { ImportSummaryModal, NotePickModal, TextPromptModal } from "./modals";
 import { RulesIndex } from "./rules/index";
 import { MiniSheetSettingTab } from "./settings";
 import { SpellIndex } from "./spells/index";
+import { CustomItemsStore } from "./state/custom-items";
 import { MiniSheetStore } from "./state/store";
 import { ConfigView } from "./views/ConfigView";
 import { PartyInventoryView } from "./views/PartyInventoryView";
@@ -23,10 +24,16 @@ export default class MiniSheetPlugin extends Plugin {
   store!: MiniSheetStore;
   rulesIndex!: RulesIndex;
   spellIndex!: SpellIndex;
+  customItems!: CustomItemsStore;
 
   async onload(): Promise<void> {
     this.store = new MiniSheetStore(this);
     await this.store.load();
+
+    this.customItems = new CustomItemsStore(this);
+    this.customItems.init();
+    // vault files resolve after layout-ready; locate the items file then
+    this.app.workspace.onLayoutReady(() => void this.customItems.load());
 
     this.rulesIndex = new RulesIndex(this);
     this.rulesIndex.init();
@@ -149,6 +156,7 @@ export default class MiniSheetPlugin extends Plugin {
   onunload(): void {
     removeBridge();
     void this.store.flush();
+    void this.customItems.flush();
   }
 
   /**
@@ -159,6 +167,8 @@ export default class MiniSheetPlugin extends Plugin {
    */
   async onExternalSettingsChange(): Promise<void> {
     await this.store.load();
+    // the synced settings may rename the tracked custom-items file
+    await this.customItems.load();
   }
 
   /**

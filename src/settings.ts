@@ -45,5 +45,22 @@ export class MiniSheetSettingTab extends PluginSettingTab {
             this.plugin.spellIndex.rebuild();
           })
       );
+
+    new Setting(containerEl)
+      .setName("Custom items file")
+      .setDesc(
+        "JSON file holding forged custom magic items, tracked by file name " +
+          "anywhere in the vault. Created at the vault root on first save."
+      )
+      .addText((text) =>
+        text
+          .setPlaceholder("minisheet-items.json")
+          .setValue(this.plugin.store.data.value.settings.customItemsFileName)
+          .onChange((value) => {
+            this.plugin.store.updateSettings({ customItemsFileName: value });
+            // re-locate + reload against the newly named file
+            void this.plugin.customItems.load();
+          })
+      );
   }
 }
