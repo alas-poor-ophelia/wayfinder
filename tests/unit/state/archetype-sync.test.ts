@@ -138,6 +138,37 @@ describe("syncClassResources with archetypes", () => {
     expect(chaKi?.max).toBe(6); // floor(5/2) + cha 4
   });
 
+  it("spell warrior re-keys raging song to the weapon-song pool, keeping spend", () => {
+    const store = makeStore();
+    store.setCharacterField("pal", "classes", [{ className: "Skald", level: 3 }]);
+    store.syncClassResources("pal");
+    // cha +3: 3 + 3 + 2·2 = 10
+    expect(
+      store.getCharacter("pal")!.resources.find((r) => r.id === "ragingSong")?.max
+    ).toBe(10);
+
+    // spend two rounds, then declare the archetype (Adarin-shaped flow:
+    // her live pool predates the catalog and shares the weaponSongRounds id)
+    const spent = store
+      .getCharacter("pal")!
+      .resources.map((r) => (r.id === "ragingSong" ? { ...r, current: 8 } : r));
+    store.setCharacterField("pal", "resources", [
+      ...spent,
+      { id: "weaponSongRounds", name: "Weapon Song", current: 5, max: 13 },
+    ]);
+    store.setCharacterField("pal", "classes", [
+      { className: "Skald", level: 3, archetypeKeys: ["spell-warrior"] },
+    ]);
+    store.syncClassResources("pal");
+    const ids = poolIds(store);
+    expect(ids).not.toContain("ragingSong");
+    const song = store
+      .getCharacter("pal")!
+      .resources.find((r) => r.id === "weaponSongRounds");
+    expect(song?.max).toBe(10); // re-keyed formula takes over the max
+    expect(song?.current).toBe(5); // spend preserved
+  });
+
   it("unchecking the archetype restores the base pool on the next sync", () => {
     const store = makeStore(5, "stonelord");
     store.syncClassResources("pal");

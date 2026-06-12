@@ -38,4 +38,12 @@ export const CLASS_FEATURE_MECH: Record<string, Record<string, FeatureMech>> = {
     "stunning-fist": { resource: "stunningFist" },
     "flurry-of-blows-bonus-attack": { quickAction: "flurryOfBlows" },
   },
+  Skald: {
+    "raging-song": { resource: "ragingSong" },
+    "versatile-performance": { quickAction: "versatilePerformance" },
+    spells: { gate: "spellcasting" },
+    // spell-kenning / inspired rage / rage powers: not modeled — refs to
+    // them are deliberate no-ops (inspired rage is a song TYPE inside the
+    // raging-song pool, not the pool itself).
+  },
 };

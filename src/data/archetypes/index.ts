@@ -21,14 +21,17 @@ import { CLASS_FEATURE_MECH } from "./feature-map";
 import { PALADIN_ARCHETYPE_MECHANICS } from "./mechanics/paladin";
 import { MONK_ARCHETYPE_MECHANICS } from "./mechanics/monk";
 import { MONK_UNCHAINED_ARCHETYPE_MECHANICS } from "./mechanics/monk-unchained";
+import { SKALD_ARCHETYPE_MECHANICS } from "./mechanics/skald";
 import paladinJson from "./paladin.json";
 import monkJson from "./monk.json";
 import monkUnchainedJson from "./monk-unchained.json";
+import skaldJson from "./skald.json";
 
 const FILES: ClassArchetypeFile[] = [
   paladinJson as unknown as ClassArchetypeFile,
   monkJson as unknown as ClassArchetypeFile,
   monkUnchainedJson as unknown as ClassArchetypeFile,
+  skaldJson as unknown as ClassArchetypeFile,
 ];
 
 const BY_CLASS = new Map<string, Map<string, ArchetypeDef>>(
@@ -57,6 +60,7 @@ const ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
   ...PALADIN_ARCHETYPE_MECHANICS,
   ...MONK_ARCHETYPE_MECHANICS,
   ...MONK_UNCHAINED_ARCHETYPE_MECHANICS,
+  ...SKALD_ARCHETYPE_MECHANICS,
 };
 
 export function listArchetypes(className: string): ArchetypeDef[] {

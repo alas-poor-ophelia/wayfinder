@@ -177,6 +177,46 @@ describe("monk archetypes", () => {
   });
 });
 
+describe("skald archetypes", () => {
+  const skald = (level: number, ...archetypeKeys: string[]) => ({
+    className: "Skald",
+    level,
+    ...(archetypeKeys.length ? { archetypeKeys } : {}),
+  });
+
+  it("spell-warrior: raging song re-keyed to the weapon-song pool, QA granted", () => {
+    const fx = resolveArchetypeEffects([skald(3, "spell-warrior")]);
+    expect(fx.suppressedResources[0].has("ragingSong")).toBe(true);
+    const song = fx.addedResources.find((r) => r.def.id === "weaponSongRounds");
+    expect(song).toBeDefined();
+    // Adarin's exact numbers: skald 3, cha +6 → 3 + 6 + 2·2 = 13
+    expect(song!.def.max(3, { ...ZERO, cha: 6 })).toBe(13);
+    expect(fx.addedQuickActions).toContainEqual({ id: "weaponSong", level: 3 });
+    // Greater Counterspell replaces spell kenning, NOT the spells feature
+    expect(fx.removedSpellcastingClassKeys.size).toBe(0);
+  });
+
+  it("elegist (partial): whole raging-song pool auto-suppressed by the graph", () => {
+    const fx = resolveArchetypeEffects([skald(4, "elegist")]);
+    expect(fx.suppressedResources[0].has("ragingSong")).toBe(true);
+    expect(fx.addedResources).toHaveLength(0);
+  });
+
+  it("bacchanal (partial): versatile performance QA auto-suppressed by the graph", () => {
+    const fx = resolveArchetypeEffects([skald(4, "bacchanal")]);
+    expect(fx.suppressedQuickActions[0].has("versatilePerformance")).toBe(true);
+    // raging song untouched — bacchanal keeps it
+    expect(fx.suppressedResources[0].has("ragingSong")).toBe(false);
+  });
+
+  it("inspired-rage refs never suppress the rounds pool (song types are not the pool)", () => {
+    // twilight-speaker replaces inspired rage (unmatched ref) but keeps
+    // raging song itself
+    const fx = resolveArchetypeEffects([skald(4, "twilight-speaker")]);
+    expect(fx.suppressedResources[0].has("ragingSong")).toBe(false);
+  });
+});
+
 describe("catalog surface", () => {
   it("lists 47 Paladin archetypes, none for unknown classes", () => {
     expect(listArchetypes("Paladin")).toHaveLength(47);
@@ -186,6 +226,10 @@ describe("catalog surface", () => {
   it("lists both monk catalogs independently", () => {
     expect(listArchetypes("Monk")).toHaveLength(56);
     expect(listArchetypes("Monk (Unchained)")).toHaveLength(14);
+  });
+
+  it("lists 26 Skald archetypes", () => {
+    expect(listArchetypes("Skald")).toHaveLength(26);
   });
 
   it("partial-mechanics flag: curated five are full, others partial", () => {
