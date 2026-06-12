@@ -40,6 +40,17 @@ export function parseClassTable(html: string, classKey: string): BaseClassFeatur
     return [];
   }
 
+  // Columns beyond Special are a spell grid only when the header row says
+  // so with ordinal spell-level headers ("1st", "2nd", ...). Monk-style
+  // tables put named columns there (Flurry of Blows Attack Bonus, AC Bonus)
+  // which used to mint a phantom spells@1 feature.
+  const headerCells = rows[headerRow]
+    .querySelectorAll("td, th")
+    .map((c) => cleanCell(c.innerHTML));
+  const hasSpellGrid = headerCells
+    .slice(specialCol + 1)
+    .some((c) => /^\d+(?:st|nd|rd|th)$/i.test(c));
+
   const byId = new Map<string, BaseClassFeature>();
   let spellsLevel = 0;
   for (let r = headerRow + 1; r < rows.length; r++) {
@@ -55,8 +66,8 @@ export function parseClassTable(html: string, classKey: string): BaseClassFeatur
       if (!byId.has(id)) byId.set(id, { id, name, level });
     }
 
-    // Any non-dash cell beyond the header's columns belongs to a spell grid.
-    if (!spellsLevel) {
+    // First level where any spell-grid cell holds a real slot entry.
+    if (hasSpellGrid && !spellsLevel) {
       const spellCells = cells.slice(specialCol + 1);
       if (spellCells.some((c) => !isDash(c))) spellsLevel = level;
     }

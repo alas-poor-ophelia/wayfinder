@@ -7,8 +7,12 @@
 import { describe, expect, it } from "vitest";
 import { parseFeatureRefs } from "../../../scripts/scrape-archetypes/parse-replaces";
 import paladinJson from "../../../src/data/archetypes/paladin.json";
+import monkJson from "../../../src/data/archetypes/monk.json";
+import monkUnchainedJson from "../../../src/data/archetypes/monk-unchained.json";
 
 const BASE = paladinJson.baseFeatures;
+const MONK_BASE = monkJson.baseFeatures;
+const MONK_U_BASE = monkUnchainedJson.baseFeatures;
 
 describe("parseFeatureRefs: aonprd Paladin corpus", () => {
   it("simple template (Stonelord: Stonestrike)", () => {
@@ -122,6 +126,71 @@ describe("parseFeatureRefs: aonprd Paladin corpus", () => {
       { feature: "channel-positive-energy", raw: "channel positive energy" },
     ]);
     expect(alters).toEqual([{ feature: "smite-evil", raw: "smite evil" }]);
+  });
+});
+
+describe("parseFeatureRefs: aonprd Monk corpus (class-table rider aliases)", () => {
+  it("'ki pool' aliases to the core table's ki-pool-magic slug (Martial Artist: Exploit Weakness)", () => {
+    const { replaces } = parseFeatureRefs(
+      "This ability replaces ki pool.",
+      MONK_BASE
+    );
+    expect(replaces).toEqual([{ feature: "ki-pool-magic", raw: "ki pool" }]);
+  });
+
+  it("core flurry needs no alias (Master of Many Styles: Fuse Style)", () => {
+    const { replaces } = parseFeatureRefs(
+      "This ability replaces flurry of blows.",
+      MONK_BASE
+    );
+    expect(replaces).toEqual([
+      { feature: "flurry-of-blows", raw: "flurry of blows" },
+    ]);
+  });
+
+  it("unchained 'flurry of blows' aliases to flurry-of-blows-bonus-attack; ki pool is direct (Sage Counselor: Feinting Flurry)", () => {
+    const { replaces, alters } = parseFeatureRefs(
+      "This ability alters flurry of blows and ki pool, and it replaces the bonus feat gained at 10th level.",
+      MONK_U_BASE
+    );
+    expect(alters).toEqual([
+      { feature: "flurry-of-blows-bonus-attack", raw: "flurry of blows" },
+      { feature: "ki-pool", raw: "ki pool" },
+    ]);
+    expect(replaces).toEqual([
+      {
+        feature: "bonus-feat",
+        levels: [10],
+        raw: "the bonus feat gained at 10th level",
+      },
+    ]);
+  });
+});
+
+describe("scraped monk catalogs integrity", () => {
+  it("monk tables carry no phantom spells feature", () => {
+    // the monk class tables put combat columns (AC Bonus, Flurry) after
+    // Special — the parser used to mint a synthetic spells@1 from them
+    expect(MONK_BASE.some((f) => f.id === "spells")).toBe(false);
+    expect(MONK_U_BASE.some((f) => f.id === "spells")).toBe(false);
+  });
+
+  it("unique ids within each catalog", () => {
+    for (const file of [monkJson, monkUnchainedJson]) {
+      const ids = file.archetypes.map((a) => a.id);
+      expect(new Set(ids).size).toBe(ids.length);
+    }
+  });
+
+  it("base feature tables pin the canonical pool/flurry levels", () => {
+    const core = new Map(MONK_BASE.map((f) => [f.id, f.level]));
+    expect(core.get("ki-pool-magic")).toBe(4);
+    expect(core.get("flurry-of-blows")).toBe(1);
+    expect(core.get("stunning-fist")).toBe(1);
+    const unchained = new Map(MONK_U_BASE.map((f) => [f.id, f.level]));
+    expect(unchained.get("ki-pool")).toBe(3);
+    expect(unchained.get("flurry-of-blows-bonus-attack")).toBe(1);
+    expect(unchained.get("stunning-fist")).toBe(1);
   });
 });
 

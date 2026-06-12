@@ -64,6 +64,10 @@ const FEATURE_ALIASES: Record<string, string> = {
   "divine-spellcasting": "spells",
   spell: "spells",
   "channel-energy": "channel-positive-energy",
+  // The class tables bake column riders into these slugs: core Monk prints
+  // "Ki pool (magic)", unchained Monk "Flurry of blows (bonus attack)".
+  "ki-pool": "ki-pool-magic",
+  "flurry-of-blows": "flurry-of-blows-bonus-attack",
 };
 
 const ORDINAL_RE = /(\d+)(?:st|nd|rd|th)/g;
