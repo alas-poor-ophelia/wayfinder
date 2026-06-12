@@ -108,10 +108,84 @@ describe("resolveArchetypeEffects", () => {
   });
 });
 
+const monkU = (level: number, ...archetypeKeys: string[]) => ({
+  className: "Monk (Unchained)",
+  level,
+  ...(archetypeKeys.length ? { archetypeKeys } : {}),
+});
+
+const ZERO = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
+
+describe("monk archetypes", () => {
+  it("scaled-fist (unchained): AC stat gate, ki pool re-added Cha-based", () => {
+    const fx = resolveArchetypeEffects([monkU(5, "scaled-fist")]);
+    expect(fx.scaledFistAC).toBe(true);
+    expect(fx.suppressedResources[0].has("kiPool")).toBe(true);
+    const ki = fx.addedResources.find((r) => r.def.id === "kiPool");
+    expect(ki?.def.minLevel).toBe(3);
+    // Draconic Might: floor(5/2) + CHA 4 = 6 — WIS is ignored entirely
+    expect(ki!.def.max(5, { ...ZERO, wis: 3, cha: 4 })).toBe(6);
+    expect(ki!.label).toBe("Monk (Unchained) (Scaled Fist)");
+  });
+
+  it("scaled-fist on a CORE monk: unchained mechanics are class-guarded off; graph still runs", () => {
+    const fx = resolveArchetypeEffects([
+      { className: "Monk", level: 5, archetypeKeys: ["scaled-fist"] },
+    ]);
+    // the core catalog lists the same id, but the mechanics carry the
+    // unchained ki timing/formula — partial graph suppression only
+    expect(fx.scaledFistAC).toBe(false);
+    expect(fx.addedResources).toHaveLength(0);
+    expect(fx.suppressedResources[0].has("kiPool")).toBe(false);
+  });
+
+  it("kata-master (core): panache added, stunning fist suppressed via graph, ki alters-ref inert", () => {
+    const fx = resolveArchetypeEffects([
+      { className: "Monk", level: 4, archetypeKeys: ["kata-master"] },
+    ]);
+    expect(fx.suppressedResources[0].has("stunningFist")).toBe(true);
+    const panache = fx.addedResources.find((r) => r.def.id === "panache");
+    expect(panache!.def.max(4, { ...ZERO, cha: 3 })).toBe(3);
+    expect(panache!.def.max(4, { ...ZERO, cha: -2 })).toBe(1); // minimum 1
+    // "This ability modifies ki pool" — alters never suppress
+    expect(fx.suppressedResources[0].has("kiPool")).toBe(false);
+  });
+
+  it("master-of-many-styles (partial, core): flurry quick action auto-suppressed by the graph", () => {
+    const fx = resolveArchetypeEffects([
+      { className: "Monk", level: 3, archetypeKeys: ["master-of-many-styles"] },
+    ]);
+    expect(fx.suppressedQuickActions[0].has("flurryOfBlows")).toBe(true);
+    expect(fx.addedResources).toHaveLength(0);
+  });
+
+  it("black-asp (partial, unchained): stunning fist pool auto-suppressed by the graph", () => {
+    const fx = resolveArchetypeEffects([monkU(3, "black-asp")]);
+    expect(fx.suppressedResources[0].has("stunningFist")).toBe(true);
+  });
+
+  it("legacy class strings resolve against the LONGEST catalog key", () => {
+    // contains both "Monk" and "Monk (Unchained)" — must hit the latter
+    const fx = resolveArchetypeEffects([
+      {
+        className: "Monk (Unchained) variant",
+        level: 5,
+        archetypeKeys: ["scaled-fist"],
+      },
+    ]);
+    expect(fx.scaledFistAC).toBe(true);
+  });
+});
+
 describe("catalog surface", () => {
   it("lists 47 Paladin archetypes, none for unknown classes", () => {
     expect(listArchetypes("Paladin")).toHaveLength(47);
     expect(listArchetypes("Wizard")).toHaveLength(0);
+  });
+
+  it("lists both monk catalogs independently", () => {
+    expect(listArchetypes("Monk")).toHaveLength(56);
+    expect(listArchetypes("Monk (Unchained)")).toHaveLength(14);
   });
 
   it("partial-mechanics flag: curated five are full, others partial", () => {
@@ -122,9 +196,19 @@ describe("catalog surface", () => {
       "gray-paladin",
       "warrior-of-the-holy-light",
     ]) {
-      expect(isPartialMechanics(id), `${id} should be full`).toBe(false);
+      expect(isPartialMechanics(id, "Paladin"), `${id} should be full`).toBe(
+        false
+      );
     }
-    expect(isPartialMechanics("hospitaler")).toBe(true);
-    expect(isPartialMechanics("divine-hunter")).toBe(true);
+    expect(isPartialMechanics("hospitaler", "Paladin")).toBe(true);
+    expect(isPartialMechanics("divine-hunter", "Paladin")).toBe(true);
+  });
+
+  it("partial-mechanics flag is class-scoped: scaled-fist is curated for the unchained monk only", () => {
+    expect(isPartialMechanics("scaled-fist", "Monk (Unchained)")).toBe(false);
+    // the core Monk catalog lists the same id, but the mechanics (unchained
+    // ki timing/formula) were not authored for it
+    expect(isPartialMechanics("scaled-fist", "Monk")).toBe(true);
+    expect(isPartialMechanics("kata-master", "Monk")).toBe(false);
   });
 });

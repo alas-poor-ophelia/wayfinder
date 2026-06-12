@@ -25,4 +25,17 @@ export const CLASS_FEATURE_MECH: Record<string, Record<string, FeatureMech>> = {
     // channel-positive-energy / mercy: the Paladin def has no pools for
     // these today — entries appear when the pools do.
   },
+  // The class tables bake column riders into some slugs (core "Ki pool
+  // (magic)", unchained "Flurry of blows (bonus attack)"); the scraper's
+  // FEATURE_ALIASES resolve refs to them, so the riders appear here too.
+  Monk: {
+    "ki-pool-magic": { resource: "kiPool" },
+    "stunning-fist": { resource: "stunningFist" },
+    "flurry-of-blows": { quickAction: "flurryOfBlows" },
+  },
+  "Monk (Unchained)": {
+    "ki-pool": { resource: "kiPool" },
+    "stunning-fist": { resource: "stunningFist" },
+    "flurry-of-blows-bonus-attack": { quickAction: "flurryOfBlows" },
+  },
 };

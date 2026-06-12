@@ -349,7 +349,7 @@ function ClassesEditor({
                         <span class="ms-config__arch-name" title={a.description}>
                           {a.name}
                         </span>
-                        {isPartialMechanics(a.id) && (
+                        {isPartialMechanics(a.id, a.classKey) && (
                           <span
                             class="ms-config__arch-partial"
                             title="No hand-authored stats yet — replaced pools/actions auto-suppress, but new abilities aren't computed"

@@ -108,6 +108,9 @@ export interface ArchetypeMechanics {
   divineGraceMinLevel?: number;
   /** grants the scaling dodge AC bonus (Virtuous Bravo: Nimble) */
   grantsBravoAC?: boolean;
+  /** monk AC bonus keys off CHA instead of WIS (Scaled Fist: Draconic
+   *  Might rebases every Wis-driven monk calculation onto Cha) */
+  scaledFistAC?: boolean;
 }
 
 export type RaceCategory = "core" | "featured" | "uncommon";

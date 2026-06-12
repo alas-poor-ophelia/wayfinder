@@ -104,6 +104,40 @@ describe("syncClassResources with archetypes", () => {
     expect(ids.filter((x) => x === "layOnHands").length).toBeGreaterThan(0);
   });
 
+  it("scaled fist re-keys the ki pool to CHA on sync (Draconic Might)", () => {
+    const store = makeStore();
+    // wis +2, cha +4 — distinct so the formula source is unambiguous
+    store.setCharacterField("pal", "baseAbilities", {
+      str: 14,
+      dex: 14,
+      con: 12,
+      int: 10,
+      wis: 14,
+      cha: 18,
+    });
+    store.setCharacterField("pal", "classes", [
+      { className: "Monk (Unchained)", level: 5 },
+    ]);
+    store.syncClassResources("pal");
+    const wisKi = store
+      .getCharacter("pal")!
+      .resources.find((r) => r.id === "kiPool");
+    expect(wisKi?.max).toBe(4); // floor(5/2) + wis 2
+
+    store.setCharacterField("pal", "classes", [
+      {
+        className: "Monk (Unchained)",
+        level: 5,
+        archetypeKeys: ["scaled-fist"],
+      },
+    ]);
+    store.syncClassResources("pal");
+    const chaKi = store
+      .getCharacter("pal")!
+      .resources.find((r) => r.id === "kiPool");
+    expect(chaKi?.max).toBe(6); // floor(5/2) + cha 4
+  });
+
   it("unchecking the archetype restores the base pool on the next sync", () => {
     const store = makeStore(5, "stonelord");
     store.syncClassResources("pal");
@@ -135,6 +169,26 @@ describe("syncClassQuickActions with archetypes", () => {
     const restored = store.syncClassQuickActions("pal");
     expect(restored.added).toContain("Smite Evil");
     expect(has("smiteEvil")).toBe(true);
+  });
+
+  it("master of many styles prunes the flurry action on a core monk", () => {
+    const store = makeStore();
+    store.setCharacterField("pal", "classes", [
+      { className: "Monk", level: 3 },
+    ]);
+    store.syncClassQuickActions("pal");
+    const has = () =>
+      (store.getCharacter("pal")!.quickActions ?? []).some(
+        (a) => a.id === "flurryOfBlows"
+      );
+    expect(has()).toBe(true);
+
+    store.setCharacterField("pal", "classes", [
+      { className: "Monk", level: 3, archetypeKeys: ["master-of-many-styles"] },
+    ]);
+    const result = store.syncClassQuickActions("pal");
+    expect(result.removed).toContain("Flurry of Blows");
+    expect(has()).toBe(false);
   });
 
   it("virtuous bravo grants precise strike at 4th, not at 3rd", () => {

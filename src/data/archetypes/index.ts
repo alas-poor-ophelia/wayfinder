@@ -19,10 +19,16 @@ import type { ArchetypeDef, ClassArchetypeFile } from "../../types/archetypes";
 import type { ArchetypeMechanics, ClassResourceDef } from "../types";
 import { CLASS_FEATURE_MECH } from "./feature-map";
 import { PALADIN_ARCHETYPE_MECHANICS } from "./mechanics/paladin";
+import { MONK_ARCHETYPE_MECHANICS } from "./mechanics/monk";
+import { MONK_UNCHAINED_ARCHETYPE_MECHANICS } from "./mechanics/monk-unchained";
 import paladinJson from "./paladin.json";
+import monkJson from "./monk.json";
+import monkUnchainedJson from "./monk-unchained.json";
 
 const FILES: ClassArchetypeFile[] = [
   paladinJson as unknown as ClassArchetypeFile,
+  monkJson as unknown as ClassArchetypeFile,
+  monkUnchainedJson as unknown as ClassArchetypeFile,
 ];
 
 const BY_CLASS = new Map<string, Map<string, ArchetypeDef>>(
@@ -36,14 +42,21 @@ function catalogFor(className: string): Map<string, ArchetypeDef> | undefined {
   const direct = BY_CLASS.get(className);
   if (direct) return direct;
   const lower = className.toLowerCase();
+  // Longest key wins: "Monk (Unchained) something" must resolve to the
+  // unchained catalog even though it also contains "monk".
+  let best: { key: string; map: Map<string, ArchetypeDef> } | undefined;
   for (const [key, map] of BY_CLASS) {
-    if (lower.includes(key.toLowerCase())) return map;
+    if (lower.includes(key.toLowerCase()) && key.length > (best?.key.length ?? 0)) {
+      best = { key, map };
+    }
   }
-  return undefined;
+  return best?.map;
 }
 
 const ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
   ...PALADIN_ARCHETYPE_MECHANICS,
+  ...MONK_ARCHETYPE_MECHANICS,
+  ...MONK_UNCHAINED_ARCHETYPE_MECHANICS,
 };
 
 export function listArchetypes(className: string): ArchetypeDef[] {
@@ -63,9 +76,11 @@ export function getArchetypeMechanics(
   return ARCHETYPE_MECHANICS[id];
 }
 
-/** Scraped def exists but no hand-authored mechanics — auto-suppression only. */
-export function isPartialMechanics(id: string): boolean {
-  return !ARCHETYPE_MECHANICS[id];
+/** Scraped def exists but no hand-authored mechanics — auto-suppression
+ *  only. Class-scoped: "scaled-fist" is curated for Monk (Unchained) but
+ *  partial when the core Monk catalog lists the same id. */
+export function isPartialMechanics(id: string, classKey: string): boolean {
+  return ARCHETYPE_MECHANICS[id]?.classKey !== classKey;
 }
 
 export interface AddedResource {
@@ -93,6 +108,8 @@ export interface ArchetypeEffects {
   removedSpellcastingClassKeys: Set<string>;
   /** Virtuous Bravo Nimble: scaling dodge AC from 3rd level */
   grantsBravoAC: boolean;
+  /** Scaled Fist Draconic Might: monk AC bonus keys off CHA, not WIS */
+  scaledFistAC: boolean;
   classSkillAdds: Set<string>;
   classSkillRemoves: Set<string>;
   /** false when no entry selects any archetype (cheap short-circuit) */
@@ -108,6 +125,7 @@ export function resolveArchetypeEffects(classes: ClassEntry[]): ArchetypeEffects
     divineGraceMinLevel: 0,
     removedSpellcastingClassKeys: new Set<string>(),
     grantsBravoAC: false,
+    scaledFistAC: false,
     classSkillAdds: new Set<string>(),
     classSkillRemoves: new Set<string>(),
     any: false,
@@ -143,7 +161,12 @@ export function resolveArchetypeEffects(classes: ClassEntry[]): ArchetypeEffects
 
       const mechanics = ARCHETYPE_MECHANICS[key];
       if (!mechanics) continue;
-      const label = def ? `${entry.className} (${def.name})` : entry.className;
+      // Mechanics apply only when the key resolves in this entry's catalog
+      // AND was authored for that exact class — "scaled-fist" exists in
+      // BOTH monk catalogs, but its Cha-based ki formula is the unchained
+      // one (core picks fall back to partial graph suppression).
+      if (!def || mechanics.classKey !== def.classKey) continue;
+      const label = `${entry.className} (${def.name})`;
       for (const id of mechanics.removesResources ?? []) {
         effects.suppressedResources[i].add(id);
       }
@@ -171,6 +194,7 @@ export function resolveArchetypeEffects(classes: ClassEntry[]): ArchetypeEffects
         );
       }
       if (mechanics.grantsBravoAC) effects.grantsBravoAC = true;
+      if (mechanics.scaledFistAC) effects.scaledFistAC = true;
       for (const s of mechanics.classSkills?.add ?? []) {
         effects.classSkillAdds.add(s);
       }
