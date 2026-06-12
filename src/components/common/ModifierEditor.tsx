@@ -17,7 +17,8 @@ interface TargetGroup {
   options: TargetOption[];
 }
 
-const TARGET_GROUPS: TargetGroup[] = [
+/** exported for the quick-action effect editor's target dropdown */
+export const TARGET_GROUPS: TargetGroup[] = [
   {
     label: "Armor Class",
     options: [

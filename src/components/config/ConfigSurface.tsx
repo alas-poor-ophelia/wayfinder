@@ -14,6 +14,7 @@ import {
   RuleLinksEditor,
   SkillsEditor,
 } from "./editors";
+import { QuickActionsEditor } from "./QuickActionsEditor";
 
 interface ConfigSurfaceProps {
   plugin: MiniSheetPlugin;
@@ -113,8 +114,15 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
         >
           Sync class pools
         </button>
+        <button
+          class="ms-config__add"
+          onClick={() => store.syncClassQuickActions(character.id)}
+        >
+          Sync class actions
+        </button>
         <div class="ms-config__derived">
-          Flags class skills on existing rows · upserts class resource pools
+          Flags class skills on existing rows · upserts class resource pools ·
+          adds class quick actions (never overwrites your edits)
         </div>
       </section>
 
@@ -139,6 +147,7 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
       <SkillsEditor store={store} character={character} />
       <ResourcesEditor store={store} character={character} />
       <CustomBuffsEditor store={store} character={character} />
+      <QuickActionsEditor app={plugin.app} store={store} character={character} />
       <RuleLinksEditor store={store} character={character} plugin={plugin} />
     </div>
   );

@@ -1,0 +1,345 @@
+// Quick Action Builder (config pane) + icon picker modal.
+// Scoped under .minisheet-config-root except the modal (Obsidian portals
+// modals to document.body, so the picker carries its own class).
+
+.minisheet-config-root {
+  .ms-qa__hint {
+    margin: 0 0 8px;
+    font-size: 0.78em;
+    opacity: 0.7;
+  }
+
+  .ms-qa__list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ms-qa__row {
+    border: 1px solid rgba(202, 151, 89, 0.25);
+    border-radius: 4px;
+    background: rgba(60, 60, 80, 0.15);
+
+    &.is-dragging {
+      opacity: 0.55;
+      border-style: dashed;
+    }
+
+    &.is-drop-target {
+      border-color: var(--ms-gold);
+      box-shadow: 0 0 4px rgba(202, 151, 89, 0.5);
+    }
+  }
+
+  .ms-qa__row-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 6px;
+  }
+
+  .ms-qa__handle {
+    // iPad: pointer drag instead of scroll — touch-action is load-bearing
+    touch-action: none;
+    cursor: grab;
+    width: var(--ms-touch);
+    height: var(--ms-touch);
+    min-width: var(--ms-touch);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    box-shadow: none;
+    font-size: 16px;
+    opacity: 0.6;
+
+    &:active {
+      cursor: grabbing;
+      opacity: 1;
+    }
+  }
+
+  .ms-qa__row-icon {
+    display: flex;
+    width: 22px;
+    height: 22px;
+    color: var(--ms-gold);
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .ms-qa__row-name {
+    flex: 1;
+    text-align: left;
+    border: none;
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+    font-family: "Taroca", sans-serif;
+    font-size: 0.9em;
+    min-height: var(--ms-touch);
+  }
+
+  .ms-qa__eye,
+  .ms-qa__remove {
+    border: none;
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+    min-width: 32px;
+    min-height: var(--ms-touch);
+  }
+
+  .ms-qa__eye.is-off {
+    opacity: 0.45;
+  }
+
+  .ms-qa__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  // --- expand-in-place editor ------------------------------------------
+  .ms-qa__editor {
+    padding: 6px 10px 10px;
+    border-top: 1px solid rgba(202, 151, 89, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ms-qa__subhead {
+    margin-top: 8px;
+    color: var(--ms-gold);
+    font-size: 0.8em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .ms-qa__icon-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: rgba(60, 60, 80, 0.3);
+    border: 1px solid rgba(202, 151, 89, 0.3);
+    cursor: pointer;
+    color: white;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .ms-qa__stage {
+    border-left: 2px solid rgba(202, 151, 89, 0.25);
+    padding-left: 8px;
+    margin: 4px 0;
+  }
+
+  .ms-qa__stage-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+
+    input[type="text"] {
+      flex: 1;
+      min-width: 90px;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.75em;
+    }
+  }
+
+  .ms-qa__stage-no {
+    font-size: 0.78em;
+    opacity: 0.8;
+    white-space: nowrap;
+  }
+
+  .ms-qa__effects {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 4px 0;
+  }
+
+  .ms-qa__effect {
+    background: rgba(60, 60, 80, 0.2);
+    border-radius: 4px;
+    padding: 4px 6px;
+  }
+
+  .ms-qa__effect-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .ms-qa__effect-kind {
+      flex: 1;
+    }
+  }
+
+  .ms-qa__effect-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+
+    input[type="text"] {
+      flex: 1;
+      min-width: 80px;
+    }
+
+    input[type="number"] {
+      width: 52px;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.75em;
+    }
+  }
+
+  .ms-qa__note-text {
+    min-width: 140px;
+  }
+
+  // --- QAValue (number | formula) -------------------------------------
+  .ms-qa__value {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .ms-qa__value-label {
+    font-size: 0.75em;
+    opacity: 0.8;
+  }
+
+  .ms-qa__formula-toggle {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    padding: 0;
+    border-radius: 3px;
+    border: 1px solid rgba(202, 151, 89, 0.4);
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+    font-style: italic;
+    opacity: 0.6;
+
+    &.is-on {
+      background: rgba(140, 30, 30, 0.6);
+      color: white;
+      opacity: 1;
+    }
+  }
+
+  .ms-qa__num {
+    width: 52px;
+  }
+
+  .ms-qa__formula {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+
+    input[type="number"] {
+      width: 44px;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.8em;
+    }
+  }
+
+  .ms-qa__add {
+    align-self: flex-start;
+    font-size: 0.78em;
+    padding: 2px 8px;
+    min-height: 28px;
+  }
+}
+
+// --- icon picker modal (portals to body) --------------------------------
+.ms-icon-picker-modal {
+  max-width: 480px;
+}
+
+.ms-icon-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .ms-icon-picker__search {
+    width: 100%;
+  }
+
+  .ms-icon-picker__count {
+    font-size: 0.75em;
+    opacity: 0.65;
+  }
+
+  .ms-icon-picker__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .ms-icon-picker__cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background: rgba(60, 60, 80, 0.3);
+    cursor: pointer;
+
+    svg {
+      width: 26px;
+      height: 26px;
+      color: var(--text-normal, white);
+    }
+
+    &:hover {
+      border-color: var(--ms-gold, #ca9759);
+    }
+
+    &.is-current {
+      border-color: var(--ms-red, #8b0000);
+      box-shadow: 0 0 4px rgba(139, 0, 0, 0.7);
+    }
+  }
+
+  .ms-icon-picker__credit {
+    font-size: 0.7em;
+    opacity: 0.6;
+  }
+}
