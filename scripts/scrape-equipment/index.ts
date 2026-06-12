@@ -12,7 +12,9 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { networkFetchCount } from "./fetch";
+import { scrapeArmorAbilities, scrapeWeaponAbilities } from "./parse-abilities";
 import { scrapeArmor } from "./parse-armor";
+import { scrapeMagicItems } from "./parse-magic";
 import { scrapeWeapons } from "./parse-weapons";
 
 const OUT_DIR = join(
@@ -42,8 +44,17 @@ if (what === "armor" || what === "all") {
   console.log("scraping armor...");
   writeJson("armor.json", await scrapeArmor());
 }
-if (!["weapons", "armor", "all"].includes(what)) {
-  console.error(`unknown target "${what}" — use weapons|armor|all`);
+if (what === "abilities" || what === "all") {
+  console.log("scraping weapon/armor special abilities...");
+  writeJson("weapon-abilities.json", await scrapeWeaponAbilities());
+  writeJson("armor-abilities.json", await scrapeArmorAbilities());
+}
+if (what === "magic" || what === "all") {
+  console.log("scraping magic items (wondrous/rings/rods)...");
+  writeJson("magic-items.json", await scrapeMagicItems());
+}
+if (!["weapons", "armor", "abilities", "magic", "all"].includes(what)) {
+  console.error(`unknown target "${what}" — use weapons|armor|abilities|magic|all`);
   process.exit(1);
 }
 

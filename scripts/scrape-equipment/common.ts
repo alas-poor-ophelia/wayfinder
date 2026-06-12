@@ -24,7 +24,7 @@ export function isDash(s: string): boolean {
 export function slugify(name: string): string {
   return name
     .toLowerCase()
-    .replace(/[^a-z0-9+]+/g, "-")
+    .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
 
@@ -94,4 +94,26 @@ export function parseSource(block: string): string {
 export function parseDetailField(block: string, label: string): string {
   const m = new RegExp(`<b>${label}</b>\\s*([^;<]+)`).exec(block);
   return m ? cleanCell(m[1]) : "";
+}
+
+/** "CL 10th" → 10 (0 when absent). */
+export function parseCasterLevel(block: string): number {
+  const m = /<b>CL<\/b>\s*(\d+)/.exec(block);
+  return m ? Number(m[1]) : 0;
+}
+
+/** Full Description section text (up to the next framing header). */
+export function parseDescription(block: string): string {
+  const m = /<h3 class="framing">Description<\/h3>(.*?)(?:<h3 class="framing">|$)/s.exec(
+    block
+  );
+  return m ? cleanCell(m[1]) : "";
+}
+
+/** Word-boundary truncation for bundled short descriptions. */
+export function capText(s: string, max = 280): string {
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max - 1);
+  const space = cut.lastIndexOf(" ");
+  return `${cut.slice(0, space > max * 0.6 ? space : max - 1)}…`;
 }

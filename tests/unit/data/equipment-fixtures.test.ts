@@ -67,7 +67,7 @@ describe("equipment catalog: weapons.json", () => {
 
   it("every weapon has a well-formed id and name", () => {
     for (const w of weapons) {
-      expect(w.id, w.name).toMatch(/^[a-z0-9+-]+$/);
+      expect(w.id, w.name).toMatch(/^[a-z0-9-]+$/);
       expect(w.name.length).toBeGreaterThan(0);
     }
   });

@@ -62,7 +62,8 @@ export interface BaseArmorDef {
 export interface ItemAbilityDef {
   id: string;
   name: string;
-  appliesTo: "weapon" | "melee" | "ranged" | "armor" | "shield";
+  /** "weapon" = both melee and ranged; "armor-or-shield" = both lists */
+  appliesTo: "weapon" | "melee" | "ranged" | "armor" | "shield" | "armor-or-shield";
   /** +N effective bonus cost; null when flat-priced */
   bonusEquivalent: number | null;
   /** flat gp adder; null when bonus-equivalent priced */
