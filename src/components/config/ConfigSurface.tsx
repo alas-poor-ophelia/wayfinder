@@ -2,7 +2,9 @@ import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord, ClassEntry } from "../../types/character";
 import { ABILITY_KEYS, type AbilityKey } from "../../types/character";
+import { Fragment } from "preact";
 import { CLASS_NAMES, getClassStats, totalBab, totalLevel } from "../../calc/class-stats";
+import { isPartialMechanics, listArchetypes } from "../../data/archetypes";
 import { findRaceByName, getRaceData, RACE_DATA, RACE_KEYS } from "../../data/races";
 import type { RaceData } from "../../data/types";
 import { NumberField, SelectField, TextField } from "../common/fields";
@@ -122,7 +124,8 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
         </button>
         <div class="ms-config__derived">
           Flags class skills on existing rows · upserts class resource pools ·
-          adds class quick actions (never overwrites your edits)
+          adds class quick actions (never overwrites your edits;
+          archetype-replaced pools &amp; actions are removed on sync)
         </div>
       </section>
 
@@ -277,44 +280,90 @@ function ClassesEditor({
       <h3 class="ms-config__section-title">Classes &amp; levels</h3>
       {classes.map((entry, idx) => {
         const stats = getClassStats(entry.className);
+        const archetypes = listArchetypes(entry.className);
+        const selected = entry.archetypeKeys ?? [];
         return (
-          <div class="ms-config__class-row" key={idx}>
-            <select
-              class="ms-field__input dropdown"
-              value={entry.className}
-              onChange={(e) =>
-                update(idx, {
-                  className: (e.target as HTMLSelectElement).value,
-                })
-              }
-            >
-              {CLASS_NAMES.map((name) => (
-                <option key={name} value={name} selected={name === entry.className}>
-                  {name}
-                </option>
-              ))}
-            </select>
-            <input
-              class="ms-field__input ms-field__input--number"
-              type="number"
-              min={0}
-              value={entry.level}
-              onInput={(e) => {
-                const n = Number((e.target as HTMLInputElement).value);
-                if (!Number.isNaN(n)) update(idx, { level: n });
-              }}
-            />
-            <span class="ms-config__class-stats">
-              {stats ? `${stats.hitDie} · BAB ×${stats.bab}` : "—"}
-            </span>
-            <button
-              class="ms-config__remove"
-              aria-label={`Remove ${entry.className}`}
-              onClick={() => onChange(classes.filter((_, i) => i !== idx))}
-            >
-              ✕
-            </button>
-          </div>
+          <Fragment key={idx}>
+            <div class="ms-config__class-row">
+              <select
+                class="ms-field__input dropdown"
+                value={entry.className}
+                onChange={(e) =>
+                  update(idx, {
+                    className: (e.target as HTMLSelectElement).value,
+                  })
+                }
+              >
+                {CLASS_NAMES.map((name) => (
+                  <option key={name} value={name} selected={name === entry.className}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+              <input
+                class="ms-field__input ms-field__input--number"
+                type="number"
+                min={0}
+                value={entry.level}
+                onInput={(e) => {
+                  const n = Number((e.target as HTMLInputElement).value);
+                  if (!Number.isNaN(n)) update(idx, { level: n });
+                }}
+              />
+              <span class="ms-config__class-stats">
+                {stats ? `${stats.hitDie} · BAB ×${stats.bab}` : "—"}
+              </span>
+              <button
+                class="ms-config__remove"
+                aria-label={`Remove ${entry.className}`}
+                onClick={() => onChange(classes.filter((_, i) => i !== idx))}
+              >
+                ✕
+              </button>
+            </div>
+            {archetypes.length > 0 && (
+              <details class="ms-config__arch">
+                <summary class="ms-config__arch-summary">
+                  Archetypes
+                  {selected.length > 0 && (
+                    <span class="ms-config__arch-count">{selected.length}</span>
+                  )}
+                </summary>
+                <div class="ms-config__arch-list">
+                  {archetypes.map((a) => {
+                    const checked = selected.includes(a.id);
+                    return (
+                      <label class="ms-config__arch-row" key={a.id}>
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => {
+                            const next = checked
+                              ? selected.filter((k) => k !== a.id)
+                              : [...selected, a.id];
+                            update(idx, {
+                              archetypeKeys: next.length > 0 ? next : undefined,
+                            });
+                          }}
+                        />
+                        <span class="ms-config__arch-name" title={a.description}>
+                          {a.name}
+                        </span>
+                        {isPartialMechanics(a.id) && (
+                          <span
+                            class="ms-config__arch-partial"
+                            title="No hand-authored stats yet — replaced pools/actions auto-suppress, but new abilities aren't computed"
+                          >
+                            partial
+                          </span>
+                        )}
+                      </label>
+                    );
+                  })}
+                </div>
+              </details>
+            )}
+          </Fragment>
         );
       })}
       <button

@@ -117,6 +117,86 @@
   white-space: nowrap;
 }
 
+/* Per-class archetype picker: collapsed by default, checklist inside.
+   45px touch rows on tablet; the 47-entry Paladin list scrolls. */
+.ms-config__arch {
+  margin: -2px 0 8px;
+  padding-left: 4px;
+}
+
+.ms-config__arch-summary {
+  font-family: "Taroca", sans-serif;
+  font-size: 0.75em;
+  color: var(--text-muted);
+  cursor: pointer;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .is-tablet & {
+    min-height: 45px;
+  }
+
+  &:hover {
+    color: var(--text-normal);
+  }
+}
+
+.ms-config__arch-count {
+  background: var(--ms-red);
+  color: var(--text-on-accent, #fff);
+  border-radius: 8px;
+  font-size: 0.9em;
+  line-height: 1;
+  padding: 2px 6px;
+}
+
+.ms-config__arch-list {
+  max-height: 240px;
+  overflow-y: auto;
+  border-left: 1px solid var(--background-modifier-border);
+  margin-left: 2px;
+  padding-left: 6px;
+}
+
+.ms-config__arch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  cursor: pointer;
+
+  .is-tablet & {
+    min-height: 45px;
+  }
+
+  input[type="checkbox"] {
+    flex-shrink: 0;
+    margin: 0;
+  }
+}
+
+.ms-config__arch-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8em;
+}
+
+.ms-config__arch-partial {
+  flex-shrink: 0;
+  font-family: "Taroca", sans-serif;
+  font-size: 0.65em;
+  color: var(--ms-gold);
+  border: 1px solid var(--ms-gold);
+  border-radius: 7px;
+  padding: 1px 5px;
+  line-height: 1.2;
+}
+
 .ms-config__add {
   min-height: 32px;
 }
