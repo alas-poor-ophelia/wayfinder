@@ -31,3 +31,22 @@ descriptively.
 
 Product Identity (character names, deities, setting lore, artwork) is not
 reproduced in this repository.
+
+# Icon Attribution
+
+The icon set bundled in `src/data/icons/registry.ts` (generated from
+`assets/icons/rpgawesome-webfont.svg`) contains icons created by the
+**game-icons.net** contributors — notably Lorc, Delapouite, and others —
+licensed under **Creative Commons Attribution 3.0 Unported (CC BY 3.0)**,
+<https://creativecommons.org/licenses/by/3.0/> (full text in
+`CC-BY-3.0.txt` in this directory). Source: <https://game-icons.net>.
+
+The icons reach this project via **RPG Awesome**
+(<https://github.com/nagoshiashumari/Rpg-Awesome>), a curated icon font of
+the game-icons.net set, © 2014 Daniela Howe, distributed under the
+BSD 3-Clause License (`RPG-AWESOME-LICENSE.txt` in this directory).
+
+The ten icons under `assets/icons/legacy/` are likewise game-icons.net
+icons (CC BY 3.0) carried over from the original MiniSheet sheet.
+
+Attribution is also displayed in-app in the Quick Action icon picker.

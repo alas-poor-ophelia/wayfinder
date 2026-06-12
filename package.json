@@ -10,6 +10,7 @@
     "build:prod": "bun run build:css && bun esbuild.config.mjs production",
     "build:watch": "bun esbuild.config.mjs --watch",
     "deploy": "bun run build && bun scripts/deploy.mjs",
+    "gen:icons": "bun scripts/generate-icons.mjs",
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
