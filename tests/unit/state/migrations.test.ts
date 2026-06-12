@@ -173,3 +173,42 @@ describe("migrateData v8 -> v9 (Scaled Fist stamped onto legacy monks)", () => {
     expect(out.characters![0].classes[0].archetypeKeys).toBeUndefined();
   });
 });
+
+describe("migrateData v9 -> v10 (Spell Warrior stamped onto weapon-song skalds)", () => {
+  it("stamps spell-warrior when a weaponSongRounds pool is present", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.classes = [
+      { className: "Paladin", level: 5, archetypeKeys: ["virtuous-bravo"] },
+      { className: "Skald", level: 3 },
+    ];
+    c.resources = [
+      { id: "weaponSongRounds", name: "Weapon Song", current: 13, max: 13 },
+    ];
+    const out = migrateData({ schemaVersion: 9, characters: [c] });
+    const classes = out.characters![0].classes;
+    expect(classes[1].archetypeKeys).toEqual(["spell-warrior"]);
+    expect(classes[0].archetypeKeys).toEqual(["virtuous-bravo"]);
+  });
+
+  it("skalds without weapon-song evidence are untouched", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.classes = [{ className: "Skald", level: 3 }];
+    c.resources = [
+      { id: "ragingSong", name: "Raging Song", current: 10, max: 10 },
+    ];
+    const out = migrateData({ schemaVersion: 9, characters: [c] });
+    expect(out.characters![0].classes[0].archetypeKeys).toBeUndefined();
+  });
+
+  it("user-curated skald selections are never overwritten", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.classes = [
+      { className: "Skald", level: 3, archetypeKeys: ["elegist"] },
+    ];
+    c.resources = [
+      { id: "weaponSongRounds", name: "Weapon Song", current: 13, max: 13 },
+    ];
+    const out = migrateData({ schemaVersion: 9, characters: [c] });
+    expect(out.characters![0].classes[0].archetypeKeys).toEqual(["elegist"]);
+  });
+});

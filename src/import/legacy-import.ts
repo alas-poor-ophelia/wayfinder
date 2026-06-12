@@ -682,6 +682,23 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   }
   record.resources = resources;
 
+  // A weapon-song pool on a skald can only mean Spell Warrior (weapon song
+  // IS that archetype's raging song; the legacy sheet never recorded the
+  // archetype) — infer it so a later class-resource sync re-keys this pool
+  // instead of granting the inspired-rage ragingSong pool she traded away.
+  if (resources.some((r) => r.id === "weaponSongRounds")) {
+    const skaldEntry = record.classes.find((c) =>
+      c.className.toLowerCase().includes("skald")
+    );
+    if (skaldEntry && !skaldEntry.archetypeKeys) {
+      skaldEntry.archetypeKeys = ["spell-warrior"];
+      warnings.push(
+        `Weapon Song pool on a skald: inferred the Spell Warrior archetype ` +
+          `(weapon song is that archetype's raging song)`
+      );
+    }
+  }
+
   // --- spell slots ---
   // With a spellbook note, the full spellbook replaces the old fallback
   // pools (slot maxima are computed, remaining counts live in the

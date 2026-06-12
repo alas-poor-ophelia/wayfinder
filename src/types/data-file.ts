@@ -151,7 +151,10 @@ export const DEFAULT_DATA: MiniSheetData = {
   // monk entries without archetypeKeys get ["scaled-fist"] stamped so
   // existing characters keep their CHA-based AC (real migration —
   // src/state/migrations.ts)
-  schemaVersion: 9,
+  // v10: skalds with a weapon-song pool/quick-action get ["spell-warrior"]
+  // stamped (weapon song is that archetype's raging song), so resource
+  // sync re-keys the pool instead of granting ragingSong (real migration)
+  schemaVersion: 10,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

@@ -33,6 +33,7 @@ export function migrateData(raw: Partial<MiniSheetData>): Partial<MiniSheetData>
   if (version < 7) data = migrateToV7(data);
   // (v8 was schema-forward only: ClassEntry.archetypeKeys, no code.)
   if (version < 9) data = migrateToV9(data);
+  if (version < 10) data = migrateToV10(data);
   return data;
 }
 
@@ -206,6 +207,35 @@ function migrateCharacterToV9(record: CharacterRecord): CharacterRecord {
   const classes = record.classes.map((entry) =>
     /\bmonk\b/i.test(entry.className) && entry.level > 0 && !entry.archetypeKeys
       ? { ...entry, archetypeKeys: ["scaled-fist"] }
+      : entry
+  );
+  return { ...record, classes };
+}
+
+/**
+ * v10: a weapon-song POOL on a skald means the Spell Warrior archetype —
+ * weapon song IS that archetype's raging song, and the legacy sheet never
+ * recorded it. Stamping the key keeps a later class-resource sync
+ * re-keying the existing weaponSongRounds pool instead of granting the
+ * inspired-rage ragingSong pool the character traded away. Only the pool
+ * counts as evidence: the weaponSong QUICK ACTION is part of the default
+ * v6-seeded set every character carries, so it proves nothing. Skald
+ * entries with archetypeKeys are user-curated and never touched.
+ */
+function migrateToV10(raw: Partial<MiniSheetData>): Partial<MiniSheetData> {
+  if (!raw.characters) return raw;
+  return { ...raw, characters: raw.characters.map(migrateCharacterToV10) };
+}
+
+function migrateCharacterToV10(record: CharacterRecord): CharacterRecord {
+  if (!record.classes?.length) return record;
+  const hasWeaponSongPool = record.resources?.some(
+    (r) => r.id === "weaponSongRounds"
+  );
+  if (!hasWeaponSongPool) return record;
+  const classes = record.classes.map((entry) =>
+    /\bskald\b/i.test(entry.className) && entry.level > 0 && !entry.archetypeKeys
+      ? { ...entry, archetypeKeys: ["spell-warrior"] }
       : entry
   );
   return { ...record, classes };
