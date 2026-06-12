@@ -22,6 +22,7 @@ import {
 } from "../types/inventory";
 import { computeAll } from "../calc";
 import { evaluateResourceFormula } from "../calc/resources";
+import { resolveArchetypeEffects } from "../data/archetypes";
 import { classQuickActionIds, classResources, unionClassSkills } from "../data/classes";
 import { getCatalogQuickAction } from "../data/quick-actions";
 import { getRaceData } from "../data/races";
@@ -366,14 +367,17 @@ export class MiniSheetStore {
   /** Upsert resource pools granted by the character's classes, with maxima
    *  recomputed from current level + ability mods, then recompute every
    *  formula-driven pool. Existing pools keep their `current` (clamped);
-   *  unknown manual pools are never touched. */
+   *  unknown manual pools are never touched. Pools an archetype suppresses
+   *  are pruned — unless re-granted (altered formulas re-add the same id),
+   *  user-formula'd, or item-granted. */
   syncClassResources(id: string): void {
     const record = this.getCharacter(id);
     if (!record) throw new Error(`No character with id "${id}"`);
     const computed = computeAll(record);
     const mods = computed.mods;
-    const resources = [...record.resources];
-    for (const pool of classResources(record.classes, mods)) {
+    const suggested = classResources(record.classes, mods);
+    let resources = [...record.resources];
+    for (const pool of suggested) {
       const idx = resources.findIndex((r) => r.id === pool.id);
       if (idx === -1) {
         resources.push({
@@ -392,6 +396,20 @@ export class MiniSheetStore {
         };
       }
     }
+    const fx = resolveArchetypeEffects(record.classes);
+    if (fx.any) {
+      const grantedIds = new Set(suggested.map((p) => p.id));
+      const suppressed = new Set(
+        fx.suppressedResources.flatMap((s) => [...s])
+      );
+      resources = resources.filter(
+        (pool) =>
+          !suppressed.has(pool.id) ||
+          grantedIds.has(pool.id) ||
+          pool.formula !== undefined ||
+          pool.kind === "item"
+      );
+    }
     // user-defined formulas win over (and extend beyond) class defs
     const ctx = { classes: record.classes, mods, scores: computed.scores };
     for (let i = 0; i < resources.length; i++) {
@@ -406,15 +424,32 @@ export class MiniSheetStore {
   /** Add quick actions granted by the character's classes. INSERT-ONLY:
    *  an action the character already has (by id) is never touched, so
    *  user edits and removals-then-re-adds always win. Removed-on-purpose
-   *  actions WILL come back — that's the explicit point of the button. */
-  syncClassQuickActions(id: string): { added: string[] } {
+   *  actions WILL come back — that's the explicit point of the button.
+   *  Exception: actions an archetype suppresses are pruned (re-add is one
+   *  sync away after unchecking the archetype). */
+  syncClassQuickActions(id: string): { added: string[]; removed: string[] } {
     const record = this.getCharacter(id);
     if (!record) throw new Error(`No character with id "${id}"`);
-    const existing = record.quickActions ?? [];
+    let existing = record.quickActions ?? [];
+    const removed: string[] = [];
+    const fx = resolveArchetypeEffects(record.classes);
+    const granted = new Set(classQuickActionIds(record.classes));
+    if (fx.any) {
+      const suppressed = new Set(
+        fx.suppressedQuickActions.flatMap((s) => [...s])
+      );
+      existing = existing.filter((a) => {
+        if (suppressed.has(a.id) && !granted.has(a.id)) {
+          removed.push(a.name);
+          return false;
+        }
+        return true;
+      });
+    }
     const present = new Set(existing.map((a) => a.id));
     const added: string[] = [];
     const appended: QuickActionDef[] = [];
-    for (const actionId of classQuickActionIds(record.classes)) {
+    for (const actionId of granted) {
       if (present.has(actionId)) continue;
       // the crane FD variant stands in for plain fighting defensively
       if (actionId === "fightingDefensively" && present.has("fightingDefensivelyCrane")) {
@@ -425,9 +460,9 @@ export class MiniSheetStore {
       appended.push(def);
       added.push(def.name);
     }
-    if (appended.length) {
+    if (appended.length || removed.length) {
       this.updateCharacter(id, { quickActions: [...existing, ...appended] });
     }
-    return { added };
+    return { added, removed };
   }
 }
