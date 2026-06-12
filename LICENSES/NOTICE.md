@@ -1,9 +1,16 @@
 # Open Game Content Notice
 
 The static game data bundled in `src/data/` (class statistics, race
-statistics, and resource-pool formulas) is **Open Game Content** as defined
-by the Open Game License 1.0a (see `OGL-1.0a.txt` in this directory), used
-in accordance with Section 15 of that license.
+statistics, resource-pool formulas, and the equipment catalog in
+`src/data/equipment/`) is **Open Game Content** as defined by the Open
+Game License 1.0a (see `OGL-1.0a.txt` in this directory), used in
+accordance with Section 15 of that license.
+
+The equipment catalog (weapons, armor, magic item statistics) was compiled
+from **Archives of Nethys** (<https://www.aonprd.com>), which publishes
+this Open Game Content under the same license. Only Open Game Content
+(item names, statistics, and mechanical descriptions) is reproduced;
+Product Identity is excluded.
 
 This plugin is not published, endorsed, or specifically approved by Paizo.
 The "Pathfinder" name is a trademark of Paizo Inc. and is used here only
@@ -21,6 +28,8 @@ descriptively.
   Publishing, LLC; Author: Jason Bulmahn.
 - Pathfinder Roleplaying Game Ultimate Magic © 2011, Paizo Publishing, LLC.
 - Pathfinder Roleplaying Game Ultimate Combat © 2011, Paizo Publishing, LLC.
+- Pathfinder Roleplaying Game Ultimate Equipment © 2012, Paizo
+  Publishing, LLC.
 - Pathfinder Roleplaying Game Advanced Race Guide © 2012, Paizo
   Publishing, LLC.
 - Pathfinder Roleplaying Game Advanced Class Guide © 2014, Paizo Inc.
