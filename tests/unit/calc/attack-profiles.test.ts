@@ -85,6 +85,47 @@ describe("computeAll attackProfiles", () => {
     expect(armed.attackProfiles.melee).toHaveLength(2);
   });
 
+  it("shuriken-style flags flow through to the ranged profile math", () => {
+    const c = withItems([
+      weaponItem({
+        name: "Shuriken (5)",
+        weapon: {
+          kind: "ranged",
+          damageDie: "1d2",
+          critRange: "20",
+          critMult: "2",
+          damageStat: "str",
+          flurry: true,
+        },
+      }),
+    ]);
+    c.baseAbilities.str = 16; // +3
+    const out = computeAll(c);
+    // str rides the damage line, like the legacy built-in Shuriken entry
+    expect(out.attackProfiles.ranged[0].text).toContain("1d2+3");
+  });
+
+  it("rangedTouch toggle swaps the legacy ranged string to the Ray entry", () => {
+    const c = withItems([]);
+    const off = computeAll(c);
+    c.toggles.rangedTouch = true;
+    const on = computeAll(c);
+    expect(off.attacks.ranged).not.toContain("(touch)");
+    expect(on.attacks.ranged).toContain("(touch)");
+    expect(on.attacks.ranged).not.toContain("1d8"); // no weapon dice on a ray
+  });
+
+  it("meleeTouch swaps attacks.melee but never the weapon profiles", () => {
+    const c = withItems([weaponItem({ name: "Longsword" })]);
+    c.toggles.meleeTouch = true;
+    const out = computeAll(c);
+    expect(out.attacks.melee).toContain("(touch)");
+    expect(out.attacks.melee).not.toContain("1d6");
+    // per-weapon profile text keeps the weapon math (touch forced off)
+    expect(out.attackProfiles.melee[0].text).toContain("1d8");
+    expect(out.attackProfiles.melee[0].text).not.toContain("(touch)");
+  });
+
   it("weapon enhancement modifiers flow into the profile text", () => {
     const plain = computeAll(withItems([weaponItem({})]));
     const enhanced = computeAll(

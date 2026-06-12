@@ -531,9 +531,12 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   const seeded = seedQuickActionsFromToggles(importedToggles);
   record.quickActions = seeded.quickActions;
   record.quickActionState = seeded.quickActionState;
+  const importedStyle = selectValue(sheet.rangedAttackStyle, "Longbow", warnings, "rangedAttackStyle");
   record.toggles = {
     ...defaultToggles(),
-    rangedAttackStyle: selectValue(sheet.rangedAttackStyle, "Longbow", warnings, "rangedAttackStyle"),
+    rangedAttackStyle: importedStyle,
+    // the old "Ray" style is now the touch toggle on the ranged block
+    ...(importedStyle === "Ray" ? { rangedTouch: true } : {}),
   };
 
   // --- enhancements ---

@@ -41,6 +41,11 @@ export interface ItemWeaponStats {
   damageDie: string;
   critRange: string; // "20" | "19-20" | "18-20"
   critMult: string; // "2" | "3" | "4"
+  /** thrown-at-hand ranged weapon (shuriken etc.): Str mod adds to damage,
+   *  matching the legacy built-in Shuriken style entry */
+  damageStat?: "str";
+  /** monk weapon: ranged attacks may Flurry of Blows (legacy Shuriken quirk) */
+  flurry?: boolean;
 }
 
 export interface InventoryItem {

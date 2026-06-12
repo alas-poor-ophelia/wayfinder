@@ -88,9 +88,22 @@ export interface AttackInput {
   // --- hardcoded Waveblade / style-table paths below are untouched) -------
   /** melee block weapon (absent = legacy Waveblade constants 1d6/18-20/x2) */
   meleeWeapon?: { damageDie: string; critRange: string; critMult: string };
+  /** melee touch attack (shocking grasp etc.): overrides meleeWeapon with
+   *  the Ray treatment — no weapon dice (bonus-only damage, same quirks),
+   *  20/x2 crit, no stat to damage, "(touch)" tag. Attack-side math
+   *  (str/agile stat, charge, flurry...) is the normal melee block's. */
+  meleeTouch?: boolean;
   /** ranged block weapon (absent = rangedAttackStyle built-ins). Damage
-   *  stat 0 like the Longbow entry; suppresses Shuriken flurry/touch. */
-  rangedWeapon?: { damageDie: string; critRange: string; critMult: string };
+   *  stat 0 like the Longbow entry unless damageStat says otherwise;
+   *  flurry opts ranged back into the legacy Shuriken flurry/precise-strike
+   *  quirks. Never a touch attack. */
+  rangedWeapon?: {
+    damageDie: string;
+    critRange: string;
+    critMult: string;
+    damageStat?: "str";
+    flurry?: boolean;
+  };
 }
 
 export interface AttackStrings {
@@ -548,16 +561,19 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
   };
 
   // MELEE ATTACK (legacy: WAVEBLADE)
+  const meleeTouch = input.meleeTouch || false;
   const meleeAttackStat = flags.agileWeapon && stats.dex > stats.str ? stats.dex : stats.str;
   const meleeDamageStat = flags.agileWeapon && stats.dex > stats.str ? stats.dex : stats.str;
 
   const meleeAttack = createWeaponAttack({
     ...baseParams,
-    damageDie: getEnlargedDamageDie(input.meleeWeapon?.damageDie ?? "1d6", sizeAdjust),
-    critRange: input.meleeWeapon?.critRange ?? "18-20",
-    critMultiplier: input.meleeWeapon?.critMult ?? "2",
+    damageDie: meleeTouch
+      ? ""
+      : getEnlargedDamageDie(input.meleeWeapon?.damageDie ?? "1d6", sizeAdjust),
+    critRange: meleeTouch ? "20" : input.meleeWeapon?.critRange ?? "18-20",
+    critMultiplier: meleeTouch ? "2" : input.meleeWeapon?.critMult ?? "2",
     attackStat: meleeAttackStat,
-    damageStat: meleeDamageStat,
+    damageStat: meleeTouch ? 0 : meleeDamageStat,
     enhancementBonus: enhancements.melee,
     atkAdjust: adjustments.atk,
     dmgAdjust: adjustments.dmg,
@@ -578,7 +594,13 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     true,
     input.flurryAttacks
   );
-  const meleeAttackStrings = formatAttackStrings(meleeAttack.attackBonus, meleeAttack.damageString, meleeAttack.critInfo, meleeAttacks);
+  const meleeAttackStrings = formatAttackStrings(
+    meleeAttack.attackBonus,
+    meleeAttack.damageString,
+    meleeAttack.critInfo,
+    meleeAttacks,
+    meleeTouch
+  );
 
   // RANGED ATTACK
   const rangedWeaponProps = input.rangedWeapon
@@ -587,11 +609,13 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
         damageDie: input.rangedWeapon.damageDie,
         critRange: input.rangedWeapon.critRange,
         critMult: input.rangedWeapon.critMult,
-        damageStat: 0,
+        damageStat: input.rangedWeapon.damageStat === "str" ? stats.str : 0,
         touchAttack: false,
       }
     : getRangedWeaponProperties(options.rangedStyle, stats);
-  const canUseFlurryForRanged = !input.rangedWeapon && options.rangedStyle === "Shuriken";
+  const canUseFlurryForRanged = input.rangedWeapon
+    ? Boolean(input.rangedWeapon.flurry)
+    : options.rangedStyle === "Shuriken";
 
   const rangedAttack = createWeaponAttack({
     ...baseParams,

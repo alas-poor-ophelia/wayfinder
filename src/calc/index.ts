@@ -309,7 +309,13 @@ export function computeAll(
     preciseStrike: qa ? false : character.toggles.preciseStrike,
     doublePreciseStrike: qa ? false : character.toggles.doublePreciseStrike,
     flanking: qa ? false : character.toggles.flanking,
-    rangedAttackStyle: character.toggles.rangedAttackStyle,
+    // touch modes: ranged rides the legacy Ray entry, melee its meleeTouch
+    // twin — touch attack, bonus-only damage (smite double-count quirk
+    // included in both)
+    rangedAttackStyle: character.toggles.rangedTouch
+      ? "Ray"
+      : character.toggles.rangedAttackStyle,
+    meleeTouch: character.toggles.meleeTouch ?? false,
     weaponSong: qa ? "Off" : character.toggles.weaponSong,
     ...(qa
       ? {
@@ -347,12 +353,19 @@ export function computeAll(
     (i) => i.type === "Weapon" && i.equipped && i.weapon
   );
   const attackProfiles: ComputedCharacter["attackProfiles"] = {
+    // per-weapon profiles always show the WEAPON math: touch mode is
+    // forced off (touch overrides meleeWeapon; ranged is immune already —
+    // rangedWeapon takes precedence over the Ray style)
     melee: equippedWeapons
       .filter((i) => i.weapon!.kind === "melee")
       .map((i) => ({
         id: i.id,
         name: i.name,
-        text: calculateAttackStrings({ ...attackInput, meleeWeapon: i.weapon! }).melee,
+        text: calculateAttackStrings({
+          ...attackInput,
+          meleeTouch: false,
+          meleeWeapon: i.weapon!,
+        }).melee,
       })),
     ranged: equippedWeapons
       .filter((i) => i.weapon!.kind === "ranged")

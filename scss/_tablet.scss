@@ -190,6 +190,15 @@
   box-shadow: none;
 }
 
+/* Touch-toggle hand icon is a pure masked shape; flat reset + re-assert
+   the longhand background-color (is-on gold wins at higher specificity). */
+.is-tablet button.ms-atk-block__touch {
+  padding: 0;
+  box-shadow: none;
+  min-height: 0;
+  background-color: rgba(144, 108, 70, 0.55);
+}
+
 .is-tablet button.ms-chip {
   padding: 6px 10px;
   background: transparent;

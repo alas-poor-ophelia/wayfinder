@@ -51,8 +51,16 @@ export interface CombatToggles {
   versatilePerformance: boolean;
   /** "Off" | "Enhancement" | "Defending" | "Flaming" | ... */
   weaponSong: string;
-  /** "Shuriken" | "Longbow" | "Ray" */
+  /** "Shuriken" | "Longbow" | "Ray" — legacy built-in style. No UI since
+   *  ranged blocks went inventory-driven; kept as the calc fallback for
+   *  records without equipped ranged weapons (and for old fixtures). */
   rangedAttackStyle: string;
+  /** ranged block touch mode: shows the Ray math (ranged touch attack,
+   *  bonus-only damage) instead of the equipped-weapon profile */
+  rangedTouch?: boolean;
+  /** melee block touch mode: same treatment as rangedTouch — touch attack,
+   *  no weapon dice, 20/x2 (shocking grasp etc.) */
+  meleeTouch?: boolean;
   /** single-block mode: the equipped weapon item id driving the block.
    *  Like rangedAttackStyle these are selectors, not toggles — they live on. */
   activeMeleeWeaponId?: string;

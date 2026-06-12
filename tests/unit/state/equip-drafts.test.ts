@@ -92,6 +92,45 @@ describe("inventory drafts", () => {
     ).toMatchObject({ critRange: "20", critMult: "2" });
   });
 
+  it("thrown monk ranged weapon (shuriken) stamps damageStat + flurry", () => {
+    const shuriken: BaseWeaponDef = {
+      ...longsword,
+      id: "shuriken-5",
+      name: "Shuriken (5)",
+      dmgM: "1d2",
+      critRange: "20",
+      critMult: "2",
+      rangeFt: 10,
+      special: ["monk"],
+      proficiency: "exotic",
+      category: "ranged",
+    };
+    expect(weaponStatsFor(shuriken)).toEqual({
+      kind: "ranged",
+      damageDie: "1d2",
+      critRange: "20",
+      critMult: "2",
+      damageStat: "str",
+      flurry: true,
+    });
+    // projectile weapons get neither flag
+    expect(weaponStatsFor(longbow)).toEqual({
+      kind: "ranged",
+      damageDie: "1d8",
+      critRange: "19-20",
+      critMult: "2",
+    });
+    // melee monk weapons (kama) get no ranged flurry flag
+    expect(
+      weaponStatsFor({ ...longsword, special: ["monk", "trip"], category: "light" })
+    ).toEqual({
+      kind: "melee",
+      damageDie: "1d8",
+      critRange: "19-20",
+      critMult: "2",
+    });
+  });
+
   it("armor draft emits ONE typed ac.all modifier of the base bonus", () => {
     expect(armorDraft(chainShirt).modifiers).toEqual([
       { target: "ac.all", type: "armor", value: 4, source: "Chain shirt" },

@@ -132,5 +132,63 @@ describe("calculateAttackStrings", () => {
       const slashes = (s: string): number => (s.match(/\//g) ?? []).length;
       expect(slashes(fullLine(out.ranged))).toBeLessThan(slashes(fullLine(stock.ranged)));
     });
+
+    // Inventory-driven Shuriken/Longbow: a rangedWeapon carrying the stamped
+    // damageStat/flurry flags must reproduce the built-in style entries
+    // byte-for-byte (str-to-damage, flurry, and precise-strike routing).
+    it("flagged rangedWeapon reproduces the built-in Shuriken style exactly", () => {
+      const shurikenBase: AttackInput = {
+        ...base,
+        flurryOfBlows: true,
+        monkLevel: 5,
+        preciseStrike: true,
+        panachePoints: 2,
+        paladinLevel: 4,
+        rangedAttackStyle: "Shuriken",
+      };
+      const stock = calculateAttackStrings(shurikenBase);
+      const out = calculateAttackStrings({
+        ...shurikenBase,
+        rangedWeapon: {
+          damageDie: "1d2",
+          critRange: "20",
+          critMult: "2",
+          damageStat: "str",
+          flurry: true,
+        },
+      });
+      expect(out.ranged).toBe(stock.ranged);
+    });
+
+    it("meleeTouch applies the Ray treatment to the melee block only", () => {
+      const stock = calculateAttackStrings(base);
+      const out = calculateAttackStrings({ ...base, meleeTouch: true });
+      expect(out.melee).toContain("(touch)");
+      expect(out.melee).not.toContain("1d6"); // no weapon dice
+      expect(out.melee).toContain("(20/x2)");
+      expect(out.ranged).toBe(stock.ranged);
+      expect(out.unarmed).toBe(stock.unarmed);
+    });
+
+    it("meleeTouch overrides an equipped meleeWeapon", () => {
+      const out = calculateAttackStrings({
+        ...base,
+        meleeTouch: true,
+        meleeWeapon: { damageDie: "1d8", critRange: "19-20", critMult: "2" },
+      });
+      expect(out.melee).toContain("(touch)");
+      expect(out.melee).not.toContain("1d8");
+      expect(out.melee).toContain("(20/x2)");
+    });
+
+    it("plain rangedWeapon reproduces the built-in Longbow style exactly", () => {
+      const stock = calculateAttackStrings({ ...base, rangedAttackStyle: "Longbow" });
+      const out = calculateAttackStrings({
+        ...base,
+        rangedAttackStyle: "Longbow",
+        rangedWeapon: { damageDie: "1d8", critRange: "20", critMult: "3" },
+      });
+      expect(out.ranged).toBe(stock.ranged);
+    });
   });
 });

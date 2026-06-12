@@ -1,3 +1,4 @@
+import { useState } from "preact/hooks";
 import type { AttackProfileText } from "../../calc";
 import type { AttackStrings } from "../../calc/attacks";
 import type { MiniSheetStore } from "../../state/store";
@@ -9,8 +10,6 @@ interface AttackBlocksProps {
   attacks: AttackStrings;
   profiles: { melee: AttackProfileText[]; ranged: AttackProfileText[] };
 }
-
-const RANGED_STYLES = ["Shuriken", "Longbow", "Ray"];
 
 /** Render "**Bold:** rest" lines from the calculator's markdown-ish strings. */
 function AttackText({ text }: { text: string }) {
@@ -51,30 +50,76 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
     store.setCharacterField(character.id, path, value);
   const prefs = character.attackBlocks ?? { melee: "single", ranged: "single" };
 
+  // Fold state is component-owned (controlled <details open>), NOT trusted
+  // to DOM node identity: toggling touch can swap a separate-mode block
+  // ARRAY for a single touch block, which remounts the slot and would snap
+  // an uncontrolled block shut mid-click. onToggle keeps user folds synced.
+  const [openBlocks, setOpenBlocks] = useState<Record<string, boolean>>({});
+  const foldProps = (k: string) => ({
+    key: k,
+    open: !!openBlocks[k],
+    onToggle: (e: Event) => {
+      const open = (e.currentTarget as HTMLDetailsElement).open;
+      setOpenBlocks((m) => (m[k] === open ? m : { ...m, [k]: open }));
+    },
+  });
+
+  // Touch toggle (replaces the old Ray style): a hand icon in the block
+  // header, revealed only while the block is open (CSS [open] gate). When
+  // on, the bucket renders a single touch block with the ray-treatment
+  // math; the icon stays in its header to toggle back. preventDefault
+  // keeps the summary from folding the block on click; the destination
+  // block(s) are explicitly marked open so the toggle never lands folded.
+  const touchIcon = (bucket: "melee" | "ranged", on: boolean) => (
+    <button
+      class={`ms-atk-block__touch${on ? " is-on" : ""}`}
+      aria-pressed={on}
+      aria-label={`Toggle ${bucket} touch attack`}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const enabling = !on;
+        set(`toggles.${bucket}Touch`, enabling);
+        setOpenBlocks((m) => {
+          const next = { ...m, [`${bucket}-main`]: true };
+          if (!enabling) {
+            // touch off in separate mode lands on the weapon blocks
+            for (const p of profiles[bucket]) next[p.id] = true;
+          }
+          return next;
+        });
+      }}
+    />
+  );
+
   // ---- melee ----
+  // Touch/fallback/single all render through ONE keyed <details> call site:
+  // toggling touch must DIFF the open block, not replace it — a recreated
+  // node loses its open state and the block snaps shut under the click.
+  const meleeTouch = !!character.toggles.meleeTouch;
   let meleeBlocks;
-  if (profiles.melee.length === 0) {
-    meleeBlocks = (
-      <details class="ms-atk-block">
-        <summary class="ms-atk-block__title">Melee</summary>
-        <AttackText text={attacks.melee} />
-      </details>
-    );
-  } else if (prefs.melee === "separate") {
+  if (!meleeTouch && prefs.melee === "separate" && profiles.melee.length > 0) {
     meleeBlocks = profiles.melee.map((p) => (
-      <details class="ms-atk-block" key={p.id}>
-        <summary class="ms-atk-block__title">{p.name}</summary>
+      <details class="ms-atk-block" {...foldProps(p.id)}>
+        <summary class="ms-atk-block__title">
+          {p.name}
+          {touchIcon("melee", false)}
+        </summary>
         <AttackText text={p.text} />
       </details>
     ));
   } else {
-    const active =
-      profiles.melee.find((p) => p.id === character.toggles.activeMeleeWeaponId) ??
-      profiles.melee[0];
+    const active = meleeTouch
+      ? undefined
+      : profiles.melee.find((p) => p.id === character.toggles.activeMeleeWeaponId) ??
+        profiles.melee[0];
     meleeBlocks = (
-      <details class="ms-atk-block">
-        <summary class="ms-atk-block__title">{active.name}</summary>
-        {profiles.melee.length > 1 && (
+      <details class="ms-atk-block" {...foldProps("melee-main")}>
+        <summary class="ms-atk-block__title">
+          {meleeTouch ? "Melee Touch" : active ? active.name : "Melee"}
+          {touchIcon("melee", meleeTouch)}
+        </summary>
+        {!meleeTouch && profiles.melee.length > 1 && active && (
           <div class="ms-atk-block__picker">
             <select
               class="dropdown"
@@ -94,101 +139,65 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
             </select>
           </div>
         )}
-        <AttackText text={active.text} />
+        <AttackText text={active ? active.text : attacks.melee} />
       </details>
     );
   }
 
   // ---- ranged ----
-  // The built-in styles (Ray etc.) stay available: as the dedicated style
-  // block in separate mode, or merged into the selector in single mode.
-  const styleDropdown = (
-    <select
-      class="dropdown"
-      value={character.toggles.rangedAttackStyle}
-      onChange={(e) =>
-        set("toggles.rangedAttackStyle", (e.target as HTMLSelectElement).value)
-      }
-    >
-      {RANGED_STYLES.map((style) => (
-        <option
-          key={style}
-          value={style}
-          selected={style === character.toggles.rangedAttackStyle}
-        >
-          {style}
-        </option>
-      ))}
-    </select>
-  );
-
+  // Blocks derive from equipped ranged weapons only (no built-in styles).
+  // Same single keyed call site as melee so toggling touch never replaces
+  // the open <details>.
+  const rangedTouch = !!character.toggles.rangedTouch;
   let rangedBlocks;
-  if (profiles.ranged.length === 0) {
-    rangedBlocks = (
-      <details class="ms-atk-block">
-        <summary class="ms-atk-block__title">Ranged</summary>
-        <div class="ms-atk-block__picker">{styleDropdown}</div>
-        <AttackText text={attacks.ranged} />
-      </details>
-    );
-  } else if (prefs.ranged === "separate") {
-    rangedBlocks = (
-      <>
-        {profiles.ranged.map((p) => (
-          <details class="ms-atk-block" key={p.id}>
-            <summary class="ms-atk-block__title">{p.name}</summary>
-            <AttackText text={p.text} />
-          </details>
-        ))}
-        <details class="ms-atk-block">
-          <summary class="ms-atk-block__title">Ranged (style)</summary>
-          <div class="ms-atk-block__picker">{styleDropdown}</div>
-          <AttackText text={attacks.ranged} />
-        </details>
-      </>
-    );
-  } else {
-    const activeWeapon = profiles.ranged.find(
-      (p) => p.id === character.toggles.activeRangedWeaponId
-    );
-    // selector mixes equipped weapons with the built-in styles; a style
-    // pick clears the weapon selection and falls through to legacy text
-    rangedBlocks = (
-      <details class="ms-atk-block">
+  if (!rangedTouch && prefs.ranged === "separate" && profiles.ranged.length > 0) {
+    rangedBlocks = profiles.ranged.map((p) => (
+      <details class="ms-atk-block" {...foldProps(p.id)}>
         <summary class="ms-atk-block__title">
-          {activeWeapon ? activeWeapon.name : "Ranged"}
+          {p.name}
+          {touchIcon("ranged", false)}
         </summary>
-        <div class="ms-atk-block__picker">
-          <select
-            class="dropdown"
-            value={activeWeapon ? activeWeapon.id : `style:${character.toggles.rangedAttackStyle}`}
-            onChange={(e) => {
-              const v = (e.target as HTMLSelectElement).value;
-              if (v.startsWith("style:")) {
-                set("toggles.activeRangedWeaponId", undefined);
-                set("toggles.rangedAttackStyle", v.slice(6));
-              } else {
-                set("toggles.activeRangedWeaponId", v);
+        <AttackText text={p.text} />
+      </details>
+    ));
+  } else {
+    const activeWeapon = rangedTouch
+      ? undefined
+      : profiles.ranged.find((p) => p.id === character.toggles.activeRangedWeaponId) ??
+        profiles.ranged[0];
+    rangedBlocks = (
+      <details class="ms-atk-block" {...foldProps("ranged-main")}>
+        <summary class="ms-atk-block__title">
+          {rangedTouch ? "Ranged Touch" : activeWeapon ? activeWeapon.name : "Ranged"}
+          {touchIcon("ranged", rangedTouch)}
+        </summary>
+        {!rangedTouch && profiles.ranged.length > 1 && activeWeapon && (
+          <div class="ms-atk-block__picker">
+            <select
+              class="dropdown"
+              value={activeWeapon.id}
+              onChange={(e) =>
+                set(
+                  "toggles.activeRangedWeaponId",
+                  (e.target as HTMLSelectElement).value
+                )
               }
-            }}
-          >
-            {profiles.ranged.map((p) => (
-              <option key={p.id} value={p.id} selected={!!activeWeapon && p.id === activeWeapon.id}>
-                {p.name}
-              </option>
-            ))}
-            {RANGED_STYLES.map((style) => (
-              <option
-                key={style}
-                value={`style:${style}`}
-                selected={!activeWeapon && style === character.toggles.rangedAttackStyle}
-              >
-                {style}
-              </option>
-            ))}
-          </select>
-        </div>
-        <AttackText text={activeWeapon ? activeWeapon.text : attacks.ranged} />
+            >
+              {profiles.ranged.map((p) => (
+                <option key={p.id} value={p.id} selected={p.id === activeWeapon.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        {rangedTouch ? (
+          <AttackText text={attacks.ranged} />
+        ) : activeWeapon ? (
+          <AttackText text={activeWeapon.text} />
+        ) : (
+          <div class="ms-atk-block__hint">No ranged weapon equipped.</div>
+        )}
       </details>
     );
   }
@@ -198,7 +207,7 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
       {meleeBlocks}
       {rangedBlocks}
       {character.characterType !== "familiar" && (
-        <details class="ms-atk-block">
+        <details class="ms-atk-block" {...foldProps("unarmed")}>
           <summary class="ms-atk-block__title">Unarmed Strike</summary>
           <AttackText text={attacks.unarmed} />
         </details>

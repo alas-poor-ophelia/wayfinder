@@ -16,11 +16,19 @@ import type { InventoryItem, ItemWeaponStats } from "../types/inventory";
  *  Ammunition gets none — arrows aren't an attack block. */
 export function weaponStatsFor(w: BaseWeaponDef): ItemWeaponStats | undefined {
   if (!w.dmgM || w.category === "ammunition") return undefined;
+  const ranged = w.category === "ranged";
+  // 10 ft range increment = thrown at hand (shuriken, chakram): Str to
+  // damage, like the legacy built-in Shuriken entry. Projectile weapons
+  // (bows, crossbows) have longer increments and stay at flat 0.
+  const thrown = ranged && w.rangeFt !== null && w.rangeFt <= 10;
+  const monk = w.special.includes("monk");
   return {
-    kind: w.category === "ranged" ? "ranged" : "melee",
+    kind: ranged ? "ranged" : "melee",
     damageDie: w.dmgM,
     critRange: w.critRange || "20",
     critMult: w.critMult || "2",
+    ...(thrown ? { damageStat: "str" as const } : {}),
+    ...(ranged && monk ? { flurry: true } : {}),
   };
 }
 
