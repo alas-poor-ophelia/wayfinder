@@ -84,6 +84,7 @@ export const UNCHAINED_CLASSES: ClassData[] = [
         footer: "uses/day",
       },
     ],
+    quickActions: [{ id: "flurryOfBlows" }],
   },
   // https://legacy.aonprd.com/unchained/classes/rogue.html
   {

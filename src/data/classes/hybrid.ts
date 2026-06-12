@@ -314,6 +314,7 @@ export const HYBRID_CLASSES: ClassData[] = [
         footer: "rounds/day",
       },
     ],
+    quickActions: [{ id: "versatilePerformance", minLevel: 2 }],
   },
   // https://www.aonprd.com/ClassDisplay.aspx?ItemName=Slayer
   {
@@ -397,6 +398,7 @@ export const HYBRID_CLASSES: ClassData[] = [
         footer: "uses/day",
       },
     ],
+    quickActions: [{ id: "preciseStrike", minLevel: 3 }],
   },
   // https://www.aonprd.com/ClassDisplay.aspx?ItemName=Warpriest
   {

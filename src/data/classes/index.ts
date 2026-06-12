@@ -81,3 +81,19 @@ export function classResources(
   }
   return pools;
 }
+
+/**
+ * Quick-action catalog ids a character's classes grant at their current
+ * levels (deduped; e.g. Monk + Monk (Unchained) both grant flurry once).
+ */
+export function classQuickActionIds(classes: ClassEntry[]): string[] {
+  const ids = new Set<string>();
+  for (const { className, level } of classes) {
+    if (!level) continue;
+    const data = getClassData(className);
+    for (const qa of data?.quickActions ?? []) {
+      if (level >= (qa.minLevel ?? 1)) ids.add(qa.id);
+    }
+  }
+  return [...ids];
+}

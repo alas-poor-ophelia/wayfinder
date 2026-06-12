@@ -83,6 +83,7 @@ export const CORE_CLASSES: ClassData[] = [
         footer: "rounds/day",
       },
     ],
+    quickActions: [{ id: "versatilePerformance", minLevel: 2 }],
   },
   {
     key: "Cleric",
@@ -226,6 +227,7 @@ export const CORE_CLASSES: ClassData[] = [
         footer: "uses/day",
       },
     ],
+    quickActions: [{ id: "flurryOfBlows" }],
   },
   {
     key: "Paladin",
@@ -269,6 +271,7 @@ export const CORE_CLASSES: ClassData[] = [
         footer: "uses/day",
       },
     ],
+    quickActions: [{ id: "smiteEvil" }],
   },
   {
     key: "Ranger",

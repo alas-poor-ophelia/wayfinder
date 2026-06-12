@@ -74,6 +74,12 @@ export interface ClassData {
   classSkills: string[];
   casting?: SpellcastingData;
   resources?: ClassResourceDef[];
+  /**
+   * Quick actions this class grants, referencing ids in the quick-action
+   * catalog (src/data/quick-actions.ts) — the catalog stays the single
+   * source of truth for the defs; sync copies them per character.
+   */
+  quickActions?: { id: string; minLevel?: number }[];
 }
 
 export type RaceCategory = "core" | "featured" | "uncommon";
