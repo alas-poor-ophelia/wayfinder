@@ -29,19 +29,32 @@ const BY_CLASS = new Map<string, Map<string, ArchetypeDef>>(
   FILES.map((f) => [f.classKey, new Map(f.archetypes.map((a) => [a.id, a]))])
 );
 
+/** Catalog for a class name, lenient like the sheet's class matching
+ *  everywhere else — "Paladin (Virtuous Bravo)" resolves to the Paladin
+ *  catalog (legacy class strings embed the archetype in the name). */
+function catalogFor(className: string): Map<string, ArchetypeDef> | undefined {
+  const direct = BY_CLASS.get(className);
+  if (direct) return direct;
+  const lower = className.toLowerCase();
+  for (const [key, map] of BY_CLASS) {
+    if (lower.includes(key.toLowerCase())) return map;
+  }
+  return undefined;
+}
+
 const ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
   ...PALADIN_ARCHETYPE_MECHANICS,
 };
 
-export function listArchetypes(classKey: string): ArchetypeDef[] {
-  return [...(BY_CLASS.get(classKey)?.values() ?? [])];
+export function listArchetypes(className: string): ArchetypeDef[] {
+  return [...(catalogFor(className)?.values() ?? [])];
 }
 
 export function getArchetype(
-  classKey: string,
+  className: string,
   id: string
 ): ArchetypeDef | undefined {
-  return BY_CLASS.get(classKey)?.get(id);
+  return catalogFor(className)?.get(id);
 }
 
 export function getArchetypeMechanics(
