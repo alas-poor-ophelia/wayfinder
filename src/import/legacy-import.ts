@@ -9,6 +9,7 @@
  */
 
 import { num } from "../calc/abilities";
+import { listArchetypes } from "../data/archetypes";
 import type {
   AbilityKey,
   CharacterRecord,
@@ -470,7 +471,26 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   for (const className of classNames) {
     const key = `${safeName(className)}Level`;
     const level = dual(key, sheet, config, warnings);
-    classes.push({ className, level: level ?? 0 });
+    // Legacy class strings embed the archetype in a parenthetical
+    // ("Paladin (Virtuous Bravo)"); translate recognized ones into
+    // archetypeKeys so archetype-gated math (bravo AC, divine grace,
+    // spellcasting trades) applies to imported characters.
+    const paren = /\(([^)]+)\)/.exec(className);
+    const archetype = paren
+      ? listArchetypes(className).find(
+          (a) => a.name.toLowerCase() === paren[1].trim().toLowerCase()
+        )
+      : undefined;
+    if (archetype) {
+      warnings.push(
+        `Class "${className}": recognized archetype "${archetype.name}"`
+      );
+    }
+    classes.push({
+      className,
+      level: level ?? 0,
+      ...(archetype ? { archetypeKeys: [archetype.id] } : {}),
+    });
   }
   record.classes = classes;
   if (classNames.length === 0 && input.characterType === "familiar") {
@@ -608,6 +628,23 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
       max: panacheMax ?? 0,
       footer: "points",
     });
+    // Panache on a paladin with no swashbuckler levels can only mean
+    // Virtuous Bravo — the legacy sheet never recorded the archetype
+    // (its AC renderer hardcoded the Nimble bonus for every paladin), so
+    // infer it here to keep imported math equal to the live capture.
+    const hasSwashbuckler = record.classes.some((c) =>
+      c.className.toLowerCase().includes("swashbuckler")
+    );
+    const paladinEntry = record.classes.find((c) =>
+      c.className.toLowerCase().includes("paladin")
+    );
+    if (!hasSwashbuckler && paladinEntry && !paladinEntry.archetypeKeys) {
+      paladinEntry.archetypeKeys = ["virtuous-bravo"];
+      warnings.push(
+        `Panache pool on a paladin: inferred the Virtuous Bravo archetype ` +
+          `(the old sheet hardcoded its AC bonus for all paladins)`
+      );
+    }
   }
 
   for (const spec of POOL_SPECS) {

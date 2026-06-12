@@ -4,7 +4,9 @@
  * sheet stored the same data as `classStats` frontmatter).
  *
  * Good save: 2 + floor(level / 2); poor save: floor(level / 3).
- * Divine Grace: +CHA to all saves if any paladin class has levels.
+ * Divine Grace: +CHA to all saves if any paladin class has levels —
+ * unless an archetype suppresses it (computeAll resolves the flag from
+ * the archetype effects; this module stays a pure leaf).
  */
 
 import { getClassStats } from "./class-stats";
@@ -24,6 +26,9 @@ export interface SavesInput {
   chaMod?: number;
   resistanceEnhancement?: unknown;
   conditionEffects?: SavesConditionEffects;
+  /** archetype gate: divine grace removed (Gray Paladin, Stonelord) or not
+   *  yet online (Chosen One below 4th) */
+  suppressDivineGrace?: boolean;
 }
 
 export interface SaveValues {
@@ -60,7 +65,8 @@ export function calculateSaves(input: SavesInput): SaveValues {
     baseWill += baseSave(level, stats.saves.will);
   }
 
-  const divineGrace = hasPaladinLevels ? chaMod : 0;
+  const divineGrace =
+    hasPaladinLevels && !input.suppressDivineGrace ? chaMod : 0;
 
   return {
     fort: baseFort + conMod + divineGrace + resistance + (ce.fortAdjust || 0),

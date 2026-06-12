@@ -757,8 +757,23 @@ export interface SpellbookComputeInput {
   mods: AbilityScores;
 }
 
+/** Does a class name match a spellbook's casting class? The ONE lenient
+ *  substring rule the sheet uses everywhere a casting class meets a class
+ *  list — archetype spellcasting-removal must use this too, or aliased
+ *  names silently slip the gate. Empty casting class (slot-only books from
+ *  the v5 migration) matches nothing. */
+export function castingClassMatches(
+  castingClass: string,
+  className: string
+): boolean {
+  const needle = normalizeClassName(castingClass);
+  if (!needle) return false;
+  return className.toLowerCase().includes(needle);
+}
+
 /** Sum of levels for class entries matching the casting class (lenient
- *  substring match, mirroring how the sheet matches class names). */
+ *  substring match, mirroring how the sheet matches class names; an empty
+ *  casting class deliberately keeps its legacy match-everything behavior). */
 function matchingClassLevel(classes: ClassEntry[], castingClass: string): number {
   const needle = normalizeClassName(castingClass);
   return classes

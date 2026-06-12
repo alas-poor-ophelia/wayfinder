@@ -21,7 +21,11 @@ import {
 } from "./conditions";
 import { calculateSaves, type SaveValues } from "./saves";
 import { calculateSkills, type SkillRow } from "./skills";
-import { computeSpellbook, type SpellbookComputed } from "./spells";
+import {
+  castingClassMatches,
+  computeSpellbook,
+  type SpellbookComputed,
+} from "./spells";
 import { computeXp, type XpComputed } from "./xp";
 import {
   conditionalNotes,
@@ -33,6 +37,7 @@ import {
   type Modifier,
   type ModifierTarget,
 } from "./modifiers";
+import { resolveArchetypeEffects } from "../data/archetypes";
 import { getBuffDef } from "../data/buffs";
 import { getRaceData, racialAbilityMods } from "../data/races";
 import type { RaceData } from "../data/types";
@@ -195,6 +200,11 @@ export function computeAll(
   const monkLevel = classLevel(character, "monk");
   const skaldLevel = classLevel(character, "skald");
 
+  // Archetype gates: divine grace timing/removal, traded-away spellcasting,
+  // and the Virtuous Bravo AC bonus (which used to be granted to every
+  // paladin unconditionally). No archetypes selected → all gates inert.
+  const archEffects = resolveArchetypeEffects(character.classes);
+
   // Quick Actions resolve against PRE-action mods (race/gear/config/buffs
   // applied) — no legacy toggle ever modified an ability score, so legacy
   // parity is exact. Records without quickActions (pre-v6, mid-session)
@@ -256,7 +266,7 @@ export function computeAll(
     deflectionAC: acResolved.deflectionLike,
     dodgeAC: acResolved.dodge,
     monkLevel,
-    paladinLevel,
+    bravoLevel: archEffects.grantsBravoAC ? paladinLevel : 0,
     // The old sheet's separate `hasted` flag was never bound (haste works
     // through condition effects), so it stays false here too.
     hasted: false,
@@ -390,6 +400,7 @@ export function computeAll(
     chaMod: mods.cha,
     resistanceEnhancement: 0,
     conditionEffects: effects,
+    suppressDivineGrace: paladinLevel < archEffects.divineGraceMinLevel,
   });
   const saves: SaveValues = {
     fort: baseSaves.fort + fortR.total,
@@ -431,13 +442,22 @@ export function computeAll(
     character.adjustments.init +
     combinedFor("initiative");
 
-  const spellbook = character.spellbook
-    ? computeSpellbook({
-        spellbook: character.spellbook,
-        classes: character.classes,
-        mods,
-      })
-    : undefined;
+  // An archetype that trades spellcasting away suppresses the COMPUTED
+  // spellbook only — the persisted SpellbookState is untouched, so
+  // unchecking the archetype restores everything.
+  const spellcastingRemoved =
+    character.spellbook !== undefined &&
+    [...archEffects.removedSpellcastingClassKeys].some((classKey) =>
+      castingClassMatches(character.spellbook!.castingClass, classKey)
+    );
+  const spellbook =
+    character.spellbook && !spellcastingRemoved
+      ? computeSpellbook({
+          spellbook: character.spellbook,
+          classes: character.classes,
+          mods,
+        })
+      : undefined;
 
   // coin weight excluded, matching the legacy weight totals
   const encumbrance = character.inventory

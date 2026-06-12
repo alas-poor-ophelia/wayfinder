@@ -32,14 +32,26 @@ interface CaseSpec {
 }
 
 const ARCHETYPES = {
-  /** Adarin-shaped: Virtuous Bravo paladin with panache and high cha/dex */
+  /** Adarin-shaped: Virtuous Bravo paladin with panache and high cha/dex.
+   *  The legacy outputs were captured WITH the bravo AC bonus (the old
+   *  sheet granted it to every paladin); now that the bonus lives behind
+   *  the archetype, the fixture declares what was always true. */
   paladin5: (c: CharacterRecord) => {
-    c.classes = [{ className: "Paladin (Virtuous Bravo)", level: 5 }];
+    c.classes = [
+      {
+        className: "Paladin (Virtuous Bravo)",
+        level: 5,
+        archetypeKeys: ["virtuous-bravo"],
+      },
+    ];
     c.baseAbilities = { str: 14, dex: 18, con: 14, int: 13, wis: 8, cha: 20 };
     c.resources = [{ id: "panache", name: "Panache", current: 3, max: 5 }];
   },
+  /** Same deal: the captured truth includes the bravo bonus at 11th (+3). */
   paladin11: (c: CharacterRecord) => {
-    c.classes = [{ className: "Paladin", level: 11 }];
+    c.classes = [
+      { className: "Paladin", level: 11, archetypeKeys: ["virtuous-bravo"] },
+    ];
     c.baseAbilities = { str: 18, dex: 12, con: 14, int: 10, wis: 10, cha: 16 };
   },
   monk10: (c: CharacterRecord) => {

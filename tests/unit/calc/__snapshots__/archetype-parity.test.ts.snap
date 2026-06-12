@@ -198,10 +198,10 @@ exports[`archetype parity guard: no-archetype output is frozen > Paladin 4 / Fig
 {
   "ac": {
     "cmb": 8,
-    "cmd": 23,
+    "cmd": 22,
     "flatFootedAC": 10,
-    "normalAC": 12,
-    "touchAC": 12,
+    "normalAC": 11,
+    "touchAC": 11,
   },
   "attackProfiles": {
     "melee": [],
@@ -295,10 +295,10 @@ exports[`archetype parity guard: no-archetype output is frozen > Paladin 7 (cast
 {
   "ac": {
     "cmb": 8,
-    "cmd": 23,
+    "cmd": 21,
     "flatFootedAC": 10,
-    "normalAC": 13,
-    "touchAC": 13,
+    "normalAC": 11,
+    "touchAC": 11,
   },
   "attackProfiles": {
     "melee": [],

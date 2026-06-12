@@ -1,15 +1,17 @@
 /**
  * Parity guard for the archetype feature: characters with NO archetypes
- * selected must produce byte-identical computeAll output before and after
- * the archetype system is wired in. Snapshots were captured BEFORE any
- * wiring landed; the ONE sanctioned change is the Virtuous Bravo AC
- * relocation (calc/ac.ts used to grant the Nimble dodge bonus to every
- * paladin unconditionally) — when that step lands, the paladin snapshots
- * are consciously regenerated and the diff reviewed.
+ * selected must produce byte-identical computeAll output as the system
+ * evolves. History: snapshots were first captured before any wiring; the
+ * ONE sanctioned regeneration was the Virtuous Bravo AC relocation
+ * (calc/ac.ts used to grant the Nimble dodge bonus to every paladin
+ * unconditionally — diff reviewed: normalAC/touchAC/cmd −bravo bonus on
+ * the two paladin fixtures, nothing else). From here on these are frozen
+ * again.
  */
 import { describe, expect, it } from "vitest";
 import { computeAll } from "../../../src/calc";
 import { createDefaultCharacter } from "../../../src/types/character";
+import { createDefaultSpellbook } from "../../../src/types/spellbook";
 
 function paladin7() {
   const c = createDefaultCharacter("pal7", "Parity Paladin");
@@ -19,12 +21,7 @@ function paladin7() {
     Diplomacy: { ability: "cha", ranks: 5, misc: 0, classSkill: true },
     Perception: { ability: "wis", ranks: 3, misc: 0, classSkill: false },
   };
-  c.spellbook = {
-    castingClass: "paladin",
-    castingStat: "cha",
-    spells: [],
-    levels: {},
-  };
+  c.spellbook = createDefaultSpellbook("paladin", "cha");
   return c;
 }
 

@@ -10,8 +10,21 @@ interface ACFixtureOutput {
   cmd: number;
 }
 
-function expectMatch(input: ACInput, expected: ACFixtureOutput) {
-  const result = calculateACValues(input);
+/** The captured fixtures (frozen legacy truth) name the bravo-AC driver
+ *  `paladinLevel` — the legacy sheet granted the Virtuous Bravo dodge bonus
+ *  to every paladin, and its captured characters WERE bravos. The calc
+ *  input renamed the field `bravoLevel` when the bonus moved behind the
+ *  archetype; translate at the boundary, never touch the fixture file. */
+function adaptLegacyInput(input: Record<string, unknown>): ACInput {
+  if (!("paladinLevel" in input)) return input as ACInput;
+  const { paladinLevel, ...rest } = input;
+  return { ...rest, bravoLevel: paladinLevel } as ACInput;
+}
+
+function expectMatch(rawInput: ACInput, expected: ACFixtureOutput) {
+  const result = calculateACValues(
+    adaptLegacyInput(rawInput as Record<string, unknown>)
+  );
   expect(result.normalAC).toBe(expected.normalAC);
   expect(result.touchAC).toBe(expected.touchAC);
   expect(result.flatFootedAC).toBe(expected.flatFootedAC);

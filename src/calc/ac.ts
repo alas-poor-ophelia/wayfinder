@@ -23,7 +23,8 @@ export interface ACInput {
   deflectionAC?: unknown;
   dodgeAC?: unknown;
   monkLevel?: unknown;
-  paladinLevel?: unknown;
+  /** paladin level when Virtuous Bravo is selected, 0/absent otherwise */
+  bravoLevel?: unknown;
   hasted?: boolean;
   charging?: boolean;
   fightingDefensively?: boolean;
@@ -61,11 +62,14 @@ export function calculateACValues(input: ACInput): ACValues {
     monkACBonus += 1 + Math.floor((monkLvl - 4) / 4);
   }
 
-  // Virtuous Bravo paladin: dodge bonus at level 3, +1 per 4 after.
-  const paladinLvl = Number(input.paladinLevel) || 0;
-  let paladinACBonus = 0;
-  if (paladinLvl >= 3) {
-    paladinACBonus += Math.floor((paladinLvl - 3) / 4) + 1;
+  // Virtuous Bravo "Nimble": dodge bonus at level 3, +1 per 4 after.
+  // bravoLevel is the paladin level WHEN the archetype is selected, 0
+  // otherwise — this used to be unconditional paladinLevel (the archetype
+  // masquerading as base-class math); relocated behind the archetype.
+  const bravoLvl = Number(input.bravoLevel) || 0;
+  let bravoACBonus = 0;
+  if (bravoLvl >= 3) {
+    bravoACBonus += Math.floor((bravoLvl - 3) / 4) + 1;
   }
 
   const hastedACBonus = input.hasted ? 1 : 0;
@@ -89,10 +93,10 @@ export function calculateACValues(input: ACInput): ACValues {
   const ffAcAdjust = userAcAdjust + chargingACPenalty + (Number(ce.ffAcAdjust) || 0);
 
   const normalAC =
-    baseAC + dexMod + naturalAC + deflectionAC + monkACBonus + paladinACBonus +
+    baseAC + dexMod + naturalAC + deflectionAC + monkACBonus + bravoACBonus +
     fightingDefensivelyBonus + dodgeAC + hastedACBonus + normalAcAdjust;
   const touchAC =
-    baseAC + dexMod + deflectionAC + monkACBonus + paladinACBonus +
+    baseAC + dexMod + deflectionAC + monkACBonus + bravoACBonus +
     fightingDefensivelyBonus + dodgeAC + hastedACBonus + touchAcAdjust;
   const flatFootedAC = baseAC + naturalAC + deflectionAC + monkACBonus + ffAcAdjust;
 
@@ -100,7 +104,7 @@ export function calculateACValues(input: ACInput): ACValues {
   const cmb = bab + dexMod + sizeMod + (ce.cmb || 0);
   const cmd =
     10 + bab + strMod + dexMod + sizeMod + deflectionAC + monkACBonus +
-    paladinACBonus + dodgeAC + (ce.cmd || 0);
+    bravoACBonus + dodgeAC + (ce.cmd || 0);
 
   return { normalAC, touchAC, flatFootedAC, cmb, cmd };
 }
