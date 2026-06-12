@@ -63,6 +63,26 @@ export interface AttackInput {
   weaponSong?: string;
   panachePoints?: number | string;
   conditionEffects?: ConditionEffects;
+
+  // --- Quick Action channels (all optional and absent in legacy inputs; the
+  // --- characterization fixtures never set them, so the legacy paths above
+  // --- are untouched when these are undefined) ------------------------------
+  /** replaces the getSmiteEvilValues result (ray double-count, inline
+   *  description, and baseParams spread all still apply downstream) */
+  smiteOverride?: { atkBonus: number; dmgBonus: number; description: string };
+  /** replaces the getPreciseStrikeDamage result (Shuriken-only ranged
+   *  routing and unarmed inclusion still apply downstream) */
+  preciseStrikeOverride?: number;
+  /** when flurrying, push this many base attacks instead of the legacy
+   *  2 / 3-at-monk-11 progression */
+  flurryAttacks?: number;
+  /** dice riders merged into the weapon-song dmgExtra slot per bucket */
+  extraDamageDice?: { melee?: string; ranged?: string; unarmed?: string };
+  /** keen crit math per bucket (OR'd with the weapon song's isCrit) */
+  keen?: { melee?: boolean; ranged?: boolean; unarmed?: boolean };
+  /** pre-formatted block appended to the melee/ranged outputs, exactly
+   *  where the legacy weapon-song notes text goes */
+  attackNoteBlock?: string;
 }
 
 export interface AttackStrings {
@@ -276,7 +296,8 @@ function calculateAttacks(
   monkLvl: number,
   bab: number,
   extraAttacks: number[] = [],
-  canFlurry = true
+  canFlurry = true,
+  flurryAttacks?: number
 ): number[] {
   const attacks: number[] = [];
 
@@ -286,8 +307,13 @@ function calculateAttacks(
   });
 
   if (hasFlurry && monkLvl > 0 && canFlurry) {
-    attacks.push(baseAttackBonus, baseAttackBonus);
-    if (monkLvl >= 11) attacks.push(baseAttackBonus);
+    if (flurryAttacks !== undefined) {
+      // quick-action channel: data-driven base attack count
+      for (let i = 0; i < flurryAttacks; i++) attacks.push(baseAttackBonus);
+    } else {
+      attacks.push(baseAttackBonus, baseAttackBonus);
+      if (monkLvl >= 11) attacks.push(baseAttackBonus);
+    }
   } else {
     attacks.push(baseAttackBonus);
   }
@@ -480,11 +506,28 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
   const sizeAdjust = conditionEffects.sizeAdjust || 0;
 
   // Calculate common values
-  const { notes: weaponSongNotes, melee: meleeSong, ranged: rangedSong } = processWeaponSong(options.weaponSong);
+  const { notes: weaponSongNotes, melee: rawMeleeSong, ranged: rawRangedSong } = processWeaponSong(options.weaponSong);
+  // Quick-action dice/keen channels merge into the song values so the
+  // dmgExtra slot and keen crit math downstream stay byte-identical.
+  const mergeSong = (base: SongValues, extraDice?: string, keen?: boolean): SongValues =>
+    extraDice || keen
+      ? {
+          ...base,
+          dmgExtra: base.dmgExtra && extraDice ? `${base.dmgExtra} ${extraDice}` : extraDice || base.dmgExtra,
+          isCrit: base.isCrit || Boolean(keen),
+        }
+      : base;
+  const meleeSong = mergeSong(rawMeleeSong, input.extraDamageDice?.melee, input.keen?.melee);
+  const rangedSong = mergeSong(rawRangedSong, input.extraDamageDice?.ranged, input.keen?.ranged);
+  const unarmedSong = mergeSong(NO_SONG, input.extraDamageDice?.unarmed, input.keen?.unarmed);
   const powerAttackValues = getPowerAttackValues(stats.bab, flags.powerAttack);
   const defensivePenalty = getDefensivePenalty(flags.defending, flags.craneStyle);
-  const smiteEvilValues = getSmiteEvilValues(flags.smiteEvil, flags.smiteEvilOutsider, levels.paladin, stats.cha);
-  const preciseStrikeDamage = getPreciseStrikeDamage(flags.preciseStrike, flags.doublePrecise, levels.paladin, options.panachePoints);
+  const smiteEvilValues =
+    input.smiteOverride ??
+    getSmiteEvilValues(flags.smiteEvil, flags.smiteEvilOutsider, levels.paladin, stats.cha);
+  const preciseStrikeDamage =
+    input.preciseStrikeOverride ??
+    getPreciseStrikeDamage(flags.preciseStrike, flags.doublePrecise, levels.paladin, options.panachePoints);
   const chargeBonus = flags.charging ? 2 : 0;
   const flankingBonus = flags.flanking ? 2 : 0;
 
@@ -524,7 +567,8 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     levels.monk,
     stats.bab,
     conditionEffects.extraAttacks || [],
-    true
+    true,
+    input.flurryAttacks
   );
   const meleeAttackStrings = formatAttackStrings(meleeAttack.attackBonus, meleeAttack.damageString, meleeAttack.critInfo, meleeAttacks);
 
@@ -557,7 +601,8 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     canUseFlurryForRanged ? levels.monk : 0,
     stats.bab,
     conditionEffects.extraAttacks || [],
-    canUseFlurryForRanged
+    canUseFlurryForRanged,
+    input.flurryAttacks
   );
   const rangedAttackStrings = formatAttackStrings(
     rangedAttack.attackBonus,
@@ -583,7 +628,7 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     conditionAdjust: conditionEffects.meleeAtkAdjust || 0,
     conditionAttackBonus: conditionEffects.meleeAtkAdjust || 0,
     conditionDamageBonus: conditionEffects.damageAdjust || 0,
-    weaponSongValues: NO_SONG,
+    weaponSongValues: unarmedSong,
   });
 
   const unarmedAttacks = calculateAttacks(
@@ -591,7 +636,9 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     flags.flurry,
     levels.monk,
     stats.bab,
-    conditionEffects.extraAttacks || []
+    conditionEffects.extraAttacks || [],
+    true,
+    input.flurryAttacks
   );
   const unarmedAttackStrings = formatAttackStrings(unarmedAttack.attackBonus, unarmedAttack.damageString, unarmedAttack.critInfo, unarmedAttacks);
 
@@ -600,13 +647,14 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     weaponSongNotes.length > 0 && options.weaponSong !== "Off"
       ? "\n\n**Weapon Song Effects:**\n" + weaponSongNotes.join("\n")
       : "";
+  const noteBlock = weaponSongNotesText + (input.attackNoteBlock || "");
 
   const formatWeaponOutput = (attackStrings: FormattedAttackStrings): string =>
     `**Standard Attack:** ${attackStrings.standard}\n**Full Attack:** ${attackStrings.full}`;
 
   return {
-    melee: formatWeaponOutput(meleeAttackStrings) + weaponSongNotesText,
-    ranged: formatWeaponOutput(rangedAttackStrings) + weaponSongNotesText,
+    melee: formatWeaponOutput(meleeAttackStrings) + noteBlock,
+    ranged: formatWeaponOutput(rangedAttackStrings) + noteBlock,
     unarmed: formatWeaponOutput(unarmedAttackStrings),
   };
 }

@@ -94,7 +94,11 @@ export const DEFAULT_DATA: MiniSheetData = {
   // resources[] pool (real migration — see src/state/migrations.ts)
   // v5: spellSlotsL* resource pools migrate into the spellbook
   // (SpellbookState.slotOverrides; slot-only books use castingClass "")
-  schemaVersion: 5,
+  // v6: CombatToggles (minus rangedAttackStyle) convert into per-character
+  // quickActions/quickActionState (real migration — src/state/migrations.ts)
+  // v7: Weapon Song "Enhancement" repaired from untyped to enhancement-typed
+  // (RAW stacking with weapon enhancement; user-edited variants untouched)
+  schemaVersion: 7,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

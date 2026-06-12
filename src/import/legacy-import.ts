@@ -16,7 +16,8 @@ import type {
   ResourcePool,
   SkillEntry,
 } from "../types/character";
-import { ABILITY_KEYS, createDefaultCharacter } from "../types/character";
+import { seedQuickActionsFromToggles } from "../data/quick-actions";
+import { ABILITY_KEYS, createDefaultCharacter, defaultToggles } from "../types/character";
 import type { InventoryItem, InventoryState } from "../types/inventory";
 import {
   NOTE_MAX_LENGTH,
@@ -509,8 +510,10 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     familiarBonus: num(sheet.initFamilarBonus),
   };
 
-  // --- toggles ---
-  record.toggles = {
+  // --- toggles → quick actions (v6) ---
+  // The frontmatter toggle booleans seed the default Quick Action catalog;
+  // only rangedAttackStyle survives as a real toggle field.
+  const importedToggles = {
     powerAttack: bool(sheet.powerAttack),
     fightingDefensively: bool(sheet.fightingDefensively),
     craneStyle: bool(sheet.craneStyle),
@@ -524,6 +527,12 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     doublePreciseStrike: bool(sheet.doublePreciseStrike),
     versatilePerformance: bool(sheet.versatilePerformance),
     weaponSong: selectValue(sheet.weaponSong, "Off", warnings, "weaponSong"),
+  };
+  const seeded = seedQuickActionsFromToggles(importedToggles);
+  record.quickActions = seeded.quickActions;
+  record.quickActionState = seeded.quickActionState;
+  record.toggles = {
+    ...defaultToggles(),
     rangedAttackStyle: selectValue(sheet.rangedAttackStyle, "Longbow", warnings, "rangedAttackStyle"),
   };
 

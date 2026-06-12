@@ -6,7 +6,9 @@
  * migrated data is a no-op.
  */
 
-import type { CharacterRecord, ResourcePool } from "../types/character";
+import { seedQuickActionsFromToggles } from "../data/quick-actions";
+import { defaultToggles, type CharacterRecord, type ResourcePool } from "../types/character";
+import type { QuickActionEffect } from "../types/quick-actions";
 import type { MiniSheetData } from "../types/data-file";
 import {
   createSlotOnlySpellbook,
@@ -27,6 +29,8 @@ export function migrateData(raw: Partial<MiniSheetData>): Partial<MiniSheetData>
   let data = raw;
   if (version < 4) data = migrateToV4(data);
   if (version < 5) data = migrateToV5(data);
+  if (version < 6) data = migrateToV6(data);
+  if (version < 7) data = migrateToV7(data);
   return data;
 }
 
@@ -114,4 +118,70 @@ function migrateCharacterToV5(record: CharacterRecord): CharacterRecord {
     }
   }
   return { ...record, resources, spellbook };
+}
+
+/**
+ * v6: CombatToggles (minus rangedAttackStyle) become editable Quick Actions.
+ * The default catalog is seeded per character with the active toggle values
+ * mapped into quickActionState, then the deprecated toggle fields are zeroed
+ * so stale values can't confuse anything downstream.
+ */
+function migrateToV6(raw: Partial<MiniSheetData>): Partial<MiniSheetData> {
+  if (!raw.characters) return raw;
+  return { ...raw, characters: raw.characters.map(migrateCharacterToV6) };
+}
+
+function migrateCharacterToV6(record: CharacterRecord): CharacterRecord {
+  // idempotency: a record that already owns quick actions is left alone
+  if (record.quickActions) return record;
+  const seeded = seedQuickActionsFromToggles(record.toggles ?? {});
+  return {
+    ...record,
+    quickActions: seeded.quickActions,
+    quickActionState: seeded.quickActionState,
+    toggles: {
+      ...defaultToggles(),
+      rangedAttackStyle:
+        record.toggles?.rangedAttackStyle ?? defaultToggles().rangedAttackStyle,
+    },
+  };
+}
+
+/**
+ * v7: Weapon Song "Enhancement" becomes a true enhancement bonus (RAW FIX —
+ * v6 briefly shipped it as untyped, stacking with weapon enhancement).
+ * Repairs ONLY variants that still carry the exact v6 shape, so user-edited
+ * defs are never touched.
+ */
+const V6_SONG_ENHANCEMENT_EFFECTS = JSON.stringify([
+  { kind: "modifier", target: "attack.melee", type: "untyped", value: 1 },
+  { kind: "modifier", target: "attack.ranged", type: "untyped", value: 1 },
+  { kind: "modifier", target: "damage.melee", type: "untyped", value: 1 },
+  { kind: "modifier", target: "damage.ranged", type: "untyped", value: 1 },
+]);
+
+function migrateToV7(raw: Partial<MiniSheetData>): Partial<MiniSheetData> {
+  if (!raw.characters) return raw;
+  return { ...raw, characters: raw.characters.map(migrateCharacterToV7) };
+}
+
+function migrateCharacterToV7(record: CharacterRecord): CharacterRecord {
+  if (!record.quickActions) return record;
+  const quickActions = record.quickActions.map((def) => {
+    if (!def.variants) return def;
+    const variants = def.variants.map((variant) =>
+      variant.id === "enhancement" &&
+      JSON.stringify(variant.effects) === V6_SONG_ENHANCEMENT_EFFECTS
+        ? {
+            ...variant,
+            effects: [
+              { kind: "modifier", target: "attack.melee", type: "enhancement", value: 1 },
+              { kind: "modifier", target: "attack.ranged", type: "enhancement", value: 1 },
+            ] satisfies QuickActionEffect[],
+          }
+        : variant
+    );
+    return { ...def, variants };
+  });
+  return { ...record, quickActions };
 }

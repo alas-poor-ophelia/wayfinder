@@ -1,0 +1,785 @@
+{
+  "baseline paladin5": {
+    "melee": "**Standard Attack:** +2 (1d6+2) (18-20/x2)\n**Full Attack:** +2 (1d6+2) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "powerAttack bab5": {
+    "melee": "**Standard Attack:** +1 (1d6+4) (18-20/x2)\n**Full Attack:** +1 (1d6+4) (18-20/x2)",
+    "ranged": "**Standard Attack:** +3 (1d8+2) (20/x3)\n**Full Attack:** +3 (1d8+2) (20/x3)",
+    "unarmed": "**Standard Attack:** +3 (1d3+4) (20/x2)\n**Full Attack:** +3 (1d3+4) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "powerAttack bab8": {
+    "melee": "**Standard Attack:** +9 (1d6+10) (18-20/x2)\n**Full Attack:** +9/+4 (1d6+10) (18-20/x2)",
+    "ranged": "**Standard Attack:** +7 (1d8+6) (20/x3)\n**Full Attack:** +7/+2 (1d8+6) (20/x3)",
+    "unarmed": "**Standard Attack:** +7 (1d3+10) (20/x2)\n**Full Attack:** +7/+2 (1d3+10) (20/x2)",
+    "ac": {
+      "normalAC": 12,
+      "touchAC": 12,
+      "flatFootedAC": 10,
+      "cmb": 10,
+      "cmd": 24
+    },
+    "saves": {
+      "fort": 9,
+      "ref": 4,
+      "will": 3
+    },
+    "initiative": 2,
+    "skills": {}
+  },
+  "powerAttack bab11": {
+    "melee": "**Standard Attack:** +12 (1d6+10) (18-20/x2)\n**Full Attack:** +12/+7/+2 (1d6+10) (18-20/x2)",
+    "ranged": "**Standard Attack:** +9 (1d8+6) (20/x3)\n**Full Attack:** +9/+4/-1 (1d8+6) (20/x3)",
+    "unarmed": "**Standard Attack:** +9 (1d3+10) (20/x2)\n**Full Attack:** +9/+4/-1 (1d3+10) (20/x2)",
+    "ac": {
+      "normalAC": 14,
+      "touchAC": 14,
+      "flatFootedAC": 10,
+      "cmb": 12,
+      "cmd": 29
+    },
+    "saves": {
+      "fort": 12,
+      "ref": 7,
+      "will": 10
+    },
+    "initiative": 1,
+    "skills": {}
+  },
+  "fightingDefensively": {
+    "melee": "**Standard Attack:** -2 (1d6+2) (18-20/x2)\n**Full Attack:** -2 (1d6+2) (18-20/x2)",
+    "ranged": "**Standard Attack:** +0 (1d8+0) (20/x3)\n**Full Attack:** +0 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +0 (1d3+2) (20/x2)\n**Full Attack:** +0 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 18,
+      "touchAC": 18,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "fightingDefensively crane": {
+    "melee": "**Standard Attack:** +0 (1d6+2) (18-20/x2)\n**Full Attack:** +0 (1d6+2) (18-20/x2)",
+    "ranged": "**Standard Attack:** +2 (1d8+0) (20/x3)\n**Full Attack:** +2 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +2 (1d3+2) (20/x2)\n**Full Attack:** +2 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 19,
+      "touchAC": 19,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "charge": {
+    "melee": "**Standard Attack:** +4 (1d6+2) (18-20/x2)\n**Full Attack:** +4 (1d6+2) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +6 (1d3+2) (20/x2)\n**Full Attack:** +6 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 13,
+      "touchAC": 13,
+      "flatFootedAC": 8,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "flank": {
+    "melee": "**Standard Attack:** +4 (1d6+2) (18-20/x2)\n**Full Attack:** +4 (1d6+2) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +6 (1d3+2) (20/x2)\n**Full Attack:** +6 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "flurry monk10": {
+    "melee": "**Standard Attack:** +13 (1d6+3) (18-20/x2)\n**Full Attack:** +13/+13/+8 (1d6+3) (18-20/x2)",
+    "ranged": "**Standard Attack:** +14 (1d8+0) (20/x3)\n**Full Attack:** +14/+9 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +14 (2d6+3) (20/x2)\n**Full Attack:** +14/+14/+9 (2d6+3) (20/x2)",
+    "ac": {
+      "normalAC": 16,
+      "touchAC": 16,
+      "flatFootedAC": 12,
+      "cmb": 14,
+      "cmd": 29
+    },
+    "saves": {
+      "fort": 9,
+      "ref": 11,
+      "will": 5
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "flurry monk11": {
+    "melee": "**Standard Attack:** +14 (1d6+3) (18-20/x2)\n**Full Attack:** +14/+14/+14/+9/+4 (1d6+3) (18-20/x2)",
+    "ranged": "**Standard Attack:** +15 (1d8+0) (20/x3)\n**Full Attack:** +15/+10/+5 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +15 (2d6+3) (20/x2)\n**Full Attack:** +15/+15/+15/+10/+5 (2d6+3) (20/x2)",
+    "ac": {
+      "normalAC": 16,
+      "touchAC": 16,
+      "flatFootedAC": 12,
+      "cmb": 15,
+      "cmd": 30
+    },
+    "saves": {
+      "fort": 9,
+      "ref": 11,
+      "will": 5
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "flurry no monk": {
+    "melee": "**Standard Attack:** +12 (1d6+4) (18-20/x2)\n**Full Attack:** +12/+7 (1d6+4) (18-20/x2)",
+    "ranged": "**Standard Attack:** +10 (1d8+0) (20/x3)\n**Full Attack:** +10/+5 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +10 (1d3+4) (20/x2)\n**Full Attack:** +10/+5 (1d3+4) (20/x2)",
+    "ac": {
+      "normalAC": 12,
+      "touchAC": 12,
+      "flatFootedAC": 10,
+      "cmb": 10,
+      "cmd": 24
+    },
+    "saves": {
+      "fort": 9,
+      "ref": 4,
+      "will": 3
+    },
+    "initiative": 2,
+    "skills": {}
+  },
+  "flurry monk10 shuriken": {
+    "melee": "**Standard Attack:** +13 (1d6+3) (18-20/x2)\n**Full Attack:** +13/+13/+8 (1d6+3) (18-20/x2)",
+    "ranged": "**Standard Attack:** +14 (1d2+3) (20/x2)\n**Full Attack:** +14/+14/+9 (1d2+3) (20/x2)",
+    "unarmed": "**Standard Attack:** +14 (2d6+3) (20/x2)\n**Full Attack:** +14/+14/+9 (2d6+3) (20/x2)",
+    "ac": {
+      "normalAC": 16,
+      "touchAC": 16,
+      "flatFootedAC": 12,
+      "cmb": 14,
+      "cmd": 29
+    },
+    "saves": {
+      "fort": 9,
+      "ref": 11,
+      "will": 5
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "smite paladin5": {
+    "melee": "**Standard Attack:** +7 (1d6+7) (18-20/x2)\n**Full Attack:** +7 (1d6+7) (18-20/x2)",
+    "ranged": "**Standard Attack:** +9 (1d8+5) (20/x3)\n**Full Attack:** +9 (1d8+5) (20/x3)",
+    "unarmed": "**Standard Attack:** +9 (1d3+7) (20/x2)\n**Full Attack:** +9 (1d3+7) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "smite outsider paladin5": {
+    "melee": "**Standard Attack:** +7 (1d6+12 (2x vs outsider)) (18-20/x2)\n**Full Attack:** +7 (1d6+12 (2x vs outsider)) (18-20/x2)",
+    "ranged": "**Standard Attack:** +9 (1d8+10 (2x vs outsider)) (20/x3)\n**Full Attack:** +9 (1d8+10 (2x vs outsider)) (20/x3)",
+    "unarmed": "**Standard Attack:** +9 (1d3+12 (2x vs outsider)) (20/x2)\n**Full Attack:** +9 (1d3+12 (2x vs outsider)) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "smite paladin11": {
+    "melee": "**Standard Attack:** +18 (1d6+15) (18-20/x2)\n**Full Attack:** +18/+13/+8 (1d6+15) (18-20/x2)",
+    "ranged": "**Standard Attack:** +15 (1d8+11) (20/x3)\n**Full Attack:** +15/+10/+5 (1d8+11) (20/x3)",
+    "unarmed": "**Standard Attack:** +15 (1d3+15) (20/x2)\n**Full Attack:** +15/+10/+5 (1d3+15) (20/x2)",
+    "ac": {
+      "normalAC": 14,
+      "touchAC": 14,
+      "flatFootedAC": 10,
+      "cmb": 12,
+      "cmd": 29
+    },
+    "saves": {
+      "fort": 12,
+      "ref": 7,
+      "will": 10
+    },
+    "initiative": 1,
+    "skills": {}
+  },
+  "smite no paladin": {
+    "melee": "**Standard Attack:** +12 (1d6+4) (18-20/x2)\n**Full Attack:** +12/+7 (1d6+4) (18-20/x2)",
+    "ranged": "**Standard Attack:** +10 (1d8+0) (20/x3)\n**Full Attack:** +10/+5 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +10 (1d3+4) (20/x2)\n**Full Attack:** +10/+5 (1d3+4) (20/x2)",
+    "ac": {
+      "normalAC": 12,
+      "touchAC": 12,
+      "flatFootedAC": 10,
+      "cmb": 10,
+      "cmd": 24
+    },
+    "saves": {
+      "fort": 9,
+      "ref": 4,
+      "will": 3
+    },
+    "initiative": 2,
+    "skills": {}
+  },
+  "smite outsider ray": {
+    "melee": "**Standard Attack:** +7 (1d6+12 (2x vs outsider)) (18-20/x2)\n**Full Attack:** +7 (1d6+12 (2x vs outsider)) (18-20/x2)",
+    "ranged": "**Standard Attack:** +9 (touch) (+20 (2x vs outsider)) (20/x2)\n**Full Attack:** +9 (touch) (+20 (2x vs outsider)) (20/x2)",
+    "unarmed": "**Standard Attack:** +9 (1d3+12 (2x vs outsider)) (20/x2)\n**Full Attack:** +9 (1d3+12 (2x vs outsider)) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "precise panache3": {
+    "melee": "**Standard Attack:** +2 (1d6+7) (18-20/x2)\n**Full Attack:** +2 (1d6+7) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+7) (20/x2)\n**Full Attack:** +4 (1d3+7) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "precise double panache3": {
+    "melee": "**Standard Attack:** +2 (1d6+12) (18-20/x2)\n**Full Attack:** +2 (1d6+12) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+12) (20/x2)\n**Full Attack:** +4 (1d3+12) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "precise panache0": {
+    "melee": "**Standard Attack:** +2 (1d6+2) (18-20/x2)\n**Full Attack:** +2 (1d6+2) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "precise shuriken": {
+    "melee": "**Standard Attack:** +2 (1d6+7) (18-20/x2)\n**Full Attack:** +2 (1d6+7) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d2+7) (20/x2)\n**Full Attack:** +4 (1d2+7) (20/x2)",
+    "unarmed": "**Standard Attack:** +4 (1d3+7) (20/x2)\n**Full Attack:** +4 (1d3+7) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "agile dex>str": {
+    "melee": "**Standard Attack:** +10 (1d6+4) (18-20/x2)\n**Full Attack:** +10/+5 (1d6+4) (18-20/x2)",
+    "ranged": "**Standard Attack:** +10 (1d8+0) (20/x3)\n**Full Attack:** +10/+5 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +10 (1d3+1) (20/x2)\n**Full Attack:** +10/+5 (1d3+1) (20/x2)",
+    "ac": {
+      "normalAC": 14,
+      "touchAC": 14,
+      "flatFootedAC": 10,
+      "cmb": 10,
+      "cmd": 21
+    },
+    "saves": {
+      "fort": 7,
+      "ref": 6,
+      "will": 2
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "agile str>dex": {
+    "melee": "**Standard Attack:** +10 (1d6+4) (18-20/x2)\n**Full Attack:** +10/+5 (1d6+4) (18-20/x2)",
+    "ranged": "**Standard Attack:** +7 (1d8+0) (20/x3)\n**Full Attack:** +7/+2 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +7 (1d3+4) (20/x2)\n**Full Attack:** +7/+2 (1d3+4) (20/x2)",
+    "ac": {
+      "normalAC": 11,
+      "touchAC": 11,
+      "flatFootedAC": 10,
+      "cmb": 7,
+      "cmd": 21
+    },
+    "saves": {
+      "fort": 7,
+      "ref": 3,
+      "will": 2
+    },
+    "initiative": 1,
+    "skills": {}
+  },
+  "versatilePerformance": {
+    "melee": "**Standard Attack:** +6 (1d6+2) (18-20/x2)\n**Full Attack:** +6 (1d6+2) (18-20/x2)",
+    "ranged": "**Standard Attack:** +5 (1d8+0) (20/x3)\n**Full Attack:** +5 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +5 (1d3+2) (20/x2)\n**Full Attack:** +5 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 11,
+      "touchAC": 11,
+      "flatFootedAC": 10,
+      "cmb": 5,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 7,
+      "ref": 3,
+      "will": 5
+    },
+    "initiative": 1,
+    "skills": {
+      "Bluff": 13,
+      "Perform (Sing)": 15,
+      "Sense Motive": 13
+    }
+  },
+  "PA+FD": {
+    "melee": "**Standard Attack:** -3 (1d6+4) (18-20/x2)\n**Full Attack:** -3 (1d6+4) (18-20/x2)",
+    "ranged": "**Standard Attack:** -1 (1d8+2) (20/x3)\n**Full Attack:** -1 (1d8+2) (20/x3)",
+    "unarmed": "**Standard Attack:** -1 (1d3+4) (20/x2)\n**Full Attack:** -1 (1d3+4) (20/x2)",
+    "ac": {
+      "normalAC": 18,
+      "touchAC": 18,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "PA+FD+crane": {
+    "melee": "**Standard Attack:** -1 (1d6+4) (18-20/x2)\n**Full Attack:** -1 (1d6+4) (18-20/x2)",
+    "ranged": "**Standard Attack:** +1 (1d8+2) (20/x3)\n**Full Attack:** +1 (1d8+2) (20/x3)",
+    "unarmed": "**Standard Attack:** +1 (1d3+4) (20/x2)\n**Full Attack:** +1 (1d3+4) (20/x2)",
+    "ac": {
+      "normalAC": 19,
+      "touchAC": 19,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "charge+flank": {
+    "melee": "**Standard Attack:** +6 (1d6+2) (18-20/x2)\n**Full Attack:** +6 (1d6+2) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)",
+    "unarmed": "**Standard Attack:** +8 (1d3+2) (20/x2)\n**Full Attack:** +8 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 13,
+      "touchAC": 13,
+      "flatFootedAC": 8,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "haste+flurry+PA monk11": {
+    "melee": "**Standard Attack:** +12 (1d6+9) (18-20/x2)\n**Full Attack:** +12/+12/+12/+12/+7/+2 (1d6+9) (18-20/x2)",
+    "ranged": "**Standard Attack:** +13 (1d8+6) (20/x3)\n**Full Attack:** +13/+13/+8/+3 (1d8+6) (20/x3)",
+    "unarmed": "**Standard Attack:** +13 (2d6+9) (20/x2)\n**Full Attack:** +13/+13/+13/+13/+8/+3 (2d6+9) (20/x2)",
+    "ac": {
+      "normalAC": 17,
+      "touchAC": 17,
+      "flatFootedAC": 12,
+      "cmb": 15,
+      "cmd": 31
+    },
+    "saves": {
+      "fort": 9,
+      "ref": 12,
+      "will": 5
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song enhancement + magic weapon enh2": {
+    "melee": "**Standard Attack:** +5 (1d6+5) (18-20/x2)\n**Full Attack:** +5 (1d6+5) (18-20/x2)",
+    "ranged": "**Standard Attack:** +5 (1d8+1) (20/x3)\n**Full Attack:** +5 (1d8+1) (20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "everything paladin5": {
+    "melee": "**Standard Attack:** +8 (1d6+25 (2x vs outsider) +1d6 fire) (18-20/x2)\n**Full Attack:** +8/+8 (1d6+25 (2x vs outsider) +1d6 fire) (18-20/x2)",
+    "ranged": "**Standard Attack:** +5 (1d8+12 (2x vs outsider) +1d6 fire) (20/x3)\n**Full Attack:** +5/+5 (1d8+12 (2x vs outsider) +1d6 fire) (20/x3)",
+    "unarmed": "**Standard Attack:** +9 (1d3+24 (2x vs outsider)) (20/x2)\n**Full Attack:** +9/+9 (1d3+24 (2x vs outsider)) (20/x2)",
+    "ac": {
+      "normalAC": 17,
+      "touchAC": 17,
+      "flatFootedAC": 8,
+      "cmb": 4,
+      "cmd": 18
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 5,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Enhancement": {
+    "melee": "**Standard Attack:** +3 (1d6+3) (18-20/x2)\n**Full Attack:** +3 (1d6+3) (18-20/x2)",
+    "ranged": "**Standard Attack:** +5 (1d8+1) (20/x3)\n**Full Attack:** +5 (1d8+1) (20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Defending": {
+    "melee": "**Standard Attack:** +2 (1d6+2) (18-20/x2)\n**Full Attack:** +2 (1d6+2) (18-20/x2)\n\n**Weapon Song Effects:**\n**Defending:** You can use the enhancement bonus as a bonus to your AC. Designate when the song begins.",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)\n\n**Weapon Song Effects:**\n**Defending:** You can use the enhancement bonus as a bonus to your AC. Designate when the song begins.",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 16,
+      "touchAC": 16,
+      "flatFootedAC": 11,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Distance": {
+    "melee": "**Standard Attack:** +2 (1d6+2) (18-20/x2)\n**Full Attack:** +2 (1d6+2) (18-20/x2)\n\n**Weapon Song Effects:**\n**Distance:** Doubles the range increment of your ranged weapon.",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)\n\n**Weapon Song Effects:**\n**Distance:** Doubles the range increment of your ranged weapon.",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Flaming": {
+    "melee": "**Standard Attack:** +2 (1d6+2 +1d6 fire) (18-20/x2)\n**Full Attack:** +2 (1d6+2 +1d6 fire) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0 +1d6 fire) (20/x3)\n**Full Attack:** +4 (1d8+0 +1d6 fire) (20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Frost": {
+    "melee": "**Standard Attack:** +2 (1d6+2 +1d6 cold) (18-20/x2)\n**Full Attack:** +2 (1d6+2 +1d6 cold) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0 +1d6 cold) (20/x3)\n**Full Attack:** +4 (1d8+0 +1d6 cold) (20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Ghost Touch": {
+    "melee": "**Standard Attack:** +2 (1d6+2) (18-20/x2)\n**Full Attack:** +2 (1d6+2) (18-20/x2)\n\n**Weapon Song Effects:**\n**Ghost Touch:** Your weapon can strike incorporeal creatures without miss chance and deals full damage to them.",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)\n\n**Weapon Song Effects:**\n**Ghost Touch:** Your weapon can strike incorporeal creatures without miss chance and deals full damage to them.",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Keen": {
+    "melee": "**Standard Attack:** +2 (1d6+2) (15-20/x2)\n**Full Attack:** +2 (1d6+2) (15-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (19-20/x3)\n**Full Attack:** +4 (1d8+0) (19-20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Mighty Cleaving": {
+    "melee": "**Standard Attack:** +2 (1d6+2) (18-20/x2)\n**Full Attack:** +2 (1d6+2) (18-20/x2)\n\n**Weapon Song Effects:**\n**Mighty Cleaving:** If you hit your target, you can make an additional attack against another opponent within reach at the same attack bonus.",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)\n\n**Weapon Song Effects:**\n**Mighty Cleaving:** If you hit your target, you can make an additional attack against another opponent within reach at the same attack bonus.",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Returning": {
+    "melee": "**Standard Attack:** +2 (1d6+2) (18-20/x2)\n**Full Attack:** +2 (1d6+2) (18-20/x2)\n\n**Weapon Song Effects:**\n**Returning:** A thrown weapon returns to your hand immediately after it is thrown, allowing you to make a full attack with it.",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)\n\n**Weapon Song Effects:**\n**Returning:** A thrown weapon returns to your hand immediately after it is thrown, allowing you to make a full attack with it.",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Shock": {
+    "melee": "**Standard Attack:** +2 (1d6+2 +1d6 electricity) (18-20/x2)\n**Full Attack:** +2 (1d6+2 +1d6 electricity) (18-20/x2)",
+    "ranged": "**Standard Attack:** +4 (1d8+0 +1d6 electricity) (20/x3)\n**Full Attack:** +4 (1d8+0 +1d6 electricity) (20/x3)",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  },
+  "song Seeking": {
+    "melee": "**Standard Attack:** +2 (1d6+2) (18-20/x2)\n**Full Attack:** +2 (1d6+2) (18-20/x2)\n\n**Weapon Song Effects:**\n**Seeking:** Negates the miss chance for concealment (not total concealment) for ranged attacks.",
+    "ranged": "**Standard Attack:** +4 (1d8+0) (20/x3)\n**Full Attack:** +4 (1d8+0) (20/x3)\n\n**Weapon Song Effects:**\n**Seeking:** Negates the miss chance for concealment (not total concealment) for ranged attacks.",
+    "unarmed": "**Standard Attack:** +4 (1d3+2) (20/x2)\n**Full Attack:** +4 (1d3+2) (20/x2)",
+    "ac": {
+      "normalAC": 15,
+      "touchAC": 15,
+      "flatFootedAC": 10,
+      "cmb": 4,
+      "cmd": 17
+    },
+    "saves": {
+      "fort": 2,
+      "ref": 4,
+      "will": -1
+    },
+    "initiative": 4,
+    "skills": {}
+  }
+}

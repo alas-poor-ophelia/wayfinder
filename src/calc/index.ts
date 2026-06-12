@@ -36,6 +36,7 @@ import {
 import { getBuffDef } from "../data/buffs";
 import { getRaceData, racialAbilityMods } from "../data/races";
 import type { RaceData } from "../data/types";
+import { resolveQuickActions } from "./quick-actions";
 
 export interface ComputedCharacter {
   mods: AbilityScores;
@@ -149,22 +150,18 @@ export function computeAll(
       .join("\n");
   }
 
-  const combined = [...racialMods, ...gearMods, ...configMods, ...buffMods];
-  const combinedFor = (target: string): number =>
-    combined.length ? resolveModifiers(combined, target).total : 0;
+  const baseMods = [...racialMods, ...gearMods, ...configMods, ...buffMods];
 
   // ability.* modifiers (belts, headbands...) resolve through the engine
   // and ride a dedicated offset channel into the ability math
-  const typedAbility = combined.length
-    ? Object.fromEntries(
-        ABILITY_KEYS.map((k) => [k, resolveModifiers(combined, `ability.${k}`).total])
-      )
-    : undefined;
-
-  const abilityInput: AbilityModInput = {
+  const abilityInputFor = (modSet: Modifier[]): AbilityModInput => ({
     base: character.baseAbilities,
     racial: race ? racialAbilityMods(race, character.raceAbilityChoice) : undefined,
-    typed: typedAbility,
+    typed: modSet.length
+      ? Object.fromEntries(
+          ABILITY_KEYS.map((k) => [k, resolveModifiers(modSet, `ability.${k}`).total])
+        )
+      : undefined,
     adjust: character.adjustments.ability,
     conditionAdjust: {
       str: effects.strAdjust,
@@ -176,9 +173,7 @@ export function computeAll(
     },
     drain: character.adjustments.drain,
     damage: character.adjustments.damage,
-  };
-  const mods = abilityMods(abilityInput);
-  const scores = effectiveScores(abilityInput);
+  });
 
   const masterBab =
     character.link?.babFromMaster && master
@@ -188,6 +183,52 @@ export function computeAll(
   const paladinLevel = classLevel(character, "paladin");
   const monkLevel = classLevel(character, "monk");
   const skaldLevel = classLevel(character, "skald");
+
+  // Quick Actions resolve against PRE-action mods (race/gear/config/buffs
+  // applied) — no legacy toggle ever modified an ability score, so legacy
+  // parity is exact. Records without quickActions (pre-v6, mid-session)
+  // fall back to the deprecated toggle fields below.
+  const qa = character.quickActions
+    ? (() => {
+        const input0 = abilityInputFor(baseMods);
+        return resolveQuickActions(
+          character.quickActions,
+          character.quickActionState ?? {},
+          {
+            classes: character.classes,
+            bab,
+            totalLevel: totalLevel(character.classes),
+            mods: abilityMods(input0),
+            scores: effectiveScores(input0),
+            resources: character.resources,
+          }
+        );
+      })()
+    : null;
+  if (qa && qa.sheetNotes.length) {
+    effects.buffNotes = [effects.buffNotes, ...qa.sheetNotes]
+      .filter(Boolean)
+      .join("\n");
+  }
+  // condition channels + quick-action channels, merged (conditions first —
+  // legacy extra-attack ordering)
+  const qaEffects = qa
+    ? {
+        ...effects,
+        acAdjust: (effects.acAdjust || 0) + qa.acChannels.normal,
+        touchAcAdjust: (effects.touchAcAdjust || 0) + qa.acChannels.touch,
+        ffAcAdjust: (effects.ffAcAdjust || 0) + qa.acChannels.ff,
+        extraAttacks: [...(effects.extraAttacks || []), ...qa.extraAttacks],
+      }
+    : effects;
+
+  const combined = qa ? [...baseMods, ...qa.modifiers] : baseMods;
+  const combinedFor = (target: string): number =>
+    combined.length ? resolveModifiers(combined, target).total : 0;
+
+  const abilityInput = abilityInputFor(combined);
+  const mods = abilityMods(abilityInput);
+  const scores = effectiveScores(abilityInput);
 
   // One stacking pass over every AC-targeted modifier, partitioned into
   // the legacy input buckets (naturalAC: excluded from touch; deflectionAC:
@@ -199,7 +240,7 @@ export function computeAll(
     chaMod: mods.cha,
     strMod: mods.str,
     sizeMod: character.ac.sizeMod,
-    weaponSong: character.toggles.weaponSong,
+    weaponSong: qa ? "Off" : character.toggles.weaponSong,
     naturalAC: acResolved.naturalLike,
     deflectionAC: acResolved.deflectionLike,
     dodgeAC: acResolved.dodge,
@@ -208,12 +249,12 @@ export function computeAll(
     // The old sheet's separate `hasted` flag was never bound (haste works
     // through condition effects), so it stays false here too.
     hasted: false,
-    charging: character.toggles.charging,
-    fightingDefensively: character.toggles.fightingDefensively,
-    craneStyle: character.toggles.craneStyle,
+    charging: qa ? false : character.toggles.charging,
+    fightingDefensively: qa ? false : character.toggles.fightingDefensively,
+    craneStyle: qa ? false : character.toggles.craneStyle,
     acAdjust: character.adjustments.ac,
     bab,
-    conditionEffects: effects,
+    conditionEffects: qaEffects,
   });
 
   // Attack/damage modifiers: surviving weapon enhancement rides the legacy
@@ -243,19 +284,39 @@ export function computeAll(
       character.adjustments.unarmedDmg + combinedFor("damage.unarmed"),
     meleeWeaponEnhancement: meleeAtk.enhancement,
     rangedWeaponEnhancement: rangedAtk.enhancement,
-    smiteEvil: character.toggles.smiteEvil,
-    smiteEvilOutsider: character.toggles.smiteEvilOutsider,
-    charging: character.toggles.charging,
-    flurryOfBlows: character.toggles.flurryOfBlows,
-    fightingDefensively: character.toggles.fightingDefensively,
-    craneStyle: character.toggles.craneStyle,
-    powerAttack: character.toggles.powerAttack,
-    agileWeapon: character.toggles.agileWeapon,
-    preciseStrike: character.toggles.preciseStrike,
-    doublePreciseStrike: character.toggles.doublePreciseStrike,
-    flanking: character.toggles.flanking,
+    // With quick actions resolved, the legacy toggle booleans are fed
+    // dead-false and the QA channels carry everything instead. The
+    // toggle reads below are the pre-v6 fallback only.
+    smiteEvil: qa ? false : character.toggles.smiteEvil,
+    smiteEvilOutsider: qa ? false : character.toggles.smiteEvilOutsider,
+    charging: qa ? false : character.toggles.charging,
+    flurryOfBlows: qa ? qa.flurry !== null : character.toggles.flurryOfBlows,
+    fightingDefensively: qa ? false : character.toggles.fightingDefensively,
+    craneStyle: qa ? false : character.toggles.craneStyle,
+    powerAttack: qa ? false : character.toggles.powerAttack,
+    agileWeapon: qa ? qa.agileWeapon : character.toggles.agileWeapon,
+    preciseStrike: qa ? false : character.toggles.preciseStrike,
+    doublePreciseStrike: qa ? false : character.toggles.doublePreciseStrike,
+    flanking: qa ? false : character.toggles.flanking,
     rangedAttackStyle: character.toggles.rangedAttackStyle,
-    weaponSong: character.toggles.weaponSong,
+    weaponSong: qa ? "Off" : character.toggles.weaponSong,
+    ...(qa
+      ? {
+          ...(qa.smiteOverride ? { smiteOverride: qa.smiteOverride } : {}),
+          ...(qa.preciseStrikeOverride !== null
+            ? { preciseStrikeOverride: qa.preciseStrikeOverride }
+            : {}),
+          ...(qa.flurry ? { flurryAttacks: qa.flurry.attacks } : {}),
+          extraDamageDice: qa.extraDamageDice,
+          keen: qa.keen,
+          ...(qa.attackNoteLines.length
+            ? {
+                attackNoteBlock:
+                  "\n\n**Weapon Song Effects:**\n" + qa.attackNoteLines.join("\n"),
+              }
+            : {}),
+        }
+      : {}),
     // schema v4: panache is a resources[] pool; the optional field is the
     // pre-migration fallback
     panachePoints:
@@ -264,7 +325,7 @@ export function computeAll(
       0,
     // attacks' input type carries an index signature; the concrete
     // ConditionEffects interface satisfies it structurally
-    conditionEffects: { ...effects } as AttackConditionEffects,
+    conditionEffects: { ...qaEffects } as AttackConditionEffects,
   });
 
   // Resistance now stacks in the engine (config field + cloaks take max),
@@ -301,7 +362,9 @@ export function computeAll(
       cha: effects.chaSkillAdjust,
     },
     skaldLevel,
-    versatilePerformance: character.toggles.versatilePerformance,
+    versatilePerformance: qa
+      ? qa.versatilePerformance
+      : character.toggles.versatilePerformance,
     armorCheckPenalty: 0,
   });
   const skills = combined.length

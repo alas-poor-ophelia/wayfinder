@@ -5,6 +5,7 @@ import {
   createDefaultCharacter,
   type CharacterRecord,
 } from "../types/character";
+import type { QuickActionDef } from "../types/quick-actions";
 import {
   DEFAULT_DATA,
   DEFAULT_PARTY_INV,
@@ -19,7 +20,8 @@ import {
 } from "../types/inventory";
 import { computeAll } from "../calc";
 import { evaluateResourceFormula } from "../calc/resources";
-import { classResources, unionClassSkills } from "../data/classes";
+import { classQuickActionIds, classResources, unionClassSkills } from "../data/classes";
+import { getCatalogQuickAction } from "../data/quick-actions";
 import { getRaceData } from "../data/races";
 import { migrateData } from "./migrations";
 
@@ -233,6 +235,57 @@ export class MiniSheetStore {
     this.commit({ ...d, characters });
   }
 
+  /** Cycle a quick action: off -> stage 1 -> ... -> last stage -> off.
+   *  Handles the linkedBuff add/remove on the off<->on edges. */
+  cycleQuickAction(id: string, actionId: string): void {
+    const record = this.getCharacter(id);
+    if (!record) throw new Error(`No character with id "${id}"`);
+    const def = record.quickActions?.find((a) => a.id === actionId);
+    if (!def) throw new Error(`No quick action "${actionId}"`);
+    const prev = record.quickActionState?.[actionId];
+    const prevStage = prev?.stage ?? 0;
+    const nextStage = prevStage >= def.stages.length ? 0 : prevStage + 1;
+    this.setQuickActionStage(record, def.id, nextStage, prev?.variantId, def.linkedBuff);
+  }
+
+  /** Select a quick action variant (null = off). Turning a variant on puts
+   *  the action at stage 1; the variant choice persists across off cycles. */
+  setQuickActionVariant(id: string, actionId: string, variantId: string | null): void {
+    const record = this.getCharacter(id);
+    if (!record) throw new Error(`No character with id "${id}"`);
+    const def = record.quickActions?.find((a) => a.id === actionId);
+    if (!def) throw new Error(`No quick action "${actionId}"`);
+    const prev = record.quickActionState?.[actionId];
+    if (variantId === null) {
+      this.setQuickActionStage(record, def.id, 0, prev?.variantId, def.linkedBuff);
+    } else {
+      this.setQuickActionStage(record, def.id, 1, variantId, def.linkedBuff);
+    }
+  }
+
+  private setQuickActionStage(
+    record: CharacterRecord,
+    actionId: string,
+    stage: number,
+    variantId: string | undefined,
+    linkedBuff: string | undefined
+  ): void {
+    const prevStage = record.quickActionState?.[actionId]?.stage ?? 0;
+    const quickActionState = {
+      ...record.quickActionState,
+      [actionId]: { stage, ...(variantId ? { variantId } : {}) },
+    };
+    let buffs = record.buffs;
+    if (linkedBuff) {
+      if (prevStage === 0 && stage > 0 && !buffs.includes(linkedBuff)) {
+        buffs = [...buffs, linkedBuff];
+      } else if (prevStage > 0 && stage === 0) {
+        buffs = buffs.filter((b) => b !== linkedBuff);
+      }
+    }
+    this.updateCharacter(record.id, { quickActionState, buffs });
+  }
+
   /** Set a (possibly nested, dot-separated) field on a character record. */
   setCharacterField(id: string, dotPath: string, value: unknown): void {
     const d = this.data.value;
@@ -332,5 +385,33 @@ export class MiniSheetStore {
       resources[i] = { ...pool, max, current: Math.min(pool.current, max) };
     }
     this.updateCharacter(id, { resources });
+  }
+
+  /** Add quick actions granted by the character's classes. INSERT-ONLY:
+   *  an action the character already has (by id) is never touched, so
+   *  user edits and removals-then-re-adds always win. Removed-on-purpose
+   *  actions WILL come back — that's the explicit point of the button. */
+  syncClassQuickActions(id: string): { added: string[] } {
+    const record = this.getCharacter(id);
+    if (!record) throw new Error(`No character with id "${id}"`);
+    const existing = record.quickActions ?? [];
+    const present = new Set(existing.map((a) => a.id));
+    const added: string[] = [];
+    const appended: QuickActionDef[] = [];
+    for (const actionId of classQuickActionIds(record.classes)) {
+      if (present.has(actionId)) continue;
+      // the crane FD variant stands in for plain fighting defensively
+      if (actionId === "fightingDefensively" && present.has("fightingDefensivelyCrane")) {
+        continue;
+      }
+      const def = getCatalogQuickAction(actionId);
+      if (!def) continue;
+      appended.push(def);
+      added.push(def.name);
+    }
+    if (appended.length) {
+      this.updateCharacter(id, { quickActions: [...existing, ...appended] });
+    }
+    return { added };
   }
 }

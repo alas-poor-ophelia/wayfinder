@@ -5,7 +5,10 @@
  */
 
 import type { Modifier } from "../calc/modifiers";
+// runtime import, but data/quick-actions only type-imports back — no cycle
+import { defaultQuickActions } from "../data/quick-actions";
 import type { InventoryState } from "./inventory";
+import type { QuickActionDef, QuickActionStateMap } from "./quick-actions";
 import type { SpellbookState } from "./spellbook";
 
 export interface AbilityScores {
@@ -26,6 +29,13 @@ export interface ClassEntry {
   level: number;
 }
 
+/**
+ * DEPRECATED (schema v6): every field except `rangedAttackStyle` migrated
+ * into quickActions/quickActionState. The fields stay so pre-v6 saves
+ * type-check; migrateData() zeroes them on load and computeAll only reads
+ * them as a fallback for records that somehow miss the migration.
+ * `rangedAttackStyle` is an attack-style selector, not a toggle — it lives on.
+ */
 export interface CombatToggles {
   powerAttack: boolean;
   fightingDefensively: boolean;
@@ -195,6 +205,13 @@ export interface CharacterRecord {
   initiative: InitiativeState;
   speed: string;
   toggles: CombatToggles;
+  /** Quick Actions: per-character defs, array order = combat-tab order.
+   *  Undefined only for pre-v6 records mid-session (computeAll falls back
+   *  to `toggles`); the v6 migration and the store's schema-forward merge
+   *  both seed it. */
+  quickActions?: QuickActionDef[];
+  /** active stage/variant per quick action id (stage 0/absent = off) */
+  quickActionState?: QuickActionStateMap;
   enhancements: EnhancementState;
   adjustments: AdjustmentState;
   conditions: string[];
@@ -257,6 +274,8 @@ export function createDefaultCharacter(id: string, name: string): CharacterRecor
     initiative: { miscBonus: 0, familiarBonus: 0 },
     speed: "30ft",
     toggles: defaultToggles(),
+    quickActions: defaultQuickActions(),
+    quickActionState: {},
     enhancements: { meleeWeapon: 0, rangedWeapon: 0, resistance: 0 },
     adjustments: {
       atk: 0,
