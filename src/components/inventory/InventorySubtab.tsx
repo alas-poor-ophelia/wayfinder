@@ -1,5 +1,6 @@
 import { useState } from "preact/hooks";
 import type { ComputedCharacter } from "../../calc";
+import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 import { DEFAULT_PARTY_INV, type PartyInvState } from "../../types/data-file";
@@ -13,10 +14,12 @@ import { InventoryPanel } from "./InventoryPanel";
  * debounce tick.
  */
 export function InventorySubtab({
+  plugin,
   store,
   character,
   computed,
 }: {
+  plugin: MiniSheetPlugin;
   store: MiniSheetStore;
   character: CharacterRecord;
   computed: ComputedCharacter;
@@ -29,6 +32,7 @@ export function InventorySubtab({
       inventory={character.inventory ?? createDefaultInventory()}
       variant="sidebar"
       encumbrance={computed.encumbrance}
+      customItems={plugin.customItems.items.value}
       filters={filters}
       onFilters={(patch) => setFilters((f) => ({ ...f, ...patch }))}
     />

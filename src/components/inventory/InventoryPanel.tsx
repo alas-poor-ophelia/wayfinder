@@ -2,6 +2,7 @@ import { useState } from "preact/hooks";
 import type { EncumbranceComputed } from "../../calc/encumbrance";
 import type { InventoryScope } from "../../state/inventory-actions";
 import type { MiniSheetStore } from "../../state/store";
+import type { CustomItemDef } from "../../types/custom-items";
 import type { PartyInvState } from "../../types/data-file";
 import type { InventoryItem, InventoryState } from "../../types/inventory";
 import { isContainer } from "../../types/inventory";
@@ -88,6 +89,7 @@ export interface InventoryPanelProps {
   variant: "sidebar" | "party";
   encumbrance?: EncumbranceComputed;
   ownerChoices?: string[];
+  customItems?: CustomItemDef[];
   filters: PartyInvState;
   onFilters: (patch: Partial<PartyInvState>) => void;
 }
@@ -112,6 +114,7 @@ export function InventoryPanel(props: InventoryPanelProps) {
         scope={scope}
         variant={variant}
         ownerChoices={props.ownerChoices}
+        customItems={props.customItems}
         onClose={() => setEditing(null)}
       />
     ) : null;

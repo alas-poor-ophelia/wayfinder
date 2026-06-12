@@ -1,7 +1,8 @@
 /**
- * Draft-builder tests: catalog records → inventory drafts / weapon
- * profiles. These are the handoff shapes the Equipment DB view writes
- * through addItem/updateCharacter.
+ * Draft-builder tests: catalog records → inventory drafts. These are the
+ * handoff shapes the Equipment DB view and the editor autocomplete write
+ * through addItem. Weapon drafts carry stamped attack stats — an equipped
+ * weapon item IS an attack profile.
  */
 import { describe, expect, it } from "vitest";
 import {
@@ -9,7 +10,7 @@ import {
   customDraft,
   magicDraft,
   weaponDraft,
-  weaponProfileFor,
+  weaponStatsFor,
 } from "../../../src/state/equip-drafts";
 import type { CustomItemDef } from "../../../src/types/custom-items";
 import type {
@@ -70,6 +71,27 @@ describe("inventory drafts", () => {
     expect(weaponDraft(longsword).modifiers).toBeUndefined();
   });
 
+  it("weapon draft stamps attack stats from the medium damage line", () => {
+    expect(weaponDraft(longsword).weapon).toEqual({
+      kind: "melee",
+      damageDie: "1d8",
+      critRange: "19-20",
+      critMult: "2",
+    });
+    expect(weaponDraft(longbow).weapon?.kind).toBe("ranged");
+  });
+
+  it("ammunition and no-damage entries get no attack stats", () => {
+    expect(weaponStatsFor({ ...longbow, category: "ammunition" })).toBeUndefined();
+    expect(weaponStatsFor({ ...longsword, dmgM: "" })).toBeUndefined();
+  });
+
+  it("crit fields default for no-crit weapons", () => {
+    expect(
+      weaponStatsFor({ ...longsword, critRange: "", critMult: "" })
+    ).toMatchObject({ critRange: "20", critMult: "2" });
+  });
+
   it("armor draft emits ONE typed ac.all modifier of the base bonus", () => {
     expect(armorDraft(chainShirt).modifiers).toEqual([
       { target: "ac.all", type: "armor", value: 4, source: "Chain shirt" },
@@ -121,49 +143,31 @@ describe("inventory drafts", () => {
     });
     expect(customDraft({ ...forged, kind: "shield" }).type).toBe("Shield");
   });
-});
 
-describe("weaponProfileFor", () => {
-  it("builds a melee profile from the medium damage line", () => {
-    expect(weaponProfileFor([], longsword)).toEqual({
-      id: "longsword",
-      name: "Longsword",
+  it("custom weapon draft stamps attack stats from its base weapon", () => {
+    const forged: CustomItemDef = {
+      id: "ci_x",
+      name: "+1 Flaming Longsword",
+      kind: "weapon",
+      baseId: "longsword",
+      enhancement: 1,
+      abilityIds: ["flaming"],
+      priceGp: 8315,
+      weightLbs: 4,
+      modifiers: [],
+      note: "",
+      createdAt: "",
+      modifiedAt: "",
+    };
+    expect(customDraft(forged, longsword).weapon).toEqual({
       kind: "melee",
       damageDie: "1d8",
       critRange: "19-20",
       critMult: "2",
     });
-  });
-
-  it("ranged and ammunition categories map to ranged", () => {
-    expect(weaponProfileFor([], longbow)?.kind).toBe("ranged");
-    expect(
-      weaponProfileFor([], { ...longbow, category: "ammunition" })?.kind
-    ).toBe("ranged");
-  });
-
-  it("returns null when a same-name profile exists (no duplicates)", () => {
-    const existing = [weaponProfileFor([], longsword)!];
-    expect(weaponProfileFor(existing, longsword)).toBeNull();
-  });
-
-  it("suffixes the id on collision; custom name overrides", () => {
-    const existing = [weaponProfileFor([], longsword)!];
-    const forged = weaponProfileFor(existing, longsword, "+1 Flaming Longsword");
-    expect(forged).toMatchObject({
-      id: "longsword-2",
-      name: "+1 Flaming Longsword",
-    });
-  });
-
-  it("defaults crit fields for no-crit weapons", () => {
-    const net = weaponProfileFor([], {
-      ...longsword,
-      id: "net",
-      name: "Net",
-      critRange: "",
-      critMult: "",
-    });
-    expect(net).toMatchObject({ critRange: "20", critMult: "2" });
+    // no base resolved (stale baseId) → no stats, still a valid item
+    expect(customDraft(forged).weapon).toBeUndefined();
+    // armor customs never get attack stats even when a base is passed
+    expect(customDraft({ ...forged, kind: "armor" }, longsword).weapon).toBeUndefined();
   });
 });

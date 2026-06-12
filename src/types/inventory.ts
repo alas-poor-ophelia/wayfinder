@@ -33,6 +33,16 @@ export type ItemType = (typeof ITEM_TYPES)[number];
 export const NOTE_MAX_LENGTH = 144;
 export const WAND_MAX_CHARGES = 50;
 
+/** Catalog-derived attack stats stamped onto weapon items at add time
+ *  (same denormalization pattern as custom items). An equipped Weapon-type
+ *  item with these IS an attack profile — there is no stored profile list. */
+export interface ItemWeaponStats {
+  kind: "melee" | "ranged";
+  damageDie: string;
+  critRange: string; // "20" | "19-20" | "18-20"
+  critMult: string; // "2" | "3" | "4"
+}
+
 export interface InventoryItem {
   /** legacy scheme: "item_" + 9 random base36 chars */
   id: string;
@@ -55,6 +65,8 @@ export interface InventoryItem {
   equipped?: boolean;
   /** typed stat bonuses the item grants while equipped (modifier engine) */
   modifiers?: Modifier[];
+  /** attack stats for Weapon-type items; equipped + present = attack block */
+  weapon?: ItemWeaponStats;
 }
 
 export interface CurrencyState {

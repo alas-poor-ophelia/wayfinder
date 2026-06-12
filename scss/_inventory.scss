@@ -330,12 +330,12 @@
     }
   }
 
+  // name owns its row (sidebar): wrap instead of ellipsizing — the party
+  // view re-tightens to one line in _party-inv.scss
   .ms-inv-row__name {
     flex: 1;
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
     font-family: "Norwester", sans-serif;
     font-size: 0.85em;
     letter-spacing: 0.03em;
@@ -345,6 +345,20 @@
     margin-left: 4px;
     color: var(--text-muted);
     font-size: 0.85em;
+  }
+
+  .ms-inv-row__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .ms-inv-row__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
   }
 
   .ms-inv-badge {
@@ -522,6 +536,76 @@
     gap: 6px;
   }
 
+  // ---- name autocomplete (equipment catalog) ----
+  .ms-inv-editor__namewrap {
+    position: relative;
+
+    input {
+      width: 100%;
+    }
+  }
+
+  .ms-inv-editor__suggest {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    max-height: 240px;
+    overflow-y: auto;
+    margin-top: 2px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-primary);
+    box-shadow: var(--shadow-s);
+  }
+
+  .ms-inv-editor__suggest-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 38px;
+    padding: 4px 8px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--background-modifier-border);
+    border-radius: 0;
+    box-shadow: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1em;
+    color: var(--text-normal);
+
+    &:last-child {
+      border-bottom: none;
+    }
+    &:hover {
+      background-color: var(--background-secondary);
+    }
+  }
+
+  .ms-inv-editor__suggest-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ms-inv-editor__suggest-kind {
+    flex-shrink: 0;
+    font-size: 0.85em;
+    color: var(--text-muted);
+  }
+
+  .ms-inv-editor__suggest-price {
+    flex-shrink: 0;
+    font-size: 0.85em;
+    color: var(--ms-gold);
+    white-space: nowrap;
+  }
+
   .ms-inv-editor__error {
     padding: 4px 8px;
     border-radius: 4px;
@@ -584,12 +668,19 @@
   }
 }
 
-.ms-inv-editor__equipped {
+.ms-inv-editor__equipped,
+.ms-inv-editor__flag {
   display: flex;
   align-items: center;
   gap: 6px;
   min-height: 32px;
   font-size: 0.9em;
+}
+
+.ms-inv-editor__flag {
+  font-family: "Taroca", serif;
+  font-size: 0.78em;
+  color: var(--text-muted);
 }
 
 .ms-inv-editor__bonus-hint {

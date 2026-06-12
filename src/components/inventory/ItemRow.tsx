@@ -70,26 +70,30 @@ export function ItemRow({
           {item.name}
           {item.count > 1 && <span class="ms-inv-row__count">×{item.count}</span>}
         </span>
+      </div>
+      <div class="ms-inv-row__meta">
         <span class={`ms-inv-badge ms-inv-badge--${TYPE_FAMILY[item.type]}`}>
           {item.type}
         </span>
-        {!!item.modifiers?.length && onEquip && (
+        <span class="ms-inv-row__actions">
+          {(!!item.modifiers?.length || !!item.weapon) && onEquip && (
+            <button
+              class={`ms-inv-row__equip${item.equipped ? " is-on" : ""}`}
+              aria-label={`${item.equipped ? "Unequip" : "Equip"} ${item.name}`}
+              aria-pressed={!!item.equipped}
+              title={item.equipped ? "Equipped (bonuses/attacks active)" : "Not equipped"}
+              onClick={onEquip}
+            >
+              {item.equipped ? "◉" : "○"}
+            </button>
+          )}
+          <button class="ms-inv-row__edit" aria-label={`Edit ${item.name}`} onClick={onEdit} />
           <button
-            class={`ms-inv-row__equip${item.equipped ? " is-on" : ""}`}
-            aria-label={`${item.equipped ? "Unequip" : "Equip"} ${item.name}`}
-            aria-pressed={!!item.equipped}
-            title={item.equipped ? "Equipped (bonuses active)" : "Not equipped"}
-            onClick={onEquip}
-          >
-            {item.equipped ? "◉" : "○"}
-          </button>
-        )}
-        <button class="ms-inv-row__edit" aria-label={`Edit ${item.name}`} onClick={onEdit} />
-        <button
-          class="ms-inv-row__delete"
-          aria-label={`Delete ${item.name}`}
-          onClick={onDelete}
-        />
+            class="ms-inv-row__delete"
+            aria-label={`Delete ${item.name}`}
+            onClick={onDelete}
+          />
+        </span>
       </div>
       {item.note && <div class="ms-inv-row__note">{item.note}</div>}
       {container && childCount > 0 && !expanded && (

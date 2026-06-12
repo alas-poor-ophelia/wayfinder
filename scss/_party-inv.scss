@@ -35,9 +35,34 @@
     min-width: 0;
   }
 
-  // roomier rows than the 321px sidebar
+  // roomier rows than the 321px sidebar — and wide enough to keep the
+  // name + badge/actions on ONE visual line (the sidebar stacks them)
+  .ms-inv-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 8px;
+  }
+
+  .ms-inv-row__head {
+    min-width: 0;
+  }
+
+  .ms-inv-row__meta {
+    margin-top: 0;
+  }
+
+  .ms-inv-row__note,
+  .ms-inv-row__contents,
+  .ms-inv-row__foot {
+    grid-column: 1 / -1;
+  }
+
   .ms-inv-row__name {
     font-size: 0.95em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .ms-inv-badge {

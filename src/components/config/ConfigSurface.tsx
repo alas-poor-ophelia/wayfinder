@@ -142,6 +142,8 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
         </div>
       </section>
 
+      <AttackBlocksEditor store={store} character={character} />
+
       <MiscConfigEditor store={store} character={character} />
       <EnergyResEditor store={store} character={character} />
       <SkillsEditor store={store} character={character} />
@@ -150,6 +152,43 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
       <QuickActionsEditor app={plugin.app} store={store} character={character} />
       <RuleLinksEditor store={store} character={character} plugin={plugin} />
     </div>
+  );
+}
+
+function AttackBlocksEditor({
+  store,
+  character,
+}: {
+  store: MiniSheetStore;
+  character: CharacterRecord;
+}) {
+  const prefs = {
+    melee: "single",
+    ranged: "single",
+    ...character.attackBlocks,
+  };
+  const save = (patch: Partial<typeof prefs>) =>
+    store.setCharacterField(character.id, "attackBlocks", { ...prefs, ...patch });
+  return (
+    <section class="ms-config__section">
+      <h3 class="ms-config__section-title">Attack blocks</h3>
+      <SelectField
+        label="Melee display"
+        value={prefs.melee}
+        options={["single", "separate"]}
+        onChange={(v) => save({ melee: v })}
+      />
+      <SelectField
+        label="Ranged display"
+        value={prefs.ranged}
+        options={["single", "separate"]}
+        onChange={(v) => save({ ranged: v })}
+      />
+      <div class="ms-config__derived">
+        Equipped inventory weapons become attack blocks. Single = one block
+        with a weapon selector · separate = a block per equipped weapon.
+      </div>
+    </section>
   );
 }
 

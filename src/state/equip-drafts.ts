@@ -1,19 +1,31 @@
 /**
  * Pure builders that turn equipment-catalog records into inventory item
- * drafts and weapon profiles — the handoff layer between the Equipment
- * Database view and the existing addItem/updateCharacter write paths.
+ * drafts — the handoff layer between the Equipment Database view / editor
+ * autocomplete and the existing addItem write path.
  * No obsidian imports; unit-tested in tests/unit/state/equip-drafts.test.ts.
  */
-import type { WeaponProfile } from "../types/character";
 import type { CustomItemDef } from "../types/custom-items";
 import type {
   BaseArmorDef,
   BaseWeaponDef,
   MagicItemDef,
 } from "../types/equipment";
-import type { InventoryItem } from "../types/inventory";
+import type { InventoryItem, ItemWeaponStats } from "../types/inventory";
+
+/** Attack stats stamped onto weapon items (equipped item = attack profile).
+ *  Ammunition gets none — arrows aren't an attack block. */
+export function weaponStatsFor(w: BaseWeaponDef): ItemWeaponStats | undefined {
+  if (!w.dmgM || w.category === "ammunition") return undefined;
+  return {
+    kind: w.category === "ranged" ? "ranged" : "melee",
+    damageDie: w.dmgM,
+    critRange: w.critRange || "20",
+    critMult: w.critMult || "2",
+  };
+}
 
 export function weaponDraft(w: BaseWeaponDef): Omit<InventoryItem, "id"> {
+  const stats = weaponStatsFor(w);
   return {
     name: w.name,
     type: "Weapon",
@@ -24,6 +36,7 @@ export function weaponDraft(w: BaseWeaponDef): Omit<InventoryItem, "id"> {
     note: null,
     charges: null,
     equipped: false,
+    ...(stats ? { weapon: stats } : {}),
   };
 }
 
@@ -59,7 +72,13 @@ export function magicDraft(m: MagicItemDef): Omit<InventoryItem, "id"> {
   };
 }
 
-export function customDraft(c: CustomItemDef): Omit<InventoryItem, "id"> {
+/** `base` is the forge weapon behind a custom weapon (c.baseId) — its dice
+ *  carry over so the equipped custom item drives an attack block. */
+export function customDraft(
+  c: CustomItemDef,
+  base?: BaseWeaponDef
+): Omit<InventoryItem, "id"> {
+  const stats = c.kind === "weapon" && base ? weaponStatsFor(base) : undefined;
   return {
     name: c.name,
     type: c.kind === "weapon" ? "Weapon" : c.kind === "shield" ? "Shield" : "Armor",
@@ -71,30 +90,6 @@ export function customDraft(c: CustomItemDef): Omit<InventoryItem, "id"> {
     charges: null,
     equipped: false,
     modifiers: c.modifiers,
-  };
-}
-
-/**
- * A WeaponProfile for a catalog weapon, or null when a same-name profile
- * already exists (re-adds must not duplicate). `name` overrides the catalog
- * name for forged items ("+1 Flaming Longsword" on a longsword base).
- * Pure: the caller appends it via updateCharacter.
- */
-export function weaponProfileFor(
-  existing: WeaponProfile[],
-  w: BaseWeaponDef,
-  name = w.name
-): WeaponProfile | null {
-  if (existing.some((p) => p.name === name)) return null;
-  let id = w.id;
-  let n = 2;
-  while (existing.some((p) => p.id === id)) id = `${w.id}-${n++}`;
-  return {
-    id,
-    name,
-    kind: w.category === "ranged" || w.category === "ammunition" ? "ranged" : "melee",
-    damageDie: w.dmgM,
-    critRange: w.critRange || "20",
-    critMult: w.critMult || "2",
+    ...(stats ? { weapon: stats } : {}),
   };
 }

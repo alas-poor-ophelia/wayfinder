@@ -64,4 +64,14 @@
     padding: 2px 4px;
     margin: 0;
   }
+
+  // weapon/style selector inside a single-mode block
+  .ms-atk-block__picker {
+    padding: 2px 4px;
+
+    select {
+      width: 100%;
+      min-height: 32px;
+    }
+  }
 }

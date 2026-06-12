@@ -75,4 +75,62 @@ describe("calculateAttackStrings", () => {
       expectMatchesLegacy(fixtures.hwayoung.input, fixtures.hwayoung.attacks);
     });
   });
+
+  // Equipped-weapon overrides are NEW behavior (no legacy counterpart) —
+  // asserted relative to the stock output so the legacy quirks all carry
+  // over to per-weapon blocks unchanged.
+  describe("equipped-weapon overrides", () => {
+    const base = fixtures.attackMatrixBase;
+
+    it("meleeWeapon swaps die and crit only; ranged/unarmed untouched", () => {
+      const stock = calculateAttackStrings(base);
+      const out = calculateAttackStrings({
+        ...base,
+        meleeWeapon: { damageDie: "1d8", critRange: "19-20", critMult: "2" },
+      });
+      expect(out.melee).toBe(
+        stock.melee.split("1d6").join("1d8").split("(18-20/x2)").join("(19-20/x2)")
+      );
+      expect(out.ranged).toBe(stock.ranged);
+      expect(out.unarmed).toBe(stock.unarmed);
+    });
+
+    it("melee size enlargement applies to the override die", () => {
+      const out = calculateAttackStrings({
+        ...base,
+        conditionEffects: { sizeAdjust: 1 },
+        meleeWeapon: { damageDie: "1d8", critRange: "19-20", critMult: "2" },
+      });
+      expect(out.melee).toContain("2d6"); // 1d8 steps to 2d6 at +1 size
+    });
+
+    it("rangedWeapon replaces the style entry and suppresses Ray touch", () => {
+      const out = calculateAttackStrings({
+        ...base,
+        rangedAttackStyle: "Ray",
+        rangedWeapon: { damageDie: "1d10", critRange: "19-20", critMult: "2" },
+      });
+      expect(out.ranged).toContain("1d10");
+      expect(out.ranged).toContain("(19-20/x2)");
+      expect(out.ranged).not.toContain("(touch)");
+    });
+
+    it("rangedWeapon suppresses the Shuriken flurry path", () => {
+      const flurryBase: AttackInput = {
+        ...base,
+        flurryOfBlows: true,
+        monkLevel: 5,
+        rangedAttackStyle: "Shuriken",
+      };
+      const fullLine = (s: string): string =>
+        s.split("\n").find((l) => l.startsWith("**Full Attack:**")) ?? "";
+      const stock = calculateAttackStrings(flurryBase);
+      const out = calculateAttackStrings({
+        ...flurryBase,
+        rangedWeapon: { damageDie: "1d8", critRange: "20", critMult: "3" },
+      });
+      const slashes = (s: string): number => (s.match(/\//g) ?? []).length;
+      expect(slashes(fullLine(out.ranged))).toBeLessThan(slashes(fullLine(stock.ranged)));
+    });
+  });
 });

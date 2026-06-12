@@ -7,7 +7,6 @@ import {
   customDraft,
   magicDraft,
   weaponDraft,
-  weaponProfileFor,
 } from "../../state/equip-drafts";
 import { addItem } from "../../state/inventory-actions";
 import type { CustomItemDef } from "../../types/custom-items";
@@ -89,21 +88,6 @@ function pageSlice<T>(
     page,
     pageCount,
   };
-}
-
-/** Append a weapon profile for a catalog weapon (no-op on same-name). */
-function appendWeaponProfile(
-  store: MiniSheetPlugin["store"],
-  characterId: string,
-  base: BaseWeaponDef,
-  name?: string
-): void {
-  const record = store.getCharacter(characterId);
-  if (!record) return;
-  const profile = weaponProfileFor(record.weapons, base, name);
-  if (profile) {
-    store.updateCharacter(characterId, { weapons: [...record.weapons, profile] });
-  }
 }
 
 function Sections({
@@ -277,14 +261,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
         db={db}
         rows={view.rows}
         columns={weaponColumns}
-        onAdd={
-          target
-            ? (w) =>
-                addTo(weaponDraft(w), () => {
-                  if (db.addProfile) appendWeaponProfile(store, target.id, w);
-                })
-            : null
-        }
+        onAdd={target ? (w) => addTo(weaponDraft(w)) : null}
       />
     );
   } else if (db.section === "armor") {
@@ -329,13 +306,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
           columns={customColumns}
           onAdd={
             target
-              ? (c) =>
-                  addTo(customDraft(c), () => {
-                    if (c.kind === "weapon" && db.addProfile) {
-                      const base = getBaseWeapon(c.baseId);
-                      if (base) appendWeaponProfile(store, target.id, base, c.name);
-                    }
-                  })
+              ? (c) => addTo(customDraft(c, getBaseWeapon(c.baseId)))
               : null
           }
           actions={(c) => (
@@ -429,18 +400,6 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
         <span class="ms-equipdb__count">
           Showing {filteredCount} of {totalCount}
         </span>
-        {db.section === "weapons" && target && (
-          <label class="ms-equipdb__flag" title="Also create an attack profile (damage/crit) on the character">
-            <input
-              type="checkbox"
-              checked={db.addProfile}
-              onChange={(e) =>
-                store.updateEquipDb({ addProfile: (e.target as HTMLInputElement).checked })
-              }
-            />
-            + weapon profile
-          </label>
-        )}
         {characters.length > 0 && (
           <label class="ms-equipdb__target">
             Add to:

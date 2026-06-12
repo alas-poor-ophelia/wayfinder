@@ -1,11 +1,16 @@
 import { useState } from "preact/hooks";
 import {
+  suggestEquipment,
+  type EquipSuggestion,
+} from "../../state/equip-suggest";
+import {
   addItem,
   updateItem,
   wouldCycle,
   type InventoryScope,
 } from "../../state/inventory-actions";
 import type { MiniSheetStore } from "../../state/store";
+import type { CustomItemDef } from "../../types/custom-items";
 import type { InventoryItem, InventoryState, ItemType } from "../../types/inventory";
 import {
   ITEM_TYPES,
@@ -13,6 +18,7 @@ import {
   WAND_MAX_CHARGES,
   isContainer,
 } from "../../types/inventory";
+import { formatGp } from "../equipdb/EquipTable";
 import { ModifierEditor } from "../common/ModifierEditor";
 
 type Draft = Omit<InventoryItem, "id">;
@@ -43,6 +49,7 @@ export function ItemEditor({
   scope,
   variant,
   ownerChoices,
+  customItems,
   onClose,
 }: {
   inventory: InventoryState;
@@ -52,13 +59,30 @@ export function ItemEditor({
   scope: InventoryScope;
   variant: "sidebar" | "party";
   ownerChoices?: string[];
+  /** equipment-DB custom items, included in the name autocomplete */
+  customItems?: CustomItemDef[];
   onClose: () => void;
 }) {
   const [draft, setDraft] = useState<Draft>(() =>
     item ? { ...item } : emptyDraft()
   );
   const [error, setError] = useState("");
+  const [suggestOpen, setSuggestOpen] = useState(false);
   const patch = (p: Partial<Draft>) => setDraft((d) => ({ ...d, ...p }));
+
+  // catalog autocomplete: add-mode only — editing must not bulk-replace stats
+  const suggestions =
+    !item && suggestOpen ? suggestEquipment(draft.name, customItems) : [];
+  const pick = (s: EquipSuggestion) => {
+    setSuggestOpen(false);
+    // keep what the user already chose about placement/quantity
+    setDraft((d) => ({
+      ...s.draft,
+      count: d.count,
+      containerId: d.containerId,
+      owner: d.owner,
+    }));
+  };
 
   // container choices exclude the item itself and anything inside it
   const containers = inventory.items.filter(
@@ -83,11 +107,42 @@ export function ItemEditor({
       </header>
       <label class="ms-inv-editor__field">
         Name
-        <input
-          type="text"
-          value={draft.name}
-          onInput={(e) => patch({ name: (e.target as HTMLInputElement).value })}
-        />
+        <div class="ms-inv-editor__namewrap">
+          <input
+            type="text"
+            value={draft.name}
+            onInput={(e) => {
+              patch({ name: (e.target as HTMLInputElement).value });
+              setSuggestOpen(true);
+            }}
+            onBlur={() => setSuggestOpen(false)}
+          />
+          {suggestions.length > 0 && (
+            <div
+              class="ms-inv-editor__suggest"
+              // keep the input focused so its blur doesn't kill the click
+              onMouseDown={(e) => e.preventDefault()}
+            >
+              {suggestions.map((s) => (
+                <button
+                  key={s.key}
+                  type="button"
+                  class="ms-inv-editor__suggest-row"
+                  onClick={() => pick(s)}
+                >
+                  <span class="ms-inv-editor__suggest-name">
+                    {s.name}
+                    {s.needsReview && (
+                      <span title="Bonuses not auto-detected — set them below after picking"> ⚠</span>
+                    )}
+                  </span>
+                  <span class="ms-inv-editor__suggest-kind">{s.kind}</span>
+                  <span class="ms-inv-editor__suggest-price">{formatGp(s.priceGp)}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </label>
       <label class="ms-inv-editor__field">
         Type
@@ -189,8 +244,7 @@ export function ItemEditor({
           </datalist>
         </label>
       )}
-      <details class="ms-inv-editor__bonuses" open={!!draft.modifiers?.length}>
-        <summary>Bonuses {draft.modifiers?.length ? `(${draft.modifiers.length})` : ""}</summary>
+      {(!!draft.weapon || !!draft.modifiers?.length) && (
         <label class="ms-inv-editor__equipped">
           <input
             type="checkbox"
@@ -199,8 +253,11 @@ export function ItemEditor({
               patch({ equipped: (e.target as HTMLInputElement).checked })
             }
           />
-          Equipped (bonuses apply only while equipped)
+          Equipped (bonuses &amp; attacks apply only while equipped)
         </label>
+      )}
+      <details class="ms-inv-editor__bonuses" open={!!draft.modifiers?.length}>
+        <summary>Bonuses {draft.modifiers?.length ? `(${draft.modifiers.length})` : ""}</summary>
         <ModifierEditor
           modifiers={draft.modifiers ?? []}
           source={draft.name || "Item"}

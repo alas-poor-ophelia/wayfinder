@@ -38,6 +38,14 @@ import { getRaceData, racialAbilityMods } from "../data/races";
 import type { RaceData } from "../data/types";
 import { resolveQuickActions } from "./quick-actions";
 
+/** One equipped weapon's rendered attack text for a combat-tab block. */
+export interface AttackProfileText {
+  /** the inventory item id */
+  id: string;
+  name: string;
+  text: string;
+}
+
 export interface ComputedCharacter {
   mods: AbilityScores;
   /** effective ability scores (post adjust/drain/damage) — resource
@@ -48,6 +56,9 @@ export interface ComputedCharacter {
   conditionEffects: ConditionEffects;
   ac: ACValues;
   attacks: AttackStrings;
+  /** per-equipped-weapon attack text; empty arrays = nothing equipped
+   *  (the combat tab falls back to the legacy generic blocks) */
+  attackProfiles: { melee: AttackProfileText[]; ranged: AttackProfileText[] };
   saves: SaveValues;
   skills: SkillRow[];
   initiative: number;
@@ -267,7 +278,7 @@ export function computeAll(
   const meleeDmg = splitEnhancement(resolveModifiers(combined, "damage.melee"));
   const rangedDmg = splitEnhancement(resolveModifiers(combined, "damage.ranged"));
 
-  const attacks = calculateAttackStrings({
+  const attackInput = {
     strMod: mods.str,
     dexMod: mods.dex,
     chaMod: mods.cha,
@@ -326,7 +337,31 @@ export function computeAll(
     // attacks' input type carries an index signature; the concrete
     // ConditionEffects interface satisfies it structurally
     conditionEffects: { ...qaEffects } as AttackConditionEffects,
-  });
+  };
+  const attacks = calculateAttackStrings(attackInput);
+
+  // Attack profiles derive from equipped weapon items (item.weapon stats
+  // stamped from the catalog) — same shared input, per-weapon dice. The
+  // stored character.weapons list is dormant.
+  const equippedWeapons = (character.inventory?.items ?? []).filter(
+    (i) => i.type === "Weapon" && i.equipped && i.weapon
+  );
+  const attackProfiles: ComputedCharacter["attackProfiles"] = {
+    melee: equippedWeapons
+      .filter((i) => i.weapon!.kind === "melee")
+      .map((i) => ({
+        id: i.id,
+        name: i.name,
+        text: calculateAttackStrings({ ...attackInput, meleeWeapon: i.weapon! }).melee,
+      })),
+    ranged: equippedWeapons
+      .filter((i) => i.weapon!.kind === "ranged")
+      .map((i) => ({
+        id: i.id,
+        name: i.name,
+        text: calculateAttackStrings({ ...attackInput, rangedWeapon: i.weapon! }).ranged,
+      })),
+  };
 
   // Resistance now stacks in the engine (config field + cloaks take max),
   // so the legacy resistanceEnhancement input stays 0 and the resolved
@@ -437,6 +472,7 @@ export function computeAll(
     conditionEffects: effects,
     ac,
     attacks,
+    attackProfiles,
     saves,
     skills,
     initiative,

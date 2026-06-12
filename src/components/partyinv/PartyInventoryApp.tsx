@@ -18,6 +18,7 @@ export function PartyInventoryApp({ plugin }: { plugin: MiniSheetPlugin }) {
       inventory={inventory}
       variant="party"
       ownerChoices={ownerChoices}
+      customItems={plugin.customItems.items.value}
       filters={store.partyInv()}
       onFilters={(patch) => store.updatePartyInv(patch)}
     />

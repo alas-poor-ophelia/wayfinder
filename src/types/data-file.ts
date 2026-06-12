@@ -89,8 +89,6 @@ export interface EquipDbState {
   priceMax: number | null;
   /** magic: only items whose bonuses were auto-derived */
   stattedOnly: boolean;
-  /** weapons: also create a WeaponProfile on add */
-  addProfile: boolean;
   sortKey: string;
   sortDir: "asc" | "desc";
   page: number;
@@ -109,7 +107,6 @@ export const DEFAULT_EQUIP_DB: EquipDbState = {
   priceMin: null,
   priceMax: null,
   stattedOnly: false,
-  addProfile: true,
   sortKey: "name",
   sortDir: "asc",
   page: 0,

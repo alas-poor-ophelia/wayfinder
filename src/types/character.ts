@@ -53,6 +53,18 @@ export interface CombatToggles {
   weaponSong: string;
   /** "Shuriken" | "Longbow" | "Ray" */
   rangedAttackStyle: string;
+  /** single-block mode: the equipped weapon item id driving the block.
+   *  Like rangedAttackStyle these are selectors, not toggles — they live on. */
+  activeMeleeWeaponId?: string;
+  /** absent/unknown = use rangedAttackStyle (built-in style) */
+  activeRangedWeaponId?: string;
+}
+
+/** Combat-tab display preference per attack bucket: one block with a
+ *  weapon selector, or a separate block per equipped weapon. */
+export interface AttackBlockPrefs {
+  melee: "single" | "separate";
+  ranged: "single" | "separate";
 }
 
 export interface SkillEntry {
@@ -229,7 +241,12 @@ export interface CharacterRecord {
   saveNotes: { fort: string; ref: string; will: string };
   skills: Record<string, SkillEntry>;
   resources: ResourcePool[];
+  /** DORMANT: attack profiles now derive from equipped inventory weapons
+   *  (item.weapon stats). Kept so legacy imports/saves type-check; nothing
+   *  reads it anymore. */
   weapons: WeaponProfile[];
+  /** combat-tab attack block layout; absent = single for both */
+  attackBlocks?: AttackBlockPrefs;
   link?: CharacterLink;
   ruleLinks: RuleLink[];
   /** absent = non-caster (Hwayoung keeps her static SLA content) */

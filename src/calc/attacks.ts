@@ -83,6 +83,14 @@ export interface AttackInput {
   /** pre-formatted block appended to the melee/ranged outputs, exactly
    *  where the legacy weapon-song notes text goes */
   attackNoteBlock?: string;
+
+  // --- equipped-weapon overrides (absent in every legacy fixture, so the
+  // --- hardcoded Waveblade / style-table paths below are untouched) -------
+  /** melee block weapon (absent = legacy Waveblade constants 1d6/18-20/x2) */
+  meleeWeapon?: { damageDie: string; critRange: string; critMult: string };
+  /** ranged block weapon (absent = rangedAttackStyle built-ins). Damage
+   *  stat 0 like the Longbow entry; suppresses Shuriken flurry/touch. */
+  rangedWeapon?: { damageDie: string; critRange: string; critMult: string };
 }
 
 export interface AttackStrings {
@@ -545,9 +553,9 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
 
   const meleeAttack = createWeaponAttack({
     ...baseParams,
-    damageDie: getEnlargedDamageDie("1d6", sizeAdjust),
-    critRange: "18-20",
-    critMultiplier: "2",
+    damageDie: getEnlargedDamageDie(input.meleeWeapon?.damageDie ?? "1d6", sizeAdjust),
+    critRange: input.meleeWeapon?.critRange ?? "18-20",
+    critMultiplier: input.meleeWeapon?.critMult ?? "2",
     attackStat: meleeAttackStat,
     damageStat: meleeDamageStat,
     enhancementBonus: enhancements.melee,
@@ -573,8 +581,17 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
   const meleeAttackStrings = formatAttackStrings(meleeAttack.attackBonus, meleeAttack.damageString, meleeAttack.critInfo, meleeAttacks);
 
   // RANGED ATTACK
-  const rangedWeaponProps = getRangedWeaponProperties(options.rangedStyle, stats);
-  const canUseFlurryForRanged = options.rangedStyle === "Shuriken";
+  const rangedWeaponProps = input.rangedWeapon
+    ? {
+        name: "",
+        damageDie: input.rangedWeapon.damageDie,
+        critRange: input.rangedWeapon.critRange,
+        critMult: input.rangedWeapon.critMult,
+        damageStat: 0,
+        touchAttack: false,
+      }
+    : getRangedWeaponProperties(options.rangedStyle, stats);
+  const canUseFlurryForRanged = !input.rangedWeapon && options.rangedStyle === "Shuriken";
 
   const rangedAttack = createWeaponAttack({
     ...baseParams,

@@ -20,7 +20,7 @@ interface CombatTabProps {
   computed: ComputedCharacter;
 }
 
-export function CombatTab({ store, character, computed }: CombatTabProps) {
+export function CombatTab({ plugin, store, character, computed }: CombatTabProps) {
   const sub = store.data.value.ui.combatSub ?? "main";
 
   const subtabBar = (
@@ -44,7 +44,7 @@ export function CombatTab({ store, character, computed }: CombatTabProps) {
     return (
       <div class="ms-combat">
         {subtabBar}
-        <InventorySubtab store={store} character={character} computed={computed} />
+        <InventorySubtab plugin={plugin} store={store} character={character} computed={computed} />
       </div>
     );
   }
@@ -102,7 +102,12 @@ export function CombatTab({ store, character, computed }: CombatTabProps) {
         </details>
       )}
       <Resources store={store} character={character} />
-      <AttackBlocks store={store} character={character} attacks={computed.attacks} />
+      <AttackBlocks
+        store={store}
+        character={character}
+        attacks={computed.attacks}
+        profiles={computed.attackProfiles}
+      />
       {character.characterType !== "familiar" && (
         <QuickActions store={store} character={character} />
       )}
