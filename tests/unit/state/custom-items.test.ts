@@ -67,6 +67,25 @@ describe("tolerant parsing", () => {
     expect(parsed?.items).toEqual([sword]);
   });
 
+  it("drops malformed modifiers but keeps well-formed ones", () => {
+    const text = JSON.stringify({
+      items: [
+        {
+          ...sword,
+          modifiers: [
+            sword.modifiers[0],
+            { target: "attack.melee" }, // no type/value
+            "garbage",
+            null,
+            { target: 7, type: "enhancement", value: 1 }, // wrong target type
+          ],
+        },
+      ],
+    });
+    const parsed = parseCustomItemsFile(text);
+    expect(parsed?.items[0].modifiers).toEqual(sword.modifiers);
+  });
+
   it("defaults missing optional fields on lenient entries", () => {
     const text = JSON.stringify({
       items: [{ id: "ci_x", name: "Mystery Blade", kind: "weapon" }],

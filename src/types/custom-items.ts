@@ -78,7 +78,19 @@ export function parseCustomItemsFile(text: string): CustomItemsFile | null {
         : [],
       priceGp: typeof e.priceGp === "number" ? e.priceGp : 0,
       weightLbs: typeof e.weightLbs === "number" ? e.weightLbs : 0,
-      modifiers: Array.isArray(e.modifiers) ? (e.modifiers as Modifier[]) : [],
+      // shallow shape check — a hand-edited modifier must not reach the
+      // engine malformed (computeAll skips entries missing these, but the
+      // parse contract is "never hand corrupt data downstream")
+      modifiers: Array.isArray(e.modifiers)
+        ? (e.modifiers as Modifier[]).filter(
+            (m) =>
+              typeof m === "object" &&
+              m !== null &&
+              typeof m.target === "string" &&
+              typeof m.type === "string" &&
+              typeof m.value === "number"
+          )
+        : [],
       note: typeof e.note === "string" ? e.note : "",
       createdAt: typeof e.createdAt === "string" ? e.createdAt : "",
       modifiedAt: typeof e.modifiedAt === "string" ? e.modifiedAt : "",

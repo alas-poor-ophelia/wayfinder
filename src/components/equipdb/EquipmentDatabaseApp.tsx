@@ -2,6 +2,13 @@ import { Notice } from "obsidian";
 import { useState } from "preact/hooks";
 import { ARMOR, MAGIC_ITEMS, WEAPONS, getBaseWeapon } from "../../data/equipment";
 import type MiniSheetPlugin from "../../main";
+import {
+  armorDraft,
+  customDraft,
+  magicDraft,
+  weaponDraft,
+  weaponProfileFor,
+} from "../../state/equip-drafts";
 import { addItem } from "../../state/inventory-actions";
 import type { CustomItemDef } from "../../types/custom-items";
 import type { EquipDbState } from "../../types/data-file";
@@ -10,7 +17,6 @@ import type {
   BaseWeaponDef,
   MagicItemDef,
 } from "../../types/equipment";
-import type { CharacterRecord, WeaponProfile } from "../../types/character";
 import type { InventoryItem } from "../../types/inventory";
 import { EquipFilters } from "./EquipFilters";
 import { EquipTable, formatGp, sortRows, type EquipColumn } from "./EquipTable";
@@ -43,7 +49,7 @@ function matchesCommon(
   return true;
 }
 
-export function filterWeapons(rows: BaseWeaponDef[], db: EquipDbState): BaseWeaponDef[] {
+function filterWeapons(rows: BaseWeaponDef[], db: EquipDbState): BaseWeaponDef[] {
   return rows.filter(
     (w) =>
       matchesCommon(w.name, w.source, w.costGp, db) &&
@@ -52,7 +58,7 @@ export function filterWeapons(rows: BaseWeaponDef[], db: EquipDbState): BaseWeap
   );
 }
 
-export function filterArmor(rows: BaseArmorDef[], db: EquipDbState): BaseArmorDef[] {
+function filterArmor(rows: BaseArmorDef[], db: EquipDbState): BaseArmorDef[] {
   return rows.filter(
     (a) =>
       matchesCommon(a.name, a.source, a.costGp, db) &&
@@ -60,7 +66,7 @@ export function filterArmor(rows: BaseArmorDef[], db: EquipDbState): BaseArmorDe
   );
 }
 
-export function filterMagic(rows: MagicItemDef[], db: EquipDbState): MagicItemDef[] {
+function filterMagic(rows: MagicItemDef[], db: EquipDbState): MagicItemDef[] {
   return rows.filter(
     (m) =>
       matchesCommon(m.name, m.source, m.priceGp, db) &&
@@ -70,91 +76,34 @@ export function filterMagic(rows: MagicItemDef[], db: EquipDbState): MagicItemDe
   );
 }
 
-// ---- add-to-inventory drafts ----
-
-function weaponDraft(w: BaseWeaponDef): Omit<InventoryItem, "id"> {
+/** Clamp the stored page to the filtered row count and slice — the ONE
+ *  source of page arithmetic for both the tables and the pager. */
+function pageSlice<T>(
+  filtered: T[],
+  dbPage: number
+): { rows: T[]; page: number; pageCount: number } {
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const page = Math.min(dbPage, pageCount - 1);
   return {
-    name: w.name,
-    type: "Weapon",
-    count: 1,
-    weight: w.weightLbs,
-    value: w.costGp,
-    containerId: null,
-    note: null,
-    charges: null,
-    equipped: false,
+    rows: filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE),
+    page,
+    pageCount,
   };
 }
 
-function armorDraft(a: BaseArmorDef): Omit<InventoryItem, "id"> {
-  return {
-    name: a.name,
-    type: a.kind === "shield" ? "Shield" : "Armor",
-    count: 1,
-    weight: a.weightLbs,
-    value: a.costGp,
-    containerId: null,
-    note: null,
-    charges: null,
-    equipped: false,
-    modifiers: [
-      { target: "ac.all", type: a.kind, value: a.acBonus, source: a.name },
-    ],
-  };
-}
-
-function magicDraft(m: MagicItemDef): Omit<InventoryItem, "id"> {
-  return {
-    name: m.name,
-    type: "Magic Item",
-    count: 1,
-    weight: m.weightLbs,
-    value: m.priceGp,
-    containerId: null,
-    note: null,
-    charges: null,
-    equipped: false,
-    ...(m.modifiers.length ? { modifiers: m.modifiers } : {}),
-  };
-}
-
-function customDraft(c: CustomItemDef): Omit<InventoryItem, "id"> {
-  return {
-    name: c.name,
-    type: c.kind === "weapon" ? "Weapon" : c.kind === "shield" ? "Shield" : "Armor",
-    count: 1,
-    weight: c.weightLbs,
-    value: c.priceGp,
-    containerId: null,
-    note: c.note || null,
-    charges: null,
-    equipped: false,
-    modifiers: c.modifiers,
-  };
-}
-
-/** Append a WeaponProfile derived from a catalog weapon (skip same-name). */
-function addWeaponProfile(
-  plugin: MiniSheetPlugin,
-  target: CharacterRecord,
-  w: BaseWeaponDef
+/** Append a weapon profile for a catalog weapon (no-op on same-name). */
+function appendWeaponProfile(
+  store: MiniSheetPlugin["store"],
+  characterId: string,
+  base: BaseWeaponDef,
+  name?: string
 ): void {
-  if (target.weapons.some((p) => p.name === w.name)) return;
-  const base = w.id;
-  let id = base;
-  let n = 2;
-  while (target.weapons.some((p) => p.id === id)) id = `${base}-${n++}`;
-  const profile: WeaponProfile = {
-    id,
-    name: w.name,
-    kind: w.category === "ranged" || w.category === "ammunition" ? "ranged" : "melee",
-    damageDie: w.dmgM,
-    critRange: w.critRange || "20",
-    critMult: w.critMult || "2",
-  };
-  plugin.store.updateCharacter(target.id, {
-    weapons: [...target.weapons, profile],
-  });
+  const record = store.getCharacter(characterId);
+  if (!record) return;
+  const profile = weaponProfileFor(record.weapons, base, name);
+  if (profile) {
+    store.updateCharacter(characterId, { weapons: [...record.weapons, profile] });
+  }
 }
 
 function Sections({
@@ -313,23 +262,26 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
 
   let totalCount: number;
   let filteredCount: number;
+  let page: number;
+  let pageCount: number;
   let table;
   if (db.section === "weapons") {
     const filtered = sortRows(filterWeapons(WEAPONS, db), weaponColumns, db.sortKey, db.sortDir);
     totalCount = WEAPONS.length;
     filteredCount = filtered.length;
-    const page = Math.min(db.page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
+    const view = pageSlice(filtered, db.page);
+    ({ page, pageCount } = view);
     table = (
       <EquipTable
         plugin={plugin}
         db={db}
-        rows={filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)}
+        rows={view.rows}
         columns={weaponColumns}
         onAdd={
           target
             ? (w) =>
                 addTo(weaponDraft(w), () => {
-                  if (db.addProfile) addWeaponProfile(plugin, store.getCharacter(target.id) ?? target, w);
+                  if (db.addProfile) appendWeaponProfile(store, target.id, w);
                 })
             : null
         }
@@ -339,12 +291,13 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
     const filtered = sortRows(filterArmor(ARMOR, db), armorColumns, db.sortKey, db.sortDir);
     totalCount = ARMOR.length;
     filteredCount = filtered.length;
-    const page = Math.min(db.page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
+    const view = pageSlice(filtered, db.page);
+    ({ page, pageCount } = view);
     table = (
       <EquipTable
         plugin={plugin}
         db={db}
-        rows={filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)}
+        rows={view.rows}
         columns={armorColumns}
         onAdd={target ? (a) => addTo(armorDraft(a)) : null}
       />
@@ -359,7 +312,8 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
     );
     totalCount = customItems.length;
     filteredCount = filtered.length;
-    const page = Math.min(db.page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
+    const view = pageSlice(filtered, db.page);
+    ({ page, pageCount } = view);
     table = (
       <>
         {plugin.customItems.status.value === "error" && (
@@ -371,7 +325,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
         <EquipTable
           plugin={plugin}
           db={db}
-          rows={filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)}
+          rows={view.rows}
           columns={customColumns}
           onAdd={
             target
@@ -379,13 +333,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
                   addTo(customDraft(c), () => {
                     if (c.kind === "weapon" && db.addProfile) {
                       const base = getBaseWeapon(c.baseId);
-                      if (base) {
-                        addWeaponProfile(
-                          plugin,
-                          store.getCharacter(target.id) ?? target,
-                          { ...base, name: c.name }
-                        );
-                      }
+                      if (base) appendWeaponProfile(store, target.id, base, c.name);
                     }
                   })
               : null
@@ -423,19 +371,18 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
     const filtered = sortRows(filterMagic(MAGIC_ITEMS, db), magicColumns, db.sortKey, db.sortDir);
     totalCount = MAGIC_ITEMS.length;
     filteredCount = filtered.length;
-    const page = Math.min(db.page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
+    const view = pageSlice(filtered, db.page);
+    ({ page, pageCount } = view);
     table = (
       <EquipTable
         plugin={plugin}
         db={db}
-        rows={filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)}
+        rows={view.rows}
         columns={magicColumns}
         onAdd={target ? (m) => addTo(magicDraft(m)) : null}
       />
     );
   }
-  const pageCount = Math.max(1, Math.ceil(filteredCount / PAGE_SIZE));
-  const page = Math.min(db.page, pageCount - 1);
 
   return (
     <div class="ms-equipdb">

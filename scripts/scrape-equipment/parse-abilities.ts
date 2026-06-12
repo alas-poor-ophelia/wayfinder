@@ -147,7 +147,7 @@ async function scrapeAbilitySet(
     out.push({
       id,
       name: row.name,
-      appliesTo: row.lists.size > 1 ? bothLabel : (row.appliesTo as ItemAbilityDef["appliesTo"]),
+      appliesTo: row.lists.size > 1 ? bothLabel : row.appliesTo,
       bonusEquivalent,
       flatPriceGp,
       casterLevel,
