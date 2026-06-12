@@ -82,6 +82,34 @@ export interface ClassData {
   quickActions?: { id: string; minLevel?: number }[];
 }
 
+/**
+ * Hand-authored mechanical overrides for one archetype — the layer the
+ * scraped graph can't carry because resource maxima are formulas. Keyed by
+ * the scraped ArchetypeDef.id. An archetype with a scraped def but no
+ * mechanics entry is "partial": its replaces-graph still auto-suppresses
+ * pools/quick-actions via the feature map, but it grants nothing new.
+ */
+export interface ArchetypeMechanics {
+  /** === ArchetypeDef.id, e.g. "gray-paladin" */
+  key: string;
+  /** === ClassData.key, e.g. "Paladin" */
+  classKey: string;
+  /** resource ids to suppress beyond the auto-map (use with addsResources
+   *  sharing the id to express an altered formula) */
+  removesResources?: string[];
+  addsResources?: ClassResourceDef[];
+  removesQuickActions?: string[];
+  addsQuickActions?: { id: string; minLevel?: number }[];
+  classSkills?: { add?: string[]; remove?: string[] };
+  /** archetype trades spellcasting away entirely */
+  removesSpellcasting?: boolean;
+  /** divine grace comes online at this class level (Chosen One: 4);
+   *  full removal comes from the replaces-graph, not this field */
+  divineGraceMinLevel?: number;
+  /** grants the scaling dodge AC bonus (Virtuous Bravo: Nimble) */
+  grantsBravoAC?: boolean;
+}
+
 export type RaceCategory = "core" | "featured" | "uncommon";
 
 export type Vision = "normal" | "low-light" | "darkvision60" | "darkvision120";

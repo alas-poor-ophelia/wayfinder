@@ -145,7 +145,9 @@ export const DEFAULT_DATA: MiniSheetData = {
   // quickActions/quickActionState (real migration — src/state/migrations.ts)
   // v7: Weapon Song "Enhancement" repaired from untyped to enhancement-typed
   // (RAW stacking with weapon enhancement; user-edited variants untouched)
-  schemaVersion: 7,
+  // v8: ClassEntry gains optional archetypeKeys (schema-forward merge, no
+  // migration code — same pattern as v2/v3)
+  schemaVersion: 8,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

@@ -27,6 +27,12 @@ export const ABILITY_KEYS: AbilityKey[] = ["str", "dex", "con", "int", "wis", "c
 export interface ClassEntry {
   className: string; // key into CLASS_STATS
   level: number;
+  /**
+   * Archetype ids from this class's scraped catalog
+   * (src/data/archetypes/<class>.json). Multiple archetypes are legal;
+   * the sheet merges their effects and never enforces overlap rules.
+   */
+  archetypeKeys?: string[];
 }
 
 /**

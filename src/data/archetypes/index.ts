@@ -1,0 +1,171 @@
+/**
+ * Archetype data surface: bundled scraped catalogs (one JSON per class,
+ * equipment-pattern eager imports) + the hand-authored mechanics layer +
+ * resolveArchetypeEffects(), the single merge point the store and calc
+ * pipeline consume.
+ *
+ * Merge semantics (legality is deliberately NOT enforced):
+ *  - suppression = union per class entry of (graph replaces-refs resolved
+ *    through CLASS_FEATURE_MECH) ∪ (mechanics.removes*). Alters-refs,
+ *    level-scoped refs ("her 12th-level mercy") and unmatched refs never
+ *    suppress. Suppression only filters that entry's BASE grants.
+ *  - adds = concat of mechanics.adds* across all archetypes; adds are never
+ *    themselves suppressed (an altered pool is expressed as remove + re-add
+ *    under the same id). Consumers dedupe pool ids, first wins.
+ *  - gates (divine grace, spellcasting, bravo AC) OR/max across archetypes.
+ */
+import type { ClassEntry } from "../../types/character";
+import type { ArchetypeDef, ClassArchetypeFile } from "../../types/archetypes";
+import type { ArchetypeMechanics, ClassResourceDef } from "../types";
+import { CLASS_FEATURE_MECH } from "./feature-map";
+import { PALADIN_ARCHETYPE_MECHANICS } from "./mechanics/paladin";
+import paladinJson from "./paladin.json";
+
+const FILES: ClassArchetypeFile[] = [
+  paladinJson as unknown as ClassArchetypeFile,
+];
+
+const BY_CLASS = new Map<string, Map<string, ArchetypeDef>>(
+  FILES.map((f) => [f.classKey, new Map(f.archetypes.map((a) => [a.id, a]))])
+);
+
+const ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
+  ...PALADIN_ARCHETYPE_MECHANICS,
+};
+
+export function listArchetypes(classKey: string): ArchetypeDef[] {
+  return [...(BY_CLASS.get(classKey)?.values() ?? [])];
+}
+
+export function getArchetype(
+  classKey: string,
+  id: string
+): ArchetypeDef | undefined {
+  return BY_CLASS.get(classKey)?.get(id);
+}
+
+export function getArchetypeMechanics(
+  id: string
+): ArchetypeMechanics | undefined {
+  return ARCHETYPE_MECHANICS[id];
+}
+
+/** Scraped def exists but no hand-authored mechanics — auto-suppression only. */
+export function isPartialMechanics(id: string): boolean {
+  return !ARCHETYPE_MECHANICS[id];
+}
+
+export interface AddedResource {
+  /** index into the character's classes[] */
+  entryIndex: number;
+  /** display label, e.g. "Paladin (Stonelord)" */
+  label: string;
+  /** the class entry's current level (formula input) */
+  level: number;
+  def: ClassResourceDef;
+}
+
+export interface ArchetypeEffects {
+  /** ids suppressed from each class entry's BASE grants (indexed like classes[]) */
+  suppressedResources: Array<Set<string>>;
+  suppressedQuickActions: Array<Set<string>>;
+  addedResources: AddedResource[];
+  addedQuickActions: { id: string; minLevel?: number; level: number }[];
+  /**
+   * Paladin class level at which divine grace (CHA to saves) comes online.
+   * 0 = unmodified, Infinity = removed by an archetype.
+   */
+  divineGraceMinLevel: number;
+  /** class keys whose spellcasting an archetype trades away */
+  removedSpellcastingClassKeys: Set<string>;
+  /** Virtuous Bravo Nimble: scaling dodge AC from 3rd level */
+  grantsBravoAC: boolean;
+  classSkillAdds: Set<string>;
+  classSkillRemoves: Set<string>;
+  /** false when no entry selects any archetype (cheap short-circuit) */
+  any: boolean;
+}
+
+export function resolveArchetypeEffects(classes: ClassEntry[]): ArchetypeEffects {
+  const effects: ArchetypeEffects = {
+    suppressedResources: classes.map(() => new Set<string>()),
+    suppressedQuickActions: classes.map(() => new Set<string>()),
+    addedResources: [],
+    addedQuickActions: [],
+    divineGraceMinLevel: 0,
+    removedSpellcastingClassKeys: new Set<string>(),
+    grantsBravoAC: false,
+    classSkillAdds: new Set<string>(),
+    classSkillRemoves: new Set<string>(),
+    any: false,
+  };
+
+  for (let i = 0; i < classes.length; i++) {
+    const entry = classes[i];
+    const keys = entry.archetypeKeys ?? [];
+    if (keys.length === 0) continue;
+    effects.any = true;
+    const featureMech = CLASS_FEATURE_MECH[entry.className] ?? {};
+
+    for (const key of keys) {
+      const def = getArchetype(entry.className, key);
+      if (def) {
+        for (const feature of def.features) {
+          for (const ref of feature.replaces) {
+            if (ref.unmatched || (ref.levels && ref.levels.length > 0)) continue;
+            const mech = featureMech[ref.feature];
+            if (!mech) continue;
+            if (mech.resource) effects.suppressedResources[i].add(mech.resource);
+            if (mech.quickAction)
+              effects.suppressedQuickActions[i].add(mech.quickAction);
+            if (mech.gate === "divineGrace") {
+              effects.divineGraceMinLevel = Number.POSITIVE_INFINITY;
+            }
+            if (mech.gate === "spellcasting") {
+              effects.removedSpellcastingClassKeys.add(entry.className);
+            }
+          }
+        }
+      }
+
+      const mechanics = ARCHETYPE_MECHANICS[key];
+      if (!mechanics) continue;
+      const label = def ? `${entry.className} (${def.name})` : entry.className;
+      for (const id of mechanics.removesResources ?? []) {
+        effects.suppressedResources[i].add(id);
+      }
+      for (const id of mechanics.removesQuickActions ?? []) {
+        effects.suppressedQuickActions[i].add(id);
+      }
+      for (const resourceDef of mechanics.addsResources ?? []) {
+        effects.addedResources.push({
+          entryIndex: i,
+          label,
+          level: entry.level,
+          def: resourceDef,
+        });
+      }
+      for (const qa of mechanics.addsQuickActions ?? []) {
+        effects.addedQuickActions.push({ ...qa, level: entry.level });
+      }
+      if (mechanics.removesSpellcasting) {
+        effects.removedSpellcastingClassKeys.add(entry.className);
+      }
+      if (mechanics.divineGraceMinLevel) {
+        effects.divineGraceMinLevel = Math.max(
+          effects.divineGraceMinLevel,
+          mechanics.divineGraceMinLevel
+        );
+      }
+      if (mechanics.grantsBravoAC) effects.grantsBravoAC = true;
+      for (const s of mechanics.classSkills?.add ?? []) {
+        effects.classSkillAdds.add(s);
+      }
+      for (const s of mechanics.classSkills?.remove ?? []) {
+        effects.classSkillRemoves.add(s);
+      }
+    }
+  }
+
+  return effects;
+}
