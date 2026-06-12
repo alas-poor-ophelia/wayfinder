@@ -491,13 +491,17 @@ export function MiscConfigEditor({ store, character }: EditorProps) {
             onInput={(e) => { const n = Number((e.target as HTMLInputElement).value); if (!Number.isNaN(n)) set("initiative.familiarBonus", n); }} />
         </label>
       </div>
+      {/* hidden-by-default quick actions: config keeps an on/off for them
+          (v6 — these were toggle booleans before the Quick Action conversion) */}
       <label class="ms-field">
         <span class="ms-field__label">Versatile Perf.</span>
         <input
           type="checkbox"
-          checked={character.toggles.versatilePerformance}
+          checked={(character.quickActionState?.versatilePerformance?.stage ?? 0) > 0}
           onChange={(e) =>
-            set("toggles.versatilePerformance", (e.target as HTMLInputElement).checked)
+            set("quickActionState.versatilePerformance", {
+              stage: (e.target as HTMLInputElement).checked ? 1 : 0,
+            })
           }
         />
       </label>
@@ -505,9 +509,11 @@ export function MiscConfigEditor({ store, character }: EditorProps) {
         <span class="ms-field__label">Agile weapon</span>
         <input
           type="checkbox"
-          checked={character.toggles.agileWeapon}
+          checked={(character.quickActionState?.agileWeapon?.stage ?? 0) > 0}
           onChange={(e) =>
-            set("toggles.agileWeapon", (e.target as HTMLInputElement).checked)
+            set("quickActionState.agileWeapon", {
+              stage: (e.target as HTMLInputElement).checked ? 1 : 0,
+            })
           }
         />
       </label>

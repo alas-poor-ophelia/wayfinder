@@ -8,6 +8,7 @@ import {
   sortSpells,
 } from "../components/spelldb/SpellDatabaseApp";
 import type { TabName } from "../constants";
+import { ICONS, ICON_IDS, type IconDef } from "../data/icons/registry";
 import {
   addGlobalMetamagic,
   addLevelMetamagic,
@@ -143,6 +144,13 @@ export interface MiniSheetBridge {
   applyClassSkills(id: string): void;
   /** Upsert class-granted resource pools (ki, rage, grit...). */
   syncClassResources(id: string): void;
+  /** Bundled icon registry (id -> def) — lets MCP evals render/verify icons. */
+  getIcon(iconId: string): IconDef | null;
+  listIcons(): string[];
+  /** Cycle a quick action's stage (off -> 1 -> ... -> off). */
+  cycleQuickAction(id: string, actionId: string): void;
+  /** Select a quick action variant (null = off). */
+  setQuickActionVariant(id: string, actionId: string, variantId: string | null): void;
 }
 
 declare global {
@@ -328,6 +336,11 @@ export function installBridge(plugin: MiniSheetPlugin): void {
     setRace: (id, raceKey) => store.setRace(id, raceKey),
     applyClassSkills: (id) => store.applyClassSkills(id),
     syncClassResources: (id) => store.syncClassResources(id),
+    getIcon: (iconId) => ICONS[iconId] ?? null,
+    listIcons: () => [...ICON_IDS],
+    cycleQuickAction: (id, actionId) => store.cycleQuickAction(id, actionId),
+    setQuickActionVariant: (id, actionId, variantId) =>
+      store.setQuickActionVariant(id, actionId, variantId),
     openPartyInventory: () => plugin.activatePartyInvView(),
     getPartyInvState: () => {
       const filters = store.partyInv();

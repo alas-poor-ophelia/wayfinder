@@ -5,7 +5,7 @@ import type { CharacterRecord } from "../../types/character";
 import { InventorySubtab } from "../inventory/InventorySubtab";
 import { ACShield } from "./ACShield";
 import { AttackBlocks } from "./AttackBlocks";
-import { CombatToggles } from "./CombatToggles";
+import { QuickActions } from "./QuickActions";
 import { ConditionNotes } from "./ConditionNotes";
 import { EnergyRes } from "./EnergyRes";
 import { HPDroplet } from "./HPDroplet";
@@ -104,7 +104,7 @@ export function CombatTab({ store, character, computed }: CombatTabProps) {
       <Resources store={store} character={character} />
       <AttackBlocks store={store} character={character} attacks={computed.attacks} />
       {character.characterType !== "familiar" && (
-        <CombatToggles store={store} character={character} />
+        <QuickActions store={store} character={character} />
       )}
     </div>
   );
