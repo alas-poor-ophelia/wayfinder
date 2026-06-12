@@ -2,11 +2,14 @@
  * Parity guard for the archetype feature: characters with NO archetypes
  * selected must produce byte-identical computeAll output as the system
  * evolves. History: snapshots were first captured before any wiring; the
- * ONE sanctioned regeneration was the Virtuous Bravo AC relocation
- * (calc/ac.ts used to grant the Nimble dodge bonus to every paladin
- * unconditionally — diff reviewed: normalAC/touchAC/cmd −bravo bonus on
- * the two paladin fixtures, nothing else). From here on these are frozen
- * again.
+ * TWO sanctioned regenerations were the hardcoded-archetype relocations:
+ *  1. Virtuous Bravo AC (calc/ac.ts granted the Nimble dodge bonus to
+ *     every paladin — diff reviewed: normalAC/touchAC/cmd −bravo bonus
+ *     on the two paladin fixtures, nothing else).
+ *  2. Scaled Fist AC (calc/ac.ts keyed the monk AC bonus off CHA for
+ *     every monk — diff reviewed: the plain-monk fixture's AC/cmd move
+ *     from the CHA-based to the RAW WIS-based bonus, nothing else).
+ * From here on these are frozen again.
  */
 import { describe, expect, it } from "vitest";
 import { computeAll } from "../../../src/calc";

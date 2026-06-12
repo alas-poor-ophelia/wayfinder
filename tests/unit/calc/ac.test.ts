@@ -14,11 +14,16 @@ interface ACFixtureOutput {
  *  `paladinLevel` — the legacy sheet granted the Virtuous Bravo dodge bonus
  *  to every paladin, and its captured characters WERE bravos. The calc
  *  input renamed the field `bravoLevel` when the bonus moved behind the
- *  archetype; translate at the boundary, never touch the fixture file. */
+ *  archetype; translate at the boundary, never touch the fixture file.
+ *  Likewise the legacy monk AC bonus was hardcoded CHA-based — its captured
+ *  monk WAS a Scaled Fist, so declare the archetype on the inputs. */
 function adaptLegacyInput(input: Record<string, unknown>): ACInput {
-  if (!("paladinLevel" in input)) return input as ACInput;
-  const { paladinLevel, ...rest } = input;
-  return { ...rest, bravoLevel: paladinLevel } as ACInput;
+  const adapted: Record<string, unknown> = { ...input, scaledFist: true };
+  if ("paladinLevel" in adapted) {
+    adapted.bravoLevel = adapted.paladinLevel;
+    delete adapted.paladinLevel;
+  }
+  return adapted as ACInput;
 }
 
 function expectMatch(rawInput: ACInput, expected: ACFixtureOutput) {

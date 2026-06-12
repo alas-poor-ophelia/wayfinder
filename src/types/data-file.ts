@@ -147,7 +147,11 @@ export const DEFAULT_DATA: MiniSheetData = {
   // (RAW stacking with weapon enhancement; user-edited variants untouched)
   // v8: ClassEntry gains optional archetypeKeys (schema-forward merge, no
   // migration code — same pattern as v2/v3)
-  schemaVersion: 8,
+  // v9: monk AC bonus relocated behind the Scaled Fist archetype; leveled
+  // monk entries without archetypeKeys get ["scaled-fist"] stamped so
+  // existing characters keep their CHA-based AC (real migration —
+  // src/state/migrations.ts)
+  schemaVersion: 9,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

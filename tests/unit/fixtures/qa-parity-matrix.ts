@@ -54,12 +54,27 @@ const ARCHETYPES = {
     ];
     c.baseAbilities = { str: 18, dex: 12, con: 14, int: 10, wis: 10, cha: 16 };
   },
+  /** Same deal as the paladins: the legacy outputs were captured with the
+   *  CHA-keyed monk AC bonus (the old sheet hardcoded Scaled Fist behavior
+   *  for every monk); the fixture declares what was always true. */
   monk10: (c: CharacterRecord) => {
-    c.classes = [{ className: "Monk (Unchained)", level: 10 }];
+    c.classes = [
+      {
+        className: "Monk (Unchained)",
+        level: 10,
+        archetypeKeys: ["scaled-fist"],
+      },
+    ];
     c.baseAbilities = { str: 16, dex: 18, con: 14, int: 10, wis: 14, cha: 10 };
   },
   monk11: (c: CharacterRecord) => {
-    c.classes = [{ className: "Monk (Unchained)", level: 11 }];
+    c.classes = [
+      {
+        className: "Monk (Unchained)",
+        level: 11,
+        archetypeKeys: ["scaled-fist"],
+      },
+    ];
     c.baseAbilities = { str: 16, dex: 18, con: 14, int: 10, wis: 14, cha: 10 };
   },
   /** no paladin/monk levels: smite/precise/flurry dead-toggle cases */

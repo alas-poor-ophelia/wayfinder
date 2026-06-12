@@ -101,10 +101,10 @@ exports[`archetype parity guard: no-archetype output is frozen > Monk (Unchained
 {
   "ac": {
     "cmb": 8,
-    "cmd": 20,
-    "flatFootedAC": 10,
-    "normalAC": 13,
-    "touchAC": 13,
+    "cmd": 24,
+    "flatFootedAC": 14,
+    "normalAC": 17,
+    "touchAC": 17,
   },
   "attackProfiles": {
     "melee": [],

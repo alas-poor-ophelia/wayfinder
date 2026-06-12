@@ -31,6 +31,8 @@ export function migrateData(raw: Partial<MiniSheetData>): Partial<MiniSheetData>
   if (version < 5) data = migrateToV5(data);
   if (version < 6) data = migrateToV6(data);
   if (version < 7) data = migrateToV7(data);
+  // (v8 was schema-forward only: ClassEntry.archetypeKeys, no code.)
+  if (version < 9) data = migrateToV9(data);
   return data;
 }
 
@@ -184,4 +186,27 @@ function migrateCharacterToV7(record: CharacterRecord): CharacterRecord {
     return { ...def, variants };
   });
   return { ...record, quickActions };
+}
+
+/**
+ * v9: the monk AC bonus moved behind the Scaled Fist archetype (calc/ac.ts
+ * granted CHA-to-AC to every monk unconditionally before — the sheet's only
+ * monk WAS a scaled fist). Stamp the archetype onto leveled monk entries
+ * that don't already declare archetypes, so existing characters keep the
+ * exact AC they had; entries with archetypeKeys are user-curated and never
+ * touched. Same inference the legacy importer applies.
+ */
+function migrateToV9(raw: Partial<MiniSheetData>): Partial<MiniSheetData> {
+  if (!raw.characters) return raw;
+  return { ...raw, characters: raw.characters.map(migrateCharacterToV9) };
+}
+
+function migrateCharacterToV9(record: CharacterRecord): CharacterRecord {
+  if (!record.classes?.length) return record;
+  const classes = record.classes.map((entry) =>
+    /\bmonk\b/i.test(entry.className) && entry.level > 0 && !entry.archetypeKeys
+      ? { ...entry, archetypeKeys: ["scaled-fist"] }
+      : entry
+  );
+  return { ...record, classes };
 }

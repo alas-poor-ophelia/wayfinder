@@ -125,3 +125,51 @@ describe("migrateData v4 -> v5 (spell slots into the spellbook)", () => {
     expect(out.characters![0].spellbook).toBeUndefined();
   });
 });
+
+describe("migrateData v8 -> v9 (Scaled Fist stamped onto legacy monks)", () => {
+  const v8Data = (characters: CharacterRecord[]): Partial<MiniSheetData> => ({
+    schemaVersion: 8,
+    characters,
+  });
+
+  it("stamps scaled-fist onto leveled monk entries without archetypes", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.classes = [
+      { className: "Paladin", level: 5, archetypeKeys: ["virtuous-bravo"] },
+      { className: "Skald", level: 3 },
+      { className: "Monk (Unchained)", level: 2 },
+    ];
+    const out = migrateData(v8Data([c]));
+    const classes = out.characters![0].classes;
+    // monk gets the inference; everything else untouched
+    expect(classes[2].archetypeKeys).toEqual(["scaled-fist"]);
+    expect(classes[0].archetypeKeys).toEqual(["virtuous-bravo"]);
+    expect(classes[1].archetypeKeys).toBeUndefined();
+  });
+
+  it("never touches user-curated archetype selections or level-0 entries", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.classes = [
+      { className: "Monk", level: 4, archetypeKeys: ["kata-master"] },
+      { className: "Monk (Unchained)", level: 0 },
+    ];
+    const out = migrateData(v8Data([c]));
+    expect(out.characters![0].classes[0].archetypeKeys).toEqual(["kata-master"]);
+    expect(out.characters![0].classes[1].archetypeKeys).toBeUndefined();
+  });
+
+  it("idempotent: re-running on migrated data is a no-op", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.classes = [{ className: "Monk (Unchained)", level: 2 }];
+    const once = migrateData(v8Data([c]));
+    const twice = migrateData({ ...once, schemaVersion: 8 }); // stale stamp
+    expect(twice.characters![0].classes).toEqual(once.characters![0].classes);
+  });
+
+  it("v9 does not run for data already at v9", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.classes = [{ className: "Monk (Unchained)", level: 2 }];
+    const out = migrateData({ schemaVersion: 9, characters: [c] });
+    expect(out.characters![0].classes[0].archetypeKeys).toBeUndefined();
+  });
+});

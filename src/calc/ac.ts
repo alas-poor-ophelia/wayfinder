@@ -17,12 +17,16 @@ export interface ACInput {
   dexMod?: number;
   chaMod?: number;
   strMod?: number;
+  wisMod?: number;
   sizeMod?: number;
   weaponSong?: string;
   naturalAC?: unknown;
   deflectionAC?: unknown;
   dodgeAC?: unknown;
   monkLevel?: unknown;
+  /** true when a Scaled Fist archetype keys the monk AC bonus off CHA
+   *  instead of WIS (the legacy sheet hardcoded CHA for every monk) */
+  scaledFist?: boolean;
   /** paladin level when Virtuous Bravo is selected, 0/absent otherwise */
   bravoLevel?: unknown;
   hasted?: boolean;
@@ -55,9 +59,18 @@ export function calculateACValues(input: ACInput): ACValues {
   const deflectionAC = Number(input.deflectionAC) || 0;
   const dodgeAC = Number(input.dodgeAC) || 0;
 
-  // Scaled Fist monk: CHA to AC when unarmored; +1 at level 4, +1 per 4 after.
+  // Monk AC bonus: WIS to AC (+1 at level 4, +1 per 4 after). Scaled Fist
+  // (Draconic Might) keys it off CHA instead — the legacy renderer
+  // hardcoded the CHA form for every monk (its only monk WAS a scaled
+  // fist); relocated behind the archetype. Two preserved quirks: the
+  // legacy CHA path adds the raw modifier even when negative, and the
+  // bonus ignores armor/encumbrance (never modeled). The RAW-only WIS
+  // path adds the bonus "if any" — never negative.
   const monkLvl = Number(input.monkLevel) || 0;
-  let monkACBonus = monkLvl > 0 ? chaMod : 0;
+  const monkACStat = input.scaledFist
+    ? chaMod
+    : Math.max(0, Number(input.wisMod) || 0);
+  let monkACBonus = monkLvl > 0 ? monkACStat : 0;
   if (monkLvl >= 4) {
     monkACBonus += 1 + Math.floor((monkLvl - 4) / 4);
   }

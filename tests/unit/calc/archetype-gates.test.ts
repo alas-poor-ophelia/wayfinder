@@ -71,6 +71,44 @@ describe("spellcasting removal gate", () => {
   });
 });
 
+function monk(level: number, ...archetypeKeys: string[]) {
+  const c = createDefaultCharacter("m", "M");
+  c.classes = [
+    {
+      className: "Monk (Unchained)",
+      level,
+      ...(archetypeKeys.length ? { archetypeKeys } : {}),
+    },
+  ];
+  // wis +3, cha +4 — distinct mods so the AC stat source is unambiguous
+  c.baseAbilities = { str: 14, dex: 14, con: 12, int: 10, wis: 16, cha: 18 };
+  return c;
+}
+
+describe("scaled fist AC relocation", () => {
+  it("plain monk now adds WIS (RAW), not CHA", () => {
+    const computed = computeAll(monk(5));
+    // 10 base + 2 dex + 3 wis + 1 scaling (4th+)
+    expect(computed.ac.normalAC).toBe(16);
+  });
+
+  it("with the archetype, AC matches the old unconditional CHA values exactly", () => {
+    const computed = computeAll(monk(5, "scaled-fist"));
+    // 10 base + 2 dex + 4 cha + 1 scaling
+    expect(computed.ac.normalAC).toBe(17);
+    expect(computed.ac.touchAC).toBe(17);
+    // flat-footed loses dex but keeps the monk bonus
+    expect(computed.ac.flatFootedAC).toBe(15);
+  });
+
+  it("negative WIS adds nothing on the RAW path", () => {
+    const c = monk(2);
+    c.baseAbilities = { ...c.baseAbilities, wis: 8 };
+    // 10 base + 2 dex + max(0, -1) + no scaling below 4th
+    expect(computeAll(c).ac.normalAC).toBe(12);
+  });
+});
+
 describe("virtuous bravo AC relocation", () => {
   it("plain paladin no longer gets the Nimble dodge bonus", () => {
     const computed = computeAll(paladin(7));

@@ -260,12 +260,14 @@ export function computeAll(
     dexMod: mods.dex,
     chaMod: mods.cha,
     strMod: mods.str,
+    wisMod: mods.wis,
     sizeMod: character.ac.sizeMod,
     weaponSong: qa ? "Off" : character.toggles.weaponSong,
     naturalAC: acResolved.naturalLike,
     deflectionAC: acResolved.deflectionLike,
     dodgeAC: acResolved.dodge,
     monkLevel,
+    scaledFist: archEffects.scaledFistAC,
     bravoLevel: archEffects.grantsBravoAC ? paladinLevel : 0,
     // The old sheet's separate `hasted` flag was never bound (haste works
     // through condition effects), so it stays false here too.

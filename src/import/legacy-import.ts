@@ -492,6 +492,20 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
       ...(archetype ? { archetypeKeys: [archetype.id] } : {}),
     });
   }
+  // The legacy AC renderer hardcoded the Scaled Fist CHA-to-AC bonus for
+  // every monk (its only monk WAS a scaled fist), so a legacy monk with no
+  // recorded archetype can only have meant one — infer it to keep imported
+  // math equal to the live capture (same reasoning as the Virtuous Bravo
+  // panache inference below). Both monk catalogs carry the "scaled-fist" id.
+  for (const entry of classes) {
+    if (!/\bmonk\b/i.test(entry.className) || entry.archetypeKeys) continue;
+    if (!entry.level) continue;
+    entry.archetypeKeys = ["scaled-fist"];
+    warnings.push(
+      `Class "${entry.className}": inferred the Scaled Fist archetype ` +
+        `(the old sheet hardcoded its CHA-to-AC bonus for all monks)`
+    );
+  }
   record.classes = classes;
   if (classNames.length === 0 && input.characterType === "familiar") {
     const bab = dual("bab", sheet, config, warnings);
