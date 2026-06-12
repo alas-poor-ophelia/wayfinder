@@ -4,6 +4,7 @@ import { num } from "./calc/abilities";
 import {
   PLUGIN_ID,
   VIEW_TYPE_CONFIG,
+  VIEW_TYPE_EQUIP_DB,
   VIEW_TYPE_MINISHEET,
   VIEW_TYPE_PARTY_INV,
   VIEW_TYPE_SPELL_DB,
@@ -16,6 +17,7 @@ import { SpellIndex } from "./spells/index";
 import { CustomItemsStore } from "./state/custom-items";
 import { MiniSheetStore } from "./state/store";
 import { ConfigView } from "./views/ConfigView";
+import { EquipmentDatabaseView } from "./views/EquipmentDatabaseView";
 import { PartyInventoryView } from "./views/PartyInventoryView";
 import { SheetView } from "./views/SheetView";
 import { SpellDatabaseView } from "./views/SpellDatabaseView";
@@ -61,6 +63,11 @@ export default class MiniSheetPlugin extends Plugin {
       (leaf) => new ConfigView(leaf, this)
     );
 
+    this.registerView(
+      VIEW_TYPE_EQUIP_DB,
+      (leaf) => new EquipmentDatabaseView(leaf, this)
+    );
+
     this.addRibbonIcon("shield", "Open MiniSheet", () => {
       void this.activateView();
     });
@@ -101,6 +108,12 @@ export default class MiniSheetPlugin extends Plugin {
       id: "open-party-inventory",
       name: "Open party inventory",
       callback: () => void this.activatePartyInvView(),
+    });
+
+    this.addCommand({
+      id: "open-equipment-database",
+      name: "Open equipment database",
+      callback: () => void this.activateEquipDbView(),
     });
 
     this.addCommand({
@@ -320,6 +333,18 @@ export default class MiniSheetPlugin extends Plugin {
     if (!leaf) {
       leaf = workspace.getLeaf("tab");
       await leaf.setViewState({ type: VIEW_TYPE_SPELL_DB, active: true });
+    }
+    await workspace.revealLeaf(leaf);
+  }
+
+  /** Open (or reveal) the equipment database in the main pane. */
+  async activateEquipDbView(): Promise<void> {
+    const { workspace } = this.app;
+    let leaf: WorkspaceLeaf | null =
+      workspace.getLeavesOfType(VIEW_TYPE_EQUIP_DB)[0] ?? null;
+    if (!leaf) {
+      leaf = workspace.getLeaf("tab");
+      await leaf.setViewState({ type: VIEW_TYPE_EQUIP_DB, active: true });
     }
     await workspace.revealLeaf(leaf);
   }

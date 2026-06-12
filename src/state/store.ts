@@ -8,8 +8,10 @@ import {
 import type { QuickActionDef } from "../types/quick-actions";
 import {
   DEFAULT_DATA,
+  DEFAULT_EQUIP_DB,
   DEFAULT_PARTY_INV,
   DEFAULT_SPELL_DB,
+  type EquipDbState,
   type MiniSheetData,
   type PartyInvState,
   type SpellDbState,
@@ -129,6 +131,20 @@ export class MiniSheetStore {
       ui: {
         ...this.data.value.ui,
         spellDb: { ...this.spellDb(), ...patch },
+      },
+    });
+  }
+
+  equipDb(): EquipDbState {
+    return { ...DEFAULT_EQUIP_DB, ...this.data.value.ui.equipDb };
+  }
+
+  updateEquipDb(patch: Partial<EquipDbState>): void {
+    this.commit({
+      ...this.data.value,
+      ui: {
+        ...this.data.value.ui,
+        equipDb: { ...this.equipDb(), ...patch },
       },
     });
   }

@@ -13,6 +13,8 @@ export interface UiState {
   combatSub?: "main" | "inventory";
   /** main-pane party inventory view state (persists like spellDb) */
   partyInv?: PartyInvState;
+  /** main-pane equipment database view state (persists like spellDb) */
+  equipDb?: EquipDbState;
 }
 
 export interface PartyInvState {
@@ -64,6 +66,50 @@ export const DEFAULT_SPELL_DB: SpellDbState = {
   sr: "",
   eschewOnly: false,
   knownOnly: false,
+  sortKey: "name",
+  sortDir: "asc",
+  page: 0,
+  targetCharacterId: null,
+  filtersOpen: false,
+};
+
+export interface EquipDbState {
+  section: "weapons" | "armor" | "magic" | "custom" | "forge";
+  search: string;
+  /** weapons: simple|martial|exotic|ammo ("" = all) */
+  proficiency: string;
+  /** weapons/armor category value ("" = all) */
+  category: string;
+  /** magic: wondrous|ring|rod ("" = all) */
+  group: string;
+  /** magic: body slot ("" = all) */
+  slot: string;
+  source: string;
+  priceMin: number | null;
+  priceMax: number | null;
+  /** magic: only items whose bonuses were auto-derived */
+  stattedOnly: boolean;
+  /** weapons: also create a WeaponProfile on add */
+  addProfile: boolean;
+  sortKey: string;
+  sortDir: "asc" | "desc";
+  page: number;
+  targetCharacterId: string | null;
+  filtersOpen: boolean;
+}
+
+export const DEFAULT_EQUIP_DB: EquipDbState = {
+  section: "weapons",
+  search: "",
+  proficiency: "",
+  category: "",
+  group: "",
+  slot: "",
+  source: "",
+  priceMin: null,
+  priceMax: null,
+  stattedOnly: false,
+  addProfile: true,
   sortKey: "name",
   sortDir: "asc",
   page: 0,
