@@ -190,11 +190,15 @@ function ValueField({ label, value, onChange }: { label: string; value: QAValue;
       >
         ƒ
       </button>
-      {!isF ? (
-        <Num value={value as number} onChange={(n) => onChange(n)} />
-      ) : (
-        <FormulaBody value={value as QuickActionFormula} onChange={onChange} />
-      )}
+      {/* wrapping value column — keeps wrapped formula rows aligned under the
+          inputs rather than flush below the label */}
+      <span class="effect__num__vals">
+        {!isF ? (
+          <Num value={value as number} onChange={(n) => onChange(n)} />
+        ) : (
+          <FormulaBody value={value as QuickActionFormula} onChange={onChange} />
+        )}
+      </span>
     </span>
   );
 }

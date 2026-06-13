@@ -320,10 +320,23 @@
   }
   .effect__num {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 5px;
+    max-width: 100%;
     font-size: 12px;
     color: var(--text-mute);
+  }
+  /* the value controls (number or whole formula) form their own wrapping
+     column to the right of the label + ƒ toggle, so when a wide formula
+     wraps, its rows hang aligned under the first input — not under the label */
+  .effect__num__vals {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+    min-width: 0;
   }
   .effect__num .num {
     min-height: 30px;
