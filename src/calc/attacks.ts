@@ -125,6 +125,19 @@ export interface AttackStrings {
   melee: string; // legacy key: "waveblade"
   ranged: string;
   unarmed: string;
+  /** Structured pieces behind each rendered string — drives the combat-tab
+      two-row layout. The strings above stay the contract for tests. */
+  parts: { melee: AttackParts; ranged: AttackParts; unarmed: AttackParts };
+}
+
+/** The discrete pieces of one attack line, unwrapped (no parens/markdown).
+    Standard and Full share damage/crit; the UI shows them once. */
+export interface AttackParts {
+  standard: string; // to-hit only, e.g. "+4"
+  full: string; // iterative to-hits, e.g. "+4/-1"
+  damage: string; // e.g. "1d8+1" (may carry "(2x vs outsider)"); "" for none
+  crit: string; // e.g. "19-20/x2"; "" when not applicable
+  touch: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -365,6 +378,7 @@ function calculateAttacks(
 interface FormattedAttackStrings {
   standard: string;
   full: string;
+  parts: AttackParts;
 }
 
 function formatAttackStrings(
@@ -379,7 +393,19 @@ function formatAttackStrings(
   const standard = `${formatAttackBonus(standardBonus)}${touchText}${damageText}${critInfo}`;
   const fullAttackString = attacks.map((bonus) => formatAttackBonus(bonus)).join("/");
   const full = `${fullAttackString}${touchText}${damageText}${critInfo}`;
-  return { standard, full };
+  // critInfo arrives wrapped as " (19-20/x2)"; unwrap for the structured chip.
+  const crit = critInfo.replace(/^\s*\((.*)\)$/, "$1");
+  return {
+    standard,
+    full,
+    parts: {
+      standard: formatAttackBonus(standardBonus),
+      full: fullAttackString,
+      damage: damageString,
+      crit,
+      touch: touchAttack,
+    },
+  };
 }
 
 function processWeaponSong(weaponSong: string): WeaponSongEffect {
@@ -733,5 +759,10 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     melee: formatWeaponOutput(meleeAttackStrings) + noteBlock,
     ranged: formatWeaponOutput(rangedAttackStrings) + noteBlock,
     unarmed: formatWeaponOutput(unarmedAttackStrings),
+    parts: {
+      melee: meleeAttackStrings.parts,
+      ranged: rangedAttackStrings.parts,
+      unarmed: unarmedAttackStrings.parts,
+    },
   };
 }

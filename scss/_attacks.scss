@@ -68,6 +68,96 @@
     margin: 0;
   }
 
+  // Two-row attack contents: to-hit heroes, then shared damage/crit chips.
+  // The pieces arrive structured from the calc (AttackParts), so each gets
+  // its own visual treatment instead of one bold-labelled run-on line.
+  .ms-atk-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 1px 0;
+  }
+
+  // Row 1 — to-hit bonuses, the heroes. Wraps as whole cells, never mid-cell.
+  .ms-atk-tohit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 16px;
+  }
+
+  .ms-atk-tohit__cell {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  .ms-atk-tohit__label {
+    font-family: "Taroca", sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: rgba(144, 108, 70, 0.85);
+  }
+
+  .ms-atk-tohit__value {
+    font-family: "Norwester", sans-serif;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--ms-gold);
+  }
+
+  // Row 2 — damage + crit, shown ONCE (Std/Full always share them).
+  .ms-atk-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .ms-atk-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  // Damage: filled bronze pill — the supporting hero.
+  .ms-atk-chip--dmg {
+    background-color: rgba(144, 108, 70, 0.22);
+    color: var(--text-normal);
+  }
+
+  // Crit: outlined pill — quieter, secondary.
+  .ms-atk-chip--crit {
+    border: 1px solid rgba(144, 108, 70, 0.45);
+    color: var(--text-muted);
+  }
+
+  // Touch: gold accent, matches the header touch toggle.
+  .ms-atk-chip--touch {
+    background-color: var(--ms-gold);
+    color: #1c1305;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+
+  // Trailing note block (weapon-song effects) below the rows.
+  .ms-atk-block__notes {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+
+    strong {
+      color: rgba(144, 108, 70, 0.9);
+    }
+  }
+
   // weapon selector + touch toggle row inside a block
   .ms-atk-block__picker {
     padding: 2px 4px;

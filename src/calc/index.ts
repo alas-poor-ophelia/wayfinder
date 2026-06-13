@@ -12,6 +12,7 @@ import { calculateACValues, type ACValues } from "./ac";
 import {
   calculateAttackStrings,
   type AttackStrings,
+  type AttackParts,
   type ConditionEffects as AttackConditionEffects,
 } from "./attacks";
 import { totalBab, totalLevel } from "./class-stats";
@@ -49,6 +50,8 @@ export interface AttackProfileText {
   id: string;
   name: string;
   text: string;
+  /** Structured pieces driving the two-row layout; text is kept for notes. */
+  parts: AttackParts;
 }
 
 export interface ComputedCharacter {
@@ -420,22 +423,20 @@ export function computeAll(
     // rangedWeapon takes precedence over the Ray style)
     melee: equippedWeapons
       .filter((i) => i.weapon!.kind === "melee")
-      .map((i) => ({
-        id: i.id,
-        name: i.name,
-        text: calculateAttackStrings({
+      .map((i) => {
+        const r = calculateAttackStrings({
           ...attackInput,
           meleeTouch: false,
           meleeWeapon: i.weapon!,
-        }).melee,
-      })),
+        });
+        return { id: i.id, name: i.name, text: r.melee, parts: r.parts.melee };
+      }),
     ranged: equippedWeapons
       .filter((i) => i.weapon!.kind === "ranged")
-      .map((i) => ({
-        id: i.id,
-        name: i.name,
-        text: calculateAttackStrings({ ...attackInput, rangedWeapon: i.weapon! }).ranged,
-      })),
+      .map((i) => {
+        const r = calculateAttackStrings({ ...attackInput, rangedWeapon: i.weapon! });
+        return { id: i.id, name: i.name, text: r.ranged, parts: r.parts.ranged };
+      }),
   };
 
   // Resistance now stacks in the engine (config field + cloaks take max),

@@ -13,6 +13,10 @@
  *     every fixture gains the additive `speed` object; no existing key
  *     changed (no raceKey on these fixtures, so speed derives from the
  *     manual "30ft" string exactly as InitSpeed rendered before).
+ *  4. attacks.parts added (combat-tab two-row layout) — diff reviewed:
+ *     every fixture gains the additive `parts` object (structured
+ *     standard/full/damage/crit/touch behind the existing strings); the
+ *     melee/ranged/unarmed strings are byte-identical, nothing else moved.
  * From here on these are frozen again.
  */
 import { describe, expect, it } from "vitest";
