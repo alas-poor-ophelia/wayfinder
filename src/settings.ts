@@ -62,5 +62,29 @@ export class MiniSheetSettingTab extends PluginSettingTab {
             void this.plugin.customItems.load();
           })
       );
+
+    new Setting(containerEl)
+      .setName("Elephant in the Room")
+      .setDesc(
+        "Apply the Elephant in the Room feat-tax houserules vault-wide: " +
+          "finesse weapons grant Dexterity to attack, damage, and CMB with " +
+          "no feat. Off reverts to RAW (Strength-based CMB, Weapon Finesse " +
+          "only via its toggle / a class grant). Defaults on."
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(
+            this.plugin.store.data.value.settings.houseRules?.elephantInTheRoom ??
+              true
+          )
+          .onChange((value) => {
+            this.plugin.store.updateSettings({
+              houseRules: {
+                ...this.plugin.store.data.value.settings.houseRules,
+                elephantInTheRoom: value,
+              },
+            });
+          })
+      );
   }
 }

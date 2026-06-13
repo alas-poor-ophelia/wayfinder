@@ -12,6 +12,23 @@ import type {
 } from "../types/equipment";
 import type { InventoryItem, ItemWeaponStats } from "../types/inventory";
 
+/** Weapons usable with Weapon Finesse beyond the whole "light" category —
+ *  the named exceptions PF1e calls out (rapier, whip, spiked chain, elven
+ *  curve blade, sword cane). The catalog has no `finesse` tag, so finesse is
+ *  derived: category === "light" OR a member of this set. */
+const FINESSE_WEAPON_IDS = new Set([
+  "rapier",
+  "whip",
+  "spiked-chain",
+  "elven-curve-blade",
+  "sword-cane",
+]);
+
+/** A weapon is finesse-able if it is light or one of the named exceptions. */
+export function isFinesseWeapon(w: BaseWeaponDef): boolean {
+  return w.category === "light" || w.special.includes("finesse") || FINESSE_WEAPON_IDS.has(w.id);
+}
+
 /** Attack stats stamped onto weapon items (equipped item = attack profile).
  *  Ammunition gets none — arrows aren't an attack block. */
 export function weaponStatsFor(w: BaseWeaponDef): ItemWeaponStats | undefined {
@@ -29,6 +46,8 @@ export function weaponStatsFor(w: BaseWeaponDef): ItemWeaponStats | undefined {
     critMult: w.critMult || "2",
     ...(thrown ? { damageStat: "str" as const } : {}),
     ...(ranged && monk ? { flurry: true } : {}),
+    // melee finesse only — a finesse property on a ranged weapon is meaningless
+    ...(!ranged && isFinesseWeapon(w) ? { finesse: true } : {}),
   };
 }
 
@@ -86,7 +105,14 @@ export function customDraft(
   c: CustomItemDef,
   base?: BaseWeaponDef
 ): Omit<InventoryItem, "id"> {
-  const stats = c.kind === "weapon" && base ? weaponStatsFor(base) : undefined;
+  const baseStats = c.kind === "weapon" && base ? weaponStatsFor(base) : undefined;
+  // The Agile enchant (Dex to damage in place of Str) is recorded on the
+  // forge inputs by ability id; stamp it onto the weapon stats so calc can
+  // read it without re-deriving the forge.
+  const stats =
+    baseStats && c.abilityIds.includes("agile")
+      ? { ...baseStats, agile: true as const }
+      : baseStats;
   return {
     name: c.name,
     type: c.kind === "weapon" ? "Weapon" : c.kind === "shield" ? "Shield" : "Armor",

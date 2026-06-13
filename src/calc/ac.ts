@@ -35,6 +35,11 @@ export interface ACInput {
   craneStyle?: boolean;
   acAdjust?: unknown;
   bab?: number;
+  /** Which ability mod feeds CMB. Defaults to "dex" — the legacy quirk the
+   *  whole codebase (and every captured fixture) was built on. computeAll
+   *  passes "str" only when the Elephant in the Room houserule is OFF, or ON
+   *  while wielding a non-finesse weapon (RAW: Str for combat maneuvers). */
+  cmbAbility?: "str" | "dex";
   conditionEffects?: ACConditionEffects;
 }
 
@@ -114,7 +119,11 @@ export function calculateACValues(input: ACInput): ACValues {
   const flatFootedAC = baseAC + naturalAC + deflectionAC + monkACBonus + ffAcAdjust;
 
   const bab = input.bab || 0;
-  const cmb = bab + dexMod + sizeMod + (ce.cmb || 0);
+  // CMB ability: Dex by default (the preserved legacy quirk). When the caller
+  // asks for Str (RAW maneuvers, or EitR-off / non-finesse weapon) we use the
+  // raw Str mod — Str is not zeroed by loseDexToAC the way dexMod is above.
+  const cmbAbilityMod = input.cmbAbility === "str" ? strMod : dexMod;
+  const cmb = bab + cmbAbilityMod + sizeMod + (ce.cmb || 0);
   const cmd =
     10 + bab + strMod + dexMod + sizeMod + deflectionAC + monkACBonus +
     bravoACBonus + dodgeAC + (ce.cmd || 0);

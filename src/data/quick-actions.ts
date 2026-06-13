@@ -297,6 +297,16 @@ export const DEFAULT_QUICK_ACTIONS: QuickActionDef[] = [
     stages: [{ effects: [{ kind: "special", op: "agileWeapon" }] }],
   },
   {
+    // Manual Weapon Finesse: use Dex in place of Str on attacks with a
+    // finesse weapon (a per-weapon profile whose item is light/finesse).
+    // Under the Elephant in the Room houserule this is automatic for finesse
+    // weapons; the toggle is the RAW path (the feat / a class grant).
+    id: "weaponFinesse",
+    name: "Weapon Finesse",
+    icon: "ra-plain-dagger",
+    stages: [{ effects: [{ kind: "special", op: "weaponFinesse" }] }],
+  },
+  {
     id: "versatilePerformance",
     name: "Versatile Performance",
     icon: "ra-arcane-mask",

@@ -46,6 +46,13 @@ export interface ItemWeaponStats {
   damageStat?: "str";
   /** monk weapon: ranged attacks may Flurry of Blows (legacy Shuriken quirk) */
   flurry?: boolean;
+  /** weapon is usable with Weapon Finesse (light, or a named finesse weapon
+   *  like rapier/whip). Stamped from the catalog at add time; lets calc apply
+   *  Dex-to-attack (and, under Elephant in the Room, Dex-to-damage/CMB). */
+  finesse?: boolean;
+  /** the Agile weapon enhancement is applied — a finesse wielder uses Dex in
+   *  place of Str on damage rolls with this weapon (RAW; baseline under EitR). */
+  agile?: boolean;
 }
 
 export interface InventoryItem {

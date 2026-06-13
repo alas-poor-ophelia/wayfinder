@@ -20,6 +20,8 @@ export const PALADIN_ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
     key: "virtuous-bravo",
     classKey: "Paladin",
     grantsBravoAC: true,
+    // Bravo's Finesse: the archetype grants Weapon Finesse as a bonus feat.
+    grantsWeaponFinesse: true,
     addsResources: [
       {
         // id intentionally "panache": same pool the schema-v4 migration and

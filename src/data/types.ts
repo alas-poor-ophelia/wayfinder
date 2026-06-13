@@ -111,6 +111,9 @@ export interface ArchetypeMechanics {
   /** monk AC bonus keys off CHA instead of WIS (Scaled Fist: Draconic
    *  Might rebases every Wis-driven monk calculation onto Cha) */
   scaledFistAC?: boolean;
+  /** grants Weapon Finesse for free (e.g. Virtuous Bravo's Bravo's Finesse):
+   *  Dex-to-attack on finesse weapons without spending the feat */
+  grantsWeaponFinesse?: boolean;
 }
 
 export type RaceCategory = "core" | "featured" | "uncommon";

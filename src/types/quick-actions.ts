@@ -82,7 +82,10 @@ export type QuickActionEffect =
   /** flurry: REPLACES the single base attack with `count` at full bonus */
   | { kind: "flurryAttacks"; count: QAValue }
   /** irreducible legacy behaviors, also available to custom actions */
-  | { kind: "special"; op: "agileWeapon" | "versatilePerformance" };
+  | {
+      kind: "special";
+      op: "agileWeapon" | "versatilePerformance" | "weaponFinesse";
+    };
 
 export interface QuickActionStage {
   /** optional label, e.g. "vs Outsider" (shown in tooltips) */

@@ -106,10 +106,19 @@ function classLevel(character: CharacterRecord, match: string): number {
     .reduce((sum, c) => sum + (c.level || 0), 0);
 }
 
+export interface ComputeOptions {
+  /** Elephant in the Room houserule. Defaults to ON when omitted, matching
+   *  MiniSheetSettings' default and the legacy Dex-to-CMB behaviour every
+   *  captured fixture was built on (see eitrEnabled / archetype-parity). */
+  elephantInTheRoom?: boolean;
+}
+
 export function computeAll(
   character: CharacterRecord,
-  master?: CharacterRecord | null
+  master?: CharacterRecord | null,
+  options?: ComputeOptions
 ): ComputedCharacter {
+  const eitr = options?.elephantInTheRoom ?? true;
   const effects = calculateConditionEffects({
     conditions: character.conditions,
     buffs: character.buffs,
@@ -279,12 +288,28 @@ export function computeAll(
     character.ac.sizeModOverride ??
     (race ? (race.size === "small" ? 1 : 0) : character.ac.sizeMod);
 
+  // Weapon Finesse is active when a quick action / class grant turns it on.
+  // Under EitR it's automatic for finesse weapons, so the attack calc OR's
+  // this with the houserule (passed as elephantInTheRoom below).
+  const weaponFinesseActive =
+    (qa ? qa.weaponFinesse : false) || archEffects.grantsWeaponFinesse;
+
+  // CMB ability. The legacy sheet used Dex unconditionally — an Elephant in
+  // the Room artifact (finesse weapons grant Dex to CMB, and these are
+  // finesse characters). EitR owns that: on → Dex (reproducing the quirk
+  // every fixture froze), off → Str (RAW). It is NOT made weapon-conditional
+  // here: stamped weapon items only ever carry finesse=true, so a legacy item
+  // and a non-finesse one are indistinguishable, and forcing Str on the
+  // ambiguous case would silently regress existing characters' CMB.
+  const cmbAbility: "str" | "dex" = eitr ? "dex" : "str";
+
   const ac = calculateACValues({
     dexMod: mods.dex,
     chaMod: mods.cha,
     strMod: mods.str,
     wisMod: mods.wis,
     sizeMod,
+    cmbAbility,
     weaponSong: qa ? "Off" : character.toggles.weaponSong,
     naturalAC: acResolved.naturalLike,
     deflectionAC: acResolved.deflectionLike,
@@ -341,6 +366,8 @@ export function computeAll(
     craneStyle: qa ? false : character.toggles.craneStyle,
     powerAttack: qa ? false : character.toggles.powerAttack,
     agileWeapon: qa ? qa.agileWeapon : character.toggles.agileWeapon,
+    weaponFinesse: weaponFinesseActive,
+    elephantInTheRoom: eitr,
     preciseStrike: qa ? false : character.toggles.preciseStrike,
     doublePreciseStrike: qa ? false : character.toggles.doublePreciseStrike,
     flanking: qa ? false : character.toggles.flanking,

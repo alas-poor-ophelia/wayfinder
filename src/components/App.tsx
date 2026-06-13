@@ -1,5 +1,6 @@
 import { computeAll } from "../calc";
 import { TABS, TAB_LABELS } from "../constants";
+import { eitrEnabled } from "../types/data-file";
 import type MiniSheetPlugin from "../main";
 import type { MiniSheetStore } from "../state/store";
 import { Banner } from "./combat/Banner";
@@ -35,7 +36,9 @@ export function App({ plugin, store }: AppProps) {
   }
 
   const master = character.link ? store.getCharacter(character.link.masterId) : null;
-  const computed = computeAll(character, master);
+  const computed = computeAll(character, master, {
+    elephantInTheRoom: eitrEnabled(store.data.value.settings),
+  });
 
   return (
     <div class="ms-sheet ms-sheet--with-banner">

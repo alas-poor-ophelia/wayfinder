@@ -121,6 +121,23 @@ export interface MiniSheetSettings {
   /** custom-items JSON file, tracked by NAME anywhere in the vault
    *  (created at the vault root on first save) */
   customItemsFileName: string;
+  /** table houserules toggled vault-wide. Read with a default (see
+   *  eitrEnabled() in src/calc) so absence means the established default. */
+  houseRules?: HouseRules;
+}
+
+/** Vault-wide houserule switches. Currently the only entry is the
+ *  "Elephant in the Room" feat-tax rules (free merged Power Attack/Deadly
+ *  Aim, finesse weapons grant Dex to attack/damage/CMB). Defaults ON. */
+export interface HouseRules {
+  elephantInTheRoom?: boolean;
+}
+
+/** Read the Elephant in the Room houserule with the established default (ON).
+ *  Absence — older data.json, settings not yet migrated — means the default,
+ *  which keeps the legacy Dex-to-CMB behaviour every captured sheet has. */
+export function eitrEnabled(settings: Pick<MiniSheetSettings, "houseRules">): boolean {
+  return settings.houseRules?.elephantInTheRoom ?? true;
 }
 
 /** Root shape of the plugin's data.json. */
@@ -158,11 +175,15 @@ export const DEFAULT_DATA: MiniSheetData = {
   // the race's "<N>ft" converts to the "" sentinel, a differing sizeMod is
   // stamped into ac.sizeModOverride; no-raceKey characters untouched (real
   // migration). CharacterRecord.raceHeritageKey is schema-forward (like v8).
-  schemaVersion: 11,
+  // v12: MiniSheetSettings.houseRules.elephantInTheRoom (schema-forward, like
+  // v8 — optional with a read-time default of ON; see eitrEnabled()). No
+  // migration code: absent houseRules already means "the established default".
+  schemaVersion: 12,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",
     customItemsFileName: DEFAULT_CUSTOM_ITEMS_FILENAME,
+    houseRules: { elephantInTheRoom: true },
   },
   ui: {
     selectedTab: "combat",

@@ -114,6 +114,8 @@ export interface ArchetypeEffects {
   grantsBravoAC: boolean;
   /** Scaled Fist Draconic Might: monk AC bonus keys off CHA, not WIS */
   scaledFistAC: boolean;
+  /** an archetype grants Weapon Finesse for free (Virtuous Bravo) */
+  grantsWeaponFinesse: boolean;
   classSkillAdds: Set<string>;
   classSkillRemoves: Set<string>;
   /** false when no entry selects any archetype (cheap short-circuit) */
@@ -130,6 +132,7 @@ export function resolveArchetypeEffects(classes: ClassEntry[]): ArchetypeEffects
     removedSpellcastingClassKeys: new Set<string>(),
     grantsBravoAC: false,
     scaledFistAC: false,
+    grantsWeaponFinesse: false,
     classSkillAdds: new Set<string>(),
     classSkillRemoves: new Set<string>(),
     any: false,
@@ -199,6 +202,7 @@ export function resolveArchetypeEffects(classes: ClassEntry[]): ArchetypeEffects
       }
       if (mechanics.grantsBravoAC) effects.grantsBravoAC = true;
       if (mechanics.scaledFistAC) effects.scaledFistAC = true;
+      if (mechanics.grantsWeaponFinesse) effects.grantsWeaponFinesse = true;
       for (const s of mechanics.classSkills?.add ?? []) {
         effects.classSkillAdds.add(s);
       }

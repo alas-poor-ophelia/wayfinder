@@ -41,6 +41,9 @@ export interface ResolvedQuickActions {
   /** appended after condition extraAttacks (haste first — legacy order) */
   extraAttacks: number[];
   agileWeapon: boolean;
+  /** manual Weapon Finesse (the feat / a class grant): Dex-to-attack on
+   *  finesse weapons. EitR makes this automatic, so it OR's with that. */
+  weaponFinesse: boolean;
   versatilePerformance: boolean;
   /** flurry replaces the base attack with `attacks` swings at full bonus */
   flurry: { active: boolean; attacks: number } | null;
@@ -126,6 +129,7 @@ export function resolveQuickActions(
     acChannels: { normal: 0, touch: 0, ff: 0 },
     extraAttacks: [],
     agileWeapon: false,
+    weaponFinesse: false,
     versatilePerformance: false,
     flurry: null,
     smiteOverride: null,
@@ -200,6 +204,7 @@ export function resolveQuickActions(
           break;
         case "special":
           if (effect.op === "agileWeapon") out.agileWeapon = true;
+          else if (effect.op === "weaponFinesse") out.weaponFinesse = true;
           else if (effect.op === "versatilePerformance") out.versatilePerformance = true;
           break;
       }

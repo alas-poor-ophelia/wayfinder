@@ -11,6 +11,7 @@ import {
   DEFAULT_EQUIP_DB,
   DEFAULT_PARTY_INV,
   DEFAULT_SPELL_DB,
+  eitrEnabled,
   type EquipDbState,
   type MiniSheetData,
   type PartyInvState,
@@ -389,7 +390,9 @@ export class MiniSheetStore {
   syncClassResources(id: string): void {
     const record = this.getCharacter(id);
     if (!record) throw new Error(`No character with id "${id}"`);
-    const computed = computeAll(record);
+    const computed = computeAll(record, null, {
+      elephantInTheRoom: eitrEnabled(this.data.value.settings),
+    });
     const mods = computed.mods;
     const suggested = classResources(record.classes, mods);
     let resources = [...record.resources];

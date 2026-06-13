@@ -36,6 +36,7 @@ import {
 } from "../state/inventory-actions";
 import type { CharacterRecord } from "../types/character";
 import type { MiniSheetData } from "../types/data-file";
+import { eitrEnabled } from "../types/data-file";
 import type {
   CurrencyState,
   InventoryItem,
@@ -178,7 +179,9 @@ export function installBridge(plugin: MiniSheetPlugin): void {
       const record = store.getCharacter(id);
       if (!record) return null;
       const master = record.link ? store.getCharacter(record.link.masterId) : null;
-      return computeAll(record, master);
+      return computeAll(record, master, {
+        elephantInTheRoom: eitrEnabled(store.data.value.settings),
+      });
     },
     openSheet: () => plugin.activateView(),
     getSpellbook: (id) => {
@@ -191,7 +194,10 @@ export function installBridge(plugin: MiniSheetPlugin): void {
       const record = store.getCharacter(id);
       if (!record) throw new Error(`No character with id "${id}"`);
       const master = record.link ? store.getCharacter(record.link.masterId) : null;
-      const bonus = computeAll(record, master).spellbook?.castingStatBonus ?? 0;
+      const bonus =
+        computeAll(record, master, {
+          elephantInTheRoom: eitrEnabled(store.data.value.settings),
+        }).spellbook?.castingStatBonus ?? 0;
       const level = (payload.level ?? 0) as SpellLevel;
       switch (action) {
         case "cast":

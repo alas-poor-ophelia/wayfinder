@@ -120,7 +120,8 @@ describe("inventory drafts", () => {
       critRange: "19-20",
       critMult: "2",
     });
-    // melee monk weapons (kama) get no ranged flurry flag
+    // melee monk weapons (kama) get no ranged flurry flag, but a light
+    // weapon IS finesse-able, so it stamps finesse
     expect(
       weaponStatsFor({ ...longsword, special: ["monk", "trip"], category: "light" })
     ).toEqual({
@@ -128,6 +129,7 @@ describe("inventory drafts", () => {
       damageDie: "1d8",
       critRange: "19-20",
       critMult: "2",
+      finesse: true,
     });
   });
 

@@ -54,6 +54,12 @@ export interface AttackInput {
   craneStyle?: boolean;
   powerAttack?: boolean;
   agileWeapon?: boolean;
+  /** Weapon Finesse is active (the feat, a class grant, or any always-on
+   *  source): use Dex for attacks with a finesse weapon. Absent = off. */
+  weaponFinesse?: boolean;
+  /** Elephant in the Room houserule: finesse weapons grant Dex to attack
+   *  AND damage with no feat. Absent = off (callers default it to ON). */
+  elephantInTheRoom?: boolean;
   preciseStrike?: boolean;
   doublePreciseStrike?: boolean;
   flanking?: boolean;
@@ -86,8 +92,17 @@ export interface AttackInput {
 
   // --- equipped-weapon overrides (absent in every legacy fixture, so the
   // --- hardcoded Waveblade / style-table paths below are untouched) -------
-  /** melee block weapon (absent = legacy Waveblade constants 1d6/18-20/x2) */
-  meleeWeapon?: { damageDie: string; critRange: string; critMult: string };
+  /** melee block weapon (absent = legacy Waveblade constants 1d6/18-20/x2).
+   *  `finesse` (light/named finesse weapon) enables Dex-to-attack; `agile`
+   *  (the enchant) enables Dex-to-damage. Both absent on the generic legacy
+   *  line, so finesse only ever engages on a real per-weapon profile. */
+  meleeWeapon?: {
+    damageDie: string;
+    critRange: string;
+    critMult: string;
+    finesse?: boolean;
+    agile?: boolean;
+  };
   /** melee touch attack (shocking grasp etc.): overrides meleeWeapon with
    *  the Ray treatment — no weapon dice (bonus-only damage, same quirks),
    *  20/x2 crit, no stat to damage, "(touch)" tag. Attack-side math
@@ -503,6 +518,8 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     craneStyle: input.craneStyle || false,
     powerAttack: input.powerAttack || false,
     agileWeapon: input.agileWeapon || false,
+    weaponFinesse: input.weaponFinesse || false,
+    eitr: input.elephantInTheRoom || false,
     preciseStrike: input.preciseStrike || false,
     doublePrecise: input.doublePreciseStrike || false,
     flanking: input.flanking || false,
@@ -562,8 +579,27 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
 
   // MELEE ATTACK (legacy: WAVEBLADE)
   const meleeTouch = input.meleeTouch || false;
-  const meleeAttackStat = flags.agileWeapon && stats.dex > stats.str ? stats.dex : stats.str;
-  const meleeDamageStat = flags.agileWeapon && stats.dex > stats.str ? stats.dex : stats.str;
+  // Dex-for-Str on melee, only ever an UPGRADE (legacy "agile weapon" toggle
+  // gated on dex > str; finesse keeps that, since you'd never elect a worse
+  // stat). Three independent sources, OR'd:
+  //   - agileWeapon: the legacy manual override (no weapon needed)
+  //   - finesse: a finesse weapon (item.finesse) + Weapon Finesse active,
+  //     where EitR makes finesse automatic and the toggle/class grant is RAW
+  //   - the generic legacy line has no meleeWeapon, so finesse never engages
+  //     there — only on real per-weapon profiles
+  const dexBeatsStr = stats.dex > stats.str;
+  const weaponFinessable = input.meleeWeapon?.finesse ?? false;
+  const finesseAttack = weaponFinessable && (flags.eitr || flags.weaponFinesse);
+  const meleeAttackStat =
+    dexBeatsStr && (flags.agileWeapon || finesseAttack) ? stats.dex : stats.str;
+  // Dex-to-damage is narrower: EitR grants it to any finesse weapon, while RAW
+  // requires the Agile enchant (item.agile) on a finesse weapon you're wielding
+  // with finesse. The legacy agileWeapon toggle moved damage too — preserved.
+  const dexDamage =
+    (flags.eitr && weaponFinessable) ||
+    (input.meleeWeapon?.agile && weaponFinessable && (flags.weaponFinesse || flags.eitr));
+  const meleeDamageStat =
+    dexBeatsStr && (flags.agileWeapon || dexDamage) ? stats.dex : stats.str;
 
   const meleeAttack = createWeaponAttack({
     ...baseParams,

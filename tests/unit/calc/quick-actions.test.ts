@@ -298,6 +298,7 @@ describe("default catalog integrity", () => {
       "preciseStrike",
       "smiteEvil",
       "agileWeapon",
+      "weaponFinesse",
       "versatilePerformance",
     ]);
   });
