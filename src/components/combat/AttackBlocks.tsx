@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import type { ComponentChildren } from "preact";
 import type { AttackProfileText } from "../../calc";
 import type { AttackStrings, AttackParts } from "../../calc/attacks";
 import type { MiniSheetStore } from "../../state/store";
@@ -9,6 +9,21 @@ interface AttackBlocksProps {
   character: CharacterRecord;
   attacks: AttackStrings;
   profiles: { melee: AttackProfileText[]; ranged: AttackProfileText[] };
+}
+
+/**
+ * Two-way fold sleeve inside each <details>, after the <summary>. Uses the
+ * generic `.ms-fold` grid sleeve (scss/_fold.scss): the block's `.is-open`
+ * class eases the row 0fr↔1fr to the inner item's height, both ways, on every
+ * engine including iPad WebKit. Needs the contents always rendered, so the
+ * <details> is held permanently open and the fold is purely visual (foldProps).
+ */
+function Fold({ children }: { children: ComponentChildren }) {
+  return (
+    <div class="ms-fold">
+      <div class="ms-fold__inner">{children}</div>
+    </div>
+  );
 }
 
 /** "19-20/x2" → "19–20/×2" — presentational only; calc keeps the raw form. */
@@ -106,26 +121,43 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
     store.setCharacterField(character.id, path, value);
   const prefs = character.attackBlocks ?? { melee: "single", ranged: "single" };
 
-  // Fold state is component-owned (controlled <details open>), NOT trusted
-  // to DOM node identity: toggling touch can swap a separate-mode block
-  // ARRAY for a single touch block, which remounts the slot and would snap
-  // an uncontrolled block shut mid-click. onToggle keeps user folds synced.
-  const [openBlocks, setOpenBlocks] = useState<Record<string, boolean>>({});
+  // Fold state is persisted on the character (attackBlocksOpen) so expanded /
+  // collapsed survives tab swaps and reloads, and is immune to DOM node
+  // identity: toggling touch can swap a separate-mode block ARRAY for a single
+  // touch block (a remount), but the fold re-derives from the store either way.
+  //
+  // The <details> is held permanently `open` so its contents stay rendered for
+  // the grid-rows fold animation (a closed <details> hides content via
+  // content-visibility, which can't be eased on WebKit). The visual fold is the
+  // `.is-open` class instead; the native disclosure toggle is suppressed and we
+  // drive the persisted state from the summary click. patchOpen merges
+  // multi-key updates (the touch toggle).
+  const openBlocks = character.attackBlocksOpen ?? {};
+  const patchOpen = (patch: Record<string, boolean>) =>
+    set("attackBlocksOpen", { ...openBlocks, ...patch });
   const foldProps = (k: string) => ({
     key: k,
-    open: !!openBlocks[k],
-    onToggle: (e: Event) => {
-      const open = (e.currentTarget as HTMLDetailsElement).open;
-      setOpenBlocks((m) => (m[k] === open ? m : { ...m, [k]: open }));
+    open: true,
+    class: `ms-atk-block${openBlocks[k] ? " is-open" : ""}`,
+    onClick: (e: MouseEvent) => {
+      // Only a click on the summary toggles the fold; clicks in the body
+      // (weapon <select> etc.) must not. The touch button stops propagation,
+      // so it never reaches here.
+      const target = e.target;
+      if (target instanceof Element && target.closest(".ms-atk-block__title")) {
+        e.preventDefault(); // suppress the native <details> open/close
+        if (!openBlocks[k]) patchOpen({ [k]: true });
+        else patchOpen({ [k]: false });
+      }
     },
   });
 
   // Touch toggle (replaces the old Ray style): a hand icon in the block
-  // header, revealed only while the block is open (CSS [open] gate). When
+  // header, revealed only while the block is open (CSS .is-open gate). When
   // on, the bucket renders a single touch block with the ray-treatment
-  // math; the icon stays in its header to toggle back. preventDefault
-  // keeps the summary from folding the block on click; the destination
-  // block(s) are explicitly marked open so the toggle never lands folded.
+  // math; the icon stays in its header to toggle back. stopPropagation keeps
+  // the click off the summary's fold handler; the destination block(s) are
+  // explicitly marked open so the toggle never lands folded.
   const touchIcon = (bucket: "melee" | "ranged", on: boolean) => (
     <button
       class={`ms-atk-block__touch${on ? " is-on" : ""}`}
@@ -136,14 +168,12 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
         e.stopPropagation();
         const enabling = !on;
         set(`toggles.${bucket}Touch`, enabling);
-        setOpenBlocks((m) => {
-          const next = { ...m, [`${bucket}-main`]: true };
-          if (!enabling) {
-            // touch off in separate mode lands on the weapon blocks
-            for (const p of profiles[bucket]) next[p.id] = true;
-          }
-          return next;
-        });
+        const next: Record<string, boolean> = { [`${bucket}-main`]: true };
+        if (!enabling) {
+          // touch off in separate mode lands on the weapon blocks
+          for (const p of profiles[bucket]) next[p.id] = true;
+        }
+        patchOpen(next);
       }}
     />
   );
@@ -156,12 +186,14 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
   let meleeBlocks;
   if (!meleeTouch && prefs.melee === "separate" && profiles.melee.length > 0) {
     meleeBlocks = profiles.melee.map((p) => (
-      <details class="ms-atk-block" {...foldProps(p.id)}>
+      <details {...foldProps(p.id)}>
         <summary class="ms-atk-block__title">
           {p.name}
           {touchIcon("melee", false)}
         </summary>
-        <AttackBody parts={p.parts} text={p.text} />
+        <Fold>
+          <AttackBody parts={p.parts} text={p.text} />
+        </Fold>
       </details>
     ));
   } else {
@@ -170,35 +202,37 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
       : profiles.melee.find((p) => p.id === character.toggles.activeMeleeWeaponId) ??
         profiles.melee[0];
     meleeBlocks = (
-      <details class="ms-atk-block" {...foldProps("melee-main")}>
+      <details {...foldProps("melee-main")}>
         <summary class="ms-atk-block__title">
           {meleeTouch ? "Melee Touch" : active ? active.name : "Melee"}
           {touchIcon("melee", meleeTouch)}
         </summary>
-        {!meleeTouch && profiles.melee.length > 1 && active && (
-          <div class="ms-atk-block__picker">
-            <select
-              class="dropdown"
-              value={active.id}
-              onChange={(e) =>
-                set(
-                  "toggles.activeMeleeWeaponId",
-                  (e.target as HTMLSelectElement).value
-                )
-              }
-            >
-              {profiles.melee.map((p) => (
-                <option key={p.id} value={p.id} selected={p.id === active.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        <AttackBody
-          parts={active ? active.parts : attacks.parts.melee}
-          text={active ? active.text : attacks.melee}
-        />
+        <Fold>
+          {!meleeTouch && profiles.melee.length > 1 && active && (
+            <div class="ms-atk-block__picker">
+              <select
+                class="dropdown"
+                value={active.id}
+                onChange={(e) =>
+                  set(
+                    "toggles.activeMeleeWeaponId",
+                    (e.target as HTMLSelectElement).value
+                  )
+                }
+              >
+                {profiles.melee.map((p) => (
+                  <option key={p.id} value={p.id} selected={p.id === active.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          <AttackBody
+            parts={active ? active.parts : attacks.parts.melee}
+            text={active ? active.text : attacks.melee}
+          />
+        </Fold>
       </details>
     );
   }
@@ -211,12 +245,14 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
   let rangedBlocks;
   if (!rangedTouch && prefs.ranged === "separate" && profiles.ranged.length > 0) {
     rangedBlocks = profiles.ranged.map((p) => (
-      <details class="ms-atk-block" {...foldProps(p.id)}>
+      <details {...foldProps(p.id)}>
         <summary class="ms-atk-block__title">
           {p.name}
           {touchIcon("ranged", false)}
         </summary>
-        <AttackBody parts={p.parts} text={p.text} />
+        <Fold>
+          <AttackBody parts={p.parts} text={p.text} />
+        </Fold>
       </details>
     ));
   } else {
@@ -225,38 +261,40 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
       : profiles.ranged.find((p) => p.id === character.toggles.activeRangedWeaponId) ??
         profiles.ranged[0];
     rangedBlocks = (
-      <details class="ms-atk-block" {...foldProps("ranged-main")}>
+      <details {...foldProps("ranged-main")}>
         <summary class="ms-atk-block__title">
           {rangedTouch ? "Ranged Touch" : activeWeapon ? activeWeapon.name : "Ranged"}
           {touchIcon("ranged", rangedTouch)}
         </summary>
-        {!rangedTouch && profiles.ranged.length > 1 && activeWeapon && (
-          <div class="ms-atk-block__picker">
-            <select
-              class="dropdown"
-              value={activeWeapon.id}
-              onChange={(e) =>
-                set(
-                  "toggles.activeRangedWeaponId",
-                  (e.target as HTMLSelectElement).value
-                )
-              }
-            >
-              {profiles.ranged.map((p) => (
-                <option key={p.id} value={p.id} selected={p.id === activeWeapon.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        {rangedTouch ? (
-          <AttackBody parts={attacks.parts.ranged} text={attacks.ranged} />
-        ) : activeWeapon ? (
-          <AttackBody parts={activeWeapon.parts} text={activeWeapon.text} />
-        ) : (
-          <div class="ms-atk-block__hint">No ranged weapon equipped.</div>
-        )}
+        <Fold>
+          {!rangedTouch && profiles.ranged.length > 1 && activeWeapon && (
+            <div class="ms-atk-block__picker">
+              <select
+                class="dropdown"
+                value={activeWeapon.id}
+                onChange={(e) =>
+                  set(
+                    "toggles.activeRangedWeaponId",
+                    (e.target as HTMLSelectElement).value
+                  )
+                }
+              >
+                {profiles.ranged.map((p) => (
+                  <option key={p.id} value={p.id} selected={p.id === activeWeapon.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {rangedTouch ? (
+            <AttackBody parts={attacks.parts.ranged} text={attacks.ranged} />
+          ) : activeWeapon ? (
+            <AttackBody parts={activeWeapon.parts} text={activeWeapon.text} />
+          ) : (
+            <div class="ms-atk-block__hint">No ranged weapon equipped.</div>
+          )}
+        </Fold>
       </details>
     );
   }
@@ -266,9 +304,11 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
       {meleeBlocks}
       {rangedBlocks}
       {character.characterType !== "familiar" && (
-        <details class="ms-atk-block" {...foldProps("unarmed")}>
+        <details {...foldProps("unarmed")}>
           <summary class="ms-atk-block__title">Unarmed Strike</summary>
-          <AttackBody parts={attacks.parts.unarmed} text={attacks.unarmed} />
+          <Fold>
+            <AttackBody parts={attacks.parts.unarmed} text={attacks.unarmed} />
+          </Fold>
         </details>
       )}
     </div>

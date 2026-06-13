@@ -1,0 +1,35 @@
+// Generic two-way fold sleeve. A host element carrying `.is-open` eases its
+// direct-child `.ms-fold` open/closed by animating a single grid row 0fr↔1fr to
+// the inner item's intrinsic height. Pure grid-template-rows animation — long
+// supported on WebKit (Safari 16+) and Chromium alike, unlike interpolate-size
+// / ::details-content easing, which is Chromium-only (no-op on iPad WebKit).
+//
+// The host is typically a <details> held permanently open so its content stays
+// rendered (a closed <details> hides content via content-visibility, which
+// can't be eased); the fold is purely visual. See AttackBlocks and Resources.
+
+.minisheet-root {
+  .ms-fold {
+    display: grid;
+    grid-template-rows: 0fr;
+    width: 100%;
+    transition: grid-template-rows 0.22s ease;
+  }
+
+  .is-open > .ms-fold {
+    grid-template-rows: 1fr;
+  }
+
+  // The lone grid item. min-block-size:0 lets it shrink below content height;
+  // overflow:clip hides the contents as the row collapses.
+  .ms-fold__inner {
+    min-block-size: 0;
+    overflow: clip;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ms-fold {
+      transition: none;
+    }
+  }
+}

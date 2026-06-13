@@ -274,6 +274,10 @@ export interface CharacterRecord {
   weapons: WeaponProfile[];
   /** combat-tab attack block layout; absent = single for both */
   attackBlocks?: AttackBlockPrefs;
+  /** combat-tab attack block fold state, keyed by block id (weapon item id,
+   *  "melee-main", "ranged-main", "unarmed"). Persisted so the expanded /
+   *  collapsed state survives tab swaps and reloads. Absent = all collapsed. */
+  attackBlocksOpen?: Record<string, boolean>;
   link?: CharacterLink;
   ruleLinks: RuleLink[];
   /** absent = non-caster (Hwayoung keeps her static SLA content) */

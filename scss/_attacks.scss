@@ -17,6 +17,9 @@
     & + .ms-atk-block {
       border-top: none;
     }
+
+    // Two-way fold lives in the generic `.ms-fold` sleeve (scss/_fold.scss);
+    // the <details> is held permanently open and `.is-open` drives the ease.
   }
 
   .ms-atk-block__title {
@@ -59,7 +62,7 @@
     }
   }
 
-  .ms-atk-block[open] > .ms-atk-block__title::after {
+  .ms-atk-block.is-open > .ms-atk-block__title::after {
     transform: rotate(0deg);
   }
 
@@ -102,9 +105,9 @@
 
   .ms-atk-tohit__value {
     font-family: "Norwester", sans-serif;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1;
-    color: var(--ms-gold);
+    color: var(--text-normal);
   }
 
   // Row 2 — damage + crit, shown ONCE (Std/Full always share them).
@@ -120,7 +123,7 @@
     align-items: center;
     padding: 1px 8px;
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.5;
     white-space: nowrap;
   }
@@ -200,7 +203,7 @@
     }
   }
 
-  .ms-atk-block[open] > .ms-atk-block__title .ms-atk-block__touch {
+  .ms-atk-block.is-open > .ms-atk-block__title .ms-atk-block__touch {
     display: block;
   }
 

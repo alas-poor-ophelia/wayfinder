@@ -104,7 +104,7 @@
     }
   }
 
-  details[open] > .ms-resources__toggle::before {
+  .ms-resources.is-open > .ms-resources__toggle::before {
     transform: rotate(45deg); /* points down when open */
   }
 

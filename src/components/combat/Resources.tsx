@@ -32,6 +32,11 @@ export function Tracker({ pool }: { pool: ResolvedPool }) {
 
 export function Resources({ store, character }: ResourcesProps) {
   const [group, setGroup] = useState<"combat" | "items">("combat");
+  // The crease is held permanently open natively (content stays rendered for
+  // the grid-rows fold ease); `expanded` is the visual fold, driven from the
+  // toggle click. Session-local — matches the old native crease, which always
+  // reopened on reload.
+  const [expanded, setExpanded] = useState(true);
   const pools: ResolvedPool[] = [];
 
   character.resources.forEach((pool, idx) => {
@@ -48,28 +53,44 @@ export function Resources({ store, character }: ResourcesProps) {
   const shown = hasBoth ? (group === "items" ? itemPools : combatPools) : pools;
 
   return (
-    <details class="ms-resources" open>
+    <details
+      class={`ms-resources${expanded ? " is-open" : ""}`}
+      open
+      onClick={(e: MouseEvent) => {
+        // Only the crease caret toggles; pip/group clicks (inside .ms-fold)
+        // fall through to their own handlers.
+        const target = e.target;
+        if (target instanceof Element && target.closest(".ms-resources__toggle")) {
+          e.preventDefault(); // suppress the native <details> open/close
+          setExpanded((v) => !v);
+        }
+      }}
+    >
       <summary class="ms-resources__toggle" aria-label="Toggle resources" />
-      {hasBoth && (
-        <div class="ms-resources__groups">
-          <button
-            class={`ms-resources__group ms-resources__group--combat${group === "combat" ? " is-active" : ""}`}
-            aria-label="Class resources"
-            aria-pressed={group === "combat"}
-            onClick={() => setGroup("combat")}
-          />
-          <button
-            class={`ms-resources__group ms-resources__group--items${group === "items" ? " is-active" : ""}`}
-            aria-label="Item resources"
-            aria-pressed={group === "items"}
-            onClick={() => setGroup("items")}
-          />
+      <div class="ms-fold">
+        <div class="ms-fold__inner">
+          {hasBoth && (
+            <div class="ms-resources__groups">
+              <button
+                class={`ms-resources__group ms-resources__group--combat${group === "combat" ? " is-active" : ""}`}
+                aria-label="Class resources"
+                aria-pressed={group === "combat"}
+                onClick={() => setGroup("combat")}
+              />
+              <button
+                class={`ms-resources__group ms-resources__group--items${group === "items" ? " is-active" : ""}`}
+                aria-label="Item resources"
+                aria-pressed={group === "items"}
+                onClick={() => setGroup("items")}
+              />
+            </div>
+          )}
+          <div class="ms-resources__list">
+            {shown.map((pool) => (
+              <Tracker key={pool.id} pool={pool} />
+            ))}
+          </div>
         </div>
-      )}
-      <div class="ms-resources__list">
-        {shown.map((pool) => (
-          <Tracker key={pool.id} pool={pool} />
-        ))}
       </div>
     </details>
   );
