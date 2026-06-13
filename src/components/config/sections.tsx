@@ -26,6 +26,7 @@ import {
   type AbilityKey,
   type CharacterRecord,
   type ClassEntry,
+  type ResourceFormula,
   type SkillEntry,
 } from "../../types/character";
 import { Icon } from "../common/Icon";
@@ -620,47 +621,166 @@ export function SkillsSection({ store, character }: SectionProps) {
 
 /* ============================== EFFECTS ============================== */
 
+/** Source dropdown for a pool's max formula; "" = manual (no formula). */
+const RES_FORMULA_SOURCES: { value: string; label: string }[] = [
+  { value: "", label: "Manual max" },
+  { value: "classLevel", label: "Class level" },
+  { value: "characterLevel", label: "Character level" },
+  { value: "abilityMod", label: "Ability mod" },
+  { value: "abilityScore", label: "Ability score" },
+];
+const RES_ABILITY_OPTIONS = ABILITY_KEYS.map((k) => ({ value: k, label: ABILITY_LABELS[k] }));
+
 export function ResourcesSection({ store, character }: SectionProps) {
   const set = setter(store, character);
+  // formula detail is collapsed by default; track open pools by id
+  const [open, setOpen] = useState<Record<string, boolean>>({});
   const update = (idx: number, patch: Partial<CharacterRecord["resources"][number]>) => {
     set(
       "resources",
       character.resources.map((r, i) => (i === idx ? { ...r, ...patch } : r))
     );
+    // formula/kind edits should recompute computed maxima immediately
+    if ("formula" in patch) store.syncClassResources(character.id);
   };
+  const patchFormula = (
+    idx: number,
+    pool: CharacterRecord["resources"][number],
+    p: Partial<ResourceFormula>
+  ) => update(idx, { formula: { source: "characterLevel", ...pool.formula, ...p } });
+
   return (
     <Sec icon="ra-round-bottom-flask" title="Resource Pools" desc={`${character.resources.length} pools`}>
-      {character.resources.map((r, idx) => (
-        <div class="respool" key={r.id}>
-          <input
-            class="inp"
-            type="text"
-            value={r.name}
-            onInput={(e) => update(idx, { name: (e.target as HTMLInputElement).value })}
-          />
-          <Num value={r.max} onChange={(v) => update(idx, { max: v })} />
-          <span class="respool__src">{r.kind === "item" ? "Item" : "Class"}</span>
-          <button
-            class={`respool__kind${r.kind === "item" ? " is-item" : ""}`}
-            title={r.kind === "item" ? "Item resource" : "Class resource"}
-            onClick={() => update(idx, { kind: r.kind === "item" ? undefined : "item" })}
-          >
-            <Icon id={r.kind === "item" ? "ra-round-bottom-flask" : "ra-crossed-swords"} />
-          </button>
-          <button
-            class="iconbtn"
-            aria-label={`Remove ${r.name}`}
-            onClick={() =>
-              set(
-                "resources",
-                character.resources.filter((_, i) => i !== idx)
-              )
-            }
-          >
-            <UI.x />
-          </button>
-        </div>
-      ))}
+      {character.resources.map((r, idx) => {
+        const hasF = !!r.formula;
+        const isOpen = !!open[r.id];
+        return (
+          <div class="respool-block" key={r.id}>
+            <div class="respool">
+              <input
+                class="inp"
+                type="text"
+                value={r.name}
+                onInput={(e) => update(idx, { name: (e.target as HTMLInputElement).value })}
+              />
+              {hasF ? (
+                <input
+                  class="num"
+                  type="number"
+                  value={r.max}
+                  disabled
+                  title="Max is computed by the formula below"
+                />
+              ) : (
+                <Num value={r.max} onChange={(v) => update(idx, { max: v })} />
+              )}
+              <span class="respool__src">{r.kind === "item" ? "Item" : "Class"}</span>
+              <button
+                class={`respool__kind${r.kind === "item" ? " is-item" : ""}`}
+                title={r.kind === "item" ? "Item resource" : "Class resource"}
+                onClick={() => update(idx, { kind: r.kind === "item" ? undefined : "item" })}
+              >
+                <Icon id={r.kind === "item" ? "ra-round-bottom-flask" : "ra-crossed-swords"} />
+              </button>
+              <button
+                class={`respool__math${hasF ? " is-on" : ""}${isOpen ? " is-open" : ""}`}
+                aria-label={hasF ? `${r.name}: max formula (computed)` : `${r.name}: set a max formula`}
+                title={hasF ? "Max formula (computed) — tap to edit" : "Set a max formula"}
+                onClick={() => setOpen((o) => ({ ...o, [r.id]: !o[r.id] }))}
+              >
+                <span class="respool__math-f">ƒ</span>
+                <UI.chev />
+              </button>
+              <button
+                class="iconbtn"
+                aria-label={`Remove ${r.name}`}
+                onClick={() =>
+                  set(
+                    "resources",
+                    character.resources.filter((_, i) => i !== idx)
+                  )
+                }
+              >
+                <UI.x />
+              </button>
+            </div>
+            {isOpen && (
+              <div class="respool__detail">
+                <div class="respool__formula">
+                  <Sel
+                    value={r.formula?.source ?? ""}
+                    options={RES_FORMULA_SOURCES}
+                    onChange={(v) =>
+                      v === ""
+                        ? update(idx, { formula: undefined })
+                        : update(idx, {
+                            formula: { ...(r.formula ?? {}), source: v as ResourceFormula["source"] },
+                          })
+                    }
+                  />
+                  {r.formula?.source === "classLevel" && (
+                    <input
+                      class="inp"
+                      type="text"
+                      placeholder="class name (blank = all)"
+                      value={r.formula.className ?? ""}
+                      onInput={(e) =>
+                        patchFormula(idx, r, { className: (e.target as HTMLInputElement).value })
+                      }
+                    />
+                  )}
+                  {(r.formula?.source === "abilityMod" || r.formula?.source === "abilityScore") && (
+                    <Sel
+                      value={r.formula.ability ?? "str"}
+                      options={RES_ABILITY_OPTIONS}
+                      onChange={(v) => patchFormula(idx, r, { ability: v as AbilityKey })}
+                    />
+                  )}
+                  {hasF && (
+                    <span class="respool__knobs">
+                      {(
+                        [
+                          ["×", "multiplier", 1],
+                          ["÷", "divisor", 1],
+                          ["+", "flatBonus", 0],
+                          ["min", "minimum", 0],
+                        ] as [string, keyof ResourceFormula, number][]
+                      ).map(([label, key, fallback]) => (
+                        <label class="respool__knob" key={key}>
+                          {label}
+                          <input
+                            class="num"
+                            type="number"
+                            value={(r.formula?.[key] as number) ?? fallback}
+                            onInput={(e) => {
+                              const raw = (e.target as HTMLInputElement).value;
+                              if (raw === "") return;
+                              const n = Number(raw);
+                              if (!Number.isNaN(n)) patchFormula(idx, r, { [key]: n });
+                            }}
+                          />
+                        </label>
+                      ))}
+                    </span>
+                  )}
+                </div>
+                <div class="respool__foot">
+                  <span class="respool__foot-lbl">Footer</span>
+                  <input
+                    class="inp"
+                    type="text"
+                    placeholder="small text under the pips, e.g. 2d6 (+4 self)"
+                    value={r.footer ?? ""}
+                    onInput={(e) =>
+                      update(idx, { footer: (e.target as HTMLInputElement).value || undefined })
+                    }
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
       <button
         class="btn btn--ghost btn--sm"
         style={{ marginTop: 8 }}

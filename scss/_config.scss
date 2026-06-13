@@ -895,6 +895,110 @@
     text-overflow: ellipsis;
   }
 
+  /* resource pool + its collapsible max-formula detail form one block */
+  .respool-block {
+    border-bottom: 1px solid var(--line);
+  }
+  .respool-block .respool {
+    border-bottom: 0;
+  }
+  /* ƒ disclosure: accent when a formula is set, chevron flips when open */
+  .respool__math {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--text-mute);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    flex-shrink: 0;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: none;
+  }
+  .respool__math:hover {
+    border-color: var(--accent-line);
+    color: var(--text);
+  }
+  .respool__math.is-on {
+    color: var(--accent);
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+  }
+  .respool__math-f {
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .respool__math svg {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+  }
+  .respool__math.is-open svg {
+    transform: rotate(180deg);
+  }
+  .respool__detail {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 2px 0 10px;
+  }
+  .respool__formula {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .respool__formula .sel {
+    flex: 0 1 auto;
+    min-width: 130px;
+  }
+  .respool__formula .inp {
+    flex: 1 1 130px;
+    width: auto;
+    min-width: 130px;
+  }
+  .respool__knobs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .respool__knob {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-mute);
+  }
+  .respool__knob .num {
+    width: 54px;
+    min-height: 30px;
+    padding: 5px 4px;
+  }
+  .respool__foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .respool__foot-lbl {
+    flex-shrink: 0;
+    font-family: "Taroca", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+  }
+  .respool__foot .inp {
+    flex: 1;
+    width: auto;
+  }
+
   /* skills table */
   .skills-h {
     display: flex;
