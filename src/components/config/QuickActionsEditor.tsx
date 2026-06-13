@@ -1,248 +1,77 @@
-import { App, Menu, Modal } from "obsidian";
-import { render } from "preact";
+/**
+ * Quick Actions surface (config Effects category) — the redesign.
+ *
+ *  - QuickActionsSection: a tight squircle grid that mirrors the combat-tab
+ *    toggles, split into two zones (On your sheet / Bench & library) with
+ *    pointer-drag to show/hide/reorder and tap-to-edit. Catalog actions not
+ *    yet added render dimmed in the bench; tapping one adds it.
+ *  - QAEditor: centered Simple/Advanced modal editing the real QuickActionDef
+ *    (stages, variants, effects, gate, requires).
+ *  - QAAddModal: catalog picker + "build a custom action" launcher.
+ *  - QAWizard: 3-step Name → Effect → Done custom-action builder.
+ *
+ * All edits write through store.setCharacterField(id, "quickActions", ...);
+ * the prototype's flat `spends`/`showFor` map to the real gate/requires.
+ */
+import { Fragment } from "preact";
 import { useRef, useState } from "preact/hooks";
 import { BONUS_TYPES, type BonusType, type ModifierTarget } from "../../calc/modifiers";
-import { BUFF_DEFS } from "../../data/buffs";
-import { ICONS } from "../../data/icons/registry";
-import {
-  DEFAULT_QUICK_ACTIONS,
-  FIGHTING_DEFENSIVELY_CRANE,
-} from "../../data/quick-actions";
+import { DEFAULT_QUICK_ACTIONS, FIGHTING_DEFENSIVELY_CRANE } from "../../data/quick-actions";
+import { ICON_IDS } from "../../data/icons/registry";
 import type { MiniSheetStore } from "../../state/store";
 import { ABILITY_KEYS, type AbilityKey, type CharacterRecord } from "../../types/character";
 import type {
   QAValue,
   QuickActionDef,
   QuickActionEffect,
-  QuickActionStage,
-  QuickActionVariant,
+  QuickActionFormula,
 } from "../../types/quick-actions";
 import { Icon } from "../common/Icon";
 import { TARGET_GROUPS } from "../common/ModifierEditor";
-
-/**
- * Quick Action Builder — the config-pane surface for the combat tab's
- * quick actions: drag-to-reorder (pointer events, iPad-first), show/hide,
- * add from catalog or blank, and a full expand-in-place editor for name,
- * icon, stages, variants, effects, gating, and buff links.
- */
-
-interface EditorProps {
-  app: App;
-  store: MiniSheetStore;
-  character: CharacterRecord;
-}
+import { UI } from "./glyphs";
+import { Num, Sec, Seg, Sel, Txt, Check } from "./primitives";
 
 const newId = () => `qa-${Date.now().toString(36)}`;
-const slug = (name: string) =>
-  name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || newId();
 
-// ---------------------------------------------------------------------------
-// Icon picker (Obsidian modal: search + grid + CC BY attribution)
-// ---------------------------------------------------------------------------
+const CATALOG: QuickActionDef[] = [...DEFAULT_QUICK_ACTIONS, FIGHTING_DEFENSIVELY_CRANE];
 
-const PICKER_PAGE = 120;
+const TARGET_LABEL = new Map<string, string>();
+for (const g of TARGET_GROUPS) for (const o of g.options) TARGET_LABEL.set(o.value, o.label);
 
-class IconPickerModal extends Modal {
-  private current: string;
-  private onPick: (id: string) => void;
+/* ---------- effect catalog (plain-language) ------------------------------- */
 
-  constructor(app: App, current: string, onPick: (id: string) => void) {
-    super(app);
-    this.current = current;
-    this.onPick = onPick;
-  }
-
-  onOpen(): void {
-    this.modalEl.addClass("ms-icon-picker-modal");
-    const host = this.contentEl.createDiv();
-    const Picker = () => {
-      const [query, setQuery] = useState("");
-      const q = query.trim().toLowerCase();
-      const matches = Object.entries(ICONS).filter(
-        ([id, def]) => !q || def.name.toLowerCase().includes(q) || id.includes(q)
-      );
-      const shown = matches.slice(0, PICKER_PAGE);
-      return (
-        <div class="ms-icon-picker">
-          <input
-            class="ms-icon-picker__search"
-            type="text"
-            placeholder="Search icons..."
-            value={query}
-            onInput={(e) => setQuery((e.target as HTMLInputElement).value)}
-          />
-          <div class="ms-icon-picker__count">
-            {matches.length > shown.length
-              ? `showing ${shown.length} of ${matches.length} — refine your search`
-              : `${matches.length} icons`}
-          </div>
-          <div class="ms-icon-picker__grid">
-            {shown.map(([id, def]) => (
-              <button
-                key={id}
-                class={`ms-icon-picker__cell${id === this.current ? " is-current" : ""}`}
-                title={def.name}
-                onClick={() => {
-                  this.onPick(id);
-                  this.close();
-                }}
-              >
-                <Icon id={id} />
-              </button>
-            ))}
-          </div>
-          <div class="ms-icon-picker__credit">
-            Icons by game-icons.net contributors (Lorc, Delapouite, et al.),
-            CC BY 3.0 — via RPG Awesome.
-          </div>
-        </div>
-      );
-    };
-    render(<Picker />, host);
-  }
-
-  onClose(): void {
-    render(null, this.contentEl);
-    this.contentEl.empty();
-  }
-}
-
-// ---------------------------------------------------------------------------
-// QAValue (number | formula) editor
-// ---------------------------------------------------------------------------
-
-function QAValueEditor({
-  label,
-  value,
-  onChange,
-}: {
+interface EffectType {
+  kind: QuickActionEffect["kind"];
   label: string;
-  value: QAValue;
-  onChange(v: QAValue): void;
-}) {
-  const isFormula = typeof value === "object";
-  const num = (raw: string, fallback: number): number => {
-    const n = Number(raw);
-    return Number.isNaN(n) ? fallback : n;
-  };
-  return (
-    <div class="ms-qa__value">
-      <span class="ms-qa__value-label">{label}</span>
-      <button
-        class={`ms-qa__formula-toggle${isFormula ? " is-on" : ""}`}
-        title={isFormula ? "Switch to a fixed number" : "Switch to a formula (level/BAB/ability-based)"}
-        onClick={() => onChange(isFormula ? 0 : { source: "classLevel", className: "" })}
-      >
-        ƒ
-      </button>
-      {!isFormula ? (
-        <input
-          class="ms-qa__num"
-          type="number"
-          value={value as number}
-          onInput={(e) => onChange(num((e.target as HTMLInputElement).value, 0))}
-        />
-      ) : (
-        <span class="ms-qa__formula">
-          <select
-            value={value.source}
-            aria-label="Formula source"
-            onChange={(e) =>
-              onChange({ ...value, source: (e.target as HTMLSelectElement).value as never })
-            }
-          >
-            <option value="bab">BAB</option>
-            <option value="classLevel">Class level</option>
-            <option value="characterLevel">Character level</option>
-            <option value="abilityMod">Ability mod</option>
-            <option value="abilityScore">Ability score</option>
-          </select>
-          {value.source === "classLevel" && (
-            <input
-              type="text"
-              class="ms-qa__formula-class"
-              placeholder="class name"
-              value={value.className ?? ""}
-              onInput={(e) =>
-                onChange({ ...value, className: (e.target as HTMLInputElement).value })
-              }
-            />
-          )}
-          {(value.source === "abilityMod" || value.source === "abilityScore") && (
-            <select
-              value={value.ability ?? "str"}
-              aria-label="Formula ability"
-              onChange={(e) =>
-                onChange({ ...value, ability: (e.target as HTMLSelectElement).value as AbilityKey })
-              }
-            >
-              {ABILITY_KEYS.map((k) => (
-                <option key={k} value={k}>
-                  {k.toUpperCase()}
-                </option>
-              ))}
-            </select>
-          )}
-          <label title="divide before flooring">
-            ÷
-            <input
-              type="number"
-              value={value.divisor ?? 1}
-              onInput={(e) =>
-                onChange({ ...value, divisor: num((e.target as HTMLInputElement).value, 1) })
-              }
-            />
-          </label>
-          <label title="multiply AFTER the floor">
-            ×
-            <input
-              type="number"
-              value={value.multiplier ?? 1}
-              onInput={(e) =>
-                onChange({ ...value, multiplier: num((e.target as HTMLInputElement).value, 1) })
-              }
-            />
-          </label>
-          <label title="flat bonus added last">
-            +
-            <input
-              type="number"
-              value={value.flatBonus ?? 0}
-              onInput={(e) =>
-                onChange({ ...value, flatBonus: num((e.target as HTMLInputElement).value, 0) })
-              }
-            />
-          </label>
-        </span>
-      )}
-    </div>
-  );
+  desc: string;
+  icon: string;
 }
-
-// ---------------------------------------------------------------------------
-// Effect list editor
-// ---------------------------------------------------------------------------
-
-const EFFECT_KINDS: { kind: QuickActionEffect["kind"]; label: string }[] = [
-  { kind: "modifier", label: "Typed bonus" },
-  { kind: "acChannels", label: "AC adjust (flat channels)" },
-  { kind: "extraAttacks", label: "Extra attacks" },
-  { kind: "damageDice", label: "Damage dice" },
-  { kind: "keen", label: "Keen (double threat range)" },
-  { kind: "note", label: "Note" },
-  { kind: "smite", label: "Smite (attack+damage on all weapons)" },
-  { kind: "preciseStrike", label: "Precise strike damage" },
-  { kind: "flurryAttacks", label: "Flurry base attacks" },
-  { kind: "special", label: "Special behavior" },
+/** The eight friendly effect types offered in the wizard/choice cards. */
+const EFFECT_TYPES: EffectType[] = [
+  { kind: "modifier", label: "Bonus or penalty", icon: "ra-crossed-swords", desc: "Adjust an attack, damage, AC, save, or skill by a number." },
+  { kind: "acChannels", label: "Adjust AC", icon: "ra-shield", desc: "Change normal, touch, and flat-footed AC directly." },
+  { kind: "extraAttacks", label: "Extra attacks", icon: "ra-double-team", desc: "Add attacks at a chosen penalty." },
+  { kind: "damageDice", label: "Bonus damage dice", icon: "ra-lightning-bolt", desc: "Add dice like +1d6 fire to your hits." },
+  { kind: "keen", label: "Keen", icon: "ra-plain-dagger", desc: "Double your weapon's threat range." },
+  { kind: "note", label: "Reminder note", icon: "ra-aware", desc: "Show a note on the sheet or in attack lines." },
+  { kind: "smite", label: "Smite", icon: "ra-angel-wings", desc: "Add an ability bonus to attack and a level bonus to damage." },
+  { kind: "special", label: "Special rule", icon: "ra-arcane-mask", desc: "Built-in behaviours like Agile weapon." },
 ];
+/** Full kind list for the row select (includes the two niche legacy channels). */
+const EFFECT_KIND_OPTIONS: { value: string; label: string }[] = [
+  ...EFFECT_TYPES.map((t) => ({ value: t.kind, label: t.label })),
+  { value: "preciseStrike", label: "Precise strike damage" },
+  { value: "flurryAttacks", label: "Flurry base attacks" },
+];
+
+const APPLIES_TO = ["melee", "ranged", "unarmed", "all"];
 
 function defaultEffect(kind: QuickActionEffect["kind"]): QuickActionEffect {
   switch (kind) {
     case "modifier":
       return { kind, target: "attack.all", type: "untyped", value: 1 };
     case "acChannels":
-      return { kind, normal: 1, touch: 1, ff: 1 };
+      return { kind, normal: 1, touch: 1, ff: 0 };
     case "extraAttacks":
       return { kind, count: 1, penalty: 0 };
     case "damageDice":
@@ -252,7 +81,7 @@ function defaultEffect(kind: QuickActionEffect["kind"]): QuickActionEffect {
     case "note":
       return { kind, text: "", placement: "sheet" };
     case "smite":
-      return { kind, attack: { source: "abilityMod", ability: "cha" }, damage: { source: "classLevel", className: "" }, description: "" };
+      return { kind, attack: { source: "abilityMod", ability: "cha" }, damage: { source: "classLevel", className: "" } };
     case "preciseStrike":
       return { kind, damage: { source: "classLevel", className: "" } };
     case "flurryAttacks":
@@ -262,52 +91,159 @@ function defaultEffect(kind: QuickActionEffect["kind"]): QuickActionEffect {
   }
 }
 
-const APPLIES_TO = ["melee", "ranged", "unarmed", "all"] as const;
+function valueStr(v: QAValue): string {
+  if (typeof v === "object") return "scaling";
+  return v >= 0 ? `+${v}` : `${v}`;
+}
+
+function effectSummary(e: QuickActionEffect): string {
+  switch (e.kind) {
+    case "modifier":
+      return `${valueStr(e.value)} ${e.type !== "untyped" ? e.type + " " : ""}to ${(TARGET_LABEL.get(e.target) ?? e.target).toLowerCase()}`;
+    case "acChannels":
+      return `AC ${valueStr(e.normal ?? 0)} / ${valueStr(e.touch ?? 0)} touch / ${valueStr(e.ff ?? 0)} flat`;
+    case "extraAttacks":
+      return `${valueStr(e.count)} extra attack(s)${e.penalty ? ` at ${e.penalty}` : ""}`;
+    case "damageDice":
+      return `${e.dice} (${e.appliesTo})`;
+    case "keen":
+      return `Keen (${e.appliesTo})`;
+    case "note":
+      return `Note: “${e.text}”`;
+    case "smite":
+      return `${valueStr(e.attack)} atk, ${valueStr(e.damage)} dmg`;
+    case "preciseStrike":
+      return `${valueStr(e.damage)} precise damage`;
+    case "flurryAttacks":
+      return `${valueStr(e.count)} flurry attacks`;
+    case "special":
+      return e.op === "agileWeapon"
+        ? "DEX for melee attack"
+        : e.op === "versatilePerformance"
+          ? "Bluff/Sense Motive use Perform"
+          : "Weapon Finesse";
+  }
+}
+
+function defSummary(def: QuickActionDef): string {
+  const effects = def.stages.flatMap((s) => s.effects);
+  if (def.variants?.length) return `Tap-menu, ${def.variants.length} options.`;
+  if (effects.length === 0) return "No effects yet.";
+  return effects.map(effectSummary).join("; ") + ".";
+}
+
+/* ---------- value field (number | formula) -------------------------------- */
+
+function FormulaBody({ value, onChange }: { value: QuickActionFormula; onChange: (v: QAValue) => void }) {
+  return (
+    <>
+      <select
+        class="sel"
+        value={value.source}
+        aria-label="Formula source"
+        onChange={(e) => onChange({ ...value, source: (e.target as HTMLSelectElement).value as never })}
+      >
+        <option value="bab">BAB</option>
+        <option value="classLevel">Class level</option>
+        <option value="characterLevel">Character level</option>
+        <option value="abilityMod">Ability mod</option>
+        <option value="abilityScore">Ability score</option>
+      </select>
+      {value.source === "classLevel" && (
+        <input
+          class="inp"
+          type="text"
+          placeholder="class name"
+          value={value.className ?? ""}
+          onInput={(e) => onChange({ ...value, className: (e.target as HTMLInputElement).value })}
+        />
+      )}
+      {(value.source === "abilityMod" || value.source === "abilityScore") && (
+        <Sel
+          value={value.ability ?? "str"}
+          options={ABILITY_KEYS.map((k) => ({ value: k, label: k.toUpperCase() }))}
+          onChange={(v) => onChange({ ...value, ability: v as AbilityKey })}
+        />
+      )}
+      <span class="effect__num" title="divide before flooring">
+        ÷ <Num value={value.divisor ?? 1} onChange={(n) => onChange({ ...value, divisor: n })} />
+      </span>
+      <span class="effect__num" title="multiply after the floor">
+        × <Num value={value.multiplier ?? 1} onChange={(n) => onChange({ ...value, multiplier: n })} />
+      </span>
+      <span class="effect__num" title="flat bonus added last">
+        + <Num value={value.flatBonus ?? 0} onChange={(n) => onChange({ ...value, flatBonus: n })} />
+      </span>
+    </>
+  );
+}
+
+function ValueField({ label, value, onChange }: { label: string; value: QAValue; onChange: (v: QAValue) => void }) {
+  const isF = typeof value === "object";
+  return (
+    <span class="effect__num">
+      {label}
+      <button
+        class={`effect__ftoggle${isF ? " is-on" : ""}`}
+        title={isF ? "Switch to a fixed number" : "Switch to a level/BAB/ability formula"}
+        onClick={() => onChange(isF ? 0 : { source: "classLevel", className: "" })}
+      >
+        ƒ
+      </button>
+      {!isF ? (
+        <Num value={value as number} onChange={(n) => onChange(n)} />
+      ) : (
+        <FormulaBody value={value as QuickActionFormula} onChange={onChange} />
+      )}
+    </span>
+  );
+}
+
+/* ---------- effect row ---------------------------------------------------- */
 
 function EffectRow({
-  effect,
+  e,
   onChange,
   onRemove,
 }: {
-  effect: QuickActionEffect;
-  onChange(e: QuickActionEffect): void;
-  onRemove(): void;
+  e: QuickActionEffect;
+  onChange: (e: QuickActionEffect) => void;
+  onRemove: () => void;
 }) {
-  const text = (raw: string) => raw;
+  const patch = (p: Partial<QuickActionEffect>) => onChange({ ...e, ...p } as QuickActionEffect);
   return (
-    <div class="ms-qa__effect">
-      <div class="ms-qa__effect-head">
+    <div class="effect">
+      <div class="effect__head">
         <select
-          class="ms-qa__effect-kind"
+          class="sel"
           aria-label="Effect kind"
-          value={effect.kind}
-          onChange={(e) =>
-            onChange(defaultEffect((e.target as HTMLSelectElement).value as QuickActionEffect["kind"]))
+          value={e.kind}
+          onChange={(ev) =>
+            onChange(defaultEffect((ev.target as HTMLSelectElement).value as QuickActionEffect["kind"]))
           }
         >
-          {EFFECT_KINDS.map((k) => (
-            <option key={k.kind} value={k.kind}>
+          {EFFECT_KIND_OPTIONS.map((k) => (
+            <option key={k.value} value={k.value}>
               {k.label}
             </option>
           ))}
         </select>
-        <button class="ms-qa__remove" aria-label="Remove effect" onClick={onRemove}>
-          ✕
+        <button class="iconbtn" aria-label="Remove effect" onClick={onRemove}>
+          <UI.x />
         </button>
       </div>
-      <div class="ms-qa__effect-body">
-        {effect.kind === "modifier" && (
+      <div class="effect__body">
+        {e.kind === "modifier" && (
           <>
             <select
-              value={effect.target}
-              aria-label="Bonus target"
-              onChange={(e) =>
-                onChange({ ...effect, target: (e.target as HTMLSelectElement).value as ModifierTarget })
-              }
+              class="sel"
+              value={e.target}
+              aria-label="Target"
+              onChange={(ev) => patch({ target: (ev.target as HTMLSelectElement).value as ModifierTarget })}
             >
-              {TARGET_GROUPS.map((group) => (
-                <optgroup key={group.label} label={group.label}>
-                  {group.options.map((o) => (
+              {TARGET_GROUPS.map((g) => (
+                <optgroup key={g.label} label={g.label}>
+                  {g.options.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}
                     </option>
@@ -315,585 +251,864 @@ function EffectRow({
                 </optgroup>
               ))}
             </select>
-            <select
-              value={effect.type}
-              aria-label="Bonus type"
-              onChange={(e) =>
-                onChange({ ...effect, type: (e.target as HTMLSelectElement).value as BonusType })
-              }
-            >
-              {BONUS_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-            <QAValueEditor label="value" value={effect.value} onChange={(v) => onChange({ ...effect, value: v })} />
-            <input
-              type="text"
-              placeholder="condition (vs fear...)"
-              value={effect.condition ?? ""}
-              onInput={(e) =>
-                onChange({ ...effect, condition: text((e.target as HTMLInputElement).value) || undefined })
-              }
+            <Sel
+              value={e.type}
+              options={BONUS_TYPES.map((t) => t)}
+              onChange={(v) => patch({ type: v as BonusType })}
             />
+            <ValueField label="value" value={e.value} onChange={(v) => patch({ value: v })} />
           </>
         )}
-        {effect.kind === "acChannels" && (
+        {e.kind === "acChannels" && (
           <>
-            <QAValueEditor label="AC" value={effect.normal ?? 0} onChange={(v) => onChange({ ...effect, normal: v })} />
-            <QAValueEditor label="touch" value={effect.touch ?? 0} onChange={(v) => onChange({ ...effect, touch: v })} />
-            <QAValueEditor label="flat-footed" value={effect.ff ?? 0} onChange={(v) => onChange({ ...effect, ff: v })} />
+            <ValueField label="normal" value={e.normal ?? 0} onChange={(v) => patch({ normal: v })} />
+            <ValueField label="touch" value={e.touch ?? 0} onChange={(v) => patch({ touch: v })} />
+            <ValueField label="flat" value={e.ff ?? 0} onChange={(v) => patch({ ff: v })} />
           </>
         )}
-        {effect.kind === "extraAttacks" && (
+        {e.kind === "extraAttacks" && (
           <>
-            <QAValueEditor label="count" value={effect.count} onChange={(v) => onChange({ ...effect, count: v })} />
-            <label>
-              at penalty
-              <input
-                type="number"
-                value={effect.penalty ?? 0}
-                onInput={(e) => {
-                  const n = Number((e.target as HTMLInputElement).value);
-                  if (!Number.isNaN(n)) onChange({ ...effect, penalty: n });
-                }}
-              />
-            </label>
+            <ValueField label="count" value={e.count} onChange={(v) => patch({ count: v })} />
+            <span class="effect__num">
+              penalty <Num value={e.penalty ?? 0} onChange={(n) => patch({ penalty: n })} />
+            </span>
           </>
         )}
-        {effect.kind === "damageDice" && (
+        {e.kind === "damageDice" && (
           <>
             <input
-              type="text"
+              class="inp"
+              value={e.dice}
               placeholder="+1d6 fire"
-              value={effect.dice}
-              onInput={(e) => onChange({ ...effect, dice: (e.target as HTMLInputElement).value })}
+              onInput={(ev) => patch({ dice: (ev.target as HTMLInputElement).value })}
             />
-            <select
-              value={effect.appliesTo}
-              aria-label="Applies to"
-              onChange={(e) =>
-                onChange({ ...effect, appliesTo: (e.target as HTMLSelectElement).value as never })
-              }
-            >
-              {APPLIES_TO.map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
-              ))}
-            </select>
+            <Sel value={e.appliesTo} options={APPLIES_TO} onChange={(v) => patch({ appliesTo: v as never })} />
           </>
         )}
-        {effect.kind === "keen" && (
-          <select
-            value={effect.appliesTo}
-            aria-label="Applies to"
-            onChange={(e) =>
-              onChange({ ...effect, appliesTo: (e.target as HTMLSelectElement).value as never })
-            }
-          >
-            {APPLIES_TO.map((a) => (
-              <option key={a} value={a}>
-                {a}
-              </option>
-            ))}
-          </select>
+        {e.kind === "keen" && (
+          <Sel value={e.appliesTo} options={APPLIES_TO} onChange={(v) => patch({ appliesTo: v as never })} />
         )}
-        {effect.kind === "note" && (
+        {e.kind === "note" && (
           <>
             <input
-              type="text"
-              class="ms-qa__note-text"
-              placeholder="note text (markdown ok)"
-              value={effect.text}
-              onInput={(e) => onChange({ ...effect, text: (e.target as HTMLInputElement).value })}
+              class="inp"
+              value={e.text}
+              placeholder="Reminder text"
+              onInput={(ev) => patch({ text: (ev.target as HTMLInputElement).value })}
             />
-            <select
-              value={effect.placement ?? "sheet"}
-              aria-label="Note placement"
-              onChange={(e) =>
-                onChange({ ...effect, placement: (e.target as HTMLSelectElement).value as never })
-              }
-            >
-              <option value="sheet">sheet notes</option>
-              <option value="attack">attack strings</option>
-            </select>
+            <Sel
+              value={e.placement ?? "sheet"}
+              options={[
+                { value: "sheet", label: "Sheet" },
+                { value: "attack", label: "Attack lines" },
+              ]}
+              onChange={(v) => patch({ placement: v as never })}
+            />
           </>
         )}
-        {effect.kind === "smite" && (
+        {e.kind === "smite" && (
           <>
-            <QAValueEditor label="attack" value={effect.attack} onChange={(v) => onChange({ ...effect, attack: v })} />
-            <QAValueEditor label="damage" value={effect.damage} onChange={(v) => onChange({ ...effect, damage: v })} />
-            <input
-              type="text"
-              placeholder="inline description"
-              value={effect.description ?? ""}
-              onInput={(e) =>
-                onChange({ ...effect, description: (e.target as HTMLInputElement).value || undefined })
-              }
-            />
+            <ValueField label="attack" value={e.attack} onChange={(v) => patch({ attack: v })} />
+            <ValueField label="damage" value={e.damage} onChange={(v) => patch({ damage: v })} />
           </>
         )}
-        {effect.kind === "preciseStrike" && (
-          <QAValueEditor label="damage" value={effect.damage} onChange={(v) => onChange({ ...effect, damage: v })} />
+        {e.kind === "preciseStrike" && (
+          <ValueField label="damage" value={e.damage} onChange={(v) => patch({ damage: v })} />
         )}
-        {effect.kind === "flurryAttacks" && (
-          <QAValueEditor label="base attacks" value={effect.count} onChange={(v) => onChange({ ...effect, count: v })} />
+        {e.kind === "flurryAttacks" && (
+          <ValueField label="attacks" value={e.count} onChange={(v) => patch({ count: v })} />
         )}
-        {effect.kind === "special" && (
-          <select
-            value={effect.op}
-            aria-label="Special behavior"
-            onChange={(e) => onChange({ ...effect, op: (e.target as HTMLSelectElement).value as never })}
-          >
-            <option value="agileWeapon">Agile weapon (DEX for melee when higher)</option>
-            <option value="versatilePerformance">Versatile Performance (Bluff/Sense Motive use Perform)</option>
-          </select>
+        {e.kind === "special" && (
+          <Sel
+            value={e.op}
+            options={[
+              { value: "agileWeapon", label: "Agile weapon (DEX for melee)" },
+              { value: "versatilePerformance", label: "Versatile Performance" },
+              { value: "weaponFinesse", label: "Weapon Finesse" },
+            ]}
+            onChange={(v) => patch({ op: v as never })}
+          />
         )}
       </div>
     </div>
   );
 }
 
-function EffectsEditor({
-  effects,
-  onChange,
-}: {
-  effects: QuickActionEffect[];
-  onChange(effects: QuickActionEffect[]): void;
-}) {
+/* ---------- icon picker (nested in-config modal) -------------------------- */
+
+const ICON_PAGE = 140;
+
+function IconPicker({ current, onPick, onClose }: { current: string; onPick: (id: string) => void; onClose: () => void }) {
+  const [q, setQ] = useState("");
+  const query = q.trim().toLowerCase();
+  const matches = ICON_IDS.filter((id) => !query || id.includes(query));
+  const shown = matches.slice(0, ICON_PAGE);
   return (
-    <div class="ms-qa__effects">
-      {effects.map((effect, idx) => (
-        <EffectRow
-          key={idx}
-          effect={effect}
-          onChange={(e) => onChange(effects.map((x, i) => (i === idx ? e : x)))}
-          onRemove={() => onChange(effects.filter((_, i) => i !== idx))}
-        />
-      ))}
-      <button class="ms-qa__add" onClick={() => onChange([...effects, defaultEffect("modifier")])}>
-        + Add effect
-      </button>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Action editor (expand-in-place)
-// ---------------------------------------------------------------------------
-
-function IconButton({
-  app,
-  icon,
-  onPick,
-  label,
-}: {
-  app: App;
-  icon: string;
-  onPick(id: string): void;
-  label?: string;
-}) {
-  return (
-    <button
-      class="ms-qa__icon-btn"
-      title={label ?? "Choose icon"}
-      onClick={() => new IconPickerModal(app, icon, onPick).open()}
-    >
-      <Icon id={icon} />
-    </button>
-  );
-}
-
-function ActionEditor({
-  app,
-  def,
-  character,
-  onChange,
-}: {
-  app: App;
-  def: QuickActionDef;
-  character: CharacterRecord;
-  onChange(def: QuickActionDef): void;
-}) {
-  const patchStage = (idx: number, patch: Partial<QuickActionStage>) =>
-    onChange({
-      ...def,
-      stages: def.stages.map((s, i) => (i === idx ? { ...s, ...patch } : s)),
-    });
-  const patchVariant = (idx: number, patch: Partial<QuickActionVariant>) =>
-    onChange({
-      ...def,
-      variants: def.variants!.map((v, i) => (i === idx ? { ...v, ...patch } : v)),
-    });
-
-  return (
-    <div class="ms-qa__editor">
-      <label class="ms-field">
-        <span class="ms-field__label">Name</span>
-        <input
-          class="ms-field__input"
-          type="text"
-          value={def.name}
-          onInput={(e) => onChange({ ...def, name: (e.target as HTMLInputElement).value })}
-        />
-      </label>
-      <label class="ms-field">
-        <span class="ms-field__label">Icon</span>
-        <IconButton app={app} icon={def.icon} onPick={(icon) => onChange({ ...def, icon })} />
-      </label>
-
-      <div class="ms-qa__subhead">Stages (tap cycles: off → 1 → … → off)</div>
-      {def.stages.map((stage, idx) => (
-        <div class="ms-qa__stage" key={idx}>
-          <div class="ms-qa__stage-head">
-            <span class="ms-qa__stage-no">Stage {idx + 1}</span>
-            <input
-              type="text"
-              placeholder="stage label (optional)"
-              value={stage.name ?? ""}
-              onInput={(e) =>
-                patchStage(idx, { name: (e.target as HTMLInputElement).value || undefined })
-              }
-            />
-            <IconButton
-              app={app}
-              icon={stage.icon ?? def.icon}
-              label="Stage icon (overrides the action icon)"
-              onPick={(icon) => patchStage(idx, { icon })}
-            />
-            <label title="pulse-glow styling (legacy double state)">
-              <input
-                type="checkbox"
-                checked={Boolean(stage.emphasized)}
-                onChange={(e) =>
-                  patchStage(idx, { emphasized: (e.target as HTMLInputElement).checked || undefined })
-                }
-              />
-              pulse
-            </label>
-            {def.stages.length > 1 && (
+    <div class="scrim" onClick={onClose}>
+      <div class="modal modal--sm" onClick={(e) => e.stopPropagation()}>
+        <div class="modal__head">
+          <div class="modal__titles">
+            <div class="modal__title">Choose icon</div>
+          </div>
+          <button class="iconbtn" onClick={onClose}>
+            <UI.x />
+          </button>
+        </div>
+        <div class="modal__body">
+          <div class="searchbox" style={{ marginBottom: 8 }}>
+            <UI.search />
+            <input placeholder="Search icons…" value={q} onInput={(e) => setQ((e.target as HTMLInputElement).value)} />
+          </div>
+          <div class="icongrid">
+            {shown.map((id) => (
               <button
-                class="ms-qa__remove"
-                aria-label="Remove stage"
-                onClick={() =>
-                  onChange({ ...def, stages: def.stages.filter((_, i) => i !== idx) })
-                }
+                key={id}
+                class={id === current ? "is-sel" : ""}
+                title={id}
+                onClick={() => {
+                  onPick(id);
+                  onClose();
+                }}
               >
-                ✕
+                <Icon id={id} />
               </button>
-            )}
+            ))}
           </div>
-          <EffectsEditor effects={stage.effects} onChange={(effects) => patchStage(idx, { effects })} />
+          <p class="help">
+            {matches.length > shown.length
+              ? `Showing ${shown.length} of ${matches.length} — refine your search.`
+              : `${matches.length} icons. Game-icons.net (CC BY 3.0) via RPG Awesome.`}
+          </p>
         </div>
-      ))}
-      <button
-        class="ms-qa__add"
-        onClick={() => onChange({ ...def, stages: [...def.stages, { effects: [] }] })}
-      >
-        + Add stage
-      </button>
-
-      <div class="ms-qa__subhead">Variants (tap opens a menu instead of cycling)</div>
-      {(def.variants ?? []).map((variant, idx) => (
-        <div class="ms-qa__stage" key={variant.id}>
-          <div class="ms-qa__stage-head">
-            <input
-              type="text"
-              placeholder="variant name"
-              value={variant.name}
-              onInput={(e) => patchVariant(idx, { name: (e.target as HTMLInputElement).value })}
-            />
-            <IconButton
-              app={app}
-              icon={variant.icon ?? def.icon}
-              label="Variant icon (optional override)"
-              onPick={(icon) => patchVariant(idx, { icon })}
-            />
-            <button
-              class="ms-qa__remove"
-              aria-label="Remove variant"
-              onClick={() =>
-                onChange({ ...def, variants: def.variants!.filter((_, i) => i !== idx) })
-              }
-            >
-              ✕
-            </button>
-          </div>
-          <EffectsEditor effects={variant.effects} onChange={(effects) => patchVariant(idx, { effects })} />
-        </div>
-      ))}
-      <button
-        class="ms-qa__add"
-        onClick={() =>
-          onChange({
-            ...def,
-            variants: [
-              ...(def.variants ?? []),
-              { id: `${slug(def.name)}-v${(def.variants?.length ?? 0) + 1}`, name: "New variant", effects: [] },
-            ],
-          })
-        }
-      >
-        + Add variant
-      </button>
-
-      <div class="ms-qa__subhead">Conditions</div>
-      <label class="ms-field">
-        <span class="ms-field__label">Needs pool</span>
-        <select
-          value={def.gate?.resourceId ?? ""}
-          aria-label="Gating resource pool"
-          onChange={(e) => {
-            const id = (e.target as HTMLSelectElement).value;
-            onChange({ ...def, gate: id ? { resourceId: id, min: def.gate?.min ?? 1 } : undefined });
-          }}
-        >
-          <option value="">(none)</option>
-          {character.resources.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name}
-            </option>
-          ))}
-        </select>
-        {def.gate && (
-          <input
-            type="number"
-            title="minimum points required"
-            value={def.gate.min ?? 1}
-            onInput={(e) => {
-              const n = Number((e.target as HTMLInputElement).value);
-              if (!Number.isNaN(n)) onChange({ ...def, gate: { ...def.gate!, min: n } });
-            }}
-          />
-        )}
-      </label>
-      <label class="ms-field">
-        <span class="ms-field__label">Needs class</span>
-        <input
-          type="text"
-          placeholder="(none)"
-          value={def.requires?.className ?? ""}
-          onInput={(e) => {
-            const className = (e.target as HTMLInputElement).value;
-            onChange({
-              ...def,
-              requires: className
-                ? { className, minLevel: def.requires?.minLevel ?? 1 }
-                : undefined,
-            });
-          }}
-        />
-        {def.requires && (
-          <input
-            type="number"
-            title="minimum class level"
-            value={def.requires.minLevel}
-            onInput={(e) => {
-              const n = Number((e.target as HTMLInputElement).value);
-              if (!Number.isNaN(n))
-                onChange({ ...def, requires: { ...def.requires!, minLevel: n } });
-            }}
-          />
-        )}
-      </label>
-      <label class="ms-field">
-        <span class="ms-field__label">Linked buff</span>
-        <select
-          value={def.linkedBuff ?? ""}
-          aria-label="Linked buff"
-          onChange={(e) => {
-            const key = (e.target as HTMLSelectElement).value;
-            onChange({ ...def, linkedBuff: key || undefined });
-          }}
-        >
-          <option value="">(none)</option>
-          {BUFF_DEFS.map((b) => (
-            <option key={b.key} value={b.key}>
-              {b.name}
-            </option>
-          ))}
-          {(character.customBuffs ?? []).map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.name} (custom)
-            </option>
-          ))}
-        </select>
-      </label>
+      </div>
     </div>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Main editor: list + pointer-event drag-and-drop reorder
-// ---------------------------------------------------------------------------
+/* ====================================================================== */
+/* Two-zone grid                                                          */
+/* ====================================================================== */
 
-export function QuickActionsEditor({ app, store, character }: EditorProps) {
+interface BenchItem {
+  def: QuickActionDef;
+  cat: boolean;
+}
+interface DragState {
+  id: string;
+  from: "sheet" | "bench";
+  overZone: "sheet" | "bench" | null;
+  overIndex: number;
+}
+
+export function QuickActionsSection({
+  store,
+  character,
+  onEdit,
+  onAdd,
+}: {
+  store: MiniSheetStore;
+  character: CharacterRecord;
+  onEdit: (id: string) => void;
+  onAdd: () => void;
+}) {
   const actions = character.quickActions ?? [];
-  const [expanded, setExpanded] = useState<string | null>(null);
-  const [drag, setDrag] = useState<{ from: number; over: number } | null>(null);
-  const listRef = useRef<HTMLDivElement>(null);
-  const dragRects = useRef<DOMRect[]>([]);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const benchRef = useRef<HTMLDivElement>(null);
+  const down = useRef<{
+    id: string;
+    item: BenchItem;
+    from: "sheet" | "bench";
+    x: number;
+    y: number;
+    moved: boolean;
+    overZone: "sheet" | "bench" | null;
+    overIndex: number;
+  } | null>(null);
+  const [drag, setDrag] = useState<DragState | null>(null);
 
-  const setActions = (next: QuickActionDef[]) =>
-    store.setCharacterField(character.id, "quickActions", next);
-  const patchAction = (id: string, next: QuickActionDef) =>
-    setActions(actions.map((a) => (a.id === id ? next : a)));
+  const setQa = (next: QuickActionDef[]) => store.setCharacterField(character.id, "quickActions", next);
 
-  const removeAction = (def: QuickActionDef) => {
-    if (!window.confirm(`Remove quick action "${def.name}"?`)) return;
-    const record = store.getCharacter(character.id)!;
-    const state = { ...record.quickActionState };
-    const wasOn = (state[def.id]?.stage ?? 0) > 0;
-    delete state[def.id];
-    store.updateCharacter(character.id, {
-      quickActions: actions.filter((a) => a.id !== def.id),
-      quickActionState: state,
-      // drop a linked buff the active action had switched on
-      ...(def.linkedBuff && wasOn
-        ? { buffs: record.buffs.filter((b) => b !== def.linkedBuff) }
-        : {}),
-    });
-    if (expanded === def.id) setExpanded(null);
+  const shown = actions.filter((a) => !a.hidden);
+  const hiddenActions = actions.filter((a) => a.hidden);
+  const catalog = CATALOG.filter((c) => !actions.some((a) => a.id === c.id));
+  const bench: BenchItem[] = [
+    ...hiddenActions.map((def) => ({ def, cat: false })),
+    ...catalog.map((def) => ({ def, cat: true })),
+  ];
+
+  const zoneOf = (x: number, y: number): "sheet" | "bench" | null => {
+    const inR = (ref: typeof sheetRef) => {
+      if (!ref.current) return false;
+      const r = ref.current.getBoundingClientRect();
+      return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+    };
+    if (inR(sheetRef)) return "sheet";
+    if (inR(benchRef)) return "bench";
+    return null;
   };
 
-  // --- drag handlers (pointer capture keeps all events on the handle; the
-  // --- handle has touch-action: none in scss so iPad doesn't scroll) -------
-  const dragStart = (idx: number, e: PointerEvent) => {
+  const sheetIndex = (x: number, y: number): number => {
+    const cells = sheetRef.current
+      ? ([...sheetRef.current.querySelectorAll(".qa-cell[data-id]")] as HTMLElement[])
+      : [];
+    if (!cells.length) return 0;
+    let best = 0;
+    let bestD = Infinity;
+    cells.forEach((c) => {
+      const r = c.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const d = (x - cx) ** 2 + (y - cy) ** 2;
+      if (d < bestD) {
+        bestD = d;
+        best = x > cx ? Number(c.dataset.i) + 1 : Number(c.dataset.i);
+      }
+    });
+    return best;
+  };
+
+  const addToSheet = (item: BenchItem, index: number) => {
+    const clone = structuredClone(item.def);
+    delete clone.hidden;
+    const newShown = shown.filter((a) => a.id !== item.def.id).map((a) => a);
+    let insert = index < 0 ? newShown.length : index;
+    const orig = shown.findIndex((a) => a.id === item.def.id);
+    if (orig > -1 && orig < insert) insert--;
+    insert = Math.max(0, Math.min(insert, newShown.length));
+    newShown.splice(insert, 0, clone);
+    setQa([...newShown, ...hiddenActions.filter((a) => a.id !== item.def.id)]);
+  };
+
+  const moveToBench = (id: string) => {
+    const target = actions.find((a) => a.id === id);
+    if (!target) return;
+    setQa([
+      ...shown.filter((a) => a.id !== id),
+      ...hiddenActions.filter((a) => a.id !== id),
+      { ...target, hidden: true },
+    ]);
+  };
+
+  const onDown = (item: BenchItem, zone: "sheet" | "bench", e: PointerEvent) => {
+    down.current = {
+      id: item.def.id,
+      item,
+      from: zone,
+      x: e.clientX,
+      y: e.clientY,
+      moved: false,
+      overZone: null,
+      overIndex: -1,
+    };
     try {
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     } catch {
-      // synthetic events (tests/MCP drives) carry no real pointer to capture
+      /* synthetic events (MCP/tests) have no real pointer */
     }
-    const rows = listRef.current
-      ? ([...listRef.current.querySelectorAll(".ms-qa__row")] as HTMLElement[])
-      : [];
-    dragRects.current = rows.map((r) => r.getBoundingClientRect());
-    setDrag({ from: idx, over: idx });
   };
-  // `over` is an INSERTION index in the original list (0..length): the count
-  // of row midpoints above the pointer.
-  const dragMove = (e: PointerEvent) => {
-    if (!drag) return;
-    let over = 0;
-    dragRects.current.forEach((r, i) => {
-      if (e.clientY > r.top + r.height / 2) over = i + 1;
-    });
-    if (over !== drag.over) setDrag({ ...drag, over });
-  };
-  const dragEnd = () => {
-    if (!drag) return;
-    // removal shifts everything after `from` up one — adjust when moving down
-    const insertAt = drag.from < drag.over ? drag.over - 1 : drag.over;
-    if (insertAt !== drag.from) {
-      const next = [...actions];
-      const [moved] = next.splice(drag.from, 1);
-      next.splice(insertAt, 0, moved);
-      setActions(next);
+  const onMove = (e: PointerEvent) => {
+    const dn = down.current;
+    if (!dn) return;
+    if (!dn.moved) {
+      if (Math.abs(e.clientX - dn.x) + Math.abs(e.clientY - dn.y) < 6) return;
+      dn.moved = true;
     }
+    const z = zoneOf(e.clientX, e.clientY);
+    const overIndex = z === "sheet" ? sheetIndex(e.clientX, e.clientY) : -1;
+    dn.overZone = z;
+    dn.overIndex = overIndex;
+    setDrag({ id: dn.id, from: dn.from, overZone: z, overIndex });
+  };
+  const onUp = (item: BenchItem) => {
+    const dn = down.current;
+    down.current = null;
+    if (!dn) return;
+    if (!dn.moved) {
+      if (item.cat) addToSheet(item, -1);
+      else onEdit(item.def.id);
+      setDrag(null);
+      return;
+    }
+    // read the drop target from the ref (not the async `drag` state) so the
+    // drop is correct even when move/up fire in one tick without a re-render
+    if (dn.overZone === "sheet") addToSheet(dn.item, dn.overIndex);
+    else if (dn.overZone === "bench" && !dn.item.cat) moveToBench(dn.id);
     setDrag(null);
   };
 
-  const addFromCatalog = (e: MouseEvent) => {
-    const present = new Set(actions.map((a) => a.id));
-    const candidates = [...DEFAULT_QUICK_ACTIONS, FIGHTING_DEFENSIVELY_CRANE].filter(
-      (d) => !present.has(d.id)
+  const Cell = (item: BenchItem, i: number, zone: "sheet" | "bench") => {
+    const a = item.def;
+    return (
+      <button
+        key={a.id}
+        data-id={a.id}
+        data-i={zone === "sheet" ? i : undefined}
+        title={a.name + (item.cat ? " — tap to add" : "")}
+        class={`qa-cell${drag && drag.id === a.id ? " is-drag" : ""}${
+          zone === "sheet" && drag && drag.overZone === "sheet" && drag.overIndex === i ? " is-drop" : ""
+        }`}
+        onPointerDown={(e) => onDown(item, zone, e as unknown as PointerEvent)}
+        onPointerMove={(e) => onMove(e as unknown as PointerEvent)}
+        onPointerUp={() => onUp(item)}
+        onPointerCancel={() => {
+          down.current = null;
+          setDrag(null);
+        }}
+      >
+        <div class={`squircle${zone === "bench" ? " is-bench" : ""}`}>
+          <Icon id={a.icon} />
+        </div>
+        {a.stages.length > 1 && <span class="qa-cell__badge">{a.stages.length}</span>}
+      </button>
     );
-    const menu = new Menu();
-    if (candidates.length === 0) {
-      menu.addItem((item) => item.setTitle("(everything's already here)").setDisabled(true));
-    }
-    for (const def of candidates) {
-      menu.addItem((item) =>
-        item.setTitle(def.name).onClick(() => setActions([...actions, structuredClone(def)]))
-      );
-    }
-    menu.showAtMouseEvent(e);
-  };
-
-  const addBlank = () => {
-    const def: QuickActionDef = {
-      id: newId(),
-      name: "New action",
-      icon: "ra-crossed-swords",
-      stages: [{ effects: [] }],
-    };
-    setActions([...actions, def]);
-    setExpanded(def.id);
   };
 
   return (
-    <section class="ms-config__section ms-qa">
-      <div class="ms-config__section-title">Quick Actions</div>
-      <div class="ms-qa__hint">
-        The combat tab's action toggles. Drag to rearrange; the eye hides a
-        button without losing its setup.
-      </div>
-      <div class="ms-qa__list" ref={listRef}>
-        {actions.map((def, idx) => (
-          <div
-            key={def.id}
-            class={`ms-qa__row${drag && drag.from === idx ? " is-dragging" : ""}${
-              drag && drag.over === idx && drag.from !== idx ? " is-drop-target" : ""
-            }`}
-          >
-            <div class="ms-qa__row-bar">
-              <button
-                class="ms-qa__handle"
-                aria-label={`Drag to reorder ${def.name}`}
-                onPointerDown={(e) => dragStart(idx, e as unknown as PointerEvent)}
-                onPointerMove={(e) => dragMove(e as unknown as PointerEvent)}
-                onPointerUp={dragEnd}
-                onPointerCancel={dragEnd}
-              >
-                ⠿
-              </button>
-              <span class="ms-qa__row-icon">
-                <Icon id={def.icon} />
-              </span>
-              <button
-                class="ms-qa__row-name"
-                title="Edit this action"
-                onClick={() => setExpanded(expanded === def.id ? null : def.id)}
-              >
-                {def.name}
-                {def.hidden ? " (hidden)" : ""}
-              </button>
-              <button
-                class={`ms-qa__eye${def.hidden ? " is-off" : ""}`}
-                title={def.hidden ? "Show on the combat tab" : "Hide from the combat tab"}
-                onClick={() => patchAction(def.id, { ...def, hidden: !def.hidden || undefined })}
-              >
-                {def.hidden ? "🚫" : "👁"}
-              </button>
-              <button
-                class="ms-qa__remove"
-                aria-label={`Remove ${def.name}`}
-                onClick={() => removeAction(def)}
-              >
-                ✕
-              </button>
+    <Sec icon="ra-lightning-bolt" title="Quick Actions" desc={`${shown.length} on sheet`} collapsible={false}>
+      <p class="help qa-intro">Drag between zones to show or hide, drag within to reorder, tap to edit.</p>
+      <div class="qa-zone">
+        <div class="qa-zone__label">
+          On your sheet <span class="n">· {shown.length}</span>
+        </div>
+        <div class={`qa-tray${drag && drag.overZone === "sheet" ? " is-over" : ""}`} ref={sheetRef}>
+          {shown.map((def, i) => Cell({ def, cat: false }, i, "sheet"))}
+          <div class="qa-cell qa-add-cell" onClick={onAdd} title="Add an action">
+            <div class="squircle">
+              <UI.plus />
             </div>
-            {expanded === def.id && (
-              <ActionEditor
-                app={app}
-                def={def}
-                character={character}
-                onChange={(next) => patchAction(def.id, next)}
+          </div>
+          {shown.length === 0 && <span class="qa-tray__empty">Drag actions here</span>}
+        </div>
+      </div>
+      <div class="qa-zone">
+        <div class="qa-zone__label">
+          Bench &amp; library <span class="n">· {bench.length}</span>
+        </div>
+        <div class={`qa-tray qa-tray--bench${drag && drag.overZone === "bench" ? " is-over" : ""}`} ref={benchRef}>
+          {bench.map((item) => Cell(item, -1, "bench"))}
+          {bench.length === 0 && <span class="qa-tray__empty">Hidden &amp; available actions live here</span>}
+        </div>
+      </div>
+      <p class="qa-hint">
+        Bench holds hidden toggles and class/combat actions you haven't added.
+        <button class="btn btn--accent btn--sm" onClick={onAdd}>
+          <UI.plus /> New custom action
+        </button>
+      </p>
+    </Sec>
+  );
+}
+
+/* ====================================================================== */
+/* Editor modal (Simple / Advanced)                                       */
+/* ====================================================================== */
+
+export function QAEditor({
+  store,
+  character,
+  def,
+  onClose,
+}: {
+  store: MiniSheetStore;
+  character: CharacterRecord;
+  def: QuickActionDef;
+  onClose: () => void;
+}) {
+  const [m, setM] = useState<QuickActionDef>(() => structuredClone(def));
+  const [mode, setMode] = useState<"simple" | "advanced">("simple");
+  const [pick, setPick] = useState(false);
+  const upd = (p: Partial<QuickActionDef>) => setM({ ...m, ...p });
+  const patchStage = (i: number, p: Partial<QuickActionDef["stages"][number]>) =>
+    upd({ stages: m.stages.map((s, k) => (k === i ? { ...s, ...p } : s)) });
+  const eff0 = m.stages[0].effects;
+
+  const save = () => {
+    const actions = character.quickActions ?? [];
+    store.setCharacterField(
+      character.id,
+      "quickActions",
+      actions.map((a) => (a.id === m.id ? m : a))
+    );
+    onClose();
+  };
+  const remove = () => {
+    const record = store.getCharacter(character.id)!;
+    const state = { ...record.quickActionState };
+    const wasOn = (state[m.id]?.stage ?? 0) > 0;
+    delete state[m.id];
+    store.updateCharacter(character.id, {
+      quickActions: (record.quickActions ?? []).filter((a) => a.id !== m.id),
+      quickActionState: state,
+      ...(m.linkedBuff && wasOn ? { buffs: record.buffs.filter((b) => b !== m.linkedBuff) } : {}),
+    });
+    onClose();
+  };
+
+  const poolOptions = [
+    { value: "", label: "Nothing" },
+    ...character.resources.map((r) => ({ value: r.id, label: r.name })),
+  ];
+
+  return (
+    <div class="scrim" onClick={onClose}>
+      <div class="modal" onClick={(e) => e.stopPropagation()}>
+        <div class="modal__head">
+          <button class="squircle" onClick={() => setPick(true)} title="Change icon">
+            <Icon id={m.icon} />
+          </button>
+          <div class="modal__titles">
+            <div class="modal__title">{m.name || "Action"}</div>
+            <div class="modal__sub">Combat-tab toggle</div>
+          </div>
+          <div style={{ marginRight: 8 }}>
+            <Seg
+              value={mode}
+              options={[
+                { value: "simple", label: "Simple" },
+                { value: "advanced", label: "Advanced" },
+              ]}
+              onChange={(v) => setMode(v as "simple" | "advanced")}
+            />
+          </div>
+          <button class="iconbtn" onClick={onClose}>
+            <UI.x />
+          </button>
+        </div>
+
+        <div class="modal__body">
+          <div class="block">
+            <div class="f">
+              <span class="f__label">Name</span>
+              <span class="f__control">
+                <Txt value={m.name} onChange={(v) => upd({ name: v })} />
+              </span>
+            </div>
+            <div class="f">
+              <span class="f__label">Icon</span>
+              <span class="f__control">
+                <button class="iconpick__btn" onClick={() => setPick(true)}>
+                  <Icon id={m.icon} />
+                </button>
+              </span>
+            </div>
+          </div>
+
+          {mode === "simple" ? (
+            <>
+              <div class="block">
+                <div class="block__label">
+                  What it does <span class="ln" />
+                </div>
+                {eff0.length === 0 && <div class="empty">No effects yet.</div>}
+                {eff0.map((e, i) => (
+                  <EffectRow
+                    key={i}
+                    e={e}
+                    onChange={(ne) => patchStage(0, { effects: eff0.map((x, k) => (k === i ? ne : x)) })}
+                    onRemove={() => patchStage(0, { effects: eff0.filter((_, k) => k !== i) })}
+                  />
+                ))}
+                <button
+                  class="btn btn--ghost btn--sm"
+                  onClick={() => patchStage(0, { effects: [...eff0, defaultEffect("modifier")] })}
+                >
+                  <UI.plus /> Add effect
+                </button>
+                {(m.stages.length > 1 || (m.variants?.length ?? 0) > 0) && (
+                  <p class="help">
+                    {m.stages.length > 1 ? `Has ${m.stages.length} stages` : ""}
+                    {m.stages.length > 1 && m.variants?.length ? " · " : ""}
+                    {m.variants?.length ? `a ${m.variants.length}-option menu` : ""}. Open Advanced to edit.
+                  </p>
+                )}
+              </div>
+              <div class="block">
+                <div class="block__label">
+                  Cost <span class="ln" />
+                </div>
+                <div class="f">
+                  <span class="f__label">
+                    Spends from<small>optional — links a pool</small>
+                  </span>
+                  <span class="f__control">
+                    <Sel
+                      value={m.gate?.resourceId ?? ""}
+                      options={poolOptions}
+                      onChange={(v) => upd({ gate: v ? { resourceId: v, min: m.gate?.min ?? 1 } : undefined })}
+                    />
+                  </span>
+                </div>
+              </div>
+            </>
+          ) : (
+            <AdvancedBody m={m} upd={upd} patchStage={patchStage} poolOptions={poolOptions} />
+          )}
+        </div>
+
+        <div class="modal__foot">
+          <button class="btn btn--ghost" onClick={onClose}>
+            Cancel
+          </button>
+          <span class="spacer" />
+          <button class="btn" onClick={remove}>
+            <UI.trash /> Remove
+          </button>
+          <button class="btn btn--accent" onClick={save}>
+            <UI.check /> Save
+          </button>
+        </div>
+        {pick && <IconPicker current={m.icon} onPick={(ic) => upd({ icon: ic })} onClose={() => setPick(false)} />}
+      </div>
+    </div>
+  );
+}
+
+function AdvancedBody({
+  m,
+  upd,
+  patchStage,
+  poolOptions,
+}: {
+  m: QuickActionDef;
+  upd: (p: Partial<QuickActionDef>) => void;
+  patchStage: (i: number, p: Partial<QuickActionDef["stages"][number]>) => void;
+  poolOptions: { value: string; label: string }[];
+}) {
+  const variants = m.variants ?? [];
+  return (
+    <>
+      <div class="block">
+        <div class="block__label">
+          Stages <span class="ln" />
+        </div>
+        <p class="help" style={{ marginTop: 0, marginBottom: 8 }}>
+          Tapping cycles off → 1 → … → off. Add a stage for a stronger state.
+        </p>
+        {m.stages.map((s, i) => (
+          <div class="ed-stage" key={i}>
+            <div class="ed-stage__head">
+              <span class="ed-stage__no">Stage {i + 1}</span>
+              <input
+                class="inp"
+                placeholder="Label (optional)"
+                value={s.name ?? ""}
+                onInput={(e) => patchStage(i, { name: (e.target as HTMLInputElement).value || undefined })}
               />
-            )}
+              <label class="chip" style={{ cursor: "pointer" }}>
+                <Check value={!!s.emphasized} onChange={(v) => patchStage(i, { emphasized: v || undefined })} /> pulse
+              </label>
+              {m.stages.length > 1 && (
+                <button class="iconbtn" onClick={() => upd({ stages: m.stages.filter((_, k) => k !== i) })}>
+                  <UI.x />
+                </button>
+              )}
+            </div>
+            {s.effects.map((e, k) => (
+              <EffectRow
+                key={k}
+                e={e}
+                onChange={(ne) => patchStage(i, { effects: s.effects.map((x, j) => (j === k ? ne : x)) })}
+                onRemove={() => patchStage(i, { effects: s.effects.filter((_, j) => j !== k) })}
+              />
+            ))}
+            <button
+              class="btn btn--ghost btn--sm"
+              onClick={() => patchStage(i, { effects: [...s.effects, defaultEffect("modifier")] })}
+            >
+              <UI.plus /> Add effect
+            </button>
           </div>
         ))}
-      </div>
-      <div class="ms-qa__actions">
-        <button class="ms-config__add" onClick={(e) => addFromCatalog(e as unknown as MouseEvent)}>
-          + From catalog
-        </button>
-        <button class="ms-config__add" onClick={addBlank}>
-          + Blank action
+        <button class="btn btn--ghost btn--sm" onClick={() => upd({ stages: [...m.stages, { effects: [] }] })}>
+          <UI.plus /> Add stage
         </button>
       </div>
-    </section>
+
+      <div class="block">
+        <div class="block__label">
+          Tap-menu <span class="ln" />
+        </div>
+        <p class="help" style={{ marginTop: 0, marginBottom: 6 }}>
+          Variants make a tap open a menu (like Weapon Song) instead of cycling.
+        </p>
+        {variants.map((v, i) => (
+          <div class="menulist__item" key={v.id}>
+            <Icon id={m.icon} />
+            <input
+              class="inp"
+              value={v.name}
+              onInput={(e) =>
+                upd({ variants: variants.map((x, k) => (k === i ? { ...x, name: (e.target as HTMLInputElement).value } : x)) })
+              }
+            />
+            <span class="menulist__sum">{v.effects.map(effectSummary).join("; ")}</span>
+            <button class="iconbtn" onClick={() => upd({ variants: variants.filter((_, k) => k !== i) })}>
+              <UI.x />
+            </button>
+          </div>
+        ))}
+        <button
+          class="btn btn--ghost btn--sm"
+          style={{ marginTop: 6 }}
+          onClick={() =>
+            upd({
+              variants: [
+                ...variants,
+                { id: `v-${Date.now().toString(36)}`, name: "New variant", effects: [] },
+              ],
+            })
+          }
+        >
+          <UI.plus /> Add variant
+        </button>
+      </div>
+
+      <div class="block">
+        <div class="block__label">
+          Availability <span class="ln" />
+        </div>
+        <div class="f">
+          <span class="f__label">Spends from</span>
+          <span class="f__control">
+            <Sel
+              value={m.gate?.resourceId ?? ""}
+              options={poolOptions}
+              onChange={(v) => upd({ gate: v ? { resourceId: v, min: m.gate?.min ?? 1 } : undefined })}
+            />
+          </span>
+        </div>
+        <div class="f">
+          <span class="f__label">
+            Show for class<small>blank = always shown</small>
+          </span>
+          <span class="f__control">
+            <input
+              class="inp"
+              style={{ width: 150 }}
+              placeholder="(any class)"
+              value={m.requires?.className ?? ""}
+              onInput={(e) => {
+                const className = (e.target as HTMLInputElement).value;
+                upd({ requires: className ? { className, minLevel: m.requires?.minLevel ?? 1 } : undefined });
+              }}
+            />
+          </span>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ====================================================================== */
+/* Add picker                                                             */
+/* ====================================================================== */
+
+export function QAAddModal({
+  store,
+  character,
+  onClose,
+  onCustom,
+}: {
+  store: MiniSheetStore;
+  character: CharacterRecord;
+  onClose: () => void;
+  onCustom: () => void;
+}) {
+  const actions = character.quickActions ?? [];
+  const present = new Set(actions.map((a) => a.id));
+  const add = (def: QuickActionDef) => {
+    store.setCharacterField(character.id, "quickActions", [...actions, structuredClone(def)]);
+    onClose();
+  };
+  return (
+    <div class="scrim" onClick={onClose}>
+      <div class="modal modal--sm" onClick={(e) => e.stopPropagation()}>
+        <div class="modal__head">
+          <div class="modal__titles">
+            <div class="modal__title">Add action</div>
+            <div class="modal__sub">Defaults for your class, or your own</div>
+          </div>
+          <button class="iconbtn" onClick={onClose}>
+            <UI.x />
+          </button>
+        </div>
+        <div class="modal__body">
+          <div class="picklist">
+            {CATALOG.map((c) => {
+              const has = present.has(c.id);
+              return (
+                <button key={c.id} class={`pickitem${has ? " is-disabled" : ""}`} disabled={has} onClick={() => add(c)}>
+                  <span class="squircle">
+                    <Icon id={c.icon} />
+                  </span>
+                  <span>
+                    <span class="pickitem__t">{c.name}</span>
+                    <br />
+                    <span class="pickitem__d">{defSummary(c)}</span>
+                  </span>
+                  {has && <span class="pickitem__on">on sheet</span>}
+                </button>
+              );
+            })}
+          </div>
+          <div class="divider" />
+          <button class="btn btn--accent" style={{ width: "100%", justifyContent: "center" }} onClick={onCustom}>
+            <UI.wand /> Build a custom action
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ====================================================================== */
+/* Wizard (Name → Effect → Done)                                          */
+/* ====================================================================== */
+
+const WIZ = ["Name", "Effect", "Done"];
+
+export function QAWizard({
+  store,
+  character,
+  onClose,
+}: {
+  store: MiniSheetStore;
+  character: CharacterRecord;
+  onClose: () => void;
+}) {
+  const [step, setStep] = useState(0);
+  const [pick, setPick] = useState(false);
+  const [d, setD] = useState<{ name: string; icon: string; effect: QuickActionEffect }>(() => ({
+    name: "",
+    icon: "ra-crossed-swords",
+    effect: defaultEffect("modifier"),
+  }));
+  const upd = (p: Partial<typeof d>) => setD({ ...d, ...p });
+  const canNext = step !== 0 || d.name.trim().length > 0;
+
+  const create = () => {
+    const def: QuickActionDef = {
+      id: newId(),
+      name: d.name || "New action",
+      icon: d.icon,
+      stages: [{ effects: [d.effect] }],
+    };
+    store.setCharacterField(character.id, "quickActions", [...(character.quickActions ?? []), def]);
+    onClose();
+  };
+
+  return (
+    <div class="scrim" onClick={onClose}>
+      <div class="modal" onClick={(e) => e.stopPropagation()}>
+        <div class="modal__head">
+          <div class="modal__titles">
+            <div class="modal__title">New custom action</div>
+          </div>
+          <button class="iconbtn" onClick={onClose}>
+            <UI.x />
+          </button>
+        </div>
+        <div class="wizsteps">
+          {WIZ.map((s, i) => (
+            <Fragment key={s}>
+              <div class={`wizstep${i === step ? " is-active" : i < step ? " is-done" : ""}`}>
+                <span class="wizstep__dot">{i < step ? <UI.check /> : i + 1}</span>
+                <span class="wizstep__lbl">{s}</span>
+              </div>
+              {i < WIZ.length - 1 && <span class={`wizstep__ln${i < step ? " is-done" : ""}`} />}
+            </Fragment>
+          ))}
+        </div>
+        <div class="modal__body">
+          {step === 0 && (
+            <>
+              <p class="help" style={{ marginTop: 0 }}>
+                Name it and pick a squircle icon.
+              </p>
+              <div class="f">
+                <span class="f__label">Name</span>
+                <span class="f__control">
+                  <Txt value={d.name} onChange={(v) => upd({ name: v })} placeholder="e.g. Vital Strike" />
+                </span>
+              </div>
+              <div class="f">
+                <span class="f__label">Icon</span>
+                <span class="f__control">
+                  <button class="iconpick__btn" onClick={() => setPick(true)}>
+                    <Icon id={d.icon} />
+                  </button>
+                </span>
+              </div>
+            </>
+          )}
+          {step === 1 && (
+            <>
+              <p class="help" style={{ marginTop: 0 }}>
+                What does it do? Pick an effect type — add more later in Advanced.
+              </p>
+              <div class="choice">
+                {EFFECT_TYPES.map((t) => (
+                  <button
+                    key={t.kind}
+                    class={`choice__card${d.effect.kind === t.kind ? " is-sel" : ""}`}
+                    onClick={() => upd({ effect: defaultEffect(t.kind) })}
+                  >
+                    <span class="choice__ic">
+                      <Icon id={t.icon} />
+                    </span>
+                    <span>
+                      <span class="choice__t">{t.label}</span>
+                      <span class="choice__d">{t.desc}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <div class="divider" />
+              <EffectRow e={d.effect} onChange={(e) => upd({ effect: e })} onRemove={() => upd({ effect: defaultEffect("modifier") })} />
+            </>
+          )}
+          {step === 2 && (
+            <>
+              <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
+                <span class="squircle is-on">
+                  <Icon id={d.icon} />
+                </span>
+                <div>
+                  <div class="modal__title">{d.name || "New action"}</div>
+                  <div class="muted" style={{ fontSize: 12.5 }}>
+                    {effectSummary(d.effect)}.
+                  </div>
+                </div>
+              </div>
+              <div class="review__row">
+                <b>Effect</b>
+                <span>{effectSummary(d.effect)}</span>
+              </div>
+              <div class="review__row">
+                <b>Cost</b>
+                <span class="muted">Free — add a pool later if needed</span>
+              </div>
+              <p class="help">It'll drop onto your grid where you can drag, restage, or gate it.</p>
+            </>
+          )}
+        </div>
+        <div class="modal__foot">
+          <button class="btn btn--ghost" onClick={() => (step === 0 ? onClose() : setStep(step - 1))}>
+            <UI.arrowL /> {step === 0 ? "Cancel" : "Back"}
+          </button>
+          <span class="spacer" />
+          {step < 2 ? (
+            <button class="btn btn--accent" disabled={!canNext} style={{ opacity: canNext ? 1 : 0.5 }} onClick={() => setStep(step + 1)}>
+              Next <UI.arrowR />
+            </button>
+          ) : (
+            <button class="btn btn--accent" onClick={create}>
+              <UI.check /> Create
+            </button>
+          )}
+        </div>
+        {pick && <IconPicker current={d.icon} onPick={(ic) => upd({ icon: ic })} onClose={() => setPick(false)} />}
+      </div>
+    </div>
   );
 }

@@ -1,352 +1,579 @@
-// Quick Action Builder (config pane) + icon picker modal.
-// Scoped under .minisheet-config-root except the modal (Obsidian portals
-// modals to document.body, so the picker carries its own class).
+/* ============================================================================
+   Quick Actions surface (config Effects category) — LITERAL mirror of the
+   combat-tab toggle grid + two zones, plus the centered editor/add/wizard
+   modals, effect rows, and icon picker. Ported from the design handoff,
+   scoped under .minisheet-config-root (modals render IN the config pane).
+   ============================================================================ */
 
 .minisheet-config-root {
-  .ms-qa__hint {
-    margin: 0 0 8px;
-    font-size: 0.78em;
-    opacity: 0.7;
+  /* ===========================================================================
+     Two-zone grid
+     =========================================================================== */
+  .qa-intro {
+    margin: 0 0 12px;
   }
-
-  .ms-qa__list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  .qa-zone {
+    margin-bottom: 14px;
   }
-
-  .ms-qa__row {
-    border: 1px solid rgba(202, 151, 89, 0.25);
-    border-radius: 4px;
-    background: rgba(60, 60, 80, 0.15);
-
-    &.is-dragging {
-      opacity: 0.55;
-      border-style: dashed;
-    }
-
-    &.is-drop-target {
-      border-color: var(--ms-gold);
-      box-shadow: 0 0 4px rgba(202, 151, 89, 0.5);
-    }
-  }
-
-  .ms-qa__row-bar {
+  .qa-zone__label {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 2px 6px;
-  }
-
-  .ms-qa__handle {
-    // iPad: pointer drag instead of scroll — touch-action is load-bearing
-    touch-action: none;
-    cursor: grab;
-    width: var(--ms-touch);
-    height: var(--ms-touch);
-    min-width: var(--ms-touch);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: none;
-    box-shadow: none;
-    font-size: 16px;
-    opacity: 0.6;
-
-    &:active {
-      cursor: grabbing;
-      opacity: 1;
-    }
-  }
-
-  .ms-qa__row-icon {
-    display: flex;
-    width: 22px;
-    height: 22px;
-    color: var(--ms-gold);
-
-    svg {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  .ms-qa__row-name {
-    flex: 1;
-    text-align: left;
-    border: none;
-    background: none;
-    box-shadow: none;
-    cursor: pointer;
+    gap: 7px;
     font-family: "Taroca", sans-serif;
-    font-size: 0.9em;
-    min-height: var(--ms-touch);
-  }
-
-  .ms-qa__eye,
-  .ms-qa__remove {
-    border: none;
-    background: none;
-    box-shadow: none;
-    cursor: pointer;
-    min-width: 32px;
-    min-height: var(--ms-touch);
-  }
-
-  .ms-qa__eye.is-off {
-    opacity: 0.45;
-  }
-
-  .ms-qa__actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  // --- expand-in-place editor ------------------------------------------
-  .ms-qa__editor {
-    padding: 6px 10px 10px;
-    border-top: 1px solid rgba(202, 151, 89, 0.2);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .ms-qa__subhead {
-    margin-top: 8px;
-    color: var(--ms-gold);
-    font-size: 0.8em;
-    letter-spacing: 0.04em;
+    font-size: 10.5px;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
+    color: var(--text-mute);
+    margin-bottom: 6px;
+  }
+  .qa-zone__label .n {
+    color: var(--text-dim);
+  }
+  .qa-tray {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    padding: 7px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(0, 0, 0, 0.2);
+    min-height: 52px;
+    align-content: flex-start;
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .qa-tray.is-over {
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+  }
+  .qa-tray--bench {
+    background: rgba(0, 0, 0, 0.1);
+    border-style: dashed;
+  }
+  .qa-tray__empty {
+    color: var(--text-mute);
+    font-size: 12px;
+    padding: 6px;
+    align-self: center;
   }
 
-  .ms-qa__icon-btn {
-    width: 40px;
-    height: 40px;
-    // Obsidian's default `button` padding (4px 12px) would eat the width and
-    // squish the icon (the svg flex-shrinks); zero it so the glyph shows.
+  .qa-cell {
+    position: relative;
+    cursor: grab;
+    touch-action: none;
+    border: 0;
+    background: transparent;
     padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  }
+  .qa-cell:active {
+    cursor: grabbing;
+  }
+  .qa-cell.is-drag {
+    opacity: 0.3;
+  }
+  .qa-cell.is-drop::before {
+    content: "";
+    position: absolute;
+    left: -3px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* the literal toggle: ~45x34, barely rounded, like the sheet */
+  .squircle {
+    width: 45px;
+    height: 34px;
     border-radius: 4px;
     background: rgba(60, 60, 80, 0.3);
-    border: 1px solid rgba(202, 151, 89, 0.3);
-    cursor: pointer;
-    color: white;
-
-    svg {
-      flex-shrink: 0;
-      width: 24px;
-      height: 24px;
-    }
-  }
-
-  .ms-qa__stage {
-    border-left: 2px solid rgba(202, 151, 89, 0.25);
-    padding-left: 8px;
-    margin: 4px 0;
-  }
-
-  .ms-qa__stage-head {
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    transition: 0.12s;
+    flex-shrink: 0;
+  }
+  .squircle svg {
+    width: 23px;
+    height: 23px;
+    color: #fff;
+    opacity: 0.9;
+    flex-shrink: 0;
+  }
+  .qa-cell:hover .squircle {
+    background: rgba(80, 80, 104, 0.42);
+  }
+  .squircle.is-on {
+    background: rgba(140, 30, 30, 0.72);
+  }
+  .squircle.is-on svg {
+    filter: drop-shadow(0 0 3px rgba(255, 100, 100, 0.7)) brightness(1.2);
+  }
+  .squircle.is-bench {
+    opacity: 0.55;
+  }
+  .qa-cell__badge {
+    position: absolute;
+    top: -4px;
+    right: -3px;
+    font-size: 8px;
+    font-family: "Taroca", sans-serif;
+    background: var(--bg-soft);
+    color: var(--text-mute);
+    border-radius: 3px;
+    padding: 0 3px;
+    pointer-events: none;
+  }
+  .qa-add-cell {
+    cursor: pointer;
+  }
+  .qa-add-cell .squircle {
+    background: transparent;
+    border: 1px dashed var(--line-strong);
+  }
+  .qa-add-cell:hover .squircle {
+    border-color: var(--accent-line);
+  }
+  .qa-add-cell .squircle svg {
+    color: var(--text-mute);
+    width: 15px;
+    height: 15px;
+  }
+  .qa-hint {
+    font-size: 11.5px;
+    color: var(--text-mute);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-wrap: wrap;
-
-    input[type="text"] {
-      flex: 1;
-      min-width: 90px;
-    }
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      font-size: 0.75em;
-    }
   }
 
-  .ms-qa__stage-no {
-    font-size: 0.78em;
-    opacity: 0.8;
-    white-space: nowrap;
+  /* ===========================================================================
+     Centered modal (Obsidian-native) — editor, wizard, pickers
+     =========================================================================== */
+  .scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 9, 12, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+    padding: 24px;
   }
-
-  .ms-qa__effects {
+  .modal {
+    width: min(560px, 100%);
+    max-height: 100%;
+    background: var(--bg-pane);
+    border: 1px solid var(--line-strong);
+    border-radius: 9px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin: 4px 0;
+    overflow: hidden;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5);
   }
-
-  .ms-qa__effect {
-    background: rgba(60, 60, 80, 0.2);
+  .modal--sm {
+    width: min(420px, 100%);
+  }
+  .modal__head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .modal__head .squircle {
+    width: 42px;
+    height: 32px;
     border-radius: 4px;
-    padding: 4px 6px;
+    border: 0;
+    cursor: pointer;
   }
-
-  .ms-qa__effect-head {
+  .modal__head .squircle svg {
+    width: 20px;
+    height: 20px;
+  }
+  .modal__titles {
+    flex: 1;
+    min-width: 0;
+  }
+  .modal__title {
+    font-family: "Norwester", sans-serif;
+    font-size: 15.5px;
+    letter-spacing: 0.02em;
+  }
+  .modal__sub {
+    font-size: 11.5px;
+    color: var(--text-mute);
+  }
+  .modal__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 16px;
+  }
+  .modal__foot {
     display: flex;
     align-items: center;
-    gap: 6px;
-
-    .ms-qa__effect-kind {
-      flex: 1;
-    }
+    gap: 9px;
+    padding: 11px 16px;
+    border-top: 1px solid var(--line);
+  }
+  .spacer {
+    flex: 1;
   }
 
-  .ms-qa__effect-body {
+  .block {
+    margin-bottom: 16px;
+  }
+  .block__label {
+    font-family: "Taroca", sans-serif;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .block__label .ln {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .iconpick__btn {
+    width: 44px;
+    height: 34px;
+    border-radius: 5px;
+    border: 1px solid var(--line-strong);
+    background: rgba(60, 60, 80, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    padding: 0;
+  }
+  .iconpick__btn svg {
+    width: 23px;
+    height: 23px;
+    flex-shrink: 0;
+  }
+
+  .ed-stage {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+  .ed-stage__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .ed-stage__no {
+    font-family: "Norwester", sans-serif;
+    font-size: 12.5px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .ed-stage__head .inp {
+    flex: 1;
+    width: auto;
+    min-height: 30px;
+  }
+
+  .effect {
+    background: var(--input);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 9px;
+    margin-bottom: 7px;
+  }
+  .effect__head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .effect__head .sel {
+    flex: 1;
+  }
+  .effect__body {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
-    margin-top: 4px;
-
-    input[type="text"] {
-      flex: 1;
-      min-width: 80px;
-    }
-
-    input[type="number"] {
-      width: 52px;
-    }
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      font-size: 0.75em;
-    }
+    gap: 7px;
+    margin-top: 8px;
   }
-
-  .ms-qa__note-text {
-    min-width: 140px;
+  .effect__body .sel {
+    flex: 1;
+    min-width: 110px;
   }
-
-  // --- QAValue (number | formula) -------------------------------------
-  .ms-qa__value {
+  .effect__body .inp {
+    flex: 1;
+    width: auto;
+    min-width: 100px;
+  }
+  .effect__num {
     display: flex;
     align-items: center;
-    gap: 4px;
-    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--text-mute);
   }
-
-  .ms-qa__value-label {
-    font-size: 0.75em;
-    opacity: 0.8;
+  .effect__num .num {
+    min-height: 30px;
   }
-
-  .ms-qa__formula-toggle {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
+  .effect__ftoggle {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
     padding: 0;
     border-radius: 3px;
-    border: 1px solid rgba(202, 151, 89, 0.4);
-    background: none;
-    box-shadow: none;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--text-dim);
     cursor: pointer;
     font-style: italic;
-    opacity: 0.6;
-
-    &.is-on {
-      background: rgba(140, 30, 30, 0.6);
-      color: white;
-      opacity: 1;
-    }
+    flex-shrink: 0;
+  }
+  .effect__ftoggle.is-on {
+    background: rgba(140, 30, 30, 0.6);
+    border-color: var(--accent-line);
+    color: #fff;
   }
 
-  .ms-qa__num {
-    width: 52px;
-  }
-
-  .ms-qa__formula {
+  .menulist__item {
     display: flex;
     align-items: center;
-    gap: 4px;
-    flex-wrap: wrap;
-
-    input[type="number"] {
-      width: 44px;
-    }
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      font-size: 0.8em;
-    }
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .menulist__item > svg {
+    width: 16px;
+    height: 16px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .menulist__item .inp {
+    flex: 1;
+    width: auto;
+    min-height: 30px;
+  }
+  .menulist__item .menulist__sum {
+    font-size: 11px;
+    color: var(--text-mute);
+    flex: 1;
   }
 
-  .ms-qa__add {
-    align-self: flex-start;
-    font-size: 0.78em;
-    padding: 2px 8px;
-    min-height: 28px;
-  }
-}
-
-// --- icon picker modal (portals to body) --------------------------------
-.ms-icon-picker-modal {
-  max-width: 480px;
-}
-
-.ms-icon-picker {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  .ms-icon-picker__search {
-    width: 100%;
-  }
-
-  .ms-icon-picker__count {
-    font-size: 0.75em;
-    opacity: 0.65;
-  }
-
-  .ms-icon-picker__grid {
+  /* add-action picker list */
+  .picklist {
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pickitem {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    width: 100%;
+    color: var(--text);
+    box-shadow: none;
+  }
+  .pickitem:hover {
+    background: var(--bg-soft);
+  }
+  .pickitem.is-disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .pickitem .squircle {
+    width: 38px;
+    height: 28px;
+    border-radius: 4px;
+  }
+  .pickitem .squircle svg {
+    width: 18px;
+    height: 18px;
+  }
+  .pickitem__t {
+    font-family: "Norwester", sans-serif;
+    font-size: 13.5px;
+  }
+  .pickitem__d {
+    font-size: 11.5px;
+    color: var(--text-mute);
+  }
+  .pickitem__on {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-mute);
+  }
+
+  .icongrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+    gap: 6px;
     max-height: 320px;
     overflow-y: auto;
   }
-
-  .ms-icon-picker__cell {
-    width: 40px;
-    height: 40px;
-    // Same Obsidian default-button-padding squish as .ms-qa__icon-btn.
-    padding: 0;
+  .icongrid button {
+    aspect-ratio: 1;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: rgba(60, 60, 80, 0.28);
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
-    border: 1px solid transparent;
-    background: rgba(60, 60, 80, 0.3);
     cursor: pointer;
-
-    svg {
-      flex-shrink: 0;
-      width: 26px;
-      height: 26px;
-      color: var(--text-normal, white);
-    }
-
-    &:hover {
-      border-color: var(--ms-gold, #ca9759);
-    }
-
-    &.is-current {
-      border-color: var(--ms-red, #8b0000);
-      box-shadow: 0 0 4px rgba(139, 0, 0, 0.7);
-    }
+    color: #fff;
+    padding: 0;
+    box-shadow: none;
+  }
+  .icongrid button:hover {
+    border-color: var(--accent-line);
+  }
+  .icongrid button.is-sel {
+    border-color: var(--accent);
+  }
+  .icongrid button svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
   }
 
-  .ms-icon-picker__credit {
-    font-size: 0.7em;
-    opacity: 0.6;
+  /* wizard */
+  .wizsteps {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .wizstep {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .wizstep__dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Norwester", sans-serif;
+    font-size: 12px;
+    color: var(--text-mute);
+    flex-shrink: 0;
+  }
+  .wizstep__dot svg {
+    width: 13px;
+    height: 13px;
+  }
+  .wizstep.is-active .wizstep__dot {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #14161d;
+  }
+  .wizstep.is-done .wizstep__dot {
+    border-color: var(--accent-line);
+    color: var(--accent);
+  }
+  .wizstep__lbl {
+    font-size: 12px;
+    color: var(--text-mute);
+  }
+  .wizstep.is-active .wizstep__lbl {
+    color: var(--text);
+  }
+  .wizstep__ln {
+    flex: 1;
+    height: 1.5px;
+    background: var(--line);
+    margin: 0 8px;
+  }
+  .wizstep__ln.is-done {
+    background: var(--accent-line);
+  }
+
+  .choice {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .choice__card {
+    text-align: left;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    color: var(--text);
+    box-shadow: none;
+  }
+  .choice__card:hover {
+    border-color: var(--accent-line);
+  }
+  .choice__card.is-sel {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .choice__ic {
+    color: var(--accent);
+    display: flex;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .choice__ic svg {
+    width: 17px;
+    height: 17px;
+  }
+  .choice__t {
+    font-family: "Norwester", sans-serif;
+    font-size: 13px;
+    display: block;
+  }
+  .choice__d {
+    font-size: 11px;
+    color: var(--text-mute);
+    margin-top: 2px;
+    line-height: 1.3;
+    display: block;
+  }
+
+  .review__row {
+    display: flex;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--line);
+  }
+  .review__row:last-child {
+    border-bottom: 0;
+  }
+  .review__row b {
+    flex: 0 0 96px;
+    color: var(--text-mute);
+    font-weight: 400;
+    font-family: "Taroca", sans-serif;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding-top: 2px;
   }
 }

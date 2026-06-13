@@ -1,30 +1,34 @@
+/**
+ * Character Configuration — rail-based master/detail surface (redesign).
+ * A header, a left category rail (Character / Combat / Skills / Effects /
+ * Rules) with per-category accents, and a scrolling detail pane. The Quick
+ * Actions editor/add/wizard render as centered modals hosted here.
+ *
+ * Keeps the (plugin, store, character, onClose) signature so ConfigApp and
+ * ConfigView are unchanged. All field state lives in the store; only the
+ * selected category + open modal are local (category persists to localStorage).
+ */
+import { useEffect, useState } from "preact/hooks";
+import { totalLevel } from "../../calc/class-stats";
 import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
-import type { CharacterRecord, ClassEntry } from "../../types/character";
-import { ABILITY_KEYS, type AbilityKey } from "../../types/character";
-import { Fragment } from "preact";
-import { CLASS_NAMES, getClassStats, totalBab, totalLevel } from "../../calc/class-stats";
-import { isPartialMechanics, listArchetypes } from "../../data/archetypes";
+import type { CharacterRecord } from "../../types/character";
+import { Icon } from "../common/Icon";
+import { UI } from "./glyphs";
 import {
-  applyHeritage,
-  findRaceByName,
-  getHeritage,
-  getRaceData,
-  listHeritages,
-  RACE_DATA,
-  RACE_KEYS,
-} from "../../data/races";
-import type { RaceData } from "../../data/types";
-import { NumberField, SelectField, TextField } from "../common/fields";
-import {
-  CustomBuffsEditor,
-  EnergyResEditor,
-  MiscConfigEditor,
-  ResourcesEditor,
-  RuleLinksEditor,
-  SkillsEditor,
-} from "./editors";
-import { QuickActionsEditor } from "./QuickActionsEditor";
+  AttackBlocksSection,
+  BuffsSection,
+  CharacterActionsSection,
+  ClassesSection,
+  DefenseSection,
+  EnergySection,
+  IdentitySection,
+  ResourcesSection,
+  RulesSection,
+  SkillsSection,
+  VitalsSection,
+} from "./sections";
+import { QAAddModal, QAEditor, QAWizard, QuickActionsSection } from "./QuickActionsEditor";
 
 interface ConfigSurfaceProps {
   plugin: MiniSheetPlugin;
@@ -33,406 +37,144 @@ interface ConfigSurfaceProps {
   onClose: () => void;
 }
 
-const ABILITY_LABELS: Record<string, string> = {
-  str: "STR",
-  dex: "DEX",
-  con: "CON",
-  int: "INT",
-  wis: "WIS",
-  cha: "CHA",
+type Category = "character" | "combat" | "skills" | "effects" | "rules";
+
+const CATEGORIES: { id: Category; label: string; icon: string; accent: string }[] = [
+  { id: "character", label: "Character", icon: "ra-player", accent: "gold" },
+  { id: "combat", label: "Combat", icon: "ra-crossed-swords", accent: "red" },
+  { id: "skills", label: "Skills", icon: "ra-targeted", accent: "teal" },
+  { id: "effects", label: "Effects", icon: "ra-lightning-bolt", accent: "amber" },
+  { id: "rules", label: "Rules", icon: "ra-aware", accent: "blue" },
+];
+const accentOf = (id: string) => CATEGORIES.find((c) => c.id === id)?.accent ?? "gold";
+
+const ls = {
+  get(key: string, fallback: string): string {
+    try {
+      const raw = localStorage.getItem("msr_" + key);
+      return raw ? (JSON.parse(raw) as string) : fallback;
+    } catch {
+      return fallback;
+    }
+  },
+  set(key: string, value: string) {
+    try {
+      localStorage.setItem("msr_" + key, JSON.stringify(value));
+    } catch {
+      /* private mode / quota — non-fatal */
+    }
+  },
 };
 
+type Modal = { mode: "edit"; id: string } | { mode: "add" } | { mode: "wizard" } | null;
+
 export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfaceProps) {
-  const set = (path: string, value: unknown) =>
-    store.setCharacterField(character.id, path, value);
+  const [cat, setCat] = useState<Category>(() => {
+    const saved = ls.get("cat", "character");
+    return (CATEGORIES.some((c) => c.id === saved) ? saved : "character") as Category;
+  });
+  const [modal, setModal] = useState<Modal>(null);
+  useEffect(() => ls.set("cat", cat), [cat]);
+
+  const onSheetCount = (character.quickActions ?? []).filter((a) => !a.hidden).length;
+  const subtitle = [
+    character.race,
+    character.classes.map((c) => `${c.className} ${c.level}`).join(" / "),
+    `Level ${totalLevel(character.classes)}`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  const editing =
+    modal?.mode === "edit"
+      ? (character.quickActions ?? []).find((a) => a.id === modal.id) ?? null
+      : null;
 
   return (
-    <div class="ms-config">
-      <header class="ms-config__header">
-        <h2 class="ms-config__title">Configure — {character.name}</h2>
-        <button
-          class="ms-config__close"
-          aria-label="Close configuration"
-          onClick={onClose}
-        >
-          ✕
+    <div class="cfg">
+      <div class="cfg__top">
+        <h1 class="cfg__title">
+          Configure <b>{character.name}</b>
+        </h1>
+        <span class="cfg__sub">{subtitle}</span>
+        <span class="cfg__top-spacer" />
+        <button class="iconbtn" title="Close" aria-label="Close configuration" onClick={onClose}>
+          <UI.x />
         </button>
-      </header>
-
-      <section class="ms-config__section">
-        <h3 class="ms-config__section-title">Identity</h3>
-        <TextField
-          label="Name"
-          value={character.name}
-          onChange={(v) => set("name", v)}
-        />
-        <TextField
-          label="Race"
-          value={character.race}
-          onChange={(v) => set("race", v)}
-        />
-        <RaceDataPicker store={store} character={character} />
-        <SelectField
-          label="Type"
-          value={character.characterType}
-          options={["pc", "familiar"]}
-          onChange={(v) => set("characterType", v)}
-        />
-        <TextField
-          label="Banner image"
-          value={character.bannerImage ?? ""}
-          placeholder="vault path or URL"
-          onChange={(v) => set("bannerImage", v)}
-        />
-        <SpeedField character={character} set={set} />
-      </section>
-
-      <section class="ms-config__section">
-        <h3 class="ms-config__section-title">Base abilities</h3>
-        <div class="ms-config__abilities">
-          {ABILITY_KEYS.map((key) => (
-            <NumberField
-              key={key}
-              label={ABILITY_LABELS[key]}
-              value={character.baseAbilities[key]}
-              onChange={(v) => set(`baseAbilities.${key}`, v)}
-            />
-          ))}
-        </div>
-      </section>
-
-      <ClassesEditor
-        classes={character.classes}
-        onChange={(classes) => set("classes", classes)}
-      />
-
-      <section class="ms-config__section">
-        <h3 class="ms-config__section-title">Class data</h3>
-        <button
-          class="ms-config__add"
-          onClick={() => store.applyClassSkills(character.id)}
-        >
-          Mark class skills
-        </button>
-        <button
-          class="ms-config__add"
-          onClick={() => store.syncClassResources(character.id)}
-        >
-          Sync class pools
-        </button>
-        <button
-          class="ms-config__add"
-          onClick={() => store.syncClassQuickActions(character.id)}
-        >
-          Sync class actions
-        </button>
-        <div class="ms-config__derived">
-          Flags class skills on existing rows · upserts class resource pools ·
-          adds class quick actions (never overwrites your edits;
-          archetype-replaced pools &amp; actions are removed on sync)
-        </div>
-      </section>
-
-      <section class="ms-config__section">
-        <h3 class="ms-config__section-title">Hit points</h3>
-        <div class="ms-config__abilities">
-          <NumberField
-            label="Max"
-            value={character.hp.max}
-            onChange={(v) => set("hp.max", v)}
-          />
-          <NumberField
-            label="Current"
-            value={character.hp.current}
-            onChange={(v) => set("hp.current", v)}
-          />
-        </div>
-      </section>
-
-      <AttackBlocksEditor store={store} character={character} />
-
-      <MiscConfigEditor store={store} character={character} />
-      <EnergyResEditor store={store} character={character} />
-      <SkillsEditor store={store} character={character} />
-      <ResourcesEditor store={store} character={character} />
-      <CustomBuffsEditor store={store} character={character} />
-      <QuickActionsEditor app={plugin.app} store={store} character={character} />
-      <RuleLinksEditor store={store} character={character} plugin={plugin} />
-    </div>
-  );
-}
-
-function AttackBlocksEditor({
-  store,
-  character,
-}: {
-  store: MiniSheetStore;
-  character: CharacterRecord;
-}) {
-  const prefs = {
-    melee: "single",
-    ranged: "single",
-    ...character.attackBlocks,
-  };
-  const save = (patch: Partial<typeof prefs>) =>
-    store.setCharacterField(character.id, "attackBlocks", { ...prefs, ...patch });
-  return (
-    <section class="ms-config__section">
-      <h3 class="ms-config__section-title">Attack blocks</h3>
-      <SelectField
-        label="Melee display"
-        value={prefs.melee}
-        options={["single", "separate"]}
-        onChange={(v) => save({ melee: v })}
-      />
-      <SelectField
-        label="Ranged display"
-        value={prefs.ranged}
-        options={["single", "separate"]}
-        onChange={(v) => save({ ranged: v })}
-      />
-      <div class="ms-config__derived">
-        Equipped inventory weapons become attack blocks. Single = one block
-        with a weapon selector · separate = a block per equipped weapon.
       </div>
-    </section>
-  );
-}
-
-const CUSTOM_RACE = "(custom)";
-const RACE_NAME_OPTIONS = RACE_KEYS.map((k) => RACE_DATA[k].name).sort();
-
-function raceSummary(race: RaceData): string {
-  const mods = race.flexibleAbility
-    ? "+2 to one ability"
-    : ABILITY_KEYS.filter((k) => race.abilityMods[k])
-        .map((k) => {
-          const v = race.abilityMods[k]!;
-          return `${v > 0 ? "+" : ""}${v} ${ABILITY_LABELS[k]}`;
-        })
-        .join(", ");
-  const size = race.size === "small" ? "Small" : "Medium";
-  const VISION_LABELS: Record<string, string> = {
-    "low-light": "low-light vision",
-    darkvision60: "darkvision 60 ft",
-    darkvision120: "darkvision 120 ft",
-  };
-  const vision = race.vision
-    .filter((v) => v !== "normal")
-    .map((v) => VISION_LABELS[v] ?? v)
-    .join(", ");
-  return [mods, size, `${race.speed} ft`, vision].filter(Boolean).join(" · ");
-}
-
-/** Speed input: "" on a raceKey character means "derive from race". */
-function SpeedField({
-  character,
-  set,
-}: {
-  character: CharacterRecord;
-  set: (path: string, value: unknown) => void;
-}) {
-  const race = character.raceKey ? getRaceData(character.raceKey) : null;
-  return (
-    <>
-      <TextField
-        label="Speed"
-        value={character.speed}
-        placeholder={race ? `${race.speed}ft (racial)` : "30ft"}
-        onChange={(v) => set("speed", v)}
-      />
-      {race && !character.speed && (
-        <div class="ms-config__derived">
-          Speed derives from race — type to override, clear to revert.
-        </div>
-      )}
-    </>
-  );
-}
-
-const BASE_HERITAGE = "— (base)";
-
-function RaceDataPicker({
-  store,
-  character,
-}: {
-  store: MiniSheetStore;
-  character: CharacterRecord;
-}) {
-  const baseRace = character.raceKey ? getRaceData(character.raceKey) : null;
-  const heritages = baseRace ? listHeritages(baseRace.key) : [];
-  const heritage = baseRace
-    ? getHeritage(baseRace.key, character.raceHeritageKey ?? "")
-    : null;
-  // The EFFECTIVE race — summary and downstream displays must always use
-  // this, never baseRace, or the picker would show base mods while calc
-  // applies heritage mods.
-  const race = baseRace ? applyHeritage(baseRace, heritage?.key) : null;
-  return (
-    <>
-      <SelectField
-        label="Race data"
-        value={baseRace ? baseRace.name : CUSTOM_RACE}
-        options={[CUSTOM_RACE, ...RACE_NAME_OPTIONS]}
-        onChange={(v) =>
-          store.setRace(
-            character.id,
-            v === CUSTOM_RACE ? null : findRaceByName(v)?.key ?? null
-          )
-        }
-      />
-      {heritages.length > 0 && (
-        <SelectField
-          label="Heritage"
-          value={heritage ? heritage.name : BASE_HERITAGE}
-          options={[BASE_HERITAGE, ...heritages.map((h) => h.name)]}
-          onChange={(v) =>
-            store.setRaceHeritage(
-              character.id,
-              heritages.find((h) => h.name === v)?.key ?? null
-            )
-          }
-        />
-      )}
-      {baseRace?.flexibleAbility && (
-        <SelectField
-          label="+2 ability"
-          value={character.raceAbilityChoice ?? "—"}
-          options={["—", ...ABILITY_KEYS]}
-          onChange={(v) =>
-            store.setCharacterField(
-              character.id,
-              "raceAbilityChoice",
-              ABILITY_KEYS.includes(v as AbilityKey) ? v : undefined
-            )
-          }
-        />
-      )}
-      {race && <div class="ms-config__derived">{raceSummary(race)}</div>}
-      {heritage && (
-        <div class="ms-config__derived">SLA: {heritage.sla}</div>
-      )}
-    </>
-  );
-}
-
-function ClassesEditor({
-  classes,
-  onChange,
-}: {
-  classes: ClassEntry[];
-  onChange: (classes: ClassEntry[]) => void;
-}) {
-  const update = (idx: number, patch: Partial<ClassEntry>) => {
-    const next = classes.map((c, i) => (i === idx ? { ...c, ...patch } : c));
-    onChange(next);
-  };
-
-  const bab = totalBab(classes);
-  const level = totalLevel(classes);
-
-  return (
-    <section class="ms-config__section">
-      <h3 class="ms-config__section-title">Classes &amp; levels</h3>
-      {classes.map((entry, idx) => {
-        const stats = getClassStats(entry.className);
-        const archetypes = listArchetypes(entry.className);
-        const selected = entry.archetypeKeys ?? [];
-        return (
-          <Fragment key={idx}>
-            <div class="ms-config__class-row">
-              <select
-                class="ms-field__input dropdown"
-                value={entry.className}
-                onChange={(e) =>
-                  update(idx, {
-                    className: (e.target as HTMLSelectElement).value,
-                  })
-                }
-              >
-                {CLASS_NAMES.map((name) => (
-                  <option key={name} value={name} selected={name === entry.className}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-              <input
-                class="ms-field__input ms-field__input--number"
-                type="number"
-                min={0}
-                value={entry.level}
-                onInput={(e) => {
-                  const n = Number((e.target as HTMLInputElement).value);
-                  if (!Number.isNaN(n)) update(idx, { level: n });
-                }}
-              />
-              <span class="ms-config__class-stats">
-                {stats ? `${stats.hitDie} · BAB ×${stats.bab}` : "—"}
+      <div class="cfg__work">
+        <aside class="rail">
+          {CATEGORIES.map((c) => (
+            <button
+              key={c.id}
+              class={`rail__item acc-${c.accent}${cat === c.id ? " is-active" : ""}`}
+              onClick={() => setCat(c.id)}
+            >
+              <span class="rail__ic">
+                <Icon id={c.icon} />
               </span>
-              <button
-                class="ms-config__remove"
-                aria-label={`Remove ${entry.className}`}
-                onClick={() => onChange(classes.filter((_, i) => i !== idx))}
-              >
-                ✕
-              </button>
-            </div>
-            {archetypes.length > 0 && (
-              <details class="ms-config__arch">
-                <summary class="ms-config__arch-summary">
-                  Archetypes
-                  {selected.length > 0 && (
-                    <span class="ms-config__arch-count">{selected.length}</span>
-                  )}
-                </summary>
-                <div class="ms-config__arch-list">
-                  {archetypes.map((a) => {
-                    const checked = selected.includes(a.id);
-                    return (
-                      <label class="ms-config__arch-row" key={a.id}>
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => {
-                            const next = checked
-                              ? selected.filter((k) => k !== a.id)
-                              : [...selected, a.id];
-                            update(idx, {
-                              archetypeKeys: next.length > 0 ? next : undefined,
-                            });
-                          }}
-                        />
-                        <span class="ms-config__arch-name" title={a.description}>
-                          {a.name}
-                        </span>
-                        {isPartialMechanics(a.id, a.classKey) && (
-                          <span
-                            class="ms-config__arch-partial"
-                            title="No hand-authored stats yet — replaced pools/actions auto-suppress, but new abilities aren't computed"
-                          >
-                            partial
-                          </span>
-                        )}
-                      </label>
-                    );
-                  })}
-                </div>
-              </details>
-            )}
-          </Fragment>
-        );
-      })}
-      <button
-        class="ms-config__add"
-        onClick={() =>
-          onChange([...classes, { className: CLASS_NAMES[0], level: 1 }])
-        }
-      >
-        + Add class
-      </button>
-      <div class="ms-config__derived">
-        Level {level} · BAB +{bab}
+              <span class="rail__name">{c.label}</span>
+              {c.id === "effects" && <span class="rail__count">{onSheetCount}</span>}
+            </button>
+          ))}
+        </aside>
+        <div class={`detail acc-${accentOf(cat)}`}>
+          {cat === "character" && (
+            <>
+              <IdentitySection store={store} character={character} />
+              <CharacterActionsSection
+                store={store}
+                character={character}
+                goToEffects={() => setCat("effects")}
+              />
+              <VitalsSection store={store} character={character} />
+              <ClassesSection store={store} character={character} />
+            </>
+          )}
+          {cat === "combat" && (
+            <>
+              <AttackBlocksSection store={store} character={character} />
+              <DefenseSection store={store} character={character} />
+              <EnergySection store={store} character={character} />
+            </>
+          )}
+          {cat === "skills" && <SkillsSection store={store} character={character} />}
+          {cat === "effects" && (
+            <>
+              <QuickActionsSection
+                store={store}
+                character={character}
+                onEdit={(id) => setModal({ mode: "edit", id })}
+                onAdd={() => setModal({ mode: "add" })}
+              />
+              <ResourcesSection store={store} character={character} />
+              <BuffsSection store={store} character={character} />
+            </>
+          )}
+          {cat === "rules" && <RulesSection store={store} character={character} plugin={plugin} />}
+        </div>
       </div>
-    </section>
+
+      {editing && (
+        <div class="acc-amber">
+          <QAEditor store={store} character={character} def={editing} onClose={() => setModal(null)} />
+        </div>
+      )}
+      {modal?.mode === "add" && (
+        <div class="acc-amber">
+          <QAAddModal
+            store={store}
+            character={character}
+            onClose={() => setModal(null)}
+            onCustom={() => setModal({ mode: "wizard" })}
+          />
+        </div>
+      )}
+      {modal?.mode === "wizard" && (
+        <div class="acc-amber">
+          <QAWizard store={store} character={character} onClose={() => setModal(null)} />
+        </div>
+      )}
+    </div>
   );
 }

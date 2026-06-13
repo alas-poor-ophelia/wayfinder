@@ -257,3 +257,94 @@
   background-color: #8b0000;
   box-shadow: none;
 }
+
+// ===========================================================================
+// Config redesign — every button under .minisheet-config-root needs an
+// is-tablet override, or Obsidian's mobile build inflates it (injected
+// padding/background-color/box-shadow on button:not(.clickable-icon)).
+// Prefix selectors with `.is-tablet .minisheet-config-root` (0,3,1) so they
+// beat Obsidian's injection (0,2,1); state rules add a class for (0,4,1).
+// Re-assert the LONGHAND background-color (not the `background` shorthand —
+// the mobile build only stomps background-color).
+// ===========================================================================
+.is-tablet .minisheet-config-root {
+  --ms-touch: 45px;
+
+  button {
+    box-shadow: none;
+  }
+
+  /* shape / icon buttons: flat, no padding */
+  button:is(.iconbtn, .qa-cell, .cact, .respool__kind, .tog, .chk, .iconpick__btn, .effect__ftoggle, .squircle),
+  .icongrid button {
+    padding: 0;
+  }
+
+  /* padded text/list buttons: re-assert their intended padding */
+  button.btn {
+    padding: 7px 13px;
+  }
+  button.btn--sm {
+    padding: 5px 10px;
+  }
+  button.rail__item {
+    padding: 8px 10px;
+  }
+  .seg button {
+    padding: 5px 12px;
+  }
+  button.synccard,
+  button.choice__card {
+    padding: 10px;
+  }
+  button.pickitem {
+    padding: 9px 8px;
+  }
+
+  /* re-assert default (transparent) backgrounds the mobile build stomps */
+  button:is(.btn, .iconbtn, .qa-cell, .cact, .rail__item, .respool__kind, .effect__ftoggle, .synccard, .pickitem, .choice__card),
+  .seg button {
+    background-color: transparent;
+  }
+  button:is(.tog, .chk) {
+    background-color: var(--input);
+  }
+  button:is(.iconpick__btn, .squircle) {
+    background-color: rgba(60, 60, 80, 0.3);
+  }
+  .icongrid button {
+    background-color: rgba(60, 60, 80, 0.28);
+  }
+
+  /* state backgrounds (extra class -> higher specificity, so they win) */
+  button.btn--accent:hover {
+    background-color: var(--accent);
+  }
+  button.iconbtn:hover,
+  button.synccard:hover,
+  button.pickitem:hover {
+    background-color: var(--bg-soft);
+  }
+  .seg button.is-active {
+    background-color: var(--accent);
+  }
+  button.rail__item.is-active,
+  button.respool__kind.is-item,
+  button.tog.is-on,
+  button.chk.is-on,
+  button.choice__card.is-sel {
+    background-color: var(--accent-soft);
+  }
+  button.effect__ftoggle.is-on {
+    background-color: rgba(140, 30, 30, 0.6);
+  }
+  button.squircle.is-on {
+    background-color: rgba(140, 30, 30, 0.72);
+  }
+
+  /* comfortable touch height for the primary text/list buttons */
+  button:is(.btn, .rail__item, .synccard, .pickitem, .choice__card),
+  .seg button {
+    min-height: var(--ms-touch);
+  }
+}
