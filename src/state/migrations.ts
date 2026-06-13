@@ -7,6 +7,7 @@
  */
 
 import { seedQuickActionsFromToggles } from "../data/quick-actions";
+import { getRaceData } from "../data/races";
 import { defaultToggles, type CharacterRecord, type ResourcePool } from "../types/character";
 import type { QuickActionEffect } from "../types/quick-actions";
 import type { MiniSheetData } from "../types/data-file";
@@ -34,7 +35,37 @@ export function migrateData(raw: Partial<MiniSheetData>): Partial<MiniSheetData>
   // (v8 was schema-forward only: ClassEntry.archetypeKeys, no code.)
   if (version < 9) data = migrateToV9(data);
   if (version < 10) data = migrateToV10(data);
+  if (version < 11) data = migrateToV11(data);
   return data;
+}
+
+/**
+ * v11: racial speed/size become derived-with-override. A stored speed that
+ * exactly matches the race's canonical "<N>ft" converts to the derived
+ * sentinel (speed: ""); a stored sizeMod that DIFFERS from the race-derived
+ * value is stamped into ac.sizeModOverride so computed outputs stay
+ * byte-for-byte. Characters without a raceKey are untouched — a default
+ * "30ft"/sizeMod 0 alone is NOT evidence of intent; the raceKey gate is.
+ * (raceHeritageKey is schema-forward only, like v8 — nobody has one yet.)
+ */
+function migrateToV11(raw: Partial<MiniSheetData>): Partial<MiniSheetData> {
+  if (!raw.characters) return raw;
+  return { ...raw, characters: raw.characters.map(migrateCharacterToV11) };
+}
+
+function migrateCharacterToV11(record: CharacterRecord): CharacterRecord {
+  const race = record.raceKey ? getRaceData(record.raceKey) : null;
+  if (!race) return record;
+  let next = record;
+  if (next.speed === `${race.speed}ft`) {
+    next = { ...next, speed: "" };
+  }
+  const derived = race.size === "small" ? 1 : 0;
+  const stored = next.ac?.sizeMod ?? 0;
+  if (next.ac && stored !== derived && next.ac.sizeModOverride === undefined) {
+    next = { ...next, ac: { ...next.ac, sizeModOverride: stored } };
+  }
+  return next;
 }
 
 /**

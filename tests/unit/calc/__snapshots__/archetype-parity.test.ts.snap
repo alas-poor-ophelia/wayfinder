@@ -93,6 +93,12 @@ exports[`archetype parity guard: no-archetype output is frozen > Fighter 4 1`] =
     "wis": 10,
   },
   "skills": [],
+  "speed": {
+    "base": 30,
+    "notes": [],
+    "text": "30ft",
+    "total": 30,
+  },
   "totalLevel": 4,
 }
 `;
@@ -190,6 +196,12 @@ exports[`archetype parity guard: no-archetype output is frozen > Monk (Unchained
     "wis": 16,
   },
   "skills": [],
+  "speed": {
+    "base": 30,
+    "notes": [],
+    "text": "30ft",
+    "total": 30,
+  },
   "totalLevel": 5,
 }
 `;
@@ -287,6 +299,12 @@ exports[`archetype parity guard: no-archetype output is frozen > Paladin 4 / Fig
     "wis": 12,
   },
   "skills": [],
+  "speed": {
+    "base": 30,
+    "notes": [],
+    "text": "30ft",
+    "total": 30,
+  },
   "totalLevel": 7,
 }
 `;
@@ -403,6 +421,12 @@ exports[`archetype parity guard: no-archetype output is frozen > Paladin 7 (cast
       "usesPerform": false,
     },
   ],
+  "speed": {
+    "base": 30,
+    "notes": [],
+    "text": "30ft",
+    "total": 30,
+  },
   "spellbook": {
     "casterLevel": 7,
     "castingStatBonus": 3,

@@ -149,6 +149,35 @@ export interface RaceData {
   traits: RaceTrait[];
 }
 
+/**
+ * A variant heritage (Blood of Fiends tieflings, Blood of Angels aasimars).
+ * A heritage REPLACES the base race's ability modifiers, its "Skilled"
+ * skill bonuses, and its spell-like ability; everything else (size, speed,
+ * vision, resistances, languages, remaining traits) is kept. Applied as a
+ * pure RaceData transform — see applyHeritage() in src/data/races.
+ */
+export interface RaceHeritage {
+  /** kebab-case key, e.g. "demon-spawn" */
+  key: string;
+  /** display name, e.g. "Demon-Spawn (Pitborn)" */
+  name: string;
+  /** the base race this heritage belongs to (RaceData.key) */
+  raceKey: string;
+  source: string;
+  /** REPLACES the base race's abilityMods wholesale */
+  abilityMods: Partial<AbilityScores>;
+  /** heritage modifiers, added after replacesSources are dropped */
+  modifiers: Modifier[];
+  /** base-race Modifier.source values this heritage removes
+   *  (e.g. "Tiefling: Skilled") */
+  replacesSources: string[];
+  /** replacement spell-like ability — swaps the base race's
+   *  "Spell-Like Ability" trait summary */
+  sla: string;
+  /** extra descriptive traits beyond the SLA swap, if any */
+  traits?: RaceTrait[];
+}
+
 /** The ten Knowledge entries as STANDARD_SKILLS spells them. */
 export const ALL_KNOWLEDGE: string[] = [
   "Knowledge (arcana)",

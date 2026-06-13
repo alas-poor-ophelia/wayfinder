@@ -25,7 +25,7 @@ import { evaluateResourceFormula } from "../calc/resources";
 import { resolveArchetypeEffects } from "../data/archetypes";
 import { classQuickActionIds, classResources, unionClassSkills } from "../data/classes";
 import { getCatalogQuickAction } from "../data/quick-actions";
-import { getRaceData } from "../data/races";
+import { getHeritage, getRaceData } from "../data/races";
 import { migrateData } from "./migrations";
 
 const SAVE_DEBOUNCE_MS = 500;
@@ -328,7 +328,8 @@ export class MiniSheetStore {
   }
 
   /** Set (or clear) the structured race. Keeps the free-text label in sync
-   *  when picking and drops a stale flexible-ability choice. */
+   *  when picking, drops a stale flexible-ability choice, and drops the
+   *  heritage unless the new race actually owns it. */
   setRace(id: string, raceKey: string | null): void {
     const race = raceKey ? getRaceData(raceKey) : null;
     const current = this.getCharacter(id);
@@ -338,7 +339,22 @@ export class MiniSheetStore {
       raceAbilityChoice: race?.flexibleAbility
         ? current?.raceAbilityChoice
         : undefined,
+      raceHeritageKey:
+        race && current?.raceHeritageKey && getHeritage(race.key, current.raceHeritageKey)
+          ? current.raceHeritageKey
+          : undefined,
     });
+  }
+
+  /** Set (or clear) the variant heritage. Validated against the current
+   *  raceKey — an unknown or foreign key clears instead of persisting. */
+  setRaceHeritage(id: string, heritageKey: string | null): void {
+    const current = this.getCharacter(id);
+    const valid =
+      heritageKey && current?.raceKey
+        ? getHeritage(current.raceKey, heritageKey)
+        : null;
+    this.updateCharacter(id, { raceHeritageKey: valid ? valid.key : undefined });
   }
 
   /** Flag existing skill entries that are class skills for the character's

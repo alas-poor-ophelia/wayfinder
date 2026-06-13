@@ -5,7 +5,15 @@ import { ABILITY_KEYS, type AbilityKey } from "../../types/character";
 import { Fragment } from "preact";
 import { CLASS_NAMES, getClassStats, totalBab, totalLevel } from "../../calc/class-stats";
 import { isPartialMechanics, listArchetypes } from "../../data/archetypes";
-import { findRaceByName, getRaceData, RACE_DATA, RACE_KEYS } from "../../data/races";
+import {
+  applyHeritage,
+  findRaceByName,
+  getHeritage,
+  getRaceData,
+  listHeritages,
+  RACE_DATA,
+  RACE_KEYS,
+} from "../../data/races";
 import type { RaceData } from "../../data/types";
 import { NumberField, SelectField, TextField } from "../common/fields";
 import {
@@ -76,11 +84,7 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
           placeholder="vault path or URL"
           onChange={(v) => set("bannerImage", v)}
         />
-        <TextField
-          label="Speed"
-          value={character.speed}
-          onChange={(v) => set("speed", v)}
-        />
+        <SpeedField character={character} set={set} />
       </section>
 
       <section class="ms-config__section">
@@ -220,6 +224,34 @@ function raceSummary(race: RaceData): string {
   return [mods, size, `${race.speed} ft`, vision].filter(Boolean).join(" · ");
 }
 
+/** Speed input: "" on a raceKey character means "derive from race". */
+function SpeedField({
+  character,
+  set,
+}: {
+  character: CharacterRecord;
+  set: (path: string, value: unknown) => void;
+}) {
+  const race = character.raceKey ? getRaceData(character.raceKey) : null;
+  return (
+    <>
+      <TextField
+        label="Speed"
+        value={character.speed}
+        placeholder={race ? `${race.speed}ft (racial)` : "30ft"}
+        onChange={(v) => set("speed", v)}
+      />
+      {race && !character.speed && (
+        <div class="ms-config__derived">
+          Speed derives from race — type to override, clear to revert.
+        </div>
+      )}
+    </>
+  );
+}
+
+const BASE_HERITAGE = "— (base)";
+
 function RaceDataPicker({
   store,
   character,
@@ -227,12 +259,20 @@ function RaceDataPicker({
   store: MiniSheetStore;
   character: CharacterRecord;
 }) {
-  const race = character.raceKey ? getRaceData(character.raceKey) : null;
+  const baseRace = character.raceKey ? getRaceData(character.raceKey) : null;
+  const heritages = baseRace ? listHeritages(baseRace.key) : [];
+  const heritage = baseRace
+    ? getHeritage(baseRace.key, character.raceHeritageKey ?? "")
+    : null;
+  // The EFFECTIVE race — summary and downstream displays must always use
+  // this, never baseRace, or the picker would show base mods while calc
+  // applies heritage mods.
+  const race = baseRace ? applyHeritage(baseRace, heritage?.key) : null;
   return (
     <>
       <SelectField
         label="Race data"
-        value={race ? race.name : CUSTOM_RACE}
+        value={baseRace ? baseRace.name : CUSTOM_RACE}
         options={[CUSTOM_RACE, ...RACE_NAME_OPTIONS]}
         onChange={(v) =>
           store.setRace(
@@ -241,7 +281,20 @@ function RaceDataPicker({
           )
         }
       />
-      {race?.flexibleAbility && (
+      {heritages.length > 0 && (
+        <SelectField
+          label="Heritage"
+          value={heritage ? heritage.name : BASE_HERITAGE}
+          options={[BASE_HERITAGE, ...heritages.map((h) => h.name)]}
+          onChange={(v) =>
+            store.setRaceHeritage(
+              character.id,
+              heritages.find((h) => h.name === v)?.key ?? null
+            )
+          }
+        />
+      )}
+      {baseRace?.flexibleAbility && (
         <SelectField
           label="+2 ability"
           value={character.raceAbilityChoice ?? "—"}
@@ -256,6 +309,9 @@ function RaceDataPicker({
         />
       )}
       {race && <div class="ms-config__derived">{raceSummary(race)}</div>}
+      {heritage && (
+        <div class="ms-config__derived">SLA: {heritage.sla}</div>
+      )}
     </>
   );
 }

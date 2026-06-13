@@ -10,6 +10,15 @@ import { CORE_RACES } from "./core";
 import { FEATURED_RACES } from "./featured";
 import { UNCOMMON_RACES } from "./uncommon";
 
+export {
+  AASIMAR_HERITAGES,
+  applyHeritage,
+  getHeritage,
+  HERITAGES_BY_RACE,
+  listHeritages,
+  TIEFLING_HERITAGES,
+} from "./heritages";
+
 const ALL_RACES: RaceData[] = [...CORE_RACES, ...FEATURED_RACES, ...UNCOMMON_RACES];
 
 export const RACE_DATA: Record<string, RaceData> = Object.fromEntries(

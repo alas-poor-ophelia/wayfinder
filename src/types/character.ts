@@ -159,7 +159,14 @@ export interface ACState {
   natural: number;
   dodge: number;
   deflection: number;
+  /** manual size modifier — the only size input for characters WITHOUT a
+   *  raceKey. With a raceKey, size derives from race.size (small = +1)
+   *  unless sizeModOverride is set. */
   sizeMod: number;
+  /** explicit override of the race-derived size modifier (raceKey
+   *  characters only; 0 is ambiguous between "medium" and "manual zero",
+   *  hence a separate field rather than an in-band sentinel) */
+  sizeModOverride?: number;
   showCMBCMD: boolean;
 }
 
@@ -219,6 +226,9 @@ export interface CharacterRecord {
   raceKey?: string;
   /** chosen ability for flexible "+2 to any one" races (human etc.) */
   raceAbilityChoice?: AbilityKey;
+  /** variant heritage key (src/data/races/heritages.ts) — must name a
+   *  heritage of the current raceKey; unknown/stale keys are ignored */
+  raceHeritageKey?: string;
   bannerImage?: string;
   baseAbilities: AbilityScores;
   classes: ClassEntry[];
@@ -229,6 +239,9 @@ export interface CharacterRecord {
   ac: ACState;
   energyRes: Record<string, number>;
   initiative: InitiativeState;
+  /** movement speed. "" = derive from race.speed (raceKey characters);
+   *  any non-empty string is a manual override and the only path for
+   *  characters without a raceKey (default "30ft"). */
   speed: string;
   toggles: CombatToggles;
   /** Quick Actions: per-character defs, array order = combat-tab order.

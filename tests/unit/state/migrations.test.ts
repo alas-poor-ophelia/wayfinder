@@ -212,3 +212,52 @@ describe("migrateData v9 -> v10 (Spell Warrior stamped onto weapon-song skalds)"
     expect(out.characters![0].classes[0].archetypeKeys).toEqual(["elegist"]);
   });
 });
+
+describe("migrateData v10 -> v11 (speed/size derive-with-override)", () => {
+  const v10 = (c: CharacterRecord) => migrateData({ schemaVersion: 10, characters: [c] }).characters![0];
+
+  it("no raceKey: default 30ft / sizeMod 0 record is untouched (H-594)", () => {
+    const c = createDefaultCharacter("x", "X"); // speed "30ft", sizeMod 0, no raceKey
+    const out = v10(c);
+    expect(out.speed).toBe("30ft");
+    expect(out.ac.sizeModOverride).toBeUndefined();
+  });
+
+  it("raceKey + speed matching the racial canonical form → derived sentinel", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.raceKey = "dwarf"; // 20 ft
+    c.speed = "20ft";
+    expect(v10(c).speed).toBe("");
+  });
+
+  it("raceKey + non-matching speed string is preserved as an override", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.raceKey = "dwarf";
+    c.speed = "40ft";
+    expect(v10(c).speed).toBe("40ft");
+  });
+
+  it("small race with sizeMod 0 stays derived (no override stamped)", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.raceKey = "halfling"; // small → derived +1
+    c.ac.sizeMod = 1; // already matches derived
+    expect(v10(c).ac.sizeModOverride).toBeUndefined();
+  });
+
+  it("a sizeMod differing from the race-derived value is stamped as override", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.raceKey = "halfling"; // derived +1
+    c.ac.sizeMod = 0; // differs → preserve via override
+    expect(v10(c).ac.sizeModOverride).toBe(0);
+  });
+
+  it("is idempotent on already-migrated data", () => {
+    const c = createDefaultCharacter("x", "X");
+    c.raceKey = "dwarf";
+    c.speed = "20ft";
+    c.ac.sizeMod = 0;
+    const once = v10(c);
+    const twice = migrateData({ schemaVersion: 11, characters: [once] }).characters![0];
+    expect(twice).toEqual(once);
+  });
+});

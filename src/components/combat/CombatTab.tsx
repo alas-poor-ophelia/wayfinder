@@ -73,7 +73,7 @@ export function CombatTab({ plugin, store, character, computed }: CombatTabProps
       <div class="ms-combat__energy">
         <EnergyRes character={character} />
       </div>
-      <InitSpeed character={character} computed={computed} />
+      <InitSpeed computed={computed} />
       <div class="ms-combat__saves">
         <Saves
           character={character}

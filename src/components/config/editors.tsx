@@ -1,4 +1,5 @@
 import { STANDARD_SKILLS } from "../../calc/skills";
+import { getRaceData } from "../../data/races";
 import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type {
@@ -441,6 +442,11 @@ export function EnergyResEditor({ store, character }: EditorProps) {
 export function MiscConfigEditor({ store, character }: EditorProps) {
   const set = (path: string, value: unknown) =>
     store.setCharacterField(character.id, path, value);
+  // Race-derived size modifier (small = +1), or null without a raceKey.
+  // With a race, the field shows override ?? derived; typing the derived
+  // value clears the override (re-links to race), a differing value sticks.
+  const race = character.raceKey ? getRaceData(character.raceKey) : null;
+  const raceSizeMod = race ? (race.size === "small" ? 1 : 0) : null;
   return (
     <section class="ms-config__section">
       <h3 class="ms-config__section-title">Combat config</h3>
@@ -462,8 +468,22 @@ export function MiscConfigEditor({ store, character }: EditorProps) {
         </label>
         <label class="ms-field">
           <span class="ms-field__label">Size mod</span>
-          <input class="ms-field__input ms-field__input--number" type="number" value={character.ac.sizeMod}
-            onInput={(e) => { const n = Number((e.target as HTMLInputElement).value); if (!Number.isNaN(n)) set("ac.sizeMod", n); }} />
+          <input class="ms-field__input ms-field__input--number" type="number"
+            title={raceSizeMod !== null
+              ? `Derived from race (${raceSizeMod}); a differing value overrides`
+              : undefined}
+            value={raceSizeMod !== null
+              ? character.ac.sizeModOverride ?? raceSizeMod
+              : character.ac.sizeMod}
+            onInput={(e) => {
+              const n = Number((e.target as HTMLInputElement).value);
+              if (Number.isNaN(n)) return;
+              if (raceSizeMod !== null) {
+                set("ac.sizeModOverride", n === raceSizeMod ? undefined : n);
+              } else {
+                set("ac.sizeMod", n);
+              }
+            }} />
         </label>
         <label class="ms-field">
           <span class="ms-field__label">Melee enh.</span>

@@ -154,7 +154,11 @@ export const DEFAULT_DATA: MiniSheetData = {
   // v10: skalds with a weapon-song pool/quick-action get ["spell-warrior"]
   // stamped (weapon song is that archetype's raging song), so resource
   // sync re-keys the pool instead of granting ragingSong (real migration)
-  schemaVersion: 10,
+  // v11: racial speed/size become derived-with-override — speed matching
+  // the race's "<N>ft" converts to the "" sentinel, a differing sizeMod is
+  // stamped into ac.sizeModOverride; no-raceKey characters untouched (real
+  // migration). CharacterRecord.raceHeritageKey is schema-forward (like v8).
+  schemaVersion: 11,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

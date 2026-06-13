@@ -39,7 +39,7 @@ import {
 } from "./modifiers";
 import { resolveArchetypeEffects } from "../data/archetypes";
 import { getBuffDef } from "../data/buffs";
-import { getRaceData, racialAbilityMods } from "../data/races";
+import { applyHeritage, getHeritage, getRaceData, racialAbilityMods } from "../data/races";
 import type { RaceData } from "../data/types";
 import { resolveQuickActions } from "./quick-actions";
 
@@ -71,6 +71,10 @@ export interface ComputedCharacter {
   hpMaxEffective: number;
   /** speed multiplier from conditions (1 = normal) */
   movementMultiplier: number;
+  /** movement speed: race-derived (character.speed === "") or the manual
+   *  string, plus unconditional "speed" modifiers, times movementMultiplier.
+   *  notes carries conditional speed riders (never auto-summed). */
+  speed: { base: number; total: number; text: string; notes: string[] };
   /** present only for characters with a spellbook */
   spellbook?: SpellbookComputed;
   /** present only for characters with an inventory */
@@ -80,10 +84,13 @@ export interface ComputedCharacter {
   /** present only when the character has a raceKey — race data plus the
    *  situational racial modifiers that never auto-sum ("vs poison" etc.) */
   racial?: {
+    /** the EFFECTIVE race — heritage-transformed when one is selected */
     race: RaceData;
     notes: string[];
     /** situational save modifiers, pre-formatted for the save tooltips */
     saveNotes: { fort: string[]; ref: string[]; will: string[] };
+    /** present when a variant heritage is applied */
+    heritage?: { key: string; name: string; source: string };
   };
   /** present when any typed modifiers (racial/gear/config) are in play —
    *  situational riders and same-type-suppressed bonuses, pre-formatted */
@@ -111,8 +118,16 @@ export function computeAll(
   });
 
   // Racial contributions are opt-in via raceKey: characters without it
-  // (all legacy saves) compute byte-for-byte as before.
-  const race = character.raceKey ? getRaceData(character.raceKey) : null;
+  // (all legacy saves) compute byte-for-byte as before. A variant heritage
+  // transforms the base race into an effective RaceData (swapped ability
+  // mods / Skilled bonuses / SLA) — everything downstream reads `race`.
+  const baseRace = character.raceKey ? getRaceData(character.raceKey) : null;
+  const race = baseRace
+    ? applyHeritage(baseRace, character.raceHeritageKey)
+    : null;
+  const heritage = baseRace
+    ? getHeritage(baseRace.key, character.raceHeritageKey ?? "")
+    : null;
   const racialMods = race ? race.modifiers : [];
 
   // Equipped gear: typed modifiers from inventory items. Persisted data —
@@ -256,12 +271,20 @@ export function computeAll(
   // applies everywhere; dodgeAC: lost flat-footed).
   const acResolved = resolveAcModifiers(combined);
 
+  // Size: derived from race when raceKey is set (small = +1), with an
+  // explicit override; characters without a raceKey keep the manual
+  // ac.sizeMod path untouched. The same value feeds AC, CMB, and CMD
+  // (same-sign legacy quirk preserved — see calculateACValues).
+  const sizeMod =
+    character.ac.sizeModOverride ??
+    (race ? (race.size === "small" ? 1 : 0) : character.ac.sizeMod);
+
   const ac = calculateACValues({
     dexMod: mods.dex,
     chaMod: mods.cha,
     strMod: mods.str,
     wisMod: mods.wis,
-    sizeMod: character.ac.sizeMod,
+    sizeMod,
     weaponSong: qa ? "Off" : character.toggles.weaponSong,
     naturalAC: acResolved.naturalLike,
     deflectionAC: acResolved.deflectionLike,
@@ -484,7 +507,7 @@ export function computeAll(
     const reportTargets = [
       "attack.melee", "attack.ranged", "attack.unarmed",
       "damage.melee", "damage.ranged", "damage.unarmed",
-      "save.fort", "save.ref", "save.will", "initiative",
+      "save.fort", "save.ref", "save.will", "initiative", "speed",
       ...ABILITY_KEYS.map((k) => `ability.${k}`),
     ];
     for (const target of reportTargets) {
@@ -498,6 +521,33 @@ export function computeAll(
       modifierReport = { conditional, suppressed };
     }
   }
+
+  // Speed: race-derived when character.speed is "" (raceKey set), else the
+  // manual string. Unconditional "speed" modifiers add pre-multiplier;
+  // conditional ones (Catfolk Sprinter) surface as notes, never summed.
+  // text preserves the manual string verbatim when nothing changes it —
+  // byte-parity with the old InitSpeed rendering, freeform strings included.
+  const speedResolved = combined.length
+    ? resolveModifiers(combined, "speed")
+    : null;
+  const movementMultiplier = effects.movementAdjust ?? 1;
+  const speedBase = character.speed
+    ? parseInt(character.speed) || 0
+    : race?.speed ?? 30;
+  const speedTotal = Math.floor(
+    (speedBase + (speedResolved?.total ?? 0)) * movementMultiplier
+  );
+  const speed = {
+    base: speedBase,
+    total: speedTotal,
+    text:
+      character.speed && speedTotal === (parseInt(character.speed) || 0)
+        ? character.speed
+        : `${speedTotal}ft`,
+    notes: speedResolved
+      ? speedResolved.conditional.map(describeModifier)
+      : [],
+  };
 
   return {
     mods,
@@ -515,7 +565,8 @@ export function computeAll(
       (character.link?.hpMaxFromMaster && master
         ? Math.floor(master.hp.max / 2)
         : character.hp.max) + (effects.hpMaxAdjust || 0),
-    movementMultiplier: effects.movementAdjust ?? 1,
+    movementMultiplier,
+    speed,
     ...(spellbook ? { spellbook } : {}),
     ...(encumbrance ? { encumbrance } : {}),
     ...(xp ? { xp } : {}),
@@ -530,6 +581,15 @@ export function computeAll(
               ref: resolveModifiers(racialMods, "save.ref").conditional.map(describeModifier),
               will: resolveModifiers(racialMods, "save.will").conditional.map(describeModifier),
             },
+            ...(heritage
+              ? {
+                  heritage: {
+                    key: heritage.key,
+                    name: heritage.name,
+                    source: heritage.source,
+                  },
+                }
+              : {}),
           },
         }
       : {}),

@@ -9,6 +9,10 @@
  *  2. Scaled Fist AC (calc/ac.ts keyed the monk AC bonus off CHA for
  *     every monk — diff reviewed: the plain-monk fixture's AC/cmd move
  *     from the CHA-based to the RAW WIS-based bonus, nothing else).
+ *  3. computed.speed added (race speed/size wiring) — diff reviewed:
+ *     every fixture gains the additive `speed` object; no existing key
+ *     changed (no raceKey on these fixtures, so speed derives from the
+ *     manual "30ft" string exactly as InitSpeed rendered before).
  * From here on these are frozen again.
  */
 import { describe, expect, it } from "vitest";
