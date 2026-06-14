@@ -73,6 +73,41 @@ export interface SlaEntry {
   castsRemaining: number;
 }
 
+/**
+ * One entry in a Loadout — a SpellPreparation snapshot. `spellId` references a
+ * KnownSpell.id in the same spellbook; `level` is the level it is prepared at
+ * (the adjustedLevel). Display name/school are resolved at render from the
+ * spellbook's KnownSpell (or the spell index), never stored.
+ */
+export interface LoadoutSpell {
+  spellId: string;
+  level: SpellLevel;
+  metamagic: string[];
+  count: number;
+}
+
+/**
+ * A named preparation set a prepared/hybrid caster swaps between (schema v14).
+ * Re-adds the legacy vault-YAML "loadouts" feature into the plugin data model;
+ * `icon` is an Icon-registry id, `color` a hex from the loadout palette.
+ */
+export interface Loadout {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  desc: string;
+  spells: LoadoutSpell[];
+}
+
+export function newLoadoutId(): string {
+  let suffix = "";
+  while (suffix.length < 9) {
+    suffix += Math.random().toString(36).slice(2);
+  }
+  return `lo_${suffix.slice(0, 9)}`;
+}
+
 export interface SpellbookState {
   /** key into CASTER_CONFIGS, e.g. "skald" */
   castingClass: string;
@@ -107,6 +142,13 @@ export interface SpellbookState {
   slas: SlaEntry[];
   /** persisted collapse state of the tab's sections (legacy calloutStates) */
   sectionCollapsed: Record<string, boolean>;
+  /**
+   * Named preparation sets (schema v14). Optional/absent on books that predate
+   * v14 — read with `?? []`. Managed from the Spell Database's Loadouts tab.
+   */
+  loadouts?: Loadout[];
+  /** which loadout is currently "applied" (drives the Active marker) */
+  appliedLoadoutId?: string;
 }
 
 export function getSpellLevelKey(level: SpellLevel | number): string {
@@ -161,5 +203,6 @@ export function createDefaultSpellbook(
     preparations,
     slas: [],
     sectionCollapsed: {},
+    loadouts: [],
   };
 }

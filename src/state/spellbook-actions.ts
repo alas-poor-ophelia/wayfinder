@@ -17,8 +17,14 @@ import {
   totalMetamagicAdjustment,
 } from "../calc/spells";
 import type { AbilityKey, CharacterRecord } from "../types/character";
-import type { KnownSpell, SpellLevel, SpellPreparation } from "../types/spellbook";
-import { getSpellLevelKey } from "../types/spellbook";
+import type {
+  KnownSpell,
+  Loadout,
+  LoadoutSpell,
+  SpellLevel,
+  SpellPreparation,
+} from "../types/spellbook";
+import { getSpellLevelKey, newLoadoutId } from "../types/spellbook";
 import type { MiniSheetStore } from "./store";
 
 function requireSpellbook(character: CharacterRecord) {
@@ -531,4 +537,226 @@ export function removeKnownSpell(
     "spellbook.spells",
     sb.spells.filter((s) => (s.originalId ?? s.id) !== dbId)
   );
+}
+
+// ===========================================================================
+// Loadouts (schema v14) — named preparation sets a prepared/hybrid caster
+// swaps between. Mutations write the whole `spellbook` (structuredClone) so
+// the optional `loadouts` key is created cleanly on books that predate v14.
+// ===========================================================================
+
+export function getLoadouts(character: CharacterRecord): Loadout[] {
+  return character.spellbook?.loadouts ?? [];
+}
+
+/** dedupe key for a loadout entry: same spell + level + metamagic set. */
+function loadoutEntryKey(s: LoadoutSpell): string {
+  return JSON.stringify([s.spellId, s.level, [...s.metamagic].sort()]);
+}
+
+export function createLoadout(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  partial: Partial<Omit<Loadout, "id">> = {}
+): string {
+  const sb = requireSpellbook(character);
+  const id = newLoadoutId();
+  const loadout: Loadout = {
+    name: "New Loadout",
+    icon: "ra-crystals",
+    color: "#ca9759",
+    desc: "",
+    spells: [],
+    ...partial,
+    id,
+  };
+  const next = structuredClone(sb);
+  next.loadouts = [...(next.loadouts ?? []), loadout];
+  store.setCharacterField(character.id, "spellbook", next);
+  return id;
+}
+
+export function updateLoadout(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  id: string,
+  patch: Partial<Omit<Loadout, "id" | "spells">>
+): void {
+  const sb = requireSpellbook(character);
+  const next = structuredClone(sb);
+  next.loadouts = (next.loadouts ?? []).map((l) =>
+    l.id === id ? { ...l, ...patch } : l
+  );
+  store.setCharacterField(character.id, "spellbook", next);
+}
+
+export function duplicateLoadout(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  id: string
+): string | null {
+  const sb = requireSpellbook(character);
+  const src = (sb.loadouts ?? []).find((l) => l.id === id);
+  if (!src) return null;
+  const newId = newLoadoutId();
+  const copy: Loadout = { ...structuredClone(src), id: newId, name: `${src.name} (copy)` };
+  const next = structuredClone(sb);
+  next.loadouts = [...(next.loadouts ?? []), copy];
+  store.setCharacterField(character.id, "spellbook", next);
+  return newId;
+}
+
+export function deleteLoadout(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  id: string
+): void {
+  const sb = requireSpellbook(character);
+  const next = structuredClone(sb);
+  next.loadouts = (next.loadouts ?? []).filter((l) => l.id !== id);
+  if (next.appliedLoadoutId === id) next.appliedLoadoutId = undefined;
+  store.setCharacterField(character.id, "spellbook", next);
+}
+
+/** Add (or increment) a prepared-spell entry on a loadout. */
+export function addSpellToLoadout(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  loadoutId: string,
+  entry: LoadoutSpell
+): void {
+  const sb = requireSpellbook(character);
+  const next = structuredClone(sb);
+  next.loadouts = (next.loadouts ?? []).map((l) => {
+    if (l.id !== loadoutId) return l;
+    const key = loadoutEntryKey(entry);
+    const idx = l.spells.findIndex((s) => loadoutEntryKey(s) === key);
+    if (idx >= 0) {
+      const spells = [...l.spells];
+      spells[idx] = { ...spells[idx], count: spells[idx].count + entry.count };
+      return { ...l, spells };
+    }
+    return { ...l, spells: [...l.spells, entry] };
+  });
+  store.setCharacterField(character.id, "spellbook", next);
+}
+
+export function removeLoadoutSpell(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  loadoutId: string,
+  index: number
+): void {
+  const sb = requireSpellbook(character);
+  const next = structuredClone(sb);
+  next.loadouts = (next.loadouts ?? []).map((l) =>
+    l.id === loadoutId ? { ...l, spells: l.spells.filter((_, i) => i !== index) } : l
+  );
+  store.setCharacterField(character.id, "spellbook", next);
+}
+
+/** Bump a loadout entry's prepared count by delta (clamped to >= 1). */
+export function setLoadoutSpellCount(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  loadoutId: string,
+  index: number,
+  delta: number
+): void {
+  const sb = requireSpellbook(character);
+  const next = structuredClone(sb);
+  next.loadouts = (next.loadouts ?? []).map((l) => {
+    if (l.id !== loadoutId) return l;
+    const spells = l.spells.map((s, i) =>
+      i === index ? { ...s, count: Math.max(1, s.count + delta) } : s
+    );
+    return { ...l, spells };
+  });
+  store.setCharacterField(character.id, "spellbook", next);
+}
+
+/** Snapshot the character's current preparations into a new loadout. */
+export function snapshotCurrentPrep(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  name: string
+): string | null {
+  const sb = requireSpellbook(character);
+  const spells: LoadoutSpell[] = [];
+  for (const preps of Object.values(sb.preparations)) {
+    for (const p of preps) {
+      spells.push({
+        spellId: p.spellId,
+        level: p.adjustedLevel,
+        metamagic: [...p.metamagic],
+        count: p.count,
+      });
+    }
+  }
+  if (spells.length === 0) return null;
+  return createLoadout(store, character, { name, icon: "ra-scroll-unfurled", spells });
+}
+
+/**
+ * Apply a loadout: replace the character's preparations with the loadout's
+ * set, reset every level pool to max, then replay prepare-time slot
+ * consumption (prepared: at the entry level; hybrid: at the entry level plus
+ * any global metamagics not already on the entry — mirrors prepareSpell).
+ * Sets appliedLoadoutId. Caller gates this behind a confirm dialog.
+ */
+export function applyLoadout(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  loadoutId: string,
+  castingStatBonus: number
+): void {
+  const sb = requireSpellbook(character);
+  const loadout = (sb.loadouts ?? []).find((l) => l.id === loadoutId);
+  if (!loadout) return;
+  const paradigm = getCasterConfig(sb.castingClass).type;
+  const next = structuredClone(sb);
+
+  // 1. reset all level pools to max
+  for (let level = 0 as SpellLevel; level <= 9; level = (level + 1) as SpellLevel) {
+    const key = getSpellLevelKey(level);
+    if (!next.levels[key]) continue;
+    const max = maxSlotsFor(character, level, castingStatBonus);
+    next.levels[key].remaining = max > 0 ? max : null;
+    if (paradigm === "hybrid") {
+      const maxCasts = maxCastsFor(character, level, castingStatBonus);
+      next.levels[key].castsRemaining = maxCasts > 0 ? maxCasts : null;
+    }
+  }
+
+  // 2. rebuild preparations from the loadout
+  for (let level = 0; level <= 9; level++) {
+    next.preparations[getSpellLevelKey(level as SpellLevel)] = [];
+  }
+  for (const entry of loadout.spells) {
+    const key = getSpellLevelKey(entry.level);
+    (next.preparations[key] ??= []).push({
+      spellId: entry.spellId,
+      adjustedLevel: entry.level,
+      metamagic: [...entry.metamagic],
+      count: entry.count,
+    });
+  }
+
+  // 3. replay prepare-time slot consumption
+  for (const entry of loadout.spells) {
+    let slotLevel: SpellLevel = entry.level;
+    if (paradigm === "hybrid") {
+      const nonDupGlobals = next.globalMetamagic.active.filter(
+        (g) => !entry.metamagic.includes(g)
+      );
+      slotLevel = clampLevel(entry.level + totalMetamagicAdjustment(nonDupGlobals));
+    }
+    const lvl = next.levels[getSpellLevelKey(slotLevel)];
+    if (lvl && lvl.remaining != null) {
+      lvl.remaining = Math.max(0, lvl.remaining - entry.count);
+    }
+  }
+
+  next.appliedLoadoutId = loadoutId;
+  store.setCharacterField(character.id, "spellbook", next);
 }

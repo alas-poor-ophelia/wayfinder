@@ -6,23 +6,24 @@ import {
   formatLevelsForDisplay,
   formatLevelsWithClassesForTooltip,
   getAllLevels,
-  getSchoolColors,
+  getSchoolInk,
   transformSpellForSpellbook,
 } from "../../spells/parse";
 import type { CharacterRecord } from "../../types/character";
 import type { SpellDbState } from "../../types/data-file";
+import { UI } from "../config/glyphs";
 
-const COLUMNS: { key: string; label: string }[] = [
+const COLUMNS: { key: string; label: string; num?: boolean; dim?: boolean }[] = [
   { key: "name", label: "Name" },
-  { key: "level", label: "L" },
+  { key: "level", label: "L", num: true },
   { key: "school", label: "School" },
   { key: "castingTime", label: "Cast" },
   { key: "range", label: "Range" },
   { key: "duration", label: "Duration" },
-  { key: "components", label: "Comp." },
-  { key: "saveType", label: "Save" },
-  { key: "sr", label: "SR" },
-  { key: "source", label: "Source" },
+  { key: "components", label: "Comp.", dim: true },
+  { key: "saveType", label: "Save", dim: true },
+  { key: "sr", label: "SR", dim: true },
+  { key: "source", label: "Source", dim: true },
 ];
 
 /** Level picker for multi-level spells (replaces the legacy DOM portal). */
@@ -72,15 +73,24 @@ export function SpellTable({
   db,
   docs,
   target,
+  targetIsLoadout = false,
   knownIds,
+  onAdd,
+  onRemove,
 }: {
   plugin: MiniSheetPlugin;
   db: SpellDbState;
   docs: SpellDoc[];
   target: CharacterRecord | null;
+  /** when the add-target is a loadout, the +Add button turns red */
+  targetIsLoadout?: boolean;
   knownIds: Set<string>;
+  /** Stage B overrides: route add/remove at a loadout instead of the spellbook */
+  onAdd?: (doc: SpellDoc, level: number | null, classes: string[] | null) => void;
+  onRemove?: (doc: SpellDoc) => void;
 }) {
   const store = plugin.store;
+  const canTarget = target !== null || targetIsLoadout;
 
   const setSort = (key: string) => {
     if (db.sortKey === key) {
@@ -91,15 +101,23 @@ export function SpellTable({
   };
 
   const add = (doc: SpellDoc) => {
-    if (!target) return;
     const levels = getAllLevels(doc.spellLevelRaw);
     if (levels.length > 1) {
       new LevelPickModal(plugin, doc, (level, classes) => {
-        addKnownSpell(store, target, transformSpellForSpellbook(doc, level, classes));
+        if (onAdd) onAdd(doc, level, classes);
+        else if (target)
+          addKnownSpell(store, target, transformSpellForSpellbook(doc, level, classes));
       }).open();
-    } else {
+    } else if (onAdd) {
+      onAdd(doc, null, null);
+    } else if (target) {
       addKnownSpell(store, target, transformSpellForSpellbook(doc));
     }
+  };
+
+  const remove = (doc: SpellDoc) => {
+    if (onRemove) onRemove(doc);
+    else if (target) removeKnownSpell(store, target, doc.id);
   };
 
   const variantCount = (doc: SpellDoc) =>
@@ -108,93 +126,121 @@ export function SpellTable({
       : 0;
 
   return (
-    <table class="ms-spelldb__table">
-      <thead>
-        <tr>
-          {target && <th class="ms-spelldb__add-col" />}
-          {COLUMNS.map((col) => (
-            <th key={col.key} onClick={() => setSort(col.key)}>
-              {col.label}
-              {db.sortKey === col.key ? (db.sortDir === "asc" ? " ▲" : " ▼") : ""}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {docs.map((doc) => {
-          const known = knownIds.has(doc.id);
-          const school = getSchoolColors(doc.school);
-          return (
-            <tr key={doc.path} class={known ? "is-known" : ""}>
-              {target && (
-                <td class="ms-spelldb__add-col">
-                  {known ? (
-                    <button
-                      class="ms-spelldb__remove"
-                      aria-label={`Remove ${doc.name}`}
-                      title={`Remove all variants (${variantCount(doc)})`}
-                      onClick={() => removeKnownSpell(store, target, doc.id)}
-                    >
-                      ✕{variantCount(doc) > 1 ? ` ${variantCount(doc)}` : ""}
-                    </button>
-                  ) : (
-                    <button
-                      class="ms-spelldb__add"
-                      aria-label={`Add ${doc.name}`}
-                      onClick={() => add(doc)}
-                    >
-                      +
-                    </button>
-                  )}
-                </td>
-              )}
-              <td>
-                <a
-                  class="internal-link"
-                  data-href={doc.path}
-                  href={doc.path}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    void plugin.app.workspace.openLinkText(doc.path, "", true);
-                  }}
-                  onMouseOver={(e) => {
-                    plugin.app.workspace.trigger("hover-link", {
-                      event: e,
-                      source: "minisheet",
-                      hoverParent: { hoverPopover: null },
-                      targetEl: e.currentTarget as HTMLElement,
-                      linktext: doc.path,
-                      sourcePath: "",
-                    });
-                  }}
+    <div class="ms-spelldb__main">
+      <div class="ms-spelldb__tablescroll">
+        <table class="ms-spelldb__table">
+          <thead>
+            <tr>
+              {canTarget && <th class="ms-spelldb__addcol" />}
+              {COLUMNS.map((col) => (
+                <th
+                  key={col.key}
+                  class={`${col.num ? "ms-spelldb__numcol" : ""}${
+                    db.sortKey === col.key ? " is-sort" : ""
+                  }`}
+                  onClick={() => setSort(col.key)}
                 >
-                  {doc.name}
-                </a>
-              </td>
-              <td title={formatLevelsWithClassesForTooltip(doc.spellLevelRaw)}>
-                {formatLevelsForDisplay(doc.spellLevelRaw)}
-              </td>
-              <td>
-                {doc.school && (
-                  <span
-                    class="ms-spelldb__school"
-                    style={{ backgroundColor: school.bg, color: school.text }}
-                  >
-                    {doc.school}
-                  </span>
-                )}
-              </td>
-              <td>{doc.castingTime}</td>
-              <td>{doc.range}</td>
-              <td>{doc.duration}</td>
-              <td>{doc.components}</td>
-              <td>{doc.saveType}</td>
-              <td>{doc.sr}</td>
-              <td>{doc.source}</td>
+                  {col.label}
+                  {db.sortKey === col.key && (
+                    <span class="ms-spelldb__sortcaret">
+                      {db.sortDir === "asc" ? "▲" : "▼"}
+                    </span>
+                  )}
+                </th>
+              ))}
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            {docs.map((doc) => {
+              const known = knownIds.has(doc.id);
+              const ink = getSchoolInk(doc.school);
+              const vc = variantCount(doc);
+              return (
+                <tr key={doc.path} class={known ? "is-known" : ""}>
+                  {canTarget && (
+                    <td class="ms-spelldb__addcol">
+                      {known && !targetIsLoadout ? (
+                        <button
+                          class="ms-spelldb__remove"
+                          aria-label={`Remove ${doc.name}`}
+                          title={`Remove all variants (${vc})`}
+                          onClick={() => remove(doc)}
+                        >
+                          <UI.x />
+                          {vc > 1 ? vc : ""}
+                        </button>
+                      ) : (
+                        <button
+                          class={`ms-spelldb__add${targetIsLoadout ? " is-load" : ""}`}
+                          aria-label={`Add ${doc.name}`}
+                          onClick={() => add(doc)}
+                        >
+                          <UI.plus />
+                        </button>
+                      )}
+                    </td>
+                  )}
+                  <td>
+                    <a
+                      class="ms-spelldb__name"
+                      data-href={doc.path}
+                      href={doc.path}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        void plugin.app.workspace.openLinkText(doc.path, "", true);
+                      }}
+                      onMouseOver={(e) => {
+                        plugin.app.workspace.trigger("hover-link", {
+                          event: e,
+                          source: "minisheet",
+                          hoverParent: { hoverPopover: null },
+                          targetEl: e.currentTarget as HTMLElement,
+                          linktext: doc.path,
+                          sourcePath: "",
+                        });
+                      }}
+                    >
+                      {doc.name}
+                    </a>
+                  </td>
+                  <td
+                    class="ms-spelldb__numcol ms-spelldb__lvlcell"
+                    title={formatLevelsWithClassesForTooltip(doc.spellLevelRaw)}
+                  >
+                    {formatLevelsForDisplay(doc.spellLevelRaw)}
+                  </td>
+                  <td>
+                    {doc.school && (
+                      <span
+                        class="ms-spelldb__school"
+                        style={{
+                          color: ink,
+                          backgroundColor: `${ink}26`,
+                          borderColor: `${ink}73`,
+                        }}
+                      >
+                        {doc.school}
+                      </span>
+                    )}
+                  </td>
+                  <td>{doc.castingTime}</td>
+                  <td>{doc.range}</td>
+                  <td>{doc.duration}</td>
+                  <td class="sp-dim">{doc.components}</td>
+                  <td class="sp-dim">{doc.saveType}</td>
+                  <td class="sp-dim">{doc.sr}</td>
+                  <td class="sp-dim">{doc.source}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {docs.length === 0 && (
+          <div class="ms-spelldb__empty">
+            No matches — adjust your search or filters.
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

@@ -40,6 +40,8 @@ export const DEFAULT_PARTY_INV: PartyInvState = {
 };
 
 export interface SpellDbState {
+  /** which section of the pane is showing (database / loadouts / metamagic) */
+  section: "database" | "loadouts" | "metamagic";
   search: string;
   classes: string[];
   levels: number[];
@@ -53,10 +55,17 @@ export interface SpellDbState {
   sortDir: "asc" | "desc";
   page: number;
   targetCharacterId: string | null;
+  /**
+   * When set, the Database "Add to" target is this loadout (of the target
+   * character) instead of the spellbook; +Add appends to the loadout. null =
+   * add to the spellbook. Cleared when the loadout is deleted.
+   */
+  addLoadoutId: string | null;
   filtersOpen: boolean;
 }
 
 export const DEFAULT_SPELL_DB: SpellDbState = {
+  section: "database",
   search: "",
   classes: [],
   levels: [],
@@ -70,7 +79,8 @@ export const DEFAULT_SPELL_DB: SpellDbState = {
   sortDir: "asc",
   page: 0,
   targetCharacterId: null,
-  filtersOpen: false,
+  addLoadoutId: null,
+  filtersOpen: true,
 };
 
 export interface EquipDbState {
@@ -181,7 +191,11 @@ export const DEFAULT_DATA: MiniSheetData = {
   // v13: CharacterRecord gains optional referencePins + checklistState for the
   // redesigned Reference tab (schema-forward, like v2/v3/v8 — optional with
   // absent-default; callers coalesce with ?? []/?? {}). No migration code.
-  schemaVersion: 13,
+  // v14: SpellbookState gains optional loadouts[] + appliedLoadoutId for the
+  // Spell Database's Loadouts tab (schema-forward, like v8/v12/v13 — optional
+  // with read-time `?? []`; legacy loadouts lived in vault YAML, nothing to
+  // import). No migration code.
+  schemaVersion: 14,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

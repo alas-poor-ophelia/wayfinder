@@ -5,11 +5,17 @@
  */
 import { getArcanistCasts, getSpellSlots } from "../../../src/calc/spells";
 import {
+  addSpellToLoadout,
+  applyLoadout,
   castPrepared,
   castSpontaneous,
+  createLoadout,
+  deleteLoadout,
+  getLoadouts,
   prepareSpell,
   removePreparation,
   resetSpellbook,
+  snapshotCurrentPrep,
 } from "../../../src/state/spellbook-actions";
 import type { MiniSheetStore } from "../../../src/state/store";
 import { createDefaultCharacter, type CharacterRecord } from "../../../src/types/character";
@@ -208,6 +214,82 @@ describe("hybrid caster flows (arcanist 7, INT +4)", () => {
     resetSpellbook(store, c, 4);
     expect(c.spellbook!.levels.level1.remaining).toBe(maxPrepL1);
     expect(c.spellbook!.levels.level1.castsRemaining).toBe(maxCastsL1);
+  });
+});
+
+describe("loadouts (schema v14)", () => {
+  const maxL1 = getSpellSlots("cleric", 5, 1, 3);
+
+  it("createLoadout appends a loadout with defaults and returns its id", () => {
+    const c = cleric5();
+    const store = fakeStore(c);
+    const id = createLoadout(store, c, { name: "Combat" });
+    const loadouts = getLoadouts(c);
+    expect(loadouts).toHaveLength(1);
+    expect(loadouts[0]).toMatchObject({ id, name: "Combat", spells: [] });
+    expect(loadouts[0].icon).toBeTruthy();
+  });
+
+  it("addSpellToLoadout appends, then dedupes by spell+level+metamagic", () => {
+    const c = cleric5();
+    const store = fakeStore(c);
+    const id = createLoadout(store, c);
+    addSpellToLoadout(store, c, id, { spellId: "c1", level: 1, metamagic: [], count: 1 });
+    addSpellToLoadout(store, c, id, { spellId: "c1", level: 1, metamagic: [], count: 1 });
+    addSpellToLoadout(store, c, id, { spellId: "c0", level: 0, metamagic: [], count: 1 });
+    const lo = getLoadouts(c)[0];
+    expect(lo.spells).toEqual([
+      { spellId: "c1", level: 1, metamagic: [], count: 2 },
+      { spellId: "c0", level: 0, metamagic: [], count: 1 },
+    ]);
+  });
+
+  it("snapshotCurrentPrep clones the current preparations into a new loadout", () => {
+    const c = cleric5();
+    const store = fakeStore(c);
+    prepareSpell(store, c, "c1", 3);
+    prepareSpell(store, c, "c1", 3);
+    const id = snapshotCurrentPrep(store, c, "Saved");
+    expect(id).not.toBeNull();
+    const lo = getLoadouts(c).find((l) => l.id === id)!;
+    expect(lo.spells).toEqual([
+      { spellId: "c1", level: 1, metamagic: [], count: 2 },
+    ]);
+  });
+
+  it("snapshotCurrentPrep returns null when nothing is prepared", () => {
+    const c = cleric5();
+    const store = fakeStore(c);
+    expect(snapshotCurrentPrep(store, c, "Empty")).toBeNull();
+  });
+
+  it("applyLoadout replaces preparations and replays slot consumption", () => {
+    const c = cleric5();
+    const store = fakeStore(c);
+    // pre-existing prep that apply must clear
+    prepareSpell(store, c, "c0", 3);
+    const id = createLoadout(store, c);
+    addSpellToLoadout(store, c, id, { spellId: "c1", level: 1, metamagic: [], count: 2 });
+    applyLoadout(store, c, id, 3);
+    expect(c.spellbook!.preparations.level1).toEqual([
+      { spellId: "c1", adjustedLevel: 1, metamagic: [], count: 2 },
+    ]);
+    // the old level-0 prep is gone (replaced wholesale)
+    expect(c.spellbook!.preparations.level0).toEqual([]);
+    // two slots consumed at level 1 off a freshly reset pool
+    expect(c.spellbook!.levels.level1.remaining).toBe(maxL1 - 2);
+    expect(c.spellbook!.appliedLoadoutId).toBe(id);
+  });
+
+  it("deleteLoadout removes it and clears appliedLoadoutId when it matched", () => {
+    const c = cleric5();
+    const store = fakeStore(c);
+    const id = createLoadout(store, c);
+    applyLoadout(store, c, id, 3);
+    expect(c.spellbook!.appliedLoadoutId).toBe(id);
+    deleteLoadout(store, c, id);
+    expect(getLoadouts(c)).toHaveLength(0);
+    expect(c.spellbook!.appliedLoadoutId).toBeUndefined();
   });
 });
 
