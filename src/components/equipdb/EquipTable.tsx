@@ -41,6 +41,7 @@ export function EquipTable<T extends { id: string; name: string }>({
   columns,
   onAdd,
   actions,
+  emptyText = "No matches — adjust your search or filters.",
 }: {
   plugin: MiniSheetPlugin;
   db: EquipDbState;
@@ -50,6 +51,8 @@ export function EquipTable<T extends { id: string; name: string }>({
   onAdd: ((item: T) => void) | null;
   /** optional trailing per-row actions (edit/delete on custom items) */
   actions?(item: T): ComponentChildren;
+  /** message shown when there are no rows */
+  emptyText?: string;
 }) {
   const store = plugin.store;
 
@@ -62,6 +65,7 @@ export function EquipTable<T extends { id: string; name: string }>({
   };
 
   return (
+    <>
     <table class="ms-equipdb__table">
       <thead>
         <tr>
@@ -117,6 +121,10 @@ export function EquipTable<T extends { id: string; name: string }>({
         ))}
       </tbody>
     </table>
+    {rows.length === 0 && (
+      <div class="ms-equipdb__empty ms-equipdb__muted">{emptyText}</div>
+    )}
+    </>
   );
 }
 

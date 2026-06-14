@@ -325,6 +325,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
               ? (c) => addTo(customDraft(c, getBaseWeapon(c.baseId)))
               : null
           }
+          emptyText="No custom items yet — forge one in the Forge tab."
           actions={(c) => (
             <>
               <button
@@ -347,11 +348,6 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
             </>
           )}
         />
-        {customItems.length === 0 && (
-          <div class="ms-equipdb__muted ms-equipdb__empty">
-            No custom items yet — forge one in the Forge tab.
-          </div>
-        )}
       </>
     );
   } else {
@@ -449,18 +445,20 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
         <div class="ms-equipdb__pager">
           <button
             disabled={page === 0}
+            aria-label="Previous page"
             onClick={() => store.updateEquipDb({ page: page - 1 })}
           >
-            ←
+            <UI.arrowL />
           </button>
           <span>
             Page {page + 1} / {pageCount}
           </span>
           <button
             disabled={page >= pageCount - 1}
+            aria-label="Next page"
             onClick={() => store.updateEquipDb({ page: page + 1 })}
           >
-            →
+            <UI.arrowR />
           </button>
         </div>
       )}
