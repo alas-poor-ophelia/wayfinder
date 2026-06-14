@@ -1,14 +1,10 @@
 import { signal, type Signal } from "@preact/signals";
 import { TFile, type App } from "obsidian";
 import type MiniSheetPlugin from "../main";
+import { parseNote } from "./parse";
 
-export interface RuleDoc {
-  path: string;
-  title: string;
-  category: string;
-  headings: string[];
-  body: string;
-}
+export type { RuleDoc } from "./model";
+import type { RuleDoc } from "./model";
 
 /**
  * Index of the rules folder: one markdown note per ability/feat/trait.
@@ -73,12 +69,14 @@ export class RulesIndex {
     const raw = await this.app.vault.cachedRead(file);
     // strip frontmatter from the body we render/search
     const body = raw.replace(/^---\n[\s\S]*?\n---\n?/, "").trim();
+    const parsed = parseNote(body, cache?.frontmatter ?? {});
     return {
       path: file.path,
       title: headings[0] ?? file.basename,
       category,
       headings,
       body,
+      ...parsed,
     };
   }
 

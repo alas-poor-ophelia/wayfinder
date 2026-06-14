@@ -39,6 +39,8 @@ import {
   type ModifierTarget,
 } from "./modifiers";
 import { resolveArchetypeEffects } from "../data/archetypes";
+import { classResources } from "../data/classes";
+import { evaluateResourceFormula } from "./resources";
 import { getBuffDef } from "../data/buffs";
 import { applyHeritage, getHeritage, getRaceData, racialAbilityMods } from "../data/races";
 import type { RaceData } from "../data/types";
@@ -59,6 +61,12 @@ export interface ComputedCharacter {
   /** effective ability scores (post adjust/drain/damage) — resource
    *  formulas with source "abilityScore" read these */
   scores: AbilityScores;
+  /** Live maxima for class/archetype-granted resource pools, keyed by pool
+   *  id, derived each compute from current level + ability mods. The combat
+   *  resources UI and current-clamping read these for class pools; custom
+   *  (non-catalog) pools keep their stored max. (Route A — syncClassResources
+   *  now only seeds pool entries and snapshots these values.) */
+  resourceMaxes: Record<string, number>;
   bab: number;
   totalLevel: number;
   conditionEffects: ConditionEffects;
@@ -577,9 +585,26 @@ export function computeAll(
       : [],
   };
 
+  // Derive class/archetype pool maxima from current level + effective mods,
+  // so they auto-track level-ups and ability changes (no manual sync needed).
+  // classResources already applies archetype suppression/adds and minLevel.
+  const resourceMaxes: Record<string, number> = {};
+  for (const pool of classResources(character.classes, mods)) {
+    resourceMaxes[pool.id] = pool.max;
+  }
+  // User-defined formulas win over (and extend beyond) class defs — mirror
+  // syncClassResources' precedence so combat + config show the same live max.
+  const resCtx = { classes: character.classes, mods, scores };
+  for (const pool of character.resources) {
+    if (pool.formula) {
+      resourceMaxes[pool.id] = evaluateResourceFormula(pool.formula, resCtx);
+    }
+  }
+
   return {
     mods,
     scores,
+    resourceMaxes,
     bab,
     totalLevel: totalLevel(character.classes),
     conditionEffects: effects,

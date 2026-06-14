@@ -24,14 +24,19 @@ export function resolvePool(
   store: MiniSheetStore,
   character: CharacterRecord,
   pool: ResourcePool,
-  index: number
+  index: number,
+  /** computed.resourceMaxes — live class-pool maxima keyed by id. A pool whose
+   *  id is in this map is class-derived and uses the live value; custom pools
+   *  (absent) fall back to their stored max. Defaults to {} for non-UI callers. */
+  resourceMaxes: Record<string, number> = {}
 ): ResolvedPool {
   if (!pool.derived) {
+    const max = resourceMaxes[pool.id] ?? pool.max;
     return {
       id: pool.id,
       name: pool.name,
-      current: pool.current,
-      max: pool.max,
+      current: Math.min(pool.current, max),
+      max,
       footer: pool.footer,
       kind: pool.kind,
       set: (value) =>
@@ -60,15 +65,22 @@ export function resolvePool(
     };
   }
 
+  // The source's max derives live when it lives on THIS character (e.g. Adarin's
+  // channelEnergy → layOnHands); a cross-character source (familiar → master)
+  // falls back to its stored snapshot, which sync keeps fresh.
+  const sourceMax =
+    (sourceChar.id === character.id ? resourceMaxes[source.id] : undefined) ??
+    source.max;
+
   return {
     id: pool.id,
     name: pool.name,
     current: Math.floor(source.current / divisor),
-    max: Math.floor(source.max / divisor),
+    max: Math.floor(sourceMax / divisor),
     footer: pool.footer,
     kind: pool.kind,
     set: (value) => {
-      const next = Math.max(0, Math.min(source.max, value * divisor));
+      const next = Math.max(0, Math.min(sourceMax, value * divisor));
       store.setCharacterField(
         sourceChar.id,
         `resources.${sourceIdx}.current`,

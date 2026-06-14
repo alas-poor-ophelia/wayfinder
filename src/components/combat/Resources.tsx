@@ -6,6 +6,9 @@ import type { CharacterRecord } from "../../types/character";
 interface ResourcesProps {
   store: MiniSheetStore;
   character: CharacterRecord;
+  /** live class-pool maxima (computed.resourceMaxes) — passed through to
+   *  resolvePool so class pools render their derived max, not a stored one */
+  resourceMaxes: Record<string, number>;
 }
 
 export function Tracker({ pool }: { pool: ResolvedPool }) {
@@ -30,7 +33,7 @@ export function Tracker({ pool }: { pool: ResolvedPool }) {
   );
 }
 
-export function Resources({ store, character }: ResourcesProps) {
+export function Resources({ store, character, resourceMaxes }: ResourcesProps) {
   const [group, setGroup] = useState<"combat" | "items">("combat");
   // The crease is held permanently open natively (content stays rendered for
   // the grid-rows fold ease); `expanded` is the visual fold, driven from the
@@ -40,7 +43,7 @@ export function Resources({ store, character }: ResourcesProps) {
   const pools: ResolvedPool[] = [];
 
   character.resources.forEach((pool, idx) => {
-    pools.push(resolvePool(store, character, pool, idx));
+    pools.push(resolvePool(store, character, pool, idx, resourceMaxes));
   });
 
   if (pools.length === 0) return null;

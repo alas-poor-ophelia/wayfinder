@@ -17,6 +17,10 @@
  *     every fixture gains the additive `parts` object (structured
  *     standard/full/damage/crit/touch behind the existing strings); the
  *     melee/ranged/unarmed strings are byte-identical, nothing else moved.
+ *  5. resourceMaxes added (Route A — live class-pool maxima) — diff
+ *     reviewed: every fixture gains the additive `resourceMaxes` object
+ *     (class/archetype pool id → derived max); no existing key changed.
+ *     Fighter4 gets an empty object (no class pools).
  * From here on these are frozen again.
  */
 import { describe, expect, it } from "vitest";
