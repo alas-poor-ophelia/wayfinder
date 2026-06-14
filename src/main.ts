@@ -1,4 +1,5 @@
 import { Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
+import { signal, type Signal } from "@preact/signals";
 import { installBridge, removeBridge } from "./bridge/mcp-bridge";
 import { num } from "./calc/abilities";
 import {
@@ -10,7 +11,7 @@ import {
   VIEW_TYPE_SPELL_DB,
 } from "./constants";
 import { importLegacy, importLegacyInventory } from "./import/legacy-import";
-import { ImportSummaryModal, NotePickModal, TextPromptModal } from "./modals";
+import { ImportRuleModal, ImportSummaryModal, NotePickModal, TextPromptModal } from "./modals";
 import { RulesIndex } from "./rules/index";
 import { MiniSheetSettingTab } from "./settings";
 import { SpellIndex } from "./spells/index";
@@ -27,6 +28,9 @@ export default class MiniSheetPlugin extends Plugin {
   rulesIndex!: RulesIndex;
   spellIndex!: SpellIndex;
   customItems!: CustomItemsStore;
+  /** Reference tab: a path the tab should expand on its next render (set by
+   *  the rule importer so a freshly-imported note opens itself). */
+  openRulePath: Signal<string | null> = signal(null);
 
   async onload(): Promise<void> {
     this.store = new MiniSheetStore(this);
@@ -114,6 +118,12 @@ export default class MiniSheetPlugin extends Plugin {
       id: "open-equipment-database",
       name: "Open equipment database",
       callback: () => void this.activateEquipDbView(),
+    });
+
+    this.addCommand({
+      id: "import-rule",
+      name: "Import rule from URL",
+      callback: () => new ImportRuleModal(this).open(),
     });
 
     this.addCommand({

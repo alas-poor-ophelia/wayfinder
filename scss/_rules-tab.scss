@@ -63,6 +63,8 @@
   .r-chip svg { flex: 0 0 auto; }
   .r-chip--pin { color: var(--gold-dim); }
   .r-chip--pin.is-on { background: var(--gold); color: #1a1a1b; }
+  .r-chip--import { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 45%, transparent); font-weight: 600; }
+  .r-chip--import:hover { background: color-mix(in srgb, var(--gold) 14%, transparent); color: var(--gold); }
 
   // ---- pinned rail ----
   .mz-pinlabel {

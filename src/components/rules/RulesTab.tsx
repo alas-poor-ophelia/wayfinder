@@ -3,7 +3,7 @@
    search collapses to a single fuzzy-ranked Results list. Pins and checklist
    completion persist per-character (schema v13). Ported from the design
    prototype (blocks.jsx + OptionMasonry.jsx). */
-import { useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
@@ -11,6 +11,7 @@ import type { RuleDoc } from "../../rules/model";
 import { searchRules } from "../../rules/search";
 import { CONTENT_TYPES, FILTERABLE_TYPES } from "../../rules/registry";
 import { refIconId } from "../../rules/icons";
+import { ImportRuleModal } from "../../modals";
 import { Icon } from "../common/Icon";
 import { useDragScroll } from "../common/useDragScroll";
 import { MasonryBody, type MasonrySection } from "./MasonryGrid";
@@ -58,6 +59,15 @@ export function RulesTab({ plugin, store, character }: RulesTabProps) {
   const [allRules, setAllRules] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
   const filtersRef = useDragScroll<HTMLDivElement>();
+
+  // the rule importer sets plugin.openRulePath so a freshly-imported note
+  // expands itself once the index has picked it up
+  const pendingOpen = plugin.openRulePath.value;
+  useEffect(() => {
+    if (!pendingOpen) return;
+    setOpen(pendingOpen);
+    plugin.openRulePath.value = null;
+  }, [pendingOpen]);
 
   const docs = plugin.rulesIndex.docs.value;
   const pins = useMemo(() => new Set(character.referencePins ?? []), [character.referencePins]);
@@ -138,6 +148,14 @@ export function RulesTab({ plugin, store, character }: RulesTabProps) {
       <SearchBar value={query} onChange={setQuery} count={filtered.length} />
 
       <div class="r-filters" ref={filtersRef}>
+        <button
+          class="r-chip r-chip--import"
+          title="Import a rule from Archives of Nethys"
+          onClick={() => new ImportRuleModal(plugin).open()}
+        >
+          + Import
+        </button>
+        <span class="r-filters__div" />
         <button class={"r-chip r-chip--pin" + (pinnedOnly ? " is-on" : "")} onClick={() => setPinnedOnly((v) => !v)}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill={pinnedOnly ? "currentColor" : "none"} stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
             <path d="M12 3.5l2.6 5.3 5.9.86-4.25 4.14 1 5.86L12 17.9l-5.25 2.76 1-5.86L3.5 9.66l5.9-.86z" />
