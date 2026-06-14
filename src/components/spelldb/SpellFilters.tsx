@@ -1,12 +1,12 @@
 import { useState } from "preact/hooks";
 import type MiniSheetPlugin from "../../main";
 import type { SpellDbState } from "../../types/data-file";
+import { UI } from "../config/glyphs";
 
 /**
- * The legacy filter set (class, level 0–9, school, components, source, SR,
- * eschew-materials) plus known-only — laid out as labeled groups: class
- * picker with its own search, level chips, dropdown pairs, and an options
- * column.
+ * Persistent left filter column (Spell DB redesign): class find+checklist,
+ * level chip grid, school/source/SR selects, components input, and option
+ * flags — laid out as Taroca-labelled groups separated by hairline dividers.
  */
 export function SpellFilters({
   plugin,
@@ -37,147 +37,157 @@ export function SpellFilters({
   };
 
   return (
-    <div class="ms-spelldb__filters">
-      <div class="ms-spelldb__filter-group ms-spelldb__filter-group--classes">
-        <div class="ms-spelldb__filter-title">
+    <div class="ms-spelldb__aside">
+      <div class="ms-spelldb__fgroup">
+        <div class="ms-spelldb__flabel">
           Class
-          {db.classes.length > 0 && (
-            <span class="ms-spelldb__filter-badge">{db.classes.length}</span>
-          )}
+          {db.classes.length > 0 && <span class="badge">{db.classes.length}</span>}
         </div>
         <input
           type="search"
+          class="ms-spelldb__finput"
           placeholder="Find a class…"
           value={classSearch}
           onInput={(e) => setClassSearch((e.target as HTMLInputElement).value)}
         />
-        <div class="ms-spelldb__class-list">
-          {classes.map((cls) => (
-            <label key={cls} class={db.classes.includes(cls) ? "is-on" : ""}>
-              <input
-                type="checkbox"
-                checked={db.classes.includes(cls)}
-                onChange={() => toggleClass(cls)}
-              />
-              {cls}
-            </label>
+        <div class="ms-spelldb__classlist">
+          {classes.map((cls) => {
+            const on = db.classes.includes(cls);
+            return (
+              <label
+                key={cls}
+                class={`ms-spelldb__classrow${on ? " is-on" : ""}`}
+              >
+                <input type="checkbox" checked={on} onChange={() => toggleClass(cls)} />
+                <span class={`ms-spelldb__check${on ? " is-on" : ""}`}>
+                  {on && <UI.check />}
+                </span>
+                {cls}
+              </label>
+            );
+          })}
+        </div>
+      </div>
+
+      <div class="ms-spelldb__fgroup">
+        <div class="ms-spelldb__flabel">Level</div>
+        <div class="ms-spelldb__chips">
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => (
+            <button
+              key={level}
+              class={`ms-spelldb__chip${db.levels.includes(level) ? " is-on" : ""}`}
+              aria-pressed={db.levels.includes(level)}
+              onClick={() => toggleLevel(level)}
+            >
+              {level}
+            </button>
           ))}
         </div>
       </div>
 
-      <div class="ms-spelldb__filter-col">
-        <div class="ms-spelldb__filter-group">
-          <div class="ms-spelldb__filter-title">Level</div>
-          <div class="ms-spelldb__level-chips">
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => (
-              <button
-                key={level}
-                class={`ms-spelldb__chip${db.levels.includes(level) ? " is-on" : ""}`}
-                aria-pressed={db.levels.includes(level)}
-                onClick={() => toggleLevel(level)}
-              >
-                {level}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div class="ms-spelldb__filter-group">
-          <div class="ms-spelldb__filter-title">Components contain</div>
-          <input
-            type="search"
-            placeholder="e.g. V, S or guano"
-            value={db.componentsFilter}
-            onInput={(e) =>
-              store.updateSpellDb({
-                componentsFilter: (e.target as HTMLInputElement).value,
-                page: 0,
-              })
-            }
-          />
-        </div>
+      <div class="ms-spelldb__divider" />
+
+      <div class="ms-spelldb__fgroup">
+        <div class="ms-spelldb__flabel">School</div>
+        <select
+          class="ms-spelldb__sel"
+          value={db.school}
+          onChange={(e) =>
+            store.updateSpellDb({
+              school: (e.target as HTMLSelectElement).value,
+              page: 0,
+            })
+          }
+        >
+          <option value="">Any school</option>
+          {schools.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <div class="ms-spelldb__filter-col">
-        <div class="ms-spelldb__filter-group">
-          <div class="ms-spelldb__filter-title">School</div>
-          <select
-            class="dropdown"
-            value={db.school}
-            onChange={(e) =>
-              store.updateSpellDb({
-                school: (e.target as HTMLSelectElement).value,
-                page: 0,
-              })
-            }
-          >
-            <option value="">Any school</option>
-            {schools.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div class="ms-spelldb__filter-group">
-          <div class="ms-spelldb__filter-title">Source</div>
-          <select
-            class="dropdown"
-            value={db.source}
-            onChange={(e) =>
-              store.updateSpellDb({
-                source: (e.target as HTMLSelectElement).value,
-                page: 0,
-              })
-            }
-          >
-            <option value="">Any source</option>
-            {sources.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div class="ms-spelldb__filter-group">
-          <div class="ms-spelldb__filter-title">Spell resistance</div>
-          <select
-            class="dropdown"
-            value={db.sr}
-            onChange={(e) =>
-              store.updateSpellDb({
-                sr: (e.target as HTMLSelectElement).value as SpellDbState["sr"],
-                page: 0,
-              })
-            }
-          >
-            <option value="">Any</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </div>
+      <div class="ms-spelldb__fgroup">
+        <div class="ms-spelldb__flabel">Source</div>
+        <select
+          class="ms-spelldb__sel"
+          value={db.source}
+          onChange={(e) =>
+            store.updateSpellDb({
+              source: (e.target as HTMLSelectElement).value,
+              page: 0,
+            })
+          }
+        >
+          <option value="">Any source</option>
+          {sources.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <div class="ms-spelldb__filter-group">
-        <div class="ms-spelldb__filter-title">Options</div>
+      <div class="ms-spelldb__fgroup">
+        <div class="ms-spelldb__flabel">Spell resistance</div>
+        <select
+          class="ms-spelldb__sel"
+          value={db.sr}
+          onChange={(e) =>
+            store.updateSpellDb({
+              sr: (e.target as HTMLSelectElement).value as SpellDbState["sr"],
+              page: 0,
+            })
+          }
+        >
+          <option value="">Any</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+
+      <div class="ms-spelldb__fgroup">
+        <div class="ms-spelldb__flabel">Components contain</div>
+        <input
+          type="search"
+          class="ms-spelldb__finput"
+          placeholder="e.g. V, S or guano"
+          value={db.componentsFilter}
+          onInput={(e) =>
+            store.updateSpellDb({
+              componentsFilter: (e.target as HTMLInputElement).value,
+              page: 0,
+            })
+          }
+        />
+      </div>
+
+      <div class="ms-spelldb__divider" />
+
+      <div class="ms-spelldb__fgroup">
+        <div class="ms-spelldb__flabel">Options</div>
         <label class="ms-spelldb__flag">
           <input
             type="checkbox"
             checked={db.eschewOnly}
-            onChange={() =>
-              store.updateSpellDb({ eschewOnly: !db.eschewOnly, page: 0 })
-            }
+            onChange={() => store.updateSpellDb({ eschewOnly: !db.eschewOnly, page: 0 })}
           />
+          <span class={`ms-spelldb__check${db.eschewOnly ? " is-on" : ""}`}>
+            {db.eschewOnly && <UI.check />}
+          </span>
           Eschew Materials compatible
         </label>
         <label class="ms-spelldb__flag">
           <input
             type="checkbox"
             checked={db.knownOnly}
-            onChange={() =>
-              store.updateSpellDb({ knownOnly: !db.knownOnly, page: 0 })
-            }
+            onChange={() => store.updateSpellDb({ knownOnly: !db.knownOnly, page: 0 })}
           />
-          Known spells only
+          <span class={`ms-spelldb__check${db.knownOnly ? " is-on" : ""}`}>
+            {db.knownOnly && <UI.check />}
+          </span>
+          In current target only
         </label>
       </div>
     </div>

@@ -93,6 +93,28 @@ export function getSchoolColors(school: string): { bg: string; text: string } {
   return colors[(school || "").toLowerCase()] ?? { bg: "#6B7280", text: "#FFFFFF" };
 }
 
+/**
+ * Per-school "ink" hue (Spell DB redesign). The school pill renders as
+ * color: ink, background: ink @ 15% (ink+"26"), border: ink @ ~45% (ink+"73").
+ * These are categorical data colors, intentionally separate from the brand
+ * gold/red accent seam (which routes through --ms-accent-*).
+ */
+const SCHOOL_INK: Record<string, string> = {
+  abjuration: "#6aa6ef",
+  conjuration: "#9b86f2",
+  divination: "#e0a64e",
+  enchantment: "#ef74b3",
+  evocation: "#ef6a4e",
+  illusion: "#b48cf0",
+  necromancy: "#6f9a93",
+  transmutation: "#6cc26a",
+  universal: "#98a4b4",
+};
+
+export function getSchoolInk(school: string): string {
+  return SCHOOL_INK[(school || "").toLowerCase()] ?? "#98a4b4";
+}
+
 export interface SpellDocLike {
   id: string;
   name: string;

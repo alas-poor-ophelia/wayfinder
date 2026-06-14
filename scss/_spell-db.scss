@@ -1,239 +1,1511 @@
-// Main-pane spell database — utilitarian, Obsidian-native styling.
-// Scoped under .minisheet-spelldb-root (NOT .minisheet-root) so the
-// sheet skin never leaks into this view.
+// Main-pane Spell Database + Loadouts + Metamagic — restyled into the "ledger"
+// language established by the Equipment Database redesign (Norwester / Taroca /
+// Crimson type, dual gold + ember-red brand accent). The live Obsidian theme
+// accent is reserved for genuinely-interactive cues (focus rings, active-sort
+// column, the "Active" loadout marker).
+//
+// Scoped under .minisheet-spelldb-root (NOT .minisheet-root) so the sheet skin
+// never leaks into this view.
+//
+// BRAND-BUT-CUSTOMIZABLE SEAM — every brand value derives from an overridable
+// body-scope global token (--ms-accent-* / --ms-font-*) with a brand fallback;
+// soft/line/dim tints all color-mix() off those bases, so one Style Settings
+// override retones and re-types the whole pane. Per-school "ink" colors are a
+// categorical data coding (set inline from getSchoolInk), intentionally outside
+// the brand seam.
 
 .minisheet-spelldb-root {
-  padding: 8px 12px;
+  // --- brand accents (overridable) ---
+  --sp-gold: var(--ms-accent-gold, #ca9759);
+  --sp-gold-soft: color-mix(in srgb, var(--sp-gold) 14%, transparent);
+  --sp-gold-line: color-mix(in srgb, var(--sp-gold) 45%, transparent);
+  --sp-gold-dim: color-mix(in srgb, var(--sp-gold) 86%, #000);
 
-  .ms-spelldb__header {
+  --sp-red: var(--ms-accent-red, #8b0000);
+  --sp-red-bright: color-mix(in srgb, var(--sp-red) 72%, #fff);
+  --sp-red-soft: color-mix(in srgb, var(--sp-red) 16%, transparent);
+  --sp-red-line: color-mix(in srgb, var(--sp-red) 50%, transparent);
+
+  // --- Obsidian theme accent (interactive cues only) ---
+  --sp-accent: var(--interactive-accent);
+  --sp-accent-soft: color-mix(in srgb, var(--sp-accent) 16%, transparent);
+  --sp-accent-line: color-mix(in srgb, var(--sp-accent) 55%, transparent);
+
+  // --- type system (overridable brand fonts) ---
+  --sp-font-display: var(--ms-font-display, "Norwester", sans-serif);
+  --sp-font-label: var(--ms-font-label, "Taroca", sans-serif);
+  --sp-font-body: var(--ms-font-body, "Crimson Text", Georgia, serif);
+
+  // --- surfaces/lines/text inherit the live Obsidian theme ---
+  --sp-pane: var(--background-primary);
+  --sp-soft: var(--background-modifier-hover);
+  --sp-inset: var(--background-secondary);
+  --sp-input: var(--background-modifier-form-field, var(--background-primary));
+  --sp-line: var(--background-modifier-border);
+  --sp-line-strong: var(--background-modifier-border-hover, var(--background-modifier-border));
+  --sp-text: var(--text-normal);
+  --sp-text-dim: var(--text-muted);
+  --sp-text-mute: var(--text-faint);
+  --sp-link: color-mix(in srgb, var(--sp-red) 40%, var(--text-normal));
+  // dark contrast text for gold/red fills (pane is dark-theme-first)
+  --sp-on-fill: #14161d;
+  --sp-radius: 6px;
+
+  height: 100%;
+  padding: 13px 18px 10px;
+  color: var(--sp-text);
+  font-family: var(--sp-font-body);
+  -webkit-font-smoothing: antialiased;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  .ms-spelldb {
+    height: 100%;
+    min-height: 0;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+  }
+
+  // ===== section tabs (underline ledger) =====
+  .ms-spelldb__tabs {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--sp-line);
+  }
+
+  .ms-spelldb__tab {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 7px;
+    padding: 9px 15px;
+    margin-bottom: -1px; // overlap the row hairline with the active border
+    border: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--sp-text-mute);
+    font-family: var(--sp-font-display);
+    font-size: 14.5px;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--sp-text);
+      background: transparent;
+    }
+
+    &.is-on {
+      color: var(--sp-gold);
+      border-bottom-color: var(--sp-gold);
+    }
+  }
+
+  .ms-spelldb__tab-icon {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+  }
+
+  .ms-spelldb__tab-count {
+    font-family: var(--sp-font-label);
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    color: var(--sp-text-mute);
+  }
+
+  // ===== header controls (search / filters / clear / count / target) =====
+  .ms-spelldb__header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 0 11px;
+    flex-wrap: wrap;
   }
 
   .ms-spelldb__search {
     flex: 1;
-    min-width: 180px;
+    min-width: 170px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--sp-input);
+    border: 1px solid var(--sp-line-strong);
+    border-radius: var(--sp-radius);
+    padding: 7px 11px;
+
+    svg {
+      width: 15px;
+      height: 15px;
+      color: var(--sp-text-mute);
+      flex: 0 0 auto;
+    }
+
+    input {
+      all: unset;
+      flex: 1;
+      min-width: 0;
+      font-family: var(--sp-font-body);
+      font-size: 14px;
+      color: var(--sp-text);
+
+      &::placeholder {
+        color: var(--sp-text-mute);
+      }
+    }
+
+    &:focus-within {
+      border-color: var(--sp-accent-line);
+    }
+  }
+
+  .ms-spelldb__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--sp-line-strong);
+    background: transparent;
+    box-shadow: none;
+    color: var(--sp-text);
+    font-family: var(--sp-font-display);
+    letter-spacing: 0.02em;
+    font-size: 13px;
+    padding: 7px 12px;
+    border-radius: var(--sp-radius);
+    cursor: pointer;
+    min-height: 34px;
+
+    svg {
+      width: 15px;
+      height: 15px;
+      color: var(--sp-text-dim);
+    }
+
+    &:hover {
+      background: var(--sp-soft);
+    }
+
+    &.is-on {
+      border-color: var(--sp-gold-line);
+      color: var(--sp-gold);
+      background: var(--sp-gold-soft);
+
+      svg {
+        color: var(--sp-gold);
+      }
+    }
+  }
+
+  .ms-spelldb__btn--ghost {
+    border-color: transparent;
+    color: var(--sp-text-dim);
+    padding: 7px 8px;
+
+    &:hover {
+      color: var(--sp-text);
+      background: transparent;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
   }
 
   .ms-spelldb__count {
-    color: var(--text-muted);
-    font-size: var(--font-ui-small);
+    font-family: var(--sp-font-label);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sp-text-mute);
+    margin-left: auto;
+    white-space: nowrap;
+
+    b {
+      color: var(--sp-text-dim);
+      font-weight: 400;
+    }
   }
 
   .ms-spelldb__target {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-left: auto;
-    font-size: var(--font-ui-small);
-    color: var(--text-muted);
-  }
+    gap: 8px;
+    font-family: var(--sp-font-label);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sp-text-mute);
+    white-space: nowrap;
 
-  .ms-spelldb__filters {
-    display: grid;
-    grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) minmax(160px, 1fr) minmax(180px, 1fr);
-    gap: 12px;
-    padding: 12px;
-    margin-bottom: 8px;
-    background: var(--background-secondary);
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 8px;
-
-    @media (max-width: 900px) {
-      grid-template-columns: 1fr 1fr;
+    select {
+      font-family: var(--sp-font-display);
+      letter-spacing: 0.02em;
+      color: var(--sp-text);
+      min-width: 132px;
     }
 
-    @media (max-width: 550px) {
+    &.is-load select {
+      color: var(--sp-gold);
+      border-color: var(--sp-gold-line);
+      background-color: var(--sp-gold-soft);
+    }
+  }
+
+  // shared select styling
+  .ms-spelldb__sel {
+    appearance: none;
+    background: var(--sp-input);
+    color: var(--sp-text);
+    border: 1px solid var(--sp-line-strong);
+    border-radius: var(--sp-radius);
+    padding: 7px 28px 7px 10px;
+    font-family: var(--sp-font-body);
+    font-size: 13.5px;
+    min-height: 34px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2399a0ae' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
+
+    &:focus {
+      outline: none;
+      border-color: var(--sp-accent-line);
+    }
+  }
+
+  // ===== DB body: persistent LEFT filter column + main table =====
+  .ms-spelldb__body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 244px 1fr;
+    gap: 20px;
+    overflow: hidden;
+
+    &.is-nofilters {
       grid-template-columns: 1fr;
     }
-
-    select,
-    input[type="search"] {
-      width: 100%;
-      box-sizing: border-box;
-    }
   }
 
-  .ms-spelldb__filter-col {
+  .ms-spelldb__aside {
+    min-height: 0;
+    overflow: auto;
+    padding-right: 4px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 18px;
+  }
+
+  .ms-spelldb__fgroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     min-width: 0;
   }
 
-  .ms-spelldb__filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
-  }
-
-  .ms-spelldb__filter-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 600;
-    font-size: var(--font-ui-smaller);
+  .ms-spelldb__flabel {
+    font-family: var(--sp-font-label);
+    font-size: 10px;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-  }
-
-  .ms-spelldb__filter-badge {
-    background: var(--interactive-accent);
-    color: var(--text-on-accent);
-    border-radius: 8px;
-    padding: 0 6px;
-    font-size: 0.85em;
-    letter-spacing: 0;
-  }
-
-  .ms-spelldb__class-list {
+    color: var(--sp-text-mute);
     display: flex;
-    flex-direction: column;
-    gap: 1px;
-    max-height: 168px;
-    overflow-y: auto;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 6px;
-    background: var(--background-primary);
-    padding: 4px;
-    font-size: var(--font-ui-small);
+    align-items: center;
+    gap: 8px;
 
-    label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      white-space: nowrap;
-      cursor: pointer;
-
-      &:hover {
-        background: var(--background-modifier-hover);
-      }
-
-      &.is-on {
-        background: color-mix(in srgb, var(--interactive-accent) 18%, transparent);
-      }
+    .badge {
+      font-family: var(--sp-font-label);
+      font-size: 9px;
+      letter-spacing: 0.04em;
+      color: var(--sp-on-fill);
+      background: var(--sp-gold);
+      border-radius: 9px;
+      padding: 1px 6px;
     }
   }
 
-  .ms-spelldb__level-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
+  .ms-spelldb__fgroup .ms-spelldb__sel {
+    width: 100%;
   }
 
-  .ms-spelldb__chip {
-    width: 30px;
-    height: 26px;
-    min-width: 0;
-    padding: 0;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 6px;
-    background: var(--background-primary);
-    color: var(--text-muted);
-    font-weight: 600;
-    cursor: pointer;
+  .ms-spelldb__finput {
+    background: var(--sp-input);
+    color: var(--sp-text);
+    border: 1px solid var(--sp-line-strong);
+    border-radius: var(--sp-radius);
+    padding: 6px 10px;
+    font-family: var(--sp-font-body);
+    font-size: 13px;
+    min-height: 32px;
+    width: 100%;
+
+    &:focus {
+      outline: none;
+      border-color: var(--sp-accent-line);
+    }
+
+    &::placeholder {
+      color: var(--sp-text-mute);
+    }
+  }
+
+  // class checklist
+  .ms-spelldb__classlist {
+    display: flex;
+    flex-direction: column;
+    max-height: 188px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid var(--sp-line);
+    border-radius: var(--sp-radius);
+    background: var(--sp-inset);
+    padding: 3px;
+  }
+
+  .ms-spelldb__classrow {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 9px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--sp-text-dim);
+    text-transform: capitalize;
+
+    // visually-hide the native checkbox; the .ms-spelldb__check span is the UI
+    input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      margin: 0;
+    }
 
     &:hover {
-      background: var(--background-modifier-hover);
+      background: var(--sp-soft);
+      color: var(--sp-text);
     }
 
     &.is-on {
-      background: var(--interactive-accent);
-      border-color: var(--interactive-accent);
-      color: var(--text-on-accent);
+      color: var(--sp-text);
+    }
+  }
+
+  // custom check box (class rows = red coding; metamagic toggle = gold, below)
+  .ms-spelldb__check {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+    border-radius: 5px;
+    border: 1px solid var(--sp-line-strong);
+    background: var(--sp-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    &.is-on {
+      background: var(--sp-red-soft);
+      border-color: var(--sp-red-line);
+      color: var(--sp-red-bright);
+    }
+  }
+
+  // level chips (5-col grid)
+  .ms-spelldb__chips {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+  }
+
+  .ms-spelldb__chip {
+    font-family: var(--sp-font-display);
+    font-size: 14px;
+    color: var(--sp-text-dim);
+    cursor: pointer;
+    background: var(--sp-input);
+    border: 1px solid var(--sp-line-strong);
+    border-radius: 5px;
+    padding: 7px 0;
+    text-align: center;
+    min-width: 0;
+
+    &:hover {
+      background: var(--sp-soft);
+      color: var(--sp-text);
+    }
+
+    &.is-on {
+      background: var(--sp-gold);
+      border-color: var(--sp-gold);
+      color: var(--sp-on-fill);
     }
   }
 
   .ms-spelldb__flag {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: var(--font-ui-small);
+    gap: 9px;
+    font-size: 13px;
+    color: var(--sp-text-dim);
     cursor: pointer;
+
+    input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      margin: 0;
+    }
+
+    &:hover {
+      color: var(--sp-text);
+    }
+  }
+
+  .ms-spelldb__divider {
+    height: 1px;
+    background: var(--sp-line);
+    margin: 0;
+  }
+
+  // ===== results table =====
+  .ms-spelldb__main {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ms-spelldb__tablescroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
   }
 
   .ms-spelldb__table {
     width: 100%;
     border-collapse: collapse;
-    font-size: var(--font-ui-small);
+    font-size: 13.5px;
 
     th {
+      font-family: var(--sp-font-label);
+      font-weight: 400;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--sp-text-mute);
       text-align: left;
+      white-space: nowrap;
       cursor: pointer;
       user-select: none;
-      white-space: nowrap;
-      padding: 4px 8px;
-      border-bottom: 2px solid var(--background-modifier-border);
+      padding: 8px 10px;
       position: sticky;
       top: 0;
-      background: var(--background-primary);
+      z-index: 1;
+      background: var(--sp-pane);
+
+      &:hover {
+        color: var(--sp-text-dim);
+      }
+
+      &.is-sort {
+        color: var(--sp-accent); // active sort = obsidian accent
+      }
     }
 
     td {
-      padding: 4px 8px;
-      border-bottom: 1px solid var(--background-modifier-border);
+      padding: 7px 10px;
+      color: var(--sp-text);
       vertical-align: top;
+
+      &.sp-dim {
+        color: var(--sp-text-mute);
+      }
     }
 
-    tr.is-known td {
-      background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+    thead tr {
+      border-bottom: 1px solid var(--sp-line-strong);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--sp-line);
+
+      &:hover {
+        background: var(--sp-soft);
+      }
+
+      &.is-known {
+        box-shadow: inset 2px 0 0 var(--sp-gold);
+      }
     }
   }
 
-  .ms-spelldb__add-col {
-    width: 36px;
+  .ms-spelldb__sortcaret {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 8px;
+    vertical-align: 1px;
   }
 
-  .ms-spelldb__add,
-  .ms-spelldb__remove {
-    min-width: 26px;
-    height: 26px;
-    padding: 0 4px;
-    border-radius: 4px;
-    border: 1px solid var(--background-modifier-border);
+  .ms-spelldb__numcol {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ms-spelldb__name {
+    color: var(--sp-link);
+    font-size: 14px;
     cursor: pointer;
-    font-weight: 600;
-    /* center the glyph: Obsidian's default button line-height pushes it low */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
+
+    &:hover {
+      color: var(--sp-red-bright);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
   }
 
-  .ms-spelldb__add {
-    background: var(--interactive-accent);
-    color: var(--text-on-accent);
+  .ms-spelldb__lvlcell {
+    font-family: var(--sp-font-display);
+    color: var(--sp-text-dim);
   }
 
-  .ms-spelldb__remove {
-    background: var(--background-secondary);
-    color: var(--text-error);
-  }
-
+  // school pills — per-school ink set inline (color/bg/border)
   .ms-spelldb__school {
     display: inline-block;
-    padding: 1px 6px;
-    border-radius: 8px;
-    font-size: 0.85em;
+    font-family: var(--sp-font-label);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 11px;
+    border: 1px solid;
     white-space: nowrap;
   }
 
+  // add / remove column
+  .ms-spelldb__addcol {
+    width: 30px;
+    padding-left: 2px;
+    padding-right: 4px;
+  }
+
+  .ms-spelldb__add {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--sp-line-strong);
+    background: transparent;
+    box-shadow: none;
+    color: var(--sp-gold);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover {
+      background: var(--sp-gold);
+      color: var(--sp-on-fill);
+      border-color: var(--sp-gold);
+    }
+
+    &.is-load {
+      color: var(--sp-red-bright);
+
+      &:hover {
+        background: var(--sp-red);
+        color: #fff;
+        border-color: var(--sp-red);
+      }
+    }
+  }
+
+  .ms-spelldb__remove {
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
+    border: 1px solid var(--sp-red-line);
+    background: var(--sp-red-soft);
+    color: var(--sp-red-bright);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: var(--sp-font-label);
+    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    box-shadow: none;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    &:hover {
+      background: var(--sp-red);
+      color: #fff;
+    }
+  }
+
+  .ms-spelldb__empty {
+    padding: 26px;
+    text-align: center;
+    color: var(--sp-text-mute);
+    font-size: 13px;
+  }
+
+  // ===== pager =====
   .ms-spelldb__pager {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 14px;
+    padding: 12px 8px 4px;
+    font-family: var(--sp-font-label);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sp-text-mute);
+
+    button {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--sp-line-strong);
+      background: transparent;
+      box-shadow: none;
+      color: var(--sp-text-dim);
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+
+      svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      &:hover:not(:disabled) {
+        background: var(--sp-soft);
+        color: var(--sp-text);
+      }
+
+      &:disabled {
+        opacity: 0.3;
+        cursor: default;
+      }
+    }
+  }
+
+  // ===== block labels (shared by Loadouts + Metamagic) =====
+  .ms-spelldb__blocklabel {
+    font-family: var(--sp-font-label);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sp-gold);
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .ln {
+      flex: 1;
+      height: 1px;
+      background: var(--sp-line);
+    }
+
+    .muted {
+      color: var(--sp-text-mute);
+    }
+  }
+
+  // shared CTA / ghost buttons (Loadouts detail actions)
+  .ms-spelldb__cta {
+    background: var(--sp-red);
+    color: #fff;
+    border: 1px solid var(--sp-red);
+    box-shadow: none;
+    font-family: var(--sp-font-display);
+    letter-spacing: 0.02em;
+    font-size: 13px;
+    padding: 8px 15px;
+    border-radius: var(--sp-radius);
+    cursor: pointer;
+    min-height: 36px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    svg {
+      width: 15px;
+      height: 15px;
+      color: #fff;
+    }
+
+    &:hover {
+      filter: brightness(1.08);
+    }
+
+    &--gold {
+      background: var(--sp-gold);
+      border-color: var(--sp-gold);
+      color: var(--sp-on-fill);
+
+      svg {
+        color: var(--sp-on-fill);
+      }
+    }
+  }
+
+  .ms-spelldb__ghostbtn {
+    background: transparent;
+    color: var(--sp-text-dim);
+    border: 1px solid var(--sp-line-strong);
+    box-shadow: none;
+    font-family: var(--sp-font-display);
+    font-size: 13px;
+    padding: 8px 13px;
+    border-radius: var(--sp-radius);
+    cursor: pointer;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+
+    svg {
+      width: 15px;
+      height: 15px;
+      color: var(--sp-text-mute);
+    }
+
+    &:hover {
+      background: var(--sp-soft);
+      color: var(--sp-text);
+    }
+
+    &--danger:hover {
+      color: var(--sp-red-bright);
+      border-color: var(--sp-red-line);
+      background: var(--sp-red-soft);
+
+      svg {
+        color: var(--sp-red-bright);
+      }
+    }
+  }
+
+  // ===== Loadouts (Stage B) =====
+  .ms-spelldb__load {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 264px 1fr;
+    gap: 22px;
+    overflow: hidden;
+    padding-top: 4px;
+  }
+
+  .ms-spelldb__load-rail {
+    min-height: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding-right: 2px;
+  }
+
+  .ms-spelldb__loadcard {
+    text-align: left;
+    appearance: none;
+    background: var(--sp-inset);
+    border: 1px solid var(--sp-line);
+    border-radius: 8px;
+    padding: 12px 13px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; // Obsidian forces button align-items:center
+    gap: 7px;
+    position: relative;
+    box-shadow: none;
+    width: 100%;
+    min-width: 0;
+    height: auto; // Obsidian pins button height ~30px; content must drive it
+    white-space: normal; // <button> inherits nowrap; let card text wrap
+
+    &:hover {
+      border-color: var(--sp-line-strong);
+      background: var(--sp-soft);
+    }
+
+    &.is-on {
+      border-color: var(--sp-red-line);
+      background: linear-gradient(180deg, var(--sp-red-soft), transparent 75%);
+
+      .ms-spelldb__loadcard-icon {
+        color: var(--sp-red-bright);
+        border-color: var(--sp-red-line);
+        background: rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+
+  .ms-spelldb__loadcard-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ms-spelldb__loadcard-icon {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sp-pane);
+    border: 1px solid var(--sp-line-strong);
+    color: var(--sp-gold);
+
+    svg {
+      width: 17px;
+      height: 17px;
+    }
+  }
+
+  .ms-spelldb__loadcard-name {
+    font-family: var(--sp-font-display);
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    color: var(--sp-text);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ms-spelldb__loadcard-meta {
+    font-family: var(--sp-font-label);
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sp-text-mute);
+    display: flex;
     gap: 12px;
-    padding: 8px;
-    color: var(--text-muted);
+
+    b {
+      color: var(--sp-gold-dim);
+      font-weight: 400;
+    }
+  }
+
+  .ms-spelldb__loadcard-desc {
+    font-size: 12.5px;
+    color: var(--sp-text-dim);
+    line-height: 1.35;
+  }
+
+  .ms-spelldb__loadcard-active {
+    position: absolute;
+    top: 10px;
+    right: 11px;
+    font-family: var(--sp-font-label);
+    font-size: 8.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sp-accent);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    svg {
+      width: 11px;
+      height: 11px;
+    }
+  }
+
+  .ms-spelldb__load-new {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px;
+    border-radius: 8px;
+    border: 1px dashed var(--sp-line-strong);
+    background: transparent;
+    box-shadow: none;
+    color: var(--sp-text-dim);
+    cursor: pointer;
+    font-family: var(--sp-font-display);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+
+    &:hover {
+      border-color: var(--sp-gold-line);
+      color: var(--sp-gold);
+    }
+  }
+
+  .ms-spelldb__load-detail {
+    min-height: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ms-spelldb__load-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--sp-line);
+    margin-bottom: 14px;
+  }
+
+  .ms-spelldb__load-title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ms-spelldb__load-name {
+    font-family: var(--sp-font-display);
+    font-size: 24px;
+    letter-spacing: 0.015em;
+    color: var(--sp-text);
+    line-height: 1.1;
+
+    input {
+      all: unset;
+      font-family: inherit;
+      font-size: inherit;
+      letter-spacing: inherit;
+      color: var(--sp-gold);
+      width: 100%;
+    }
+  }
+
+  .ms-spelldb__load-sub {
+    font-size: 13px;
+    color: var(--sp-text-dim);
+    margin-top: 6px;
+    line-height: 1.4;
+
+    input {
+      all: unset;
+      font-family: var(--sp-font-body);
+      font-size: 13px;
+      color: var(--sp-text-dim);
+      width: 100%;
+    }
+  }
+
+  .ms-spelldb__load-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 0 0 auto;
+  }
+
+  // appearance editor
+  .ms-spelldb__load-appearchip {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 auto;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sp-inset);
+    border: 1px solid var(--sp-line-strong);
+    cursor: pointer;
+    position: relative;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    &:hover {
+      border-color: var(--sp-gold-line);
+    }
+
+    &.is-open {
+      border-color: var(--sp-gold);
+    }
+
+    .edit-dot {
+      position: absolute;
+      right: -4px;
+      bottom: -4px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--sp-pane);
+      border: 1px solid var(--sp-line-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sp-text-mute);
+
+      svg {
+        width: 10px;
+        height: 10px;
+      }
+    }
+  }
+
+  .ms-spelldb__appear {
+    border: 1px solid var(--sp-line-strong);
+    border-radius: 9px;
+    background: var(--sp-inset);
+    padding: 14px 15px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .ms-spelldb__appear-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ms-spelldb__appear-lbl {
+    font-family: var(--sp-font-label);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sp-text-mute);
+  }
+
+  .ms-spelldb__appear-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ms-spelldb__appear-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
+    border: 1px solid var(--sp-line-strong);
+    background: var(--sp-input);
+    color: var(--sp-text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background: var(--sp-soft);
+      color: var(--sp-text);
+    }
+
+    &.is-on {
+      border-color: var(--sp-gold);
+      color: var(--sp-gold);
+      background: var(--sp-gold-soft);
+    }
+  }
+
+  .ms-spelldb__appear-colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ms-spelldb__appear-color {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    padding: 0;
+    box-shadow: none;
+
+    &.is-on {
+      border-color: #fff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5) inset;
+    }
+  }
+
+  // loadout spell groups by level
+  .ms-spelldb__load-levels {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ms-spelldb__lvlblock-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 7px;
+  }
+
+  .ms-spelldb__lvlblock-lvl {
+    font-family: var(--sp-font-display);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--sp-gold);
+  }
+
+  .ms-spelldb__lvlblock-ct {
+    font-family: var(--sp-font-label);
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sp-text-mute);
+  }
+
+  .ms-spelldb__lvlblock-ln {
+    flex: 1;
+    height: 1px;
+    background: var(--sp-line);
+    align-self: center;
+  }
+
+  .ms-spelldb__prep {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    background: var(--sp-inset);
+    border: 1px solid var(--sp-line);
+    margin-bottom: 4px;
+
+    &:hover {
+      border-color: var(--sp-line-strong);
+    }
+  }
+
+  .ms-spelldb__prep-name {
+    font-size: 14px;
+    color: var(--sp-text);
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .ms-spelldb__prep-mm {
+    flex: 0 0 auto;
+    font-family: var(--sp-font-label);
+    font-size: 9px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--sp-red-bright);
+    background: var(--sp-red-soft);
+    border: 1px solid var(--sp-red-line);
+    border-radius: 9px;
+    padding: 2px 7px;
+  }
+
+  .ms-spelldb__prep-qty {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .ms-spelldb__prep-qtybtn {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--sp-line-strong);
+    background: var(--sp-input);
+    color: var(--sp-text-dim);
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: none;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    &:hover {
+      background: var(--sp-soft);
+      color: var(--sp-text);
+    }
+  }
+
+  .ms-spelldb__prep-count {
+    font-family: var(--sp-font-display);
+    font-size: 14px;
+    color: var(--sp-gold);
+    min-width: 14px;
+    text-align: center;
+  }
+
+  .ms-spelldb__prep-del {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--sp-line);
+    background: transparent;
+    color: var(--sp-text-mute);
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: none;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    &:hover {
+      color: var(--sp-red-bright);
+      border-color: var(--sp-red-line);
+      background: var(--sp-red-soft);
+    }
+  }
+
+  .ms-spelldb__load-empty {
+    border: 1px dashed var(--sp-line-strong);
+    border-radius: 9px;
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--sp-text-mute);
+
+    b {
+      display: block;
+      font-family: var(--sp-font-display);
+      font-size: 16px;
+      color: var(--sp-text-dim);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+  }
+
+  // ===== Metamagic (Stage C) =====
+  .ms-spelldb__mm {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding-top: 4px;
+  }
+
+  .ms-spelldb__mm-intro {
+    font-size: 13.5px;
+    color: var(--sp-text-dim);
+    max-width: 640px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .ms-spelldb__mm-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+
+    .ms-spelldb__search {
+      flex: 1 1 240px;
+    }
+  }
+
+  .ms-spelldb__mm-levelchips {
+    display: flex;
+    gap: 4px;
+  }
+
+  .ms-spelldb__mm-levelchip {
+    font-family: var(--sp-font-display);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--sp-text-dim);
+    cursor: pointer;
+    background: var(--sp-input);
+    border: 1px solid var(--sp-line-strong);
+    border-radius: 5px;
+    padding: 7px 11px;
+    min-height: 34px;
+    box-shadow: none;
+
+    &:hover {
+      background: var(--sp-soft);
+      color: var(--sp-text);
+    }
+
+    &.is-on {
+      background: var(--sp-gold);
+      border-color: var(--sp-gold);
+      color: var(--sp-on-fill);
+    }
+  }
+
+  .ms-spelldb__mm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+    gap: 12px;
+    margin-bottom: 26px;
+  }
+
+  .ms-spelldb__mmcard {
+    border: 1px solid var(--sp-line);
+    border-radius: 9px;
+    background: var(--sp-inset);
+    padding: 13px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; // Obsidian forces button align-items:center
+    gap: 9px;
+    cursor: pointer;
+    position: relative;
+    text-align: left;
+    appearance: none;
+    font: inherit;
+    box-shadow: none;
+    width: 100%;
+    min-width: 0;
+    height: auto; // Obsidian pins button height ~30px; content must drive it
+    white-space: normal; // <button> inherits nowrap; let card text wrap
+
+    &:hover {
+      border-color: var(--sp-line-strong);
+    }
+
+    &.is-known {
+      border-color: var(--sp-gold-line);
+      background: linear-gradient(180deg, var(--sp-gold-soft), transparent 70%);
+
+      .ms-spelldb__mmtoggle {
+        color: var(--sp-gold);
+      }
+    }
+  }
+
+  .ms-spelldb__mmcard-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .ms-spelldb__mmcard-name {
+    font-family: var(--sp-font-display);
+    font-size: 15.5px;
+    letter-spacing: 0.02em;
+    color: var(--sp-text);
+    flex: 1;
+    line-height: 1.15;
+  }
+
+  .ms-spelldb__mmcard-adj {
+    font-family: var(--sp-font-label);
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sp-gold);
+    border: 1px solid var(--sp-gold-line);
+    background: var(--sp-gold-soft);
+    border-radius: 9px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  .ms-spelldb__mmcard-desc {
+    font-size: 12.5px;
+    color: var(--sp-text-dim);
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .ms-spelldb__mmcard-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 3px;
+  }
+
+  .ms-spelldb__mmcard-src {
+    font-family: var(--sp-font-label);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sp-text-mute);
+  }
+
+  .ms-spelldb__mmtoggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--sp-font-label);
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sp-text-mute);
+
+    .ms-spelldb__check.is-on {
+      background: var(--sp-gold-soft);
+      border-color: var(--sp-gold-line);
+      color: var(--sp-gold);
+    }
+  }
+
+  .ms-spelldb__mm-section {
+    margin-bottom: 8px;
+  }
+
+  // ===== placeholder (sections built in later stages) =====
+  .ms-spelldb__placeholder {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--sp-text-mute);
+    text-align: center;
+
+    b {
+      font-family: var(--sp-font-display);
+      font-size: 18px;
+      letter-spacing: 0.02em;
+      color: var(--sp-text-dim);
+    }
   }
 }
+// NOTE: the iPad button-chrome overrides for .minisheet-spelldb-root live in
+// _tablet.scss alongside the config + equipdb root overrides (same convention).

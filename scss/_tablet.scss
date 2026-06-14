@@ -424,3 +424,147 @@
     height: 36px;
   }
 }
+
+// ===========================================================================
+// Spell DB redesign — same treatment for .minisheet-spelldb-root (Database +
+// Loadouts + Metamagic sections). Separate root scope, so the rules above
+// don't reach it; without this block Obsidian's mobile build inflates every
+// button (injected padding/background-color/box-shadow on
+// button:not(.clickable-icon)). `.is-tablet .minisheet-spelldb-root` is (0,3,1)
+// so it beats the injection (0,2,1); state rules add a class for (0,4,1).
+// --sp-* vars resolve here because they are declared on this same element.
+// ===========================================================================
+.is-tablet .minisheet-spelldb-root {
+  --ms-touch: 45px;
+
+  button {
+    box-shadow: none;
+  }
+
+  /* shape / icon buttons: flat, no injected padding */
+  button:is(
+    .ms-spelldb__add,
+    .ms-spelldb__appear-icon,
+    .ms-spelldb__appear-color,
+    .ms-spelldb__prep-qtybtn,
+    .ms-spelldb__prep-del
+  ),
+  .ms-spelldb__pager button {
+    padding: 0;
+  }
+
+  /* padded text buttons: re-assert their intended geometry */
+  button.ms-spelldb__tab {
+    padding: 9px 15px;
+  }
+  button.ms-spelldb__btn {
+    padding: 7px 12px;
+  }
+  button.ms-spelldb__btn--ghost {
+    padding: 7px 8px;
+  }
+  button.ms-spelldb__chip {
+    padding: 7px 0;
+  }
+  button.ms-spelldb__remove {
+    padding: 0 6px;
+  }
+  button.ms-spelldb__cta {
+    padding: 8px 15px;
+  }
+  button.ms-spelldb__ghostbtn {
+    padding: 8px 13px;
+  }
+  button.ms-spelldb__load-new {
+    padding: 11px;
+  }
+  button.ms-spelldb__loadcard {
+    padding: 12px 13px;
+  }
+  button.ms-spelldb__mm-levelchip {
+    padding: 7px 11px;
+  }
+  button.ms-spelldb__mmcard {
+    padding: 13px 14px;
+  }
+
+  /* re-assert the transparent backgrounds the mobile build stomps */
+  button:is(
+    .ms-spelldb__tab,
+    .ms-spelldb__btn,
+    .ms-spelldb__btn--ghost,
+    .ms-spelldb__add,
+    .ms-spelldb__load-new,
+    .ms-spelldb__ghostbtn,
+    .ms-spelldb__prep-del
+  ),
+  .ms-spelldb__pager button {
+    background-color: transparent;
+  }
+
+  /* filled-surface buttons: re-assert their intended fill */
+  button:is(
+    .ms-spelldb__chip,
+    .ms-spelldb__appear-icon,
+    .ms-spelldb__mm-levelchip,
+    .ms-spelldb__prep-qtybtn
+  ) {
+    background-color: var(--sp-input);
+  }
+  button:is(.ms-spelldb__loadcard, .ms-spelldb__mmcard) {
+    background-color: var(--sp-inset);
+  }
+  button.ms-spelldb__remove {
+    background-color: var(--sp-red-soft);
+  }
+  button.ms-spelldb__cta {
+    background-color: var(--sp-red);
+  }
+  button.ms-spelldb__cta--gold {
+    background-color: var(--sp-gold);
+  }
+
+  /* state backgrounds (extra class -> higher specificity, so they win) */
+  button.ms-spelldb__btn.is-on {
+    background-color: var(--sp-gold-soft);
+  }
+  button.ms-spelldb__chip.is-on,
+  button.ms-spelldb__mm-levelchip.is-on {
+    background-color: var(--sp-gold);
+  }
+  button.ms-spelldb__appear-icon.is-on {
+    background-color: var(--sp-gold-soft);
+  }
+  button.ms-spelldb__add:hover {
+    background-color: var(--sp-gold);
+  }
+  button.ms-spelldb__add.is-load:hover {
+    background-color: var(--sp-red);
+  }
+  /* loadout swatch keeps its inline color; just re-assert the selection ring
+     the global `button { box-shadow: none }` above would otherwise wipe */
+  button.ms-spelldb__appear-color.is-on {
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5) inset;
+  }
+
+  /* comfortable touch targets */
+  button:is(
+    .ms-spelldb__tab,
+    .ms-spelldb__btn,
+    .ms-spelldb__cta,
+    .ms-spelldb__ghostbtn,
+    .ms-spelldb__load-new,
+    .ms-spelldb__mm-levelchip
+  ) {
+    min-height: var(--ms-touch);
+  }
+  button:is(.ms-spelldb__add, .ms-spelldb__remove) {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+  }
+  .ms-spelldb__pager button {
+    width: 36px;
+    height: 36px;
+  }
+}
