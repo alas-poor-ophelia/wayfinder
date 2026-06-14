@@ -1,0 +1,674 @@
+[
+  {
+    "id": "apocalyptic-spell",
+    "name": "Apocalyptic Spell",
+    "adj": "var",
+    "desc": "Area affected by spell becomes difficult to move in",
+    "source": "Planar Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "aquatic-spell",
+    "name": "Aquatic Spell",
+    "adj": 1,
+    "desc": "Spell functions normally underwater",
+    "source": "Ultimate Wilderness",
+    "prerequisite": ""
+  },
+  {
+    "id": "ascendant-spell",
+    "name": "Ascendant Spell",
+    "adj": 5,
+    "desc": "Imitate mythic version of a spell",
+    "source": "Mythic Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "authoritative-spell",
+    "name": "Authoritative Spell",
+    "adj": "var",
+    "desc": "Spell forbids target from taking certain actions",
+    "source": "Planar Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "benthic-spell",
+    "name": "Benthic Spell",
+    "adj": 1,
+    "desc": "Modify a spell to inflict damage with pressurized water",
+    "source": "Elemental Master's Handbook",
+    "prerequisite": ""
+  },
+  {
+    "id": "blissful-spell",
+    "name": "Blissful Spell",
+    "adj": "var",
+    "desc": "Target of spell takes combat penalties or gains bonuses on skills and saves",
+    "source": "Planar Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "bouncing-spell",
+    "name": "Bouncing Spell",
+    "adj": 1,
+    "desc": "Redirect a spell that had no effect on initial target",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "brackish-spell",
+    "name": "Brackish Spell",
+    "adj": "var",
+    "desc": "Modfy a spell to sheath you in protective seawater when cast",
+    "source": "Elemental Master's Handbook",
+    "prerequisite": ""
+  },
+  {
+    "id": "brisk-spell",
+    "name": "Brisk Spell",
+    "adj": "var",
+    "desc": "Increase the speed of a granted movement type",
+    "source": "Magic Tactics Toolbox",
+    "prerequisite": "Dex 13+"
+  },
+  {
+    "id": "burning-spell",
+    "name": "Burning Spell",
+    "adj": "var",
+    "desc": "Spell with the acid or fire descriptor deals extra damage the next round",
+    "source": "Ultimate Magic",
+    "prerequisite": ""
+  },
+  {
+    "id": "centered-spell",
+    "name": "Centered Spell",
+    "adj": "var",
+    "desc": "Center a spells area on yourself",
+    "source": "Legacy of the First World",
+    "prerequisite": "Spellcraft 3 ranks"
+  },
+  {
+    "id": "cherry-blossom-spell",
+    "name": "Cherry Blossom Spell",
+    "adj": "var",
+    "desc": "Creatures that take damage from your spell have their age manipulated",
+    "source": "Wilderness Origins",
+    "prerequisite": ""
+  },
+  {
+    "id": "coaxing-spell",
+    "name": "Coaxing Spell",
+    "adj": "var",
+    "desc": "Use mind-affecting spells to affect mindless oozes or vermin",
+    "source": "Dungeoneer's Handbook",
+    "prerequisite": "Spell Focus (enchantment), Knowledge (dungeoneering) 6 ranks"
+  },
+  {
+    "id": "concussive-spell",
+    "name": "Concussive Spell",
+    "adj": 2,
+    "desc": "Spell with the sonic descriptor gains a debilitating concussive effect",
+    "source": "Ultimate Magic",
+    "prerequisite": ""
+  },
+  {
+    "id": "conditional-spell",
+    "name": "Conditional Spell",
+    "adj": "var",
+    "desc": "Apply conditional favor to a spell you cast",
+    "source": "Healer's Handbook",
+    "prerequisite": ""
+  },
+  {
+    "id": "consecrate-spell",
+    "name": "Consecrate Spell",
+    "adj": 2,
+    "desc": "Maximize spell variables against evil creatures.",
+    "source": "Blood of Angels",
+    "prerequisite": "Aasimar, able to prepare or cast consecrate"
+  },
+  {
+    "id": "contagious-spell",
+    "name": "Contagious Spell",
+    "adj": 2,
+    "desc": "Spell spreads to those who fail to remove it",
+    "source": "Horror Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "contingent-spell",
+    "name": "Contingent Spell",
+    "adj": 2,
+    "desc": "Turn a healing spell into a contengent effect",
+    "source": "Healer's Handbook",
+    "prerequisite": "Ability to cast cure spells (a cure spell is any spell with “cure” in its name)"
+  },
+  {
+    "id": "crypt-spell",
+    "name": "Crypt Spell",
+    "adj": "var",
+    "desc": "Damaging spell hinders resurrection or sickens undead",
+    "source": "Planar Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "dazing-spell",
+    "name": "Dazing Spell",
+    "adj": 3,
+    "desc": "Daze creature with spell damage",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "delayed-spell",
+    "name": "Delayed Spell",
+    "adj": 1,
+    "desc": "Set a spell to trigger on a delay",
+    "source": "Pathfinder #116: Fangs of War",
+    "prerequisite": ""
+  },
+  {
+    "id": "disruptive-spell",
+    "name": "Disruptive Spell",
+    "adj": 1,
+    "desc": "Target of spell must make concentration check to cast a spell in the next round",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "echoing-spell",
+    "name": "Echoing Spell",
+    "adj": 3,
+    "desc": "Cast a spell a second time",
+    "source": "Ultimate Magic",
+    "prerequisite": ""
+  },
+  {
+    "id": "eclipsed-spell",
+    "name": "Eclipsed Spell",
+    "adj": "var",
+    "desc": "Alter how your spells affect illumination",
+    "source": "Blood of Shadows",
+    "prerequisite": ""
+  },
+  {
+    "id": "ectoplasmic-spell",
+    "name": "Ectoplasmic Spell",
+    "adj": 1,
+    "desc": "Spell fully affects incorporeal and ethereal creatures",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "elemental-spell",
+    "name": "Elemental Spell",
+    "adj": 1,
+    "desc": "Inflict energy damage instead of regular spell damage",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "empower-spell",
+    "name": "Empower Spell",
+    "adj": 2,
+    "desc": "Increase spell variables by 50%",
+    "source": "PRPG Core Rulebook",
+    "prerequisite": ""
+  },
+  {
+    "id": "encouraging-spell",
+    "name": "Encouraging Spell",
+    "adj": 1,
+    "desc": "Increase a granted moral bonus",
+    "source": "Magic Tactics Toolbox",
+    "prerequisite": "Cha 13, Diplomacy 6 ranks"
+  },
+  {
+    "id": "enlarge-spell",
+    "name": "Enlarge Spell",
+    "adj": 1,
+    "desc": "Double spell range",
+    "source": "PRPG Core Rulebook",
+    "prerequisite": ""
+  },
+  {
+    "id": "extend-spell",
+    "name": "Extend Spell",
+    "adj": 1,
+    "desc": "Double spell duration",
+    "source": "PRPG Core Rulebook",
+    "prerequisite": ""
+  },
+  {
+    "id": "familiar-spell",
+    "name": "Familiar Spell",
+    "adj": 3,
+    "desc": "Imbue your familiar with a spell, allowing it to cast the spell at a later time",
+    "source": "Animal Archive",
+    "prerequisite": "Spellcaster with familiar class feature"
+  },
+  {
+    "id": "fearsome-spell",
+    "name": "Fearsome Spell",
+    "adj": 2,
+    "desc": "Spell damage causes the shaken condition",
+    "source": "Occult Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "flaring-spell",
+    "name": "Flaring Spell",
+    "adj": 1,
+    "desc": "Spell with the fire, light, or electricity descriptor dazzles creatures it affects",
+    "source": "Ultimate Magic",
+    "prerequisite": ""
+  },
+  {
+    "id": "fleeting-spell",
+    "name": "Fleeting Spell",
+    "adj": "var",
+    "desc": "Dismiss spell more easily",
+    "source": "Ultimate Intrigue",
+    "prerequisite": ""
+  },
+  {
+    "id": "focused-spell",
+    "name": "Focused Spell",
+    "adj": 1,
+    "desc": "Increase save DC of spell for one target in a group",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "furious-spell",
+    "name": "Furious Spell",
+    "adj": 1,
+    "desc": "Spell deals more damage and can be cast while in a rage",
+    "source": "Occult Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "heighten-spell",
+    "name": "Heighten Spell",
+    "adj": "var",
+    "desc": "Treat spell as a higher level",
+    "source": "PRPG Core Rulebook",
+    "prerequisite": ""
+  },
+  {
+    "id": "intensified-spell",
+    "name": "Intensified Spell",
+    "adj": 1,
+    "desc": "Increase maximum damage dice by 5 levels",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "intuitive-spell",
+    "name": "Intuitive Spell",
+    "adj": 1,
+    "desc": "Cast spell without thought components",
+    "source": "Occult Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "jinxed-spell",
+    "name": "Jinxed Spell",
+    "adj": 1,
+    "desc": "Combine your jinxes with spells",
+    "source": "Halflings of Golarion",
+    "prerequisite": "Any two metamagic feats, Halfling Jinx trait"
+  },
+  {
+    "id": "latent-curse",
+    "name": "Latent Curse",
+    "adj": 1,
+    "desc": "Alter curse spells to target objects instead of people",
+    "source": "Blood of the Coven",
+    "prerequisite": ""
+  },
+  {
+    "id": "lingering-spell",
+    "name": "Lingering Spell",
+    "adj": 1,
+    "desc": "Instantaneous area effect spell lasts for 1 round",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "logical-spell",
+    "name": "Logical Spell",
+    "adj": 1,
+    "desc": "Cast spell without emotion components",
+    "source": "Occult Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "maximize-spell",
+    "name": "Maximize Spell",
+    "adj": 3,
+    "desc": "Maximize spell variables",
+    "source": "PRPG Core Rulebook",
+    "prerequisite": ""
+  },
+  {
+    "id": "merciful-spell",
+    "name": "Merciful Spell",
+    "adj": "var",
+    "desc": "Spell inflicts nonlethal damage instead of lethal",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "murky-spell",
+    "name": "Murky Spell",
+    "adj": "var",
+    "desc": "Cloud effects work underwater, with penalties",
+    "source": "Aquatic Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "persistent-spell",
+    "name": "Persistent Spell",
+    "adj": 2,
+    "desc": "Creatures who saved against a spell must save again",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "piercing-spell",
+    "name": "Piercing Spell",
+    "adj": 1,
+    "desc": "Affected spell treats creatures with SR as having an SR of 5 lower",
+    "source": "Ultimate Magic",
+    "prerequisite": ""
+  },
+  {
+    "id": "quicken-spell",
+    "name": "Quicken Spell",
+    "adj": 4,
+    "desc": "Cast spell as a swift action",
+    "source": "PRPG Core Rulebook",
+    "prerequisite": ""
+  },
+  {
+    "id": "reach-spell",
+    "name": "Reach Spell",
+    "adj": 1,
+    "desc": "Increase spell range to higher range category",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "rime-spell",
+    "name": "Rime Spell",
+    "adj": 1,
+    "desc": "Spell with the cold descriptor also entangles creatures if the spell damages them",
+    "source": "Ultimate Magic",
+    "prerequisite": ""
+  },
+  {
+    "id": "scarring-spell",
+    "name": "Scarring Spell",
+    "adj": 1,
+    "desc": "Emotion or fear spell gives penalties against further such spells",
+    "source": "Occult Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "scouting-summons",
+    "name": "Scouting Summons",
+    "adj": "var",
+    "desc": "Possess a summoned creature",
+    "source": "Monster Summoner's Handbook",
+    "prerequisite": "Spell Focus (conjuration), ability to cast magic jar"
+  },
+  {
+    "id": "seeking-spell",
+    "name": "Seeking Spell",
+    "adj": 2,
+    "desc": "Allow spells to bend around barriers",
+    "source": "Ranged Tactics Toolbox",
+    "prerequisite": ""
+  },
+  {
+    "id": "selective-spell",
+    "name": "Selective Spell",
+    "adj": 1,
+    "desc": "Exclude targets from an area effect spell",
+    "source": "Advanced Player's Guide",
+    "prerequisite": "Spellcraft 10 ranks"
+  },
+  {
+    "id": "shadow-grasp",
+    "name": "Shadow Grasp",
+    "adj": "var",
+    "desc": "Entangle creatures caught within your darkness spells",
+    "source": "Inner Sea Magic",
+    "prerequisite": "Tenebrous Spell, Umbral Spell"
+  },
+  {
+    "id": "sickening-spell",
+    "name": "Sickening Spell",
+    "adj": 2,
+    "desc": "Sicken creature with spell damage",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "silent-spell",
+    "name": "Silent Spell",
+    "adj": 1,
+    "desc": "Cast spell without verbal components",
+    "source": "PRPG Core Rulebook",
+    "prerequisite": ""
+  },
+  {
+    "id": "snuffing-spell",
+    "name": "Snuffing Spell",
+    "adj": 2,
+    "desc": "Modify your magic to extinguish light sources",
+    "source": "Blood of Shadows",
+    "prerequisite": ""
+  },
+  {
+    "id": "solar-spell",
+    "name": "Solar Spell",
+    "adj": 1,
+    "desc": "Enhance your light magic with the power of the sun",
+    "source": "Cohorts and Companions",
+    "prerequisite": ""
+  },
+  {
+    "id": "solid-shadows",
+    "name": "Solid Shadows",
+    "adj": "var",
+    "desc": "Your shadow spells are 20% more real than normal",
+    "source": "Monster Summoner's Handbook",
+    "prerequisite": "Spell Focus (illusion)"
+  },
+  {
+    "id": "stable-spell",
+    "name": "Stable Spell",
+    "adj": 1,
+    "desc": "Cast spells in areas of primal magic with less chance of triggering a primal magic event",
+    "source": "Wardens of the Reborn Forge",
+    "prerequisite": ""
+  },
+  {
+    "id": "steam-spell",
+    "name": "Steam Spell",
+    "adj": "var",
+    "desc": "Use fire spells underwater without a caster level check",
+    "source": "Aquatic Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "still-spell",
+    "name": "Still Spell",
+    "adj": 1,
+    "desc": "Cast spell without somatic components",
+    "source": "PRPG Core Rulebook",
+    "prerequisite": ""
+  },
+  {
+    "id": "studied-spell",
+    "name": "Studied Spell",
+    "adj": 2,
+    "desc": "Spell uses Knowledge to bypass racial resistances",
+    "source": "Ultimate Intrigue",
+    "prerequisite": ""
+  },
+  {
+    "id": "stygian-spell",
+    "name": "Stygian Spell",
+    "adj": "var",
+    "desc": "Water spell causes memory loss to target",
+    "source": "Planar Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "stylized-spell",
+    "name": "Stylized Spell",
+    "adj": 1,
+    "desc": "Spell is difficult to identify and might be mistaken for a similar spell",
+    "source": "Ultimate Intrigue",
+    "prerequisite": "Bluff 5 ranks, Spellcraft 5 ranks"
+  },
+  {
+    "id": "tenacious-spell",
+    "name": "Tenacious Spell",
+    "adj": 1,
+    "desc": "Spell is difficult to dispel and remains for 1d4 rounds",
+    "source": "Ultimate Intrigue",
+    "prerequisite": ""
+  },
+  {
+    "id": "tenebrous-spell",
+    "name": "Tenebrous Spell",
+    "adj": 1,
+    "desc": "Alter a spell so it is stronger in darkness, but weaker in the light",
+    "source": "Inner Sea Magic",
+    "prerequisite": ""
+  },
+  {
+    "id": "thanatopic-spell",
+    "name": "Thanatopic Spell",
+    "adj": 2,
+    "desc": "Affected spell's death effects, energy drain, and negative levels affect undead",
+    "source": "Ultimate Magic",
+    "prerequisite": "Knowledge (religion) 6 ranks, Spell Focus (necromancy)"
+  },
+  {
+    "id": "threatening-illusion",
+    "name": "Threatening Illusion",
+    "adj": "var",
+    "desc": "Force enemies to think of your illusions as real threats",
+    "source": "Gnomes of Golarion",
+    "prerequisite": "Spell Focus (illusion), Gnome"
+  },
+  {
+    "id": "threnodic-spell",
+    "name": "Threnodic Spell",
+    "adj": 2,
+    "desc": "Change a mind-affecting spell so it can affect undead, but not living creatures",
+    "source": "Ultimate Magic",
+    "prerequisite": "Knowledge (religion) 6 ranks, Spell Focus (necromancy)"
+  },
+  {
+    "id": "thundering-spell",
+    "name": "Thundering Spell",
+    "adj": 2,
+    "desc": "Deafen creature with spell damage",
+    "source": "Advanced Player's Guide",
+    "prerequisite": ""
+  },
+  {
+    "id": "toppling-spell",
+    "name": "Toppling Spell",
+    "adj": 1,
+    "desc": "Spell with the force descriptor knocks targets prone",
+    "source": "Ultimate Magic",
+    "prerequisite": ""
+  },
+  {
+    "id": "toxic-spell",
+    "name": "Toxic Spell",
+    "adj": 1,
+    "desc": "Infuse a spell with the power of a poison",
+    "source": "Dirty Tactics Toolbox",
+    "prerequisite": "Craft (poison) 5 ranks, ability to cast 2nd-level spells, poison use class feature"
+  },
+  {
+    "id": "traumatic-spell",
+    "name": "Traumatic Spell",
+    "adj": 2,
+    "desc": "Emotion or fear spell causes nightmares",
+    "source": "Occult Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "trick-spell",
+    "name": "Trick Spell",
+    "adj": "var",
+    "desc": "Spells carry with them a dirty trick",
+    "source": "Dirty Tactics Toolbox",
+    "prerequisite": "Ability to cast 1st-level spells, chaotic neutral alignment, worshiper of Calistria"
+  },
+  {
+    "id": "tumultuous-spell",
+    "name": "Tumultuous Spell",
+    "adj": "var",
+    "desc": "Spell causes a target to move in a random direction",
+    "source": "Planar Adventures",
+    "prerequisite": ""
+  },
+  {
+    "id": "umbral-spell",
+    "name": "Umbral Spell",
+    "adj": 2,
+    "desc": "Alter a spell to radiate darkness",
+    "source": "Inner Sea Magic",
+    "prerequisite": "Tenebrous Spell"
+  },
+  {
+    "id": "ursurping-spell",
+    "name": "Ursurping Spell",
+    "adj": 1,
+    "desc": "Targets that fail their saving throw flank with you and can't make attacks of opportunity against you",
+    "source": "Pathfinder #132: The Six-Legend Soul",
+    "prerequisite": ""
+  },
+  {
+    "id": "vast-spell",
+    "name": "Vast Spell",
+    "adj": 1,
+    "desc": "Affect more creatures in an area",
+    "source": "Magic Tactics Toolbox",
+    "prerequisite": "Caster level 3rd"
+  },
+  {
+    "id": "verdant-spell",
+    "name": "Verdant Spell",
+    "adj": 2,
+    "desc": "Your spells can affect plant creatures",
+    "source": "Ultimate Wilderness",
+    "prerequisite": "Spell Focus (enchantment), Knowledge (nature) 6 ranks"
+  },
+  {
+    "id": "widen-spell",
+    "name": "Widen Spell",
+    "adj": 3,
+    "desc": "Double spell area",
+    "source": "PRPG Core Rulebook",
+    "prerequisite": ""
+  },
+  {
+    "id": "yai-mimic-spell",
+    "name": "Yai-Mimic Spell",
+    "adj": 3,
+    "desc": "Modify a ray spell to fire from your forehead, granting you brief regeneration",
+    "source": "Giant Hunter's Handbook",
+    "prerequisite": "Int 15, Still Spell"
+  }
+]

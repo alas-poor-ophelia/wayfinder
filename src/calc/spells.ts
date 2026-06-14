@@ -6,6 +6,7 @@
  * live legacy code are the contract (tests/unit/calc/spells.test.ts).
  */
 
+import { METAMAGIC_FEATS, metamagicPickerString } from "../data/feats";
 import type { AbilityScores } from "../types/character";
 import type { ClassEntry } from "../types/character";
 import type { SpellbookState } from "../types/spellbook";
@@ -654,22 +655,21 @@ export function calculateSpellDC(
   return 10 + spellLevel + castingStatBonus;
 }
 
-/** The exact legacy option list — no Quicken/Heighten in the old sheet. */
-export const METAMAGIC_OPTIONS = [
-  "Still Spell (+1 level)",
-  "Silent Spell (+1 level)",
-  "Extend Spell (+1 level)",
-  "Empower Spell (+2 levels)",
-  "Maximize Spell (+3 levels)",
-] as const;
+/**
+ * Metamagic options + slot adjustments, derived from the bundled feat catalog
+ * (scraped from aonprd). The picker strings are built to match the legacy five
+ * byte-for-byte ("Still Spell (+1 level)", …) so existing data and the calc
+ * characterization tests keep working; variable-adjustment feats contribute 0
+ * to slot math (their increase is player-determined and not modeled yet).
+ */
+export const METAMAGIC_OPTIONS: string[] = METAMAGIC_FEATS.map(metamagicPickerString);
 
-export const METAMAGIC_ADJUSTMENTS: Record<string, number> = {
-  "Still Spell (+1 level)": 1,
-  "Silent Spell (+1 level)": 1,
-  "Extend Spell (+1 level)": 1,
-  "Empower Spell (+2 levels)": 2,
-  "Maximize Spell (+3 levels)": 3,
-};
+export const METAMAGIC_ADJUSTMENTS: Record<string, number> = Object.fromEntries(
+  METAMAGIC_FEATS.map((f) => [
+    metamagicPickerString(f),
+    f.adj === "var" ? 0 : f.adj,
+  ])
+);
 
 export function getMetamagicLevelAdjustment(metamagic: string): number {
   return METAMAGIC_ADJUSTMENTS[metamagic] || 0;

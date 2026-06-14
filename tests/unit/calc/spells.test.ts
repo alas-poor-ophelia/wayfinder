@@ -137,16 +137,22 @@ describe("calculateSpellRange", () => {
 });
 
 describe("metamagic", () => {
-  it("ports the exact 5 legacy options and adjustments", () => {
-    expect([...METAMAGIC_OPTIONS]).toEqual(fixtures.metamagicOptions.map((o) => o.name));
+  // The catalog was deliberately expanded from the legacy 5 to the full
+  // scraped aonprd metamagic set (schema v14 work). The back-compat invariant
+  // is that the legacy 5 picker strings survive byte-for-byte with the same
+  // adjustments, so existing data + the subset fixtures below keep working.
+  it("preserves the legacy 5 options + adjustments in the expanded catalog", () => {
     for (const { name, adjustment } of fixtures.metamagicOptions) {
+      expect(METAMAGIC_OPTIONS).toContain(name);
       expect(getMetamagicLevelAdjustment(name)).toBe(adjustment);
     }
   });
 
-  it("unknown metamagic adjusts by 0 (no Quicken in legacy)", () => {
-    expect(getMetamagicLevelAdjustment("Quicken Spell (+4 levels)")).toBe(fixtures.metamagicUnknown);
-    expect(fixtures.metamagicUnknown).toBe(0);
+  it("recognizes scraped catalog feats; unknown strings still adjust by 0", () => {
+    // Quicken Spell is now in the catalog (it was absent from the legacy 5)
+    expect(getMetamagicLevelAdjustment("Quicken Spell (+4 levels)")).toBe(4);
+    // a string not in the catalog falls back to 0
+    expect(getMetamagicLevelAdjustment("Totally Made Up Spell (+9 levels)")).toBe(0);
   });
 
   it("matches all 32 captured subsets", () => {
