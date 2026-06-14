@@ -11,7 +11,7 @@ import { Icon } from "../common/Icon";
 import { Blocks, MetaChips, StarButton, TypeBadge, hl, hlFuzzy } from "./blocks";
 
 const ROW = 4;
-const GAP = 8;
+const GAP = 6;
 
 export interface MasonrySection {
   label: string;
@@ -113,6 +113,8 @@ export function MasonryBody({ plugin, sections, open, setOpen, query, titlePos, 
   const prev = useRef(new Map<string, DOMRect>());
   const lastOpen = useRef(open);
   const lastQuery = useRef(query);
+  const openRef = useRef(open);
+  openRef.current = open;
   const [, force] = useState(0);
 
   const reg = (id: string) => (el: HTMLElement | null) => {
@@ -121,6 +123,21 @@ export function MasonryBody({ plugin, sections, open, setOpen, query, titlePos, 
   };
   const toggle = (id: string) => setOpen(open === id ? null : id);
 
+  // Size one cell to its card: full width when open, then a row-span tall
+  // enough to hold the card's natural (content) height. The card is
+  // content-height (no height:100%), so this reads the true height.
+  const applySpan = (cell: HTMLElement, id: string) => {
+    const card = cell.firstElementChild as HTMLElement | null;
+    if (!card) return;
+    cell.style.gridColumn = id === openRef.current ? "1 / -1" : "";
+    const h = card.getBoundingClientRect().height;
+    cell.style.gridRowEnd = "span " + Math.max(1, Math.ceil((h + GAP) / (ROW + GAP)));
+  };
+
+  // Re-grouping/membership signature — re-attach the ResizeObserver only when
+  // the rendered card set actually changes, not on every open/search render.
+  const sig = sections.map((s) => s.label + ":" + s.docs.length).join("|");
+
   // masonry row-spans + FLIP slide; cascade only when `open` changed and the
   // query is unchanged (don't thrash on every keystroke)
   useLayoutEffect(() => {
@@ -128,13 +145,7 @@ export function MasonryBody({ plugin, sections, open, setOpen, query, titlePos, 
     const animate = lastOpen.current !== open && lastQuery.current === query;
     lastOpen.current = open;
     lastQuery.current = query;
-    map.forEach((cell, id) => {
-      const card = cell.firstElementChild as HTMLElement | null;
-      if (!card) return;
-      cell.style.gridColumn = id === open ? "1 / -1" : "";
-      const h = card.getBoundingClientRect().height;
-      cell.style.gridRowEnd = "span " + Math.max(1, Math.ceil((h + GAP) / (ROW + GAP)));
-    });
+    map.forEach((cell, id) => applySpan(cell, id));
     const movers: { cell: HTMLElement; id: string; dx: number; dy: number; top: number }[] = [];
     if (animate)
       map.forEach((cell, id) => {
@@ -178,6 +189,50 @@ export function MasonryBody({ plugin, sections, open, setOpen, query, titlePos, 
     map.forEach((cell, id) => m.set(id, cell.getBoundingClientRect()));
     prev.current = m;
   });
+
+  // Prose blocks render through Obsidian's MarkdownRenderer in a child effect —
+  // i.e. AFTER the layout pass above — so an expanded card grows once its body
+  // fills in. Fonts and images do the same. Watch each card for size changes
+  // and recompute just that cell's span, so the grid always reserves the card's
+  // real height and siblings reflow instead of being overlapped.
+  useEffect(() => {
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver((entries) => {
+      for (const e of entries) {
+        const cell = (e.target as HTMLElement).parentElement;
+        if (!cell || !cell.isConnected) continue;
+        let id: string | undefined;
+        cells.current.forEach((el, key) => {
+          if (el === cell) id = key;
+        });
+        if (id) applySpan(cell, id);
+      }
+    });
+    cells.current.forEach((cell) => {
+      const card = cell.firstElementChild as HTMLElement | null;
+      if (card) ro.observe(card);
+    });
+    return () => ro.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sig]);
+
+  // Deterministic counterpart to the ResizeObserver above: ProseBlock fires
+  // `ms-ref-rendered` once Obsidian's async markdown finishes. Recompute the
+  // affected cell's span directly — this path works even when the rendering
+  // lifecycle (rAF / ResizeObserver) is suspended (window backgrounded).
+  useEffect(() => {
+    const onRendered = (e: Event) => {
+      const cell = (e.target as HTMLElement | null)?.closest?.(".mz-cell") as HTMLElement | null;
+      if (!cell) return;
+      let id: string | undefined;
+      cells.current.forEach((el, key) => {
+        if (el === cell) id = key;
+      });
+      if (id) applySpan(cell, id);
+    };
+    document.addEventListener("ms-ref-rendered", onRendered);
+    return () => document.removeEventListener("ms-ref-rendered", onRendered);
+  }, []);
 
   // recompute spans once fonts load / on resize
   useEffect(() => {

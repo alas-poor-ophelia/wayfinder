@@ -12,6 +12,7 @@ import { searchRules } from "../../rules/search";
 import { CONTENT_TYPES, FILTERABLE_TYPES } from "../../rules/registry";
 import { refIconId } from "../../rules/icons";
 import { Icon } from "../common/Icon";
+import { useDragScroll } from "../common/useDragScroll";
 import { MasonryBody, type MasonrySection } from "./MasonryGrid";
 
 interface RulesTabProps {
@@ -56,6 +57,7 @@ export function RulesTab({ plugin, store, character }: RulesTabProps) {
   const [pinnedOnly, setPinnedOnly] = useState(false);
   const [allRules, setAllRules] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
+  const filtersRef = useDragScroll<HTMLDivElement>();
 
   const docs = plugin.rulesIndex.docs.value;
   const pins = useMemo(() => new Set(character.referencePins ?? []), [character.referencePins]);
@@ -95,6 +97,8 @@ export function RulesTab({ plugin, store, character }: RulesTabProps) {
   const isSearching = query.trim().length > 0;
   const rankedDocs = ranked.map((r) => r.doc);
   const pinnedDocs = useMemo(() => pool.filter((d) => pins.has(d.path)), [pool, pins]);
+  // re-attach when the rail mounts/unmounts (it only renders with pins present)
+  const railRef = useDragScroll<HTMLDivElement>([pinnedDocs.length, isSearching]);
 
   // build sections
   const sections: MasonrySection[] = [];
@@ -133,7 +137,7 @@ export function RulesTab({ plugin, store, character }: RulesTabProps) {
     <div class="ms-rules r-body mz">
       <SearchBar value={query} onChange={setQuery} count={filtered.length} />
 
-      <div class="r-filters">
+      <div class="r-filters" ref={filtersRef}>
         <button class={"r-chip r-chip--pin" + (pinnedOnly ? " is-on" : "")} onClick={() => setPinnedOnly((v) => !v)}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill={pinnedOnly ? "currentColor" : "none"} stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
             <path d="M12 3.5l2.6 5.3 5.9.86-4.25 4.14 1 5.86L12 17.9l-5.25 2.76 1-5.86L3.5 9.66l5.9-.86z" />
@@ -171,7 +175,7 @@ export function RulesTab({ plugin, store, character }: RulesTabProps) {
             </svg>
             Pinned
           </div>
-          <div class="mz-rail">
+          <div class="mz-rail" ref={railRef}>
             {pinnedDocs.map((d) => (
               <button
                 key={d.path}

@@ -121,7 +121,11 @@ function ProseBlock({ plugin, path, block }: { plugin: MiniSheetPlugin; path: st
     const el = ref.current;
     if (!el) return;
     el.empty();
-    void MarkdownRenderer.render(plugin.app, md, el, path, plugin);
+    // Markdown fills in asynchronously and grows the card after the masonry has
+    // already measured it — notify the grid so it can recompute the row span.
+    void MarkdownRenderer.render(plugin.app, md, el, path, plugin).then(() => {
+      el.dispatchEvent(new CustomEvent("ms-ref-rendered", { bubbles: true }));
+    });
   }, [md, path]);
   return <div class="r-prose" ref={ref} />;
 }

@@ -18,11 +18,17 @@ export const MANIFEST: RuleSource[] = [
   { name: "Trip", category: "Combat" },
   { name: "Aid Another", category: "Combat" },
   { name: "Charge", category: "Combat" },
-  { name: "Fighting Defensively", category: "Combat" },
   { name: "Flanking", category: "Combat" },
   { name: "Cover", category: "Combat" },
   { name: "Concealment", category: "Combat" },
   { name: "Two-Weapon Fighting", category: "Combat" },
+  { name: "Feint", category: "Combat" },
+  { name: "Total Defense", category: "Combat" },
+  { name: "Withdraw", category: "Combat" },
+  { name: "Reposition", category: "Combat" },
+  { name: "Drag", category: "Combat" },
+  { name: "Steal", category: "Combat" },
+  { name: "Dirty Trick", category: "Combat" },
 ];
 
 export function ruleUrl(src: RuleSource): string {

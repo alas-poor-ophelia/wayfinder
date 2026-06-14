@@ -43,8 +43,11 @@
   .r-filters {
     display: flex; align-items: center; gap: 5px; overflow-x: auto;
     padding-bottom: 7px; margin-bottom: 4px; scrollbar-width: none;
+    touch-action: pan-y;
   }
   .r-filters::-webkit-scrollbar { display: none; }
+  .r-filters.is-dragging, .mz-rail.is-dragging { cursor: grabbing; user-select: none; }
+  .r-filters.is-dragging .r-chip { pointer-events: none; }
   .r-filters__div { flex: 0 0 1px; align-self: stretch; background: var(--border); margin: 3px; }
   .r-chip {
     flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px;
@@ -67,13 +70,13 @@
     font: 700 10px/1 var(--f-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dim);
   }
   .mz-pinlabel svg { color: var(--gold); }
-  .mz-rail { display: flex; gap: 7px; overflow-x: auto; padding: 10px 2px 14px; margin-top: -8px; scrollbar-width: none; }
+  .mz-rail { display: flex; gap: 7px; overflow-x: auto; padding: 10px 2px 14px; margin-top: -8px; scrollbar-width: none; touch-action: pan-y; }
   .mz-rail::-webkit-scrollbar { display: none; }
   .mz-railcard {
-    flex: 0 0 auto; width: 126px; cursor: pointer; text-align: left; color: var(--text);
+    flex: 0 0 auto; width: 126px; height: auto; cursor: pointer; text-align: left; color: var(--text);
     background: linear-gradient(150deg, color-mix(in srgb, var(--bc) 22%, #18181c), #161619);
     border: 1px solid color-mix(in srgb, var(--bc) 40%, transparent); border-radius: 11px; padding: 9px;
-    display: flex; flex-direction: column; gap: 8px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
     transition: transform .18s var(--ease-back), box-shadow .18s, border-color .18s;
   }
   .mz-railcard:hover {
@@ -89,15 +92,15 @@
 
   // ---- masonry grid ----
   .mz-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px;
     grid-auto-rows: 4px; grid-auto-flow: row dense; align-items: start; margin-bottom: 6px;
   }
   .mz-cell { will-change: transform; }
 
   // ---- card ----
   .mz-card {
-    position: relative; overflow: hidden; height: 100%;
-    background: #1a1a1e; border: 1px solid #2c2c33; border-radius: 12px; padding: 10px;
+    position: relative; overflow: hidden; box-sizing: border-box;
+    background: #1a1a1e; border: 1px solid #2c2c33; border-radius: 12px; padding: 8px;
     box-shadow: inset 0 1px 0 #ffffff07;
     transition: border-color .2s, box-shadow .2s, background .2s, transform .18s var(--ease-back);
   }
