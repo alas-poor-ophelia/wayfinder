@@ -1,9 +1,55 @@
-// Main-pane equipment database — utilitarian, Obsidian-native styling.
-// Scoped under .minisheet-equipdb-root (NOT .minisheet-root) so the
-// sheet skin never leaks into this view. Mirrors _spell-db.scss.
+// Main-pane equipment database + Forge — restyled to match the Configuration
+// redesign (gold-forward brand accent, Norwester/Taroca/Crimson type), while
+// the live Obsidian theme accent is reserved for genuinely-interactive cues
+// (focus rings, active-sort column, forge ability checkmarks).
+//
+// Scoped under .minisheet-equipdb-root (NOT .minisheet-root) so the sheet skin
+// never leaks into this view. This pane intentionally owns its brand layer.
+//
+// BRAND-BUT-CUSTOMIZABLE SEAM
+// Every brand value derives from an overridable global token with a brand
+// fallback. A future "brand vs. Obsidian" setting only has to set the
+// --ms-accent-* / --ms-font-* globals at body scope (e.g. flip --ms-accent-gold
+// to var(--interactive-accent), or --ms-font-display to var(--font-interface));
+// because the soft/line/dim tints all color-mix() off these bases, one override
+// retones and re-types the entire pane.
 
 .minisheet-equipdb-root {
-  padding: 8px 12px;
+  // --- brand accents (overridable) ---
+  --eq-gold: var(--ms-accent-gold, #ca9759);
+  --eq-red: var(--ms-accent-red, #8b0000);
+  --eq-gold-soft: color-mix(in srgb, var(--eq-gold) 14%, transparent);
+  --eq-gold-line: color-mix(in srgb, var(--eq-gold) 45%, transparent);
+  --eq-gold-dim: color-mix(in srgb, var(--eq-gold) 86%, #000);
+
+  // --- Obsidian theme accent (interactive cues only) ---
+  --eq-accent: var(--interactive-accent);
+  --eq-accent-soft: color-mix(in srgb, var(--eq-accent) 16%, transparent);
+  --eq-accent-line: color-mix(in srgb, var(--eq-accent) 55%, transparent);
+
+  // --- type system (overridable brand fonts) ---
+  --eq-font-display: var(--ms-font-display, "Norwester", sans-serif);
+  --eq-font-label: var(--ms-font-label, "Taroca", sans-serif);
+  --eq-font-body: var(--ms-font-body, "Crimson Text", Georgia, serif);
+
+  // --- surfaces/lines/text inherit the live Obsidian theme (stays native,
+  //     works in light themes); brand lives in the accents + type, not chrome ---
+  --eq-line: var(--background-modifier-border);
+  --eq-line-strong: var(--background-modifier-border-hover, var(--background-modifier-border));
+  --eq-text: var(--text-normal);
+  --eq-text-dim: var(--text-muted);
+  --eq-text-mute: var(--text-faint);
+
+  padding: 13px 18px 10px;
+  color: var(--eq-text);
+  font-family: var(--eq-font-body);
+  -webkit-font-smoothing: antialiased;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
   .ms-equipdb__sections {
     display: flex;
