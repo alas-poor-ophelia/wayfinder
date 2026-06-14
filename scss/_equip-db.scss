@@ -489,23 +489,51 @@
     }
   }
 
-  // ---- forge ----
-
+  // =========================================================================
+  // Forge — sticky result aside (left) + builder (right)
+  // =========================================================================
   .ms-equipdb__forge {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    max-width: 720px;
+    display: grid;
+    grid-template-columns: minmax(248px, 0.85fr) minmax(0, 1.7fr);
+    gap: 28px;
+    align-items: start;
+    padding-top: 4px;
   }
 
+  .ms-equipdb__forge-aside {
+    position: sticky;
+    top: 4px;
+  }
+
+  .ms-equipdb__forge-main {
+    min-width: 0;
+  }
+
+  // ---- block labels (gold, hairline rule) ----
+  .ms-equipdb__blocklabel {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 9px;
+    font-family: var(--eq-font-label);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--eq-gold);
+  }
+
+  .ms-equipdb__rule {
+    flex: 1;
+    height: 1px;
+    background: var(--eq-line);
+  }
+
+  // ---- builder form ----
   .ms-equipdb__forge-form {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    padding: 12px;
-    background: var(--background-secondary);
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 13px 16px;
+    margin-bottom: 22px;
 
     select,
     input {
@@ -514,76 +542,251 @@
     }
   }
 
-  .ms-equipdb__forge-abilities {
+  // ---- ability toolbar ----
+  .ms-equipdb__ability-toolbar {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 13px;
+    flex-wrap: wrap;
 
-  .ms-equipdb__ability-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1px 12px;
-    max-height: 320px;
-    overflow-y: auto;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 6px;
-    background: var(--background-primary);
-    padding: 6px;
-    font-size: var(--font-ui-small);
+    .ms-equipdb__search--sm {
+      flex: 1 1 220px;
+      min-width: 180px;
+      padding: 6px 10px;
+    }
 
-    label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      cursor: pointer;
-      min-width: 0;
-
-      &:hover {
-        background: var(--background-modifier-hover);
-      }
-
-      &.is-on {
-        background: color-mix(in srgb, var(--interactive-accent) 18%, transparent);
-      }
-
-      &.is-blocked {
-        opacity: 0.45;
-        cursor: not-allowed;
-      }
+    .dropdown {
+      min-width: 144px;
     }
   }
 
-  .ms-equipdb__forge-result {
+  // ---- ability wrap / groups ----
+  .ms-equipdb__ability-wrap {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 12px;
-    border: 1px solid var(--background-modifier-border);
+    gap: 15px;
+    padding: 11px 13px;
+    border: 1px solid var(--eq-line);
     border-radius: 8px;
     background: var(--background-secondary);
   }
 
+  .ms-equipdb__ability-group-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 6px;
+    font-family: var(--eq-font-label);
+    font-size: 9.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--eq-text-mute);
+
+    b {
+      color: var(--eq-gold-dim);
+      font-weight: 400;
+    }
+  }
+
+  .ms-equipdb__ability-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(208px, 1fr));
+    gap: 2px 10px;
+  }
+
+  .ms-equipdb__ability {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: var(--eq-text-dim);
+    min-width: 0;
+
+    &:hover {
+      background: var(--background-modifier-hover);
+      color: var(--eq-text);
+    }
+
+    &.is-on {
+      background: var(--eq-gold-soft);
+      color: var(--eq-text);
+    }
+
+    &.is-blocked {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+  }
+
+  .ms-equipdb__ability-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ms-equipdb__ability-cost {
+    flex: 0 0 auto;
+    font-family: var(--eq-font-label);
+    font-size: 9.5px;
+    letter-spacing: 0.03em;
+    color: var(--eq-text-mute);
+    white-space: nowrap;
+  }
+
+  .ms-equipdb__ability.is-on .ms-equipdb__ability-cost {
+    color: var(--eq-gold);
+  }
+
+  .ms-equipdb__check {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--eq-line-strong);
+    border-radius: 5px;
+    background: var(--background-primary);
+    color: transparent;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    &.is-on {
+      // genuinely-interactive cue → Obsidian accent
+      background: var(--eq-accent-soft);
+      border-color: var(--eq-accent-line);
+      color: var(--eq-accent);
+    }
+  }
+
+  // ---- result card ----
+  .ms-equipdb__forge-result {
+    padding: 15px 16px;
+    border: 1px solid var(--eq-line-strong);
+    border-radius: 9px;
+    background: var(--background-secondary);
+  }
+
+  .ms-equipdb__forge-kicker {
+    font-family: var(--eq-font-label);
+    font-size: 9.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--eq-text-mute);
+  }
+
   .ms-equipdb__forge-name {
-    font-size: var(--font-ui-large);
-    font-weight: 700;
+    margin-top: 3px;
+    font-family: var(--eq-font-display);
+    font-size: 16.5px;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    color: var(--eq-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .ms-equipdb__forge-price {
-    font-size: var(--font-ui-medium);
-    color: var(--text-accent);
+    margin: 12px 0 14px;
+    font-family: var(--eq-font-display);
+    font-size: 27px;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    color: var(--eq-gold);
+
+    &.is-invalid {
+      color: var(--eq-text-mute);
+    }
+  }
+
+  .ms-equipdb__forge-stats {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--eq-line);
+  }
+
+  .ms-equipdb__forge-stat {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--eq-line);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  .ms-equipdb__forge-stat-k {
+    font-family: var(--eq-font-label);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--eq-text-mute);
+  }
+
+  .ms-equipdb__forge-stat-v {
+    font-family: var(--eq-font-display);
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    color: var(--eq-text);
+
+    b {
+      color: var(--eq-gold);
+      font-weight: 400;
+
+      &.is-over {
+        color: var(--text-error);
+      }
+    }
+  }
+
+  .ms-equipdb__forge-stat-cap {
+    color: var(--eq-text-mute);
+    font-size: 13px;
+  }
+
+  .ms-equipdb__forge-hint {
+    margin-top: 10px;
+    font-size: 12.5px;
   }
 
   .ms-equipdb__forge-error {
+    margin-top: 8px;
     color: var(--text-error);
-    font-size: var(--font-ui-small);
+    font-size: 12px;
   }
 
   .ms-equipdb__forge-actions {
     display: flex;
-    gap: 8px;
-    margin-top: 6px;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .ms-equipdb__cta {
+    font-family: var(--eq-font-display);
+    letter-spacing: 0.02em;
+    background: var(--eq-gold);
+    border-color: var(--eq-gold);
+    color: var(--background-primary);
+
+    &:hover:not(:disabled) {
+      filter: brightness(1.07);
+      background: var(--eq-gold);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+    }
   }
 }
