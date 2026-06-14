@@ -111,11 +111,21 @@ function Sections({
           class={`ms-equipdb__section${db.section === s.key ? " is-on" : ""}`}
           onClick={() => {
             onSwitch?.();
+            // tab switch resets sort, page, search, and all filters (handoff)
             store.updateEquipDb({
               section: s.key,
               page: 0,
               sortKey: "name",
               sortDir: "asc",
+              search: "",
+              proficiency: "",
+              category: "",
+              group: "",
+              slot: "",
+              source: "",
+              priceMin: null,
+              priceMax: null,
+              stattedOnly: false,
             });
           }}
         >
