@@ -116,6 +116,29 @@ export interface ResourceFormula {
   minimum?: number;
 }
 
+/**
+ * Structured, live footer for a resource pool — composes a string like
+ * "3d6 (+6 self)" from a dice count plus an optional per-die / flat bonus.
+ * No expression parser by design (mirrors ResourceFormula): the config
+ * editor builds it from dropdowns. When present it overrides the static
+ * `footer` string and recomputes as levels/abilities change.
+ *   "<dice>d<dieSize> (+<perDieBonus*dice + flatBonus> <bonusLabel>) <suffix>"
+ */
+export interface FooterFormula {
+  /** dice count — reuses the resource-formula evaluator (e.g. ⌊paladin/2⌋) */
+  dice: ResourceFormula;
+  /** die size; omit to show a bare count instead of "NdX" */
+  dieSize?: number;
+  /** added per die, e.g. Fey Foundling's +2/die heal bonus */
+  perDieBonus?: number;
+  /** flat amount added to the parenthetical total */
+  flatBonus?: number;
+  /** label inside the parenthetical, e.g. "self" */
+  bonusLabel?: string;
+  /** trailing text, e.g. "healed" */
+  suffix?: string;
+}
+
 export interface ResourcePool {
   id: string;
   name: string;
@@ -123,6 +146,8 @@ export interface ResourcePool {
   max: number;
   /** small text under the pips, e.g. "2d6 (+4 self)" */
   footer?: string;
+  /** live, structured footer — overrides `footer` when present */
+  footerFormula?: FooterFormula;
   /** item-granted pools render on the Items tab; absent = "class" */
   kind?: "class" | "item";
   /** when present, max is recomputed by the store on every resource sync */
@@ -218,7 +243,7 @@ export interface InitiativeState {
 export interface CharacterRecord {
   id: string;
   name: string;
-  characterType: "pc" | "familiar";
+  characterType: "pc" | "familiar" | "companion";
   race: string;
   /** canonical key into RACE_DATA (src/data/races). Absent = race is the
    *  free-text label only and racial data contributes nothing (legacy
@@ -235,6 +260,10 @@ export interface CharacterRecord {
   /** Familiars have no classes; their BAB mirrors the master's (link wiring
    *  replaces this in the multi-character milestone). */
   babOverride?: number;
+  /** Animal companions: effective companion level (master's druid/ranger/
+   *  hunter level, or manual). Drives the Animal Companion Base Statistics
+   *  table (src/data/companion.ts): BAB, saves, natural armor, Str/Dex. */
+  companionLevel?: number;
   hp: HPState;
   ac: ACState;
   energyRes: Record<string, number>;

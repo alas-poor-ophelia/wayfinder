@@ -9,6 +9,8 @@ interface ResourcesProps {
   /** live class-pool maxima (computed.resourceMaxes) — passed through to
    *  resolvePool so class pools render their derived max, not a stored one */
   resourceMaxes: Record<string, number>;
+  /** live composed footers (computed.resourceFooters) for footerFormula pools */
+  resourceFooters: Record<string, string>;
 }
 
 export function Tracker({ pool }: { pool: ResolvedPool }) {
@@ -33,7 +35,7 @@ export function Tracker({ pool }: { pool: ResolvedPool }) {
   );
 }
 
-export function Resources({ store, character, resourceMaxes }: ResourcesProps) {
+export function Resources({ store, character, resourceMaxes, resourceFooters }: ResourcesProps) {
   const [group, setGroup] = useState<"combat" | "items">("combat");
   // The crease is held permanently open natively (content stays rendered for
   // the grid-rows fold ease); `expanded` is the visual fold, driven from the
@@ -43,7 +45,7 @@ export function Resources({ store, character, resourceMaxes }: ResourcesProps) {
   const pools: ResolvedPool[] = [];
 
   character.resources.forEach((pool, idx) => {
-    pools.push(resolvePool(store, character, pool, idx, resourceMaxes));
+    pools.push(resolvePool(store, character, pool, idx, resourceMaxes, resourceFooters));
   });
 
   if (pools.length === 0) return null;

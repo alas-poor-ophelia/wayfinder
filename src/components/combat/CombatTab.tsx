@@ -101,7 +101,12 @@ export function CombatTab({ plugin, store, character, computed }: CombatTabProps
           ))}
         </details>
       )}
-      <Resources store={store} character={character} resourceMaxes={computed.resourceMaxes} />
+      <Resources
+        store={store}
+        character={character}
+        resourceMaxes={computed.resourceMaxes}
+        resourceFooters={computed.resourceFooters}
+      />
       <AttackBlocks
         store={store}
         character={character}

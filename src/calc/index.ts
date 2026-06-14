@@ -40,7 +40,7 @@ import {
 } from "./modifiers";
 import { resolveArchetypeEffects } from "../data/archetypes";
 import { classResources } from "../data/classes";
-import { evaluateResourceFormula } from "./resources";
+import { evaluateFooterFormula, evaluateResourceFormula } from "./resources";
 import { getBuffDef } from "../data/buffs";
 import { applyHeritage, getHeritage, getRaceData, racialAbilityMods } from "../data/races";
 import type { RaceData } from "../data/types";
@@ -67,6 +67,10 @@ export interface ComputedCharacter {
    *  (non-catalog) pools keep their stored max. (Route A — syncClassResources
    *  now only seeds pool entries and snapshots these values.) */
   resourceMaxes: Record<string, number>;
+  /** id -> human-readable formula for class-derived pools (read-only display) */
+  resourceFormulas: Record<string, string>;
+  /** id -> live composed footer string for pools with a footerFormula */
+  resourceFooters: Record<string, string>;
   bab: number;
   totalLevel: number;
   conditionEffects: ConditionEffects;
@@ -589,15 +593,25 @@ export function computeAll(
   // so they auto-track level-ups and ability changes (no manual sync needed).
   // classResources already applies archetype suppression/adds and minLevel.
   const resourceMaxes: Record<string, number> = {};
+  const resourceFormulas: Record<string, string> = {};
+  const classPoolIds = new Set<string>();
   for (const pool of classResources(character.classes, mods)) {
     resourceMaxes[pool.id] = pool.max;
+    if (pool.describe) resourceFormulas[pool.id] = pool.describe;
+    classPoolIds.add(pool.id);
   }
-  // User-defined formulas win over (and extend beyond) class defs — mirror
-  // syncClassResources' precedence so combat + config show the same live max.
+  // User formulas apply ONLY to non-class pools. A class/archetype pool's
+  // derived closure always wins, so a stale stored formula can't shadow it
+  // (e.g. a leftover {characterLevel} formula dragging Weapon Song to 11).
+  // Mirror syncClassResources' precedence so combat + config show one max.
   const resCtx = { classes: character.classes, mods, scores };
+  const resourceFooters: Record<string, string> = {};
   for (const pool of character.resources) {
-    if (pool.formula) {
+    if (pool.formula && !classPoolIds.has(pool.id)) {
       resourceMaxes[pool.id] = evaluateResourceFormula(pool.formula, resCtx);
+    }
+    if (pool.footerFormula) {
+      resourceFooters[pool.id] = evaluateFooterFormula(pool.footerFormula, resCtx);
     }
   }
 
@@ -605,6 +619,8 @@ export function computeAll(
     mods,
     scores,
     resourceMaxes,
+    resourceFormulas,
+    resourceFooters,
     bab,
     totalLevel: totalLevel(character.classes),
     conditionEffects: effects,

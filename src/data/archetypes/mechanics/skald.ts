@@ -27,6 +27,7 @@ export const SKALD_ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
         name: "Weapon Song",
         max: (level, mods) => Math.max(0, 3 + mods.cha + 2 * (level - 1)),
         footer: "rounds/day",
+        describe: "3 + Cha mod + 2 per Skald level beyond 1st",
       },
     ],
     addsQuickActions: [{ id: "weaponSong" }],

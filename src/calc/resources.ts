@@ -8,6 +8,7 @@
 
 import type {
   AbilityScores,
+  FooterFormula,
   ResourceFormula,
 } from "../types/character";
 
@@ -46,4 +47,23 @@ export function evaluateResourceFormula(
   const minimum = formula.minimum ?? 0;
   const scaled = Math.floor((baseValue(formula, ctx) * multiplier) / divisor) + flat;
   return Math.max(minimum, scaled);
+}
+
+/**
+ * Compose a live footer string from a FooterFormula, e.g. "3d6 (+6 self)".
+ * dice → N via the resource-formula evaluator; dieSize → "NdX"; the
+ * parenthetical totals perDieBonus·N + flatBonus, labelled by bonusLabel.
+ */
+export function evaluateFooterFormula(
+  f: FooterFormula,
+  ctx: ResourceFormulaContext
+): string {
+  const n = evaluateResourceFormula(f.dice, ctx);
+  const base = f.dieSize ? `${n}d${f.dieSize}` : `${n}`;
+  const bonus = (f.perDieBonus ?? 0) * n + (f.flatBonus ?? 0);
+  const paren = bonus
+    ? ` (${bonus >= 0 ? "+" : ""}${bonus}${f.bonusLabel ? ` ${f.bonusLabel}` : ""})`
+    : "";
+  const suffix = f.suffix ? ` ${f.suffix}` : "";
+  return `${base}${paren}${suffix}`;
 }

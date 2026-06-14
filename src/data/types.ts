@@ -57,6 +57,10 @@ export interface ClassResourceDef {
   max: (level: number, mods: AbilityScores) => number;
   /** small text under the pips, e.g. "rounds/day" */
   footer?: string;
+  /** human-readable formula for the read-only config display, e.g.
+   *  "⌊Paladin ÷ 2⌋ + Cha mod". The closure stays the source of truth; this
+   *  is documentation surfaced next to the gold (class-derived) max. */
+  describe?: string;
 }
 
 export interface ClassData {

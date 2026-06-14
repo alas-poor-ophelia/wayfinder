@@ -58,6 +58,8 @@ export interface SuggestedPool {
   max: number;
   footer?: string;
   className: string;
+  /** human-readable formula for the read-only config display */
+  describe?: string;
 }
 
 /**
@@ -83,6 +85,7 @@ export function classResources(
         name: def.name,
         max: def.max(level, mods),
         ...(def.footer ? { footer: def.footer } : {}),
+        ...(def.describe ? { describe: def.describe } : {}),
         className,
       });
     }
@@ -100,6 +103,7 @@ export function classResources(
       name: add.def.name,
       max: add.def.max(add.level, mods),
       ...(add.def.footer ? { footer: add.def.footer } : {}),
+      ...(add.def.describe ? { describe: add.def.describe } : {}),
       className: add.label,
     });
   }

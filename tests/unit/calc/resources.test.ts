@@ -3,7 +3,11 @@
  *   max(minimum, floor(base * multiplier / divisor) + flatBonus)
  */
 import { describe, expect, it } from "vitest";
-import { evaluateResourceFormula, type ResourceFormulaContext } from "../../../src/calc/resources";
+import {
+  evaluateFooterFormula,
+  evaluateResourceFormula,
+  type ResourceFormulaContext,
+} from "../../../src/calc/resources";
 import { computeAll } from "../../../src/calc";
 import { createDefaultCharacter, type ResourcePool } from "../../../src/types/character";
 
@@ -107,23 +111,95 @@ describe("computeAll resourceMaxes (live class-pool derivation)", () => {
     expect(r.stunningFist).toBe(4); // monk level
   });
 
-  it("lets a user formula win over the class closure", () => {
-    const c = paladin(5); // class closure would give smiteEvil = 2
+  it("ignores a user formula on a class pool — the closure always wins", () => {
+    const c = paladin(5); // class closure gives smiteEvil = 2
     const pool: ResourcePool = {
       id: "smiteEvil",
       name: "Smite",
       current: 0,
       max: 0,
+      formula: { source: "characterLevel" }, // would give 5 if honored
+    };
+    c.resources = [pool];
+    // A stale stored formula must NOT shadow a class/archetype pool's derived
+    // max (regression guard: Weapon Song dragged to 11 by a leftover formula).
+    expect(computeAll(c).resourceMaxes.smiteEvil).toBe(2);
+  });
+
+  it("applies a user formula to a non-class (custom) pool", () => {
+    const c = paladin(5);
+    const pool: ResourcePool = {
+      id: "customPool",
+      name: "Custom",
+      current: 0,
+      max: 0,
       formula: { source: "characterLevel" },
     };
     c.resources = [pool];
-    // characterLevel 5 overrides the class closure's 2
-    expect(computeAll(c).resourceMaxes.smiteEvil).toBe(5);
+    // No class closure owns this id, so the user formula drives it.
+    expect(computeAll(c).resourceMaxes.customPool).toBe(5);
   });
 
   it("is empty for a class that grants no pools", () => {
     const c = createDefaultCharacter("ftr", "Ftr");
     c.classes = [{ className: "Fighter", level: 4 }];
     expect(computeAll(c).resourceMaxes).toEqual({});
+  });
+});
+
+describe("evaluateFooterFormula", () => {
+  it("composes Adarin's Lay on Hands footer '3d6 (+6 self)'", () => {
+    // ⌊Paladin 5 ÷ 2⌋ = 2 dice... ctx has paladin 5; use a paladin-6 ctx below.
+    const pal6 = { ...ctx, classes: [{ className: "Paladin", level: 6 }] };
+    // dice = ⌊6/2⌋ = 3 → "3d6"; Fey Foundling +2/die → +6 self.
+    const footer = evaluateFooterFormula(
+      {
+        dice: { source: "classLevel", className: "paladin", divisor: 2 },
+        dieSize: 6,
+        perDieBonus: 2,
+        bonusLabel: "self",
+      },
+      pal6
+    );
+    expect(footer).toBe("3d6 (+6 self)");
+  });
+
+  it("omits the parenthetical when there is no bonus, and supports a suffix", () => {
+    expect(
+      evaluateFooterFormula(
+        { dice: { source: "classLevel", className: "paladin", divisor: 2 }, dieSize: 6, suffix: "healed" },
+        { ...ctx, classes: [{ className: "Paladin", level: 6 }] }
+      )
+    ).toBe("3d6 healed");
+  });
+
+  it("supports a flat bonus and a bare count (no die size)", () => {
+    expect(
+      evaluateFooterFormula(
+        { dice: { source: "abilityMod", ability: "cha" }, flatBonus: 1, bonusLabel: "rounds" },
+        ctx
+      )
+    ).toBe("6 (+1 rounds)");
+  });
+
+  it("flows live through computeAll.resourceFooters", () => {
+    const c = createDefaultCharacter("pal", "Pal");
+    c.classes = [{ className: "Paladin", level: 6 }];
+    c.baseAbilities = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 };
+    c.resources = [
+      {
+        id: "layOnHands",
+        name: "Lay on Hands",
+        current: 0,
+        max: 0,
+        footerFormula: {
+          dice: { source: "classLevel", className: "paladin", divisor: 2 },
+          dieSize: 6,
+          perDieBonus: 2,
+          bonusLabel: "self",
+        },
+      },
+    ];
+    expect(computeAll(c).resourceFooters.layOnHands).toBe("3d6 (+6 self)");
   });
 });

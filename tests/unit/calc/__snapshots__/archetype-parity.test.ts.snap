@@ -102,6 +102,8 @@ exports[`archetype parity guard: no-archetype output is frozen > Fighter 4 1`] =
     "wis": 0,
   },
   "movementMultiplier": 1,
+  "resourceFooters": {},
+  "resourceFormulas": {},
   "resourceMaxes": {},
   "saves": {
     "fort": 5,
@@ -229,6 +231,11 @@ exports[`archetype parity guard: no-archetype output is frozen > Monk (Unchained
     "wis": 3,
   },
   "movementMultiplier": 1,
+  "resourceFooters": {},
+  "resourceFormulas": {
+    "kiPool": "⌊Monk level ÷ 2⌋ + Wis mod",
+    "stunningFist": "Monk level (+1/day per 4 levels in other classes, added manually)",
+  },
   "resourceMaxes": {
     "kiPool": 5,
     "stunningFist": 5,
@@ -359,6 +366,11 @@ exports[`archetype parity guard: no-archetype output is frozen > Paladin 4 / Fig
     "wis": 1,
   },
   "movementMultiplier": 1,
+  "resourceFooters": {},
+  "resourceFormulas": {
+    "layOnHands": "⌊Paladin level ÷ 2⌋ + Cha mod",
+    "smiteEvil": "1 + ⌊(Paladin level − 1) ÷ 3⌋",
+  },
   "resourceMaxes": {
     "layOnHands": 4,
     "smiteEvil": 2,
@@ -489,6 +501,11 @@ exports[`archetype parity guard: no-archetype output is frozen > Paladin 7 (cast
     "wis": 0,
   },
   "movementMultiplier": 1,
+  "resourceFooters": {},
+  "resourceFormulas": {
+    "layOnHands": "⌊Paladin level ÷ 2⌋ + Cha mod",
+    "smiteEvil": "1 + ⌊(Paladin level − 1) ÷ 3⌋",
+  },
   "resourceMaxes": {
     "layOnHands": 6,
     "smiteEvil": 3,

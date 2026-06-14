@@ -33,6 +33,7 @@ export const PALADIN_ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
         // Swashbuckler panache: Cha modifier (minimum 1) per day.
         max: (_level, mods) => Math.max(1, mods.cha),
         footer: "points",
+        describe: "Cha mod (minimum 1)",
       },
     ],
     addsQuickActions: [{ id: "preciseStrike", minLevel: 4 }],

@@ -312,6 +312,7 @@ export const HYBRID_CLASSES: ClassData[] = [
         // 3 + Cha mod + 2 per level beyond 1st (note: 3, not the bard's 4).
         max: (level, mods) => Math.max(0, 3 + mods.cha + 2 * (level - 1)),
         footer: "rounds/day",
+        describe: "3 + Cha mod + 2 per Skald level beyond 1st",
       },
     ],
     quickActions: [{ id: "versatilePerformance", minLevel: 2 }],

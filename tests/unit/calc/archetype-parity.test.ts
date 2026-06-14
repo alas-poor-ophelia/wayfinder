@@ -21,6 +21,14 @@
  *     reviewed: every fixture gains the additive `resourceMaxes` object
  *     (class/archetype pool id → derived max); no existing key changed.
  *     Fighter4 gets an empty object (no class pools).
+ *  6. resourceFormulas added (read-only class-formula display) — diff
+ *     reviewed: every fixture gains the additive `resourceFormulas` object
+ *     (pool id → human-readable formula string); no existing key changed.
+ *     Fighter4 gets an empty object (no class pools).
+ *  7. resourceFooters added (calculated footers) — diff reviewed: every
+ *     fixture gains the additive `resourceFooters` object (pool id → live
+ *     footer string), empty for all four (no fixture sets a footerFormula);
+ *     no existing key changed.
  * From here on these are frozen again.
  */
 import { describe, expect, it } from "vitest";

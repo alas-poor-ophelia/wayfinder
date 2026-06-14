@@ -28,7 +28,10 @@ export function resolvePool(
   /** computed.resourceMaxes — live class-pool maxima keyed by id. A pool whose
    *  id is in this map is class-derived and uses the live value; custom pools
    *  (absent) fall back to their stored max. Defaults to {} for non-UI callers. */
-  resourceMaxes: Record<string, number> = {}
+  resourceMaxes: Record<string, number> = {},
+  /** computed.resourceFooters — live composed footer strings keyed by id.
+   *  Overrides the pool's static footer when present. */
+  resourceFooters: Record<string, string> = {}
 ): ResolvedPool {
   if (!pool.derived) {
     const max = resourceMaxes[pool.id] ?? pool.max;
@@ -37,7 +40,7 @@ export function resolvePool(
       name: pool.name,
       current: Math.min(pool.current, max),
       max,
-      footer: pool.footer,
+      footer: resourceFooters[pool.id] ?? pool.footer,
       kind: pool.kind,
       set: (value) =>
         store.setCharacterField(character.id, `resources.${index}.current`, value),
@@ -77,7 +80,7 @@ export function resolvePool(
     name: pool.name,
     current: Math.floor(source.current / divisor),
     max: Math.floor(sourceMax / divisor),
-    footer: pool.footer,
+    footer: resourceFooters[pool.id] ?? pool.footer,
     kind: pool.kind,
     set: (value) => {
       const next = Math.max(0, Math.min(sourceMax, value * divisor));

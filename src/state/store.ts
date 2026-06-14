@@ -429,11 +429,14 @@ export class MiniSheetStore {
           pool.kind === "item"
       );
     }
-    // user-defined formulas win over (and extend beyond) class defs
+    // User formulas apply ONLY to non-class pools — a class/archetype pool's
+    // derived closure always wins (mirrors computeAll), so a stale stored
+    // formula can't shadow it. Class pool ids come from `suggested`.
+    const classPoolIds = new Set(suggested.map((p) => p.id));
     const ctx = { classes: record.classes, mods, scores: computed.scores };
     for (let i = 0; i < resources.length; i++) {
       const pool = resources[i];
-      if (!pool.formula) continue;
+      if (!pool.formula || classPoolIds.has(pool.id)) continue;
       const max = evaluateResourceFormula(pool.formula, ctx);
       resources[i] = { ...pool, max, current: Math.min(pool.current, max) };
     }
