@@ -1,37 +1,160 @@
-// Rules tab chrome (search bar, category groups) — cards live in _rules.scss.
+// Reference tab chrome — search bar, filter chips, pinned rail, masonry grid
+// and the slate cards. Ported from the design prototype (styles.css), scoped
+// under .minisheet-root. Tokens + shared atoms live in _rules; blocks in
+// _rules-blocks.
 
-.minisheet-root {
-  .ms-rules {
-    padding: 4px 6px;
-  }
+@keyframes ms-ref-cardPop {
+  0% { transform: scale(.975); }
+  58% { transform: scale(1.012); }
+  100% { transform: scale(1); }
+}
+@keyframes ms-ref-accentSweep {
+  from { transform: scaleX(.2); opacity: 0; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+@keyframes ms-ref-bodyIn {
+  from { opacity: .4; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
 
-  .ms-rules__search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
+.minisheet-root .ms-rules {
+  // ---- search ----
+  .r-search {
+    display: flex; align-items: center; gap: 7px;
+    background: #0e0e0fcc; border: 1px solid var(--border); border-radius: 8px;
+    padding: 0 9px; height: 36px; margin-bottom: 8px;
+    transition: border-color .2s, box-shadow .2s;
   }
+  .r-search:focus-within { border-color: var(--gold-dim); box-shadow: 0 0 0 3px #ca975920; }
+  .r-search__icon { color: var(--faint); flex: 0 0 auto; }
+  .r-search__input {
+    flex: 1; min-width: 0; background: none; border: none; outline: none;
+    color: var(--text); font-family: var(--f-body); font-size: 16px;
+  }
+  .r-search__input::placeholder { color: var(--faint); }
+  .r-search__count { color: var(--faint); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .r-search__clear {
+    background: none; border: none; color: var(--faint); cursor: pointer;
+    font-size: 13px; padding: 2px 4px; border-radius: 4px;
+  }
+  .r-search__clear:hover { color: var(--text); background: #ffffff10; }
 
-  .ms-rules__input {
-    flex: 1;
-    min-width: 0;
-    min-height: 34px;
+  // ---- filter chips ----
+  .r-filters {
+    display: flex; align-items: center; gap: 5px; overflow-x: auto;
+    padding-bottom: 7px; margin-bottom: 4px; scrollbar-width: none;
   }
+  .r-filters::-webkit-scrollbar { display: none; }
+  .r-filters__div { flex: 0 0 1px; align-self: stretch; background: var(--border); margin: 3px; }
+  .r-chip {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px;
+    background: #ffffff0a; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 4px 10px; font-size: 11.5px; cursor: pointer;
+    white-space: nowrap; font-family: var(--f-ui);
+    transition: background .16s, color .16s, border-color .16s, transform .12s;
+  }
+  .r-chip:hover { color: var(--text); border-color: #4a4a4c; }
+  .r-chip:active { transform: scale(.94); }
+  .r-chip.is-on { background: var(--gold); border-color: var(--gold); color: #1a1a1b; font-weight: 600; }
+  .r-chip--type.is-on { background: var(--bc); border-color: var(--bc); color: #15151a; }
+  .r-chip svg { flex: 0 0 auto; }
+  .r-chip--pin { color: var(--gold-dim); }
+  .r-chip--pin.is-on { background: var(--gold); color: #1a1a1b; }
 
-  .ms-rules__all {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.8em;
-    color: var(--text-muted);
+  // ---- pinned rail ----
+  .mz-pinlabel {
+    display: flex; align-items: center; gap: 6px; margin: 2px 2px 7px;
+    font: 700 10px/1 var(--f-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dim);
   }
+  .mz-pinlabel svg { color: var(--gold); }
+  .mz-rail { display: flex; gap: 7px; overflow-x: auto; padding: 10px 2px 14px; margin-top: -8px; scrollbar-width: none; }
+  .mz-rail::-webkit-scrollbar { display: none; }
+  .mz-railcard {
+    flex: 0 0 auto; width: 126px; cursor: pointer; text-align: left; color: var(--text);
+    background: linear-gradient(150deg, color-mix(in srgb, var(--bc) 22%, #18181c), #161619);
+    border: 1px solid color-mix(in srgb, var(--bc) 40%, transparent); border-radius: 11px; padding: 9px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: transform .18s var(--ease-back), box-shadow .18s, border-color .18s;
+  }
+  .mz-railcard:hover {
+    transform: translateY(-3px); box-shadow: 0 10px 20px -10px #000;
+    border-color: color-mix(in srgb, var(--bc) 70%, transparent);
+  }
+  .mz-railcard__ic {
+    width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--bc) 24%, transparent); color: var(--bc);
+  }
+  .mz-railcard__title { font-family: var(--f-title); font-size: 13px; letter-spacing: .01em; color: #efe9df; line-height: 1.12; }
+  .mz-railcard__type { font: 700 9.5px/1 var(--f-ui); letter-spacing: .08em; text-transform: uppercase; }
 
-  .ms-rules__category {
-    font-family: "Taroca", sans-serif;
-    font-size: 0.85em;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--ms-gold);
-    margin: 10px 0 2px;
+  // ---- masonry grid ----
+  .mz-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    grid-auto-rows: 4px; grid-auto-flow: row dense; align-items: start; margin-bottom: 6px;
   }
+  .mz-cell { will-change: transform; }
+
+  // ---- card ----
+  .mz-card {
+    position: relative; overflow: hidden; height: 100%;
+    background: #1a1a1e; border: 1px solid #2c2c33; border-radius: 12px; padding: 10px;
+    box-shadow: inset 0 1px 0 #ffffff07;
+    transition: border-color .2s, box-shadow .2s, background .2s, transform .18s var(--ease-back);
+  }
+  .mz-cell:not(.is-open) .mz-card { cursor: pointer; }
+  .mz-card:not(.is-open):hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--bc) 55%, #2c2c33); box-shadow: 0 12px 24px -12px #000c;
+  }
+  .mz-card.is-open {
+    background: radial-gradient(130% 80% at 100% 0%, color-mix(in srgb, var(--bc) 15%, transparent), transparent 58%), #1c1c22;
+    border-color: color-mix(in srgb, var(--bc) 48%, #2c2c33);
+    box-shadow: 0 22px 50px -22px #000f, 0 0 0 1px color-mix(in srgb, var(--bc) 20%, transparent);
+    animation: ms-ref-cardPop .52s var(--ease-back) both;
+  }
+  .mz-card__accent {
+    position: absolute; top: 0; left: 0; right: 0; height: 2.5px;
+    background: linear-gradient(90deg, transparent, var(--bc) 28%, var(--bc) 72%, transparent);
+    transform-origin: center; animation: ms-ref-accentSweep .6s var(--ease) both;
+  }
+  .mz-card__head { display: flex; align-items: flex-start; gap: 8px; }
+  .mz-card.is-open .mz-card__head { align-items: center; margin-bottom: 10px; cursor: pointer; }
+  .mz-card__ic {
+    flex: 0 0 auto; width: 26px; height: 26px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--bc) 18%, transparent); color: var(--bc);
+    border: 1px solid color-mix(in srgb, var(--bc) 36%, transparent); transition: width .2s, height .2s;
+  }
+  .mz-card.is-open .mz-card__ic { width: 34px; height: 34px; border-radius: 9px; }
+  .mz-card__headmain { flex: 1; min-width: 0; }
+  .mz-card__title { font-family: var(--f-title); font-size: 14px; letter-spacing: .02em; color: #ece9e2; line-height: 1.12; }
+  .mz-card.is-open .mz-card__title { font-size: 20px; }
+  .mz-card__type {
+    display: inline-block; margin-top: 4px; font: 700 9.5px/1 var(--f-ui);
+    letter-spacing: .08em; text-transform: uppercase; color: var(--bc); opacity: .92;
+  }
+  .mz-card__metarow { margin-top: 6px; }
+  .mz-card__sum {
+    margin: 9px 0 1px; font-family: var(--f-body); font-size: 14px; line-height: 1.4; color: #a7a7ac;
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .mz-card__body { animation: ms-ref-bodyIn .4s var(--ease) both; }
+  .mz-card__close {
+    flex: 0 0 auto; width: 25px; height: 25px; border-radius: 6px; border: 1px solid #ffffff14;
+    background: #ffffff08; color: var(--muted); cursor: pointer; font-size: 12px;
+    display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s;
+  }
+  .mz-card__close:hover { color: var(--text); background: #ffffff16; }
+}
+
+// ---- tablet: Obsidian injects padding (and on iPad, background/box-shadow)
+// onto every <button> at .is-tablet specificity; re-assert the geometry of the
+// reference-tab buttons under a higher-specificity selector. NEEDS iPad verify.
+.is-tablet .minisheet-root .ms-rules {
+  .r-chip { padding: 4px 10px; height: auto; background: #ffffff0a; box-shadow: none; }
+  .r-chip.is-on { background: var(--gold); }
+  .r-chip--type.is-on { background: var(--bc); }
+  .r-star, .mz-card__close, .r-search__clear { padding: 3px; height: auto; box-shadow: none; }
+  .mz-railcard { padding: 9px; height: auto; box-shadow: none; }
+  .r-dice__roll { padding: 7px 11px; height: auto; }
 }

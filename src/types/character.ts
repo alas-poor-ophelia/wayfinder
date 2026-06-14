@@ -280,6 +280,13 @@ export interface CharacterRecord {
   attackBlocksOpen?: Record<string, boolean>;
   link?: CharacterLink;
   ruleLinks: RuleLink[];
+  /** Reference tab: pinned rule-note paths (ride the pinned rail). Absent =
+   *  none pinned. Same optional/absent-default pattern as attackBlocksOpen. */
+  referencePins?: string[];
+  /** Reference tab: completed checklist items, keyed `${notePath}#${blockIdx}#${itemIdx}`.
+   *  Persisted so a ticked item stays ticked across tab swaps and reloads.
+   *  Absent = nothing ticked. */
+  checklistState?: Record<string, boolean>;
   /** absent = non-caster (Hwayoung keeps her static SLA content) */
   spellbook?: SpellbookState;
   /** absent = no inventory subtab (Hwayoung). NOT in createDefaultCharacter:

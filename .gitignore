@@ -1,8 +1,10 @@
 node_modules/
 mcp/node_modules/
 scripts/.cache/
+scripts/scrape-rules/out/
 mcp/screenshots/
 .claude/
+.handoff_tmp/
 tests/fixtures/test-vault/MiniSheet/
 
 # Build artifacts (deployed to vault, not committed)

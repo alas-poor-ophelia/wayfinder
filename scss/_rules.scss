@@ -1,65 +1,107 @@
-// Rules cards — ported from the old [!rules] callout (MiniSheet.css ~2338-2410):
-// saddle-brown border, gradient title bar, parchment texture, Crimson Text body.
+// Reference tab — shared tokens + atoms (badge, star, meta, highlight,
+// section headers, empty state, entrance animation). Ported from the design
+// prototype (styles.css). The prototype's local token names are aliased onto
+// the tab root so the ported values stay verbatim; everything is scoped under
+// .minisheet-root. The masonry chrome lives in _rules-tab; typed content
+// blocks in _rules-blocks.
 
-.minisheet-root {
-  .ms-rule-card {
-    border: 3px solid #8b4513;
-    border-radius: 8px;
-    box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    position: relative;
-    margin: 1em 3px 0.75em;
-    padding: 8px;
+@keyframes ms-ref-starpop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.5) rotate(14deg); }
+  100% { transform: scale(1); }
+}
+@keyframes ms-ref-riseIn {
+  from { opacity: .35; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
 
-    // parchment texture overlay
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.1) 1px, transparent 1px),
-        radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.08) 1px, transparent 1px),
-        radial-gradient(circle at 40% 80%, rgba(139, 69, 19, 0.06) 1px, transparent 1px);
-      pointer-events: none;
-      border-radius: 5px;
-    }
+.minisheet-root .ms-rules {
+  // local token aliases (prototype names -> plugin tokens / literals)
+  --bg: #1a1a1b;
+  --bg2: #131314;
+  --panel: #202021;
+  --border: #313234;
+  --text: #dcdde0;
+  --muted: #8c8d90;
+  --faint: #5f6063;
+  --gold: var(--ms-gold);
+  --gold-dim: #9c7a4a;
+  --red: var(--ms-red);
+  --term: #ca9759;
+  --hl: #4a4327;
+  --line: #36363d;
+  --steel: #50505a;
+  --f-title: "Norwester", "Arial Narrow", sans-serif;
+  --f-deco: "Taroca", "Norwester", serif;
+  --f-body: "Crimson Text", Georgia, "Times New Roman", serif;
+  --f-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ease: cubic-bezier(.2, .85, .25, 1);
+  --ease-back: cubic-bezier(.34, 1.4, .5, 1);
+
+  padding: 9px 8px 32px;
+
+  // icon sizing (the bundled Icon renders an <svg class="ms-icon"> with no
+  // intrinsic size; give each context an explicit box)
+  .mz-card__ic .ms-icon { width: 15px; height: 15px; }
+  .mz-card.is-open .mz-card__ic .ms-icon { width: 18px; height: 18px; }
+  .mz-railcard__ic .ms-icon { width: 17px; height: 17px; }
+  .r-badge__ic { width: 11px; height: 11px; }
+  .r-chip__ic { width: 11px; height: 11px; }
+  .r-dice__roll-ic { width: 13px; height: 13px; }
+  .r-table-cap__ic { width: 11px; height: 11px; }
+  .r-empty__ic { width: 26px; height: 26px; }
+
+  // ---- section header (Taroca gold) ----
+  .r-cat {
+    font-family: var(--f-deco); font-size: 14px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--gold); margin: 14px 2px 6px; display: flex; align-items: center; gap: 8px;
+  }
+  .r-cat::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-dim), transparent); }
+  .r-cat__count { font-family: var(--f-ui); font-size: 11px; color: var(--faint); letter-spacing: 0; }
+  .r-cat--results svg { color: var(--gold); margin-right: -2px; }
+
+  // ---- type badge ----
+  .r-badge {
+    display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto;
+    font: 600 10px/1 var(--f-ui); letter-spacing: .04em; text-transform: uppercase;
+    color: var(--bc); background: color-mix(in srgb, var(--bc) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--bc) 45%, transparent);
+    border-radius: 5px; padding: 3px 6px;
+  }
+  .r-badge--mini { padding: 2px 5px; }
+  .r-badge svg { color: var(--bc); }
+
+  // ---- star ----
+  .r-star {
+    background: none; border: none; cursor: pointer; padding: 3px; flex: 0 0 auto;
+    color: #f0e2cf99; display: inline-flex; border-radius: 5px;
+    transition: color .18s, transform .18s;
+  }
+  .r-star:hover { color: #fff; background: #ffffff14; }
+  .r-star.is-on { color: var(--gold); }
+  .r-star.is-pop { animation: ms-ref-starpop .36s var(--ease-back); }
+
+  // ---- meta chips ----
+  .r-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 7px; }
+  .r-meta__chip {
+    font: 600 10.5px/1 var(--f-ui); letter-spacing: .03em; text-transform: uppercase;
+    color: var(--gold); background: #ca975918; border: 1px solid #ca975938;
+    border-radius: 4px; padding: 3px 6px;
   }
 
-  .ms-rule-card__title {
-    display: block;
-    background: linear-gradient(90deg, #8b4513, #a0522d);
-    color: #f4f1e8;
-    font-family: "Norwester", "Times New Roman", serif;
-    font-weight: bold;
-    font-size: 1.1em;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    padding: 6px 12px;
-    margin: -8px -8px 8px;
-    border-radius: 5px 5px 0 0;
-    border-bottom: 2px solid #654321;
-    cursor: pointer;
-    list-style: none;
+  // ---- search highlight ----
+  .r-hl { background: var(--hl); color: #fff; border-radius: 2px; padding: 0 1px; }
 
-    &::-webkit-details-marker {
-      display: none;
-    }
-  }
+  // ---- empty state ----
+  .r-empty { text-align: center; color: var(--faint); padding: 38px 16px; }
+  .r-empty .ms-icon { color: var(--gold-dim); opacity: .6; }
+  .r-empty > div:first-of-type { margin-top: 10px; color: var(--muted); font-size: 14px; }
+  .r-empty__sub { font-size: 12px; margin-top: 4px; }
 
-  .ms-rule-card__body {
-    color: #ffffff;
-    font-family: "Crimson Text", "Georgia", serif;
-    line-height: 1.5;
-    padding: 0 2px;
-
-    p {
-      margin: 0.5em 0;
-      text-align: justify;
-    }
-
-    strong {
-      color: #8b4513;
-      font-weight: bold;
-    }
+  // ---- entrance (movement + partial fade; never starts fully hidden so the
+  // content survives a paused off-screen animation clock) ----
+  .r-anim { opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .r-anim { animation: ms-ref-riseIn .44s var(--ease) both; animation-delay: calc(var(--i, 0) * 32ms); }
   }
 }

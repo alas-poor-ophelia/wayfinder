@@ -178,7 +178,10 @@ export const DEFAULT_DATA: MiniSheetData = {
   // v12: MiniSheetSettings.houseRules.elephantInTheRoom (schema-forward, like
   // v8 — optional with a read-time default of ON; see eitrEnabled()). No
   // migration code: absent houseRules already means "the established default".
-  schemaVersion: 12,
+  // v13: CharacterRecord gains optional referencePins + checklistState for the
+  // redesigned Reference tab (schema-forward, like v2/v3/v8 — optional with
+  // absent-default; callers coalesce with ?? []/?? {}). No migration code.
+  schemaVersion: 13,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",
