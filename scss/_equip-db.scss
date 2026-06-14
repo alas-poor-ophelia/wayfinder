@@ -102,80 +102,210 @@
     color: var(--eq-text-mute);
   }
 
+  // ---- header controls ----
   .ms-equipdb__header {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 9px;
+    padding: 12px 0 11px;
   }
 
   .ms-equipdb__search {
     flex: 1;
-    min-width: 180px;
+    min-width: 170px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 11px;
+    background: var(--background-primary);
+    border: 1px solid var(--eq-line-strong);
+    border-radius: 6px;
+
+    svg {
+      width: 15px;
+      height: 15px;
+      flex: 0 0 auto;
+      color: var(--eq-text-mute);
+    }
+
+    &:focus-within {
+      border-color: var(--eq-accent-line);
+    }
+  }
+
+  .ms-equipdb__search-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font-family: var(--eq-font-body);
+    font-size: 14px;
+    color: var(--eq-text);
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      color: var(--eq-text-mute);
+    }
+  }
+
+  .ms-equipdb__filters-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    min-height: 34px;
+    border: 1px solid var(--eq-line-strong);
+    border-radius: 6px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--eq-text);
+    font-family: var(--eq-font-display);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      color: var(--eq-text-dim);
+    }
+
+    &:hover {
+      background: var(--background-modifier-hover);
+    }
+
+    &.is-on {
+      border-color: var(--eq-gold-line);
+      color: var(--eq-gold);
+      background: var(--eq-gold-soft);
+
+      svg {
+        color: var(--eq-gold);
+      }
+    }
+  }
+
+  .ms-equipdb__clear {
+    padding: 7px 8px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--eq-text-dim);
+    font-family: var(--eq-font-display);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--eq-text);
+      background: transparent;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
   }
 
   .ms-equipdb__count {
-    color: var(--text-muted);
-    font-size: var(--font-ui-small);
+    margin-left: auto;
+    font-family: var(--eq-font-label);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--eq-text-mute);
+    white-space: nowrap;
+
+    b {
+      color: var(--eq-text-dim);
+      font-weight: 400;
+    }
   }
 
   .ms-equipdb__target {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-left: auto;
-    font-size: var(--font-ui-small);
-    color: var(--text-muted);
+    gap: 8px;
+    font-family: var(--eq-font-label);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--eq-text-mute);
+    white-space: nowrap;
+
+    select {
+      font-family: var(--eq-font-display);
+      letter-spacing: 0.02em;
+      text-transform: none;
+      color: var(--eq-text);
+    }
   }
 
-  .ms-equipdb__filters {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    padding: 12px;
-    margin-bottom: 8px;
-    background: var(--background-secondary);
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 8px;
+  // accent focus ring on the branded fields
+  .ms-equipdb__target select:focus,
+  .ms-equipdb__filter-group select:focus,
+  .ms-equipdb__filter-group input:focus,
+  .ms-equipdb__price-range input:focus {
+    border-color: var(--eq-accent-line);
+    box-shadow: none;
+  }
 
-    select,
-    input[type="search"] {
-      width: 100%;
-      box-sizing: border-box;
-    }
+  // ---- filter panel (ledger hairlines) ----
+  .ms-equipdb__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 22px;
+    padding: 12px 0 14px;
+    margin-bottom: 2px;
+    background: transparent;
+    border-top: 1px solid var(--eq-line);
+    border-bottom: 1px solid var(--eq-line);
+    border-radius: 0;
   }
 
   .ms-equipdb__filter-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    min-width: 0;
+    min-width: 150px;
+
+    select,
+    input {
+      width: 100%;
+      box-sizing: border-box;
+    }
   }
 
   .ms-equipdb__filter-title {
-    font-weight: 600;
-    font-size: var(--font-ui-smaller);
+    font-family: var(--eq-font-label);
+    font-weight: 400;
+    font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    color: var(--eq-text-mute);
   }
 
   .ms-equipdb__price-range {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
+    color: var(--eq-text-mute);
 
     input {
-      width: 80px;
+      width: 78px;
     }
   }
 
   .ms-equipdb__flag {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: var(--font-ui-small);
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--eq-text-dim);
     cursor: pointer;
   }
 

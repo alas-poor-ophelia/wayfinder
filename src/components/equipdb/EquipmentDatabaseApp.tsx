@@ -18,6 +18,7 @@ import type {
 } from "../../types/equipment";
 import type { InventoryItem } from "../../types/inventory";
 import { Icon } from "../common/Icon";
+import { UI } from "../config/glyphs";
 import { EquipFilters } from "./EquipFilters";
 import { EquipTable, formatGp, sortRows, type EquipColumn } from "./EquipTable";
 import { ForgePanel } from "./ForgePanel";
@@ -373,25 +374,31 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
     <div class="ms-equipdb">
       <Sections db={db} store={store} counts={counts} onSwitch={() => setEditing(null)} />
       <div class="ms-equipdb__header">
-        <input
-          type="search"
-          class="ms-equipdb__search"
-          placeholder={`Search ${db.section}…`}
-          value={db.search}
-          onInput={(e) =>
-            store.updateEquipDb({
-              search: (e.target as HTMLInputElement).value,
-              page: 0,
-            })
-          }
-        />
-        <button
-          class="ms-equipdb__filters-toggle"
-          aria-expanded={db.filtersOpen}
-          onClick={() => store.updateEquipDb({ filtersOpen: !db.filtersOpen })}
-        >
-          Filters
-        </button>
+        <div class="ms-equipdb__search">
+          <UI.search />
+          <input
+            type="search"
+            class="ms-equipdb__search-input"
+            placeholder={`Search ${db.section}…`}
+            value={db.search}
+            onInput={(e) =>
+              store.updateEquipDb({
+                search: (e.target as HTMLInputElement).value,
+                page: 0,
+              })
+            }
+          />
+        </div>
+        {db.section !== "custom" && (
+          <button
+            class={`ms-equipdb__filters-toggle${db.filtersOpen ? " is-on" : ""}`}
+            aria-expanded={db.filtersOpen}
+            onClick={() => store.updateEquipDb({ filtersOpen: !db.filtersOpen })}
+          >
+            <UI.sliders />
+            Filters
+          </button>
+        )}
         <button
           class="ms-equipdb__clear"
           onClick={() =>
@@ -412,7 +419,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
           Clear all
         </button>
         <span class="ms-equipdb__count">
-          Showing {filteredCount} of {totalCount}
+          Showing <b>{filteredCount}</b> of {totalCount}
         </span>
         {characters.length > 0 && (
           <label class="ms-equipdb__target">
