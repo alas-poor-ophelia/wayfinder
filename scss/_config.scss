@@ -857,6 +857,14 @@
     flex: 1;
     width: auto;
   }
+  /* class-derived max: calculated & read-only — dashed/italic signals "auto,
+     derived from level + abilities", distinct from an editable custom max */
+  .respool .num.is-calc {
+    border-style: dashed;
+    font-style: italic;
+    color: var(--ms-gold, #ca9759);
+    opacity: 0.92;
+  }
   .respool__kind {
     width: 32px;
     height: 32px;

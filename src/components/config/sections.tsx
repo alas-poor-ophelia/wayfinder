@@ -5,8 +5,10 @@
  * prototype-only fields mapped onto the real CharacterRecord + store.
  */
 import { useState } from "preact/hooks";
+import { computeAll } from "../../calc";
 import { CLASS_NAMES, getClassStats, totalBab, totalLevel } from "../../calc/class-stats";
 import { STANDARD_SKILLS } from "../../calc/skills";
+import { eitrEnabled } from "../../types/data-file";
 import { isPartialMechanics, listArchetypes } from "../../data/archetypes";
 import {
   applyHeritage,
@@ -633,6 +635,12 @@ const RES_ABILITY_OPTIONS = ABILITY_KEYS.map((k) => ({ value: k, label: ABILITY_
 
 export function ResourcesSection({ store, character }: SectionProps) {
   const set = setter(store, character);
+  // Live class/archetype pool maxima, derived from current level + abilities.
+  // A pool whose id appears here is class-backed: its max is calculated and
+  // shown read-only. Pools absent here are custom and keep an editable max.
+  const resourceMaxes = computeAll(character, null, {
+    elephantInTheRoom: eitrEnabled(store.data.value.settings),
+  }).resourceMaxes;
   // formula detail is collapsed by default; track open pools by id
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const update = (idx: number, patch: Partial<CharacterRecord["resources"][number]>) => {
@@ -653,6 +661,9 @@ export function ResourcesSection({ store, character }: SectionProps) {
     <Sec icon="ra-round-bottom-flask" title="Resource Pools" desc={`${character.resources.length} pools`}>
       {character.resources.map((r, idx) => {
         const hasF = !!r.formula;
+        const derivedMax = resourceMaxes[r.id];
+        // class-backed: max is calculated (and a user formula isn't overriding it)
+        const isCalc = !hasF && derivedMax !== undefined;
         const isOpen = !!open[r.id];
         return (
           <div class="respool-block" key={r.id}>
@@ -667,14 +678,24 @@ export function ResourcesSection({ store, character }: SectionProps) {
                 <input
                   class="num"
                   type="number"
-                  value={r.max}
+                  value={derivedMax ?? r.max}
                   disabled
                   title="Max is computed by the formula below"
+                />
+              ) : isCalc ? (
+                <input
+                  class="num is-calc"
+                  type="number"
+                  value={derivedMax}
+                  disabled
+                  title="Calculated from class level & ability scores — auto-updates"
                 />
               ) : (
                 <Num value={r.max} onChange={(v) => update(idx, { max: v })} />
               )}
-              <span class="respool__src">{r.kind === "item" ? "Item" : "Class"}</span>
+              <span class="respool__src">
+                {r.kind === "item" ? "Item" : isCalc ? "Class ƒ" : "Class"}
+              </span>
               <button
                 class={`respool__kind${r.kind === "item" ? " is-item" : ""}`}
                 title={r.kind === "item" ? "Item resource" : "Class resource"}
