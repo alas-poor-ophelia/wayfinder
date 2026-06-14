@@ -216,6 +216,14 @@
     font-weight: 700;
     cursor: pointer;
     line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
 
     &:hover {
       background-color: #8d0000;
@@ -275,6 +283,14 @@
     font-size: 11px;
     cursor: pointer;
     line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 11px;
+      height: 11px;
+    }
 
     &:hover {
       background: rgba(139, 0, 0, 0.3);
@@ -350,6 +366,9 @@
 
   /* over-preparation warning (legacy orange box) */
   .ms-overprep {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     background-color: rgba(255, 165, 0, 0.2);
     border: 1px solid #ff8c00;
     border-radius: 4px;
@@ -358,6 +377,12 @@
     color: #d2691e;
     font-weight: bold;
     font-size: 0.9em;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+    }
   }
 
   /* hybrid dual trackers sit side by side, centered */
@@ -378,24 +403,32 @@
     min-height: 26px;
   }
 
-  .ms-spellbook__db-btn {
-    width: 1.8em;
-    height: 1.8em;
+  /* ---- toolbar icon buttons (book / loadouts / config gear) — brand-seam
+     flat squircles with glyph icons, matching the equip/spell DB aesthetic ---- */
+  .ms-spellbook__db-btn,
+  .ms-spellbook-config__gear {
+    width: 1.9em;
+    height: 1.9em;
     min-width: 0;
     padding: 0;
-    border: none;
-    border-radius: 50%;
-    background: #444;
-    font-size: 1.1em;
+    border: 1px solid color-mix(in srgb, var(--ms-gold) 35%, transparent);
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--ms-gold) 10%, transparent);
+    color: var(--ms-gold);
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
 
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
     &:hover {
-      background: #555;
+      background: color-mix(in srgb, var(--ms-gold) 20%, transparent);
     }
   }
 
@@ -404,28 +437,6 @@
     position: relative;
     display: flex;
     justify-content: flex-end;
-  }
-
-  .ms-spellbook-config__gear {
-    cursor: pointer;
-    font-size: 1.2em;
-    background: #444;
-    border: none;
-    border-radius: 50%;
-    padding: 0.25em;
-    width: 1.8em;
-    height: 1.8em;
-    aspect-ratio: 1 / 1;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-
-    &:hover {
-      color: var(--ms-red);
-      background: #555;
-    }
   }
 
   .ms-spellbook-config__menu {
@@ -464,6 +475,30 @@
     height: 1px;
     background: #444;
     margin: 4px 0;
+  }
+
+  .ms-spellbook-config__manage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px;
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, var(--ms-gold) 35%, transparent);
+    background: color-mix(in srgb, var(--ms-gold) 8%, transparent);
+    color: var(--ms-gold);
+    cursor: pointer;
+    font-size: 0.85em;
+    box-shadow: none;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover {
+      background: color-mix(in srgb, var(--ms-gold) 16%, transparent);
+    }
   }
 
   .ms-spellbook-config__section-title {

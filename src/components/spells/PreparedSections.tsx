@@ -10,6 +10,7 @@ import {
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 import type MiniSheetPlugin from "../../main";
+import { UI } from "../config/glyphs";
 import type { SpellLevel } from "../../types/spellbook";
 import { getSpellLevelKey } from "../../types/spellbook";
 import { Tracker } from "../combat/Resources";
@@ -159,7 +160,8 @@ export function PreparedLevelSection({
       )}
       {totalPrepared > levelComputed.maxSlots && (
         <div class="ms-overprep">
-          ⚠️: {totalPrepared}/{levelComputed.maxSlots} spells prepared
+          <UI.warn />
+          {totalPrepared}/{levelComputed.maxSlots} spells prepared
         </div>
       )}
       {preparations.map((prep, prepIndex) => {

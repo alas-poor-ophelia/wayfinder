@@ -7,6 +7,7 @@ import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 import type { SpellLevel } from "../../types/spellbook";
 import { getSpellLevelKey } from "../../types/spellbook";
+import { UI } from "../config/glyphs";
 import { CollapseSection } from "./CollapseSection";
 
 /**
@@ -64,7 +65,7 @@ export function LevelMetamagic({
             aria-label={`Add level ${level} metamagic`}
             onClick={() => addLevelMetamagic(store, character, level)}
           >
-            +
+            <UI.plus />
           </button>
         </div>
       )}
@@ -82,7 +83,7 @@ export function LevelMetamagic({
                   aria-label={`Remove ${metamagic}`}
                   onClick={() => removeLevelMetamagic(store, character, level, index)}
                 >
-                  ✕
+                  <UI.x />
                 </button>
               </div>
             ))}

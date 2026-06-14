@@ -5,6 +5,7 @@ import {
 } from "../../state/spellbook-actions";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
+import { UI } from "../config/glyphs";
 import { CollapseSection } from "./CollapseSection";
 
 /**
@@ -64,7 +65,7 @@ export function GlobalMetamagic({
             aria-label="Add metamagic"
             onClick={() => addGlobalMetamagic(store, character)}
           >
-            +
+            <UI.plus />
           </button>
         </div>
       )}
@@ -82,7 +83,7 @@ export function GlobalMetamagic({
                   aria-label={`Remove ${metamagic}`}
                   onClick={() => removeGlobalMetamagic(store, character, index)}
                 >
-                  ✕
+                  <UI.x />
                 </button>
               </div>
             ))}

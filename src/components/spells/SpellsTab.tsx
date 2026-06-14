@@ -3,6 +3,7 @@ import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 import type MiniSheetPlugin from "../../main";
 import { SPELL_LEVELS } from "../../types/spellbook";
+import { Icon } from "../common/Icon";
 import { GlobalMetamagic } from "./GlobalMetamagic";
 import { PreparedKnownSection, PreparedLevelSection } from "./PreparedSections";
 import { SlaSection } from "./SlaSection";
@@ -49,11 +50,26 @@ export function SpellsTab({
           class="ms-spellbook__db-btn"
           aria-label="Open spell database"
           title="Open spell database"
-          onClick={() => void plugin.activateSpellDbView()}
+          onClick={() => {
+            store.updateSpellDb({ section: "database" });
+            void plugin.activateSpellDbView();
+          }}
         >
-          📖
+          <Icon id="ra-book" />
+        </button>
+        <button
+          class="ms-spellbook__db-btn"
+          aria-label="Open spell loadouts"
+          title="Spell loadouts"
+          onClick={() => {
+            store.updateSpellDb({ section: "loadouts" });
+            void plugin.activateSpellDbView();
+          }}
+        >
+          <Icon id="ra-scroll-unfurled" />
         </button>
         <SpellbookConfig
+          plugin={plugin}
           store={store}
           character={character}
           castingStatBonus={spellbookComputed.castingStatBonus}
