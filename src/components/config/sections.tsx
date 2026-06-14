@@ -114,6 +114,22 @@ function RaceDetail({ race, heritage }: { race: RaceData; heritage: RaceHeritage
 
 export function IdentitySection({ store, character }: SectionProps) {
   const set = setter(store, character);
+  // Create a new sheet of the given type, switch to it, and (for a linked
+  // type) point its master at the current PC — or, when adding from a
+  // familiar/companion, reuse that sheet's master.
+  const createSheet = (type: CharacterRecord["characterType"]) => {
+    const masterId =
+      character.characterType === "pc" ? character.id : character.link?.masterId;
+    const name =
+      type === "companion" ? "New Companion" : type === "familiar" ? "New Familiar" : "New Character";
+    const rec = store.addCharacter(name);
+    const patch: Partial<CharacterRecord> = { characterType: type };
+    if (type !== "pc" && masterId) {
+      patch.link = { masterId, hpMaxFromMaster: false, babFromMaster: false };
+    }
+    if (type === "companion") patch.companionLevel = 1;
+    store.updateCharacter(rec.id, patch);
+  };
   const baseRace = character.raceKey ? getRaceData(character.raceKey) : null;
   const heritages = baseRace ? listHeritages(baseRace.key) : [];
   const heritage = baseRace ? getHeritage(baseRace.key, character.raceHeritageKey ?? "") : null;
@@ -168,10 +184,61 @@ export function IdentitySection({ store, character }: SectionProps) {
           options={[
             { value: "pc", label: "PC" },
             { value: "familiar", label: "Familiar" },
+            { value: "companion", label: "Companion" },
           ]}
           onChange={(v) => set("characterType", v)}
         />
       </Row>
+      {character.characterType !== "pc" && (
+        <Row label="Master" sub="links to a PC sheet">
+          <Sel
+            value={character.link?.masterId ?? ""}
+            options={[
+              { value: "", label: "— none —" },
+              ...store.data.value.characters
+                .filter((c) => c.id !== character.id && c.characterType === "pc")
+                .map((c) => ({ value: c.id, label: c.name })),
+            ]}
+            onChange={(v) =>
+              set(
+                "link",
+                v
+                  ? {
+                      masterId: v,
+                      hpMaxFromMaster: character.link?.hpMaxFromMaster ?? false,
+                      babFromMaster: character.link?.babFromMaster ?? false,
+                    }
+                  : undefined
+              )
+            }
+          />
+        </Row>
+      )}
+      {character.characterType === "familiar" && character.link && (
+        <>
+          <Row label="HP from master" sub="½ master max">
+            <Check
+              value={character.link.hpMaxFromMaster}
+              onChange={(v) => set("link", { ...character.link!, hpMaxFromMaster: v })}
+            />
+          </Row>
+          <Row label="BAB from master">
+            <Check
+              value={character.link.babFromMaster}
+              onChange={(v) => set("link", { ...character.link!, babFromMaster: v })}
+            />
+          </Row>
+        </>
+      )}
+      {character.characterType === "companion" && (
+        <Row label="Companion level" sub="drives the stat table">
+          <Num
+            value={character.companionLevel ?? 1}
+            width={88}
+            onChange={(v) => set("companionLevel", Math.max(1, Math.min(20, v)))}
+          />
+        </Row>
+      )}
       <Row label="Speed" sub={race && !character.speed ? "derives from race" : undefined}>
         <input
           class="num"
@@ -183,6 +250,19 @@ export function IdentitySection({ store, character }: SectionProps) {
       </Row>
       <Row label="Banner image" sub="vault path">
         <Txt value={character.bannerImage ?? ""} onChange={(v) => set("bannerImage", v)} />
+      </Row>
+      <Row label="New sheet" sub="creates & switches">
+        <div class="id-create">
+          <button class="btn btn--sm" onClick={() => createSheet("pc")}>
+            + PC
+          </button>
+          <button class="btn btn--sm" onClick={() => createSheet("familiar")}>
+            + Familiar
+          </button>
+          <button class="btn btn--sm" onClick={() => createSheet("companion")}>
+            + Companion
+          </button>
+        </div>
       </Row>
     </Sec>
   );

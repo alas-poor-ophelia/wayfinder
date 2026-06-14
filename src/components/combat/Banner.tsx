@@ -10,8 +10,11 @@ interface BannerProps {
 
 /** Banner image (masked) + character swap button, sitting behind the content top. */
 export function Banner({ plugin, store, character }: BannerProps) {
-  const others = store.data.value.characters.filter((c) => c.id !== character.id);
-  const next = others[0];
+  // Cycle through every sheet in order (wrapping), not just the first
+  // alternate — so a PC + familiar + companion roster is fully reachable.
+  const all = store.data.value.characters;
+  const idx = all.findIndex((c) => c.id === character.id);
+  const next = all.length > 1 ? all[(idx + 1) % all.length] : undefined;
 
   let src: string | null = null;
   if (character.bannerImage) {

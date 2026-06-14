@@ -20,7 +20,7 @@ import {
   calculateConditionEffects,
   type ConditionEffects,
 } from "./conditions";
-import { calculateSaves, type SaveValues } from "./saves";
+import { calculateSaves, classBaseSaves, type SaveValues } from "./saves";
 import { calculateSkills, type SkillRow } from "./skills";
 import {
   castingClassMatches,
@@ -43,6 +43,7 @@ import { classResources } from "../data/classes";
 import { evaluateFooterFormula, evaluateResourceFormula } from "./resources";
 import { getBuffDef } from "../data/buffs";
 import { applyHeritage, getHeritage, getRaceData, racialAbilityMods } from "../data/races";
+import { companionRow } from "../data/companion";
 import type { RaceData } from "../data/types";
 import { resolveQuickActions } from "./quick-actions";
 
@@ -205,7 +206,28 @@ export function computeAll(
       .join("\n");
   }
 
-  const baseMods = [...racialMods, ...gearMods, ...configMods, ...buffMods];
+  // Animal companion: the Base Statistics table contributes a natural-armor
+  // bonus and a Str/Dex increase on top of the user-entered base animal.
+  // (BAB and base saves are applied separately below.) The table only fires
+  // for characterType "companion"; PCs/familiars get an empty set.
+  const compRow =
+    character.characterType === "companion"
+      ? companionRow(character.companionLevel ?? 1)
+      : null;
+  const companionMods: Modifier[] = [];
+  if (compRow) {
+    if (compRow.strDex) {
+      companionMods.push(
+        { target: "ability.str", type: "untyped", value: compRow.strDex, source: "Animal Companion" },
+        { target: "ability.dex", type: "untyped", value: compRow.strDex, source: "Animal Companion" }
+      );
+    }
+    if (compRow.natArmor) {
+      companionMods.push({ target: "ac.natural", type: "natural", value: compRow.natArmor, source: "Animal Companion" });
+    }
+  }
+
+  const baseMods = [...racialMods, ...gearMods, ...configMods, ...buffMods, ...companionMods];
 
   // ability.* modifiers (belts, headbands...) resolve through the engine
   // and ride a dedicated offset channel into the ability math
@@ -234,7 +256,11 @@ export function computeAll(
     character.link?.babFromMaster && master
       ? master.babOverride ?? totalBab(master.classes)
       : null;
-  const bab = masterBab ?? character.babOverride ?? totalBab(character.classes);
+  const bab =
+    (compRow ? compRow.bab : null) ??
+    masterBab ??
+    character.babOverride ??
+    totalBab(character.classes);
   const paladinLevel = classLevel(character, "paladin");
   const monkLevel = classLevel(character, "monk");
   const skaldLevel = classLevel(character, "skald");
@@ -457,6 +483,17 @@ export function computeAll(
   const fortR = resolveModifiers(combined, "save.fort");
   const refR = resolveModifiers(combined, "save.ref");
   const willR = resolveModifiers(combined, "save.will");
+  // Linked-creature base saves, added on top of the creature's OWN ability
+  // mods inside calculateSaves (via per-save max with its own base, which is
+  // 0 for a classless familiar/companion):
+  //  - familiar: the master's base saves if better (PF1e rule)
+  //  - companion: the Animal Companion Base Statistics table saves
+  const masterBaseSaves =
+    character.characterType === "familiar" && master
+      ? classBaseSaves(master.classes)
+      : compRow
+        ? { fort: compRow.fort, ref: compRow.ref, will: compRow.will }
+        : undefined;
   const baseSaves = calculateSaves({
     classes: character.classes,
     conMod: mods.con,
@@ -466,6 +503,7 @@ export function computeAll(
     resistanceEnhancement: 0,
     conditionEffects: effects,
     suppressDivineGrace: paladinLevel < archEffects.divineGraceMinLevel,
+    masterBaseSaves,
   });
   const saves: SaveValues = {
     fort: baseSaves.fort + fortR.total,

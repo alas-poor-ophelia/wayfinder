@@ -29,6 +29,10 @@ export interface SavesInput {
   /** archetype gate: divine grace removed (Gray Paladin, Stonelord) or not
    *  yet online (Chosen One below 4th) */
   suppressDivineGrace?: boolean;
+  /** familiar rule: per save, use max(own base, master's base) before adding
+   *  the familiar's OWN ability mods. The familiar never inherits the master's
+   *  ability mods, resistance, or divine grace. */
+  masterBaseSaves?: SaveValues;
 }
 
 export interface SaveValues {
@@ -42,6 +46,26 @@ function baseSave(level: number, isGood: boolean): number {
   return isGood ? 2 + Math.floor(level / 2) : Math.floor(level / 3);
 }
 
+/** Base save bonuses from class progressions alone — no ability mods, divine
+ *  grace, resistance, or conditions. Used both internally and to feed a
+ *  familiar the master's base saves. */
+export function classBaseSaves(
+  classes: { className: string; level: number }[]
+): SaveValues {
+  let fort = 0;
+  let ref = 0;
+  let will = 0;
+  for (const { className, level } of classes) {
+    if (!level) continue;
+    const stats = getClassStats(className);
+    if (!stats) continue;
+    fort += baseSave(level, stats.saves.fort);
+    ref += baseSave(level, stats.saves.ref);
+    will += baseSave(level, stats.saves.will);
+  }
+  return { fort, ref, will };
+}
+
 export function calculateSaves(input: SavesInput): SaveValues {
   const conMod = input.conMod || 0;
   const dexMod = input.dexMod || 0;
@@ -50,20 +74,23 @@ export function calculateSaves(input: SavesInput): SaveValues {
   const resistance = num(input.resistanceEnhancement);
   const ce = input.conditionEffects || {};
 
-  let baseFort = 0;
-  let baseRef = 0;
-  let baseWill = 0;
-  let hasPaladinLevels = false;
+  const own = classBaseSaves(input.classes);
+  // Divine grace only counts paladin levels whose class resolves in
+  // CLASS_STATS — matches the original loop's `if (!stats) continue` guard
+  // (an unrecognized paladin-named class grants neither base saves nor grace).
+  const hasPaladinLevels = input.classes.some(
+    (c) =>
+      c.level &&
+      getClassStats(c.className) &&
+      c.className.toLowerCase().includes("paladin")
+  );
 
-  for (const { className, level } of input.classes) {
-    if (!level) continue;
-    const stats = getClassStats(className);
-    if (!stats) continue;
-    if (className.toLowerCase().includes("paladin")) hasPaladinLevels = true;
-    baseFort += baseSave(level, stats.saves.fort);
-    baseRef += baseSave(level, stats.saves.ref);
-    baseWill += baseSave(level, stats.saves.will);
-  }
+  // Familiar rule: per save, the better of the familiar's own base and the
+  // master's base; the familiar's own ability mods are still added below.
+  const m = input.masterBaseSaves;
+  const baseFort = m ? Math.max(own.fort, m.fort) : own.fort;
+  const baseRef = m ? Math.max(own.ref, m.ref) : own.ref;
+  const baseWill = m ? Math.max(own.will, m.will) : own.will;
 
   const divineGrace =
     hasPaladinLevels && !input.suppressDivineGrace ? chaMod : 0;
