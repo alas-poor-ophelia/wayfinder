@@ -71,7 +71,7 @@
   .r-flow__opts { display: flex; flex-wrap: wrap; gap: 5px; position: relative; padding: 8px 0 4px 12px; }
   .r-flow__opt {
     font-family: var(--f-body); font-size: 13px; color: #e7e4dd;
-    background: #ca975914; border: 1px solid #ca975933; border-radius: 5px; padding: 4px 8px;
+    background: color-mix(in srgb, var(--ms-gold) 8%, transparent); border: 1px solid color-mix(in srgb, var(--ms-gold) 20%, transparent); border-radius: 5px; padding: 4px 8px;
   }
 
   // ---- steps ----

@@ -30,7 +30,7 @@
   /* Label — old ::before content on the tracker */
   .ms-resource__label {
     font-size: 12px;
-    font-family: "Taroca", serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-weight: 600;
     text-align: center;
     white-space: nowrap;

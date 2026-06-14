@@ -24,7 +24,7 @@
 
   .ms-atk-block__title {
     color: rgba(144, 108, 70, 0.9);
-    font-family: "Norwester", sans-serif;
+    font-family: var(--ms-font-display, "Norwester", sans-serif);
     font-size: 20px;
     padding: 2px 4px;
     margin: 0;
@@ -96,7 +96,7 @@
   }
 
   .ms-atk-tohit__label {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.07em;
@@ -104,7 +104,7 @@
   }
 
   .ms-atk-tohit__value {
-    font-family: "Norwester", sans-serif;
+    font-family: var(--ms-font-display, "Norwester", sans-serif);
     font-size: 18px;
     line-height: 1;
     color: var(--text-normal);

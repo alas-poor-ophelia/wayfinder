@@ -41,7 +41,7 @@
 
 .ms-modifier-notes {
   margin: 2px 8px;
-  font-family: "Taroca", sans-serif;
+  font-family: var(--ms-font-label, "Taroca", sans-serif);
   font-size: 0.78em;
   color: var(--text-muted);
 

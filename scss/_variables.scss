@@ -2,9 +2,11 @@
 // so nothing leaks into the rest of Obsidian.
 
 .minisheet-root {
-  --ms-red: #8b0000;
-  --ms-gold: #ca9759;
-  --ms-bronze: rgb(120, 80, 40);
+  // Brand accents read the Style Settings seam tokens (set on body when the
+  // user customizes), falling back to the brand defaults. See _style-settings.
+  --ms-red: var(--ms-accent-red, #8b0000);
+  --ms-gold: var(--ms-accent-gold, #ca9759);
+  --ms-bronze: rgb(120, 80, 40); // tertiary; not user-customizable
   --ms-touch: 45px; // minimum touch target (iPad)
   --ms-sheet-width: 321px;
 }

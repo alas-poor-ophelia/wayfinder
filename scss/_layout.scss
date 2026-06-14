@@ -39,14 +39,14 @@
 }
 
 .ms-title {
-  font-family: "Norwester", sans-serif;
+  font-family: var(--ms-font-display, "Norwester", sans-serif);
   font-size: 1.4em;
   margin: 0;
   color: var(--text-normal);
 }
 
 .ms-subtitle {
-  font-family: "Taroca", sans-serif;
+  font-family: var(--ms-font-label, "Taroca", sans-serif);
   font-size: 0.75em;
   color: var(--text-muted);
   margin-top: 2px;

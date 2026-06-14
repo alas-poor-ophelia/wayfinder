@@ -64,7 +64,7 @@
   }
 
   .ms-hp__stat {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 0.75em;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -97,7 +97,7 @@
     justify-content: center;
     border-radius: 4px;
     color: white;
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 0.75em;
     text-transform: uppercase;
     letter-spacing: 0.05em;

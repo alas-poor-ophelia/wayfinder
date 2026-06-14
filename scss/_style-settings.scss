@@ -1,0 +1,96 @@
+// ─────────────────────────────────────────────────────────────────────────
+// Style Settings integration (mgmeyers/obsidian-style-settings)
+//
+// The community Style Settings plugin scans every installed plugin's
+// styles.css for a `/* @settings */` comment block and writes the user's
+// choices as CSS custom properties onto `body`. We expose two brand accents
+// and three brand fonts, plus a master toggle that defers to the active
+// Obsidian theme.
+//
+// CONTRACT: nothing in this plugin ever *defines* the seam tokens
+// (--ms-accent-red, --ms-accent-gold, --ms-font-display/label/body). Every
+// consumer reads them with a brand fallback, e.g. var(--ms-accent-gold,
+// #ca9759). So when Style Settings is absent the brand shows by default;
+// when present, the user's body-scope value wins. Defining a default on a
+// .minisheet-*-root (class, specificity 0,1,0) would BEAT Style Settings'
+// body write (0,0,1) and silently break customization — so we never do.
+//
+// The sass build emits expanded output (no --style flag), so this comment
+// survives into styles.css where Style Settings can read it.
+// ─────────────────────────────────────────────────────────────────────────
+
+/* @settings
+
+name: Pathfinder Character Companion
+id: minisheet
+settings:
+    -
+        id: minisheet-accents-heading
+        title: Accent colors
+        type: heading
+        level: 2
+    -
+        id: ms-accent-red
+        title: Primary accent (red)
+        description: The dominant brand color — banner, dividers, the crest, key highlights.
+        type: variable-color
+        format: hex
+        opacity: false
+        default: '#8b0000'
+    -
+        id: ms-accent-gold
+        title: Secondary accent (gold)
+        description: Labels, trim, sort cues, and interactive accents.
+        type: variable-color
+        format: hex
+        opacity: false
+        default: '#ca9759'
+    -
+        id: minisheet-fonts-heading
+        title: Fonts
+        type: heading
+        level: 2
+    -
+        id: ms-font-display
+        title: Display font
+        description: Large headers and the character name (default Norwester).
+        type: variable-text
+        default: '"Norwester", sans-serif'
+    -
+        id: ms-font-label
+        title: Label font
+        description: Small-caps stat labels and tags (default Taroca).
+        type: variable-text
+        default: '"Taroca", sans-serif'
+    -
+        id: ms-font-body
+        title: Body font
+        description: Descriptive and rules text (default Crimson Text).
+        type: variable-text
+        default: '"Crimson Text", Georgia, serif'
+    -
+        id: minisheet-reset-heading
+        title: Theme fallback
+        type: heading
+        level: 2
+    -
+        id: minisheet-obsidian-native
+        title: Use Obsidian theme defaults
+        description: Ignore the brand colors and fonts above and inherit your active Obsidian theme's accent color and interface font instead. Overrides the choices above while enabled.
+        type: class-toggle
+
+*/
+
+// Master fallback. The class-toggle adds `minisheet-obsidian-native` to body.
+// This block is more specific (0,1,1) than Style Settings' body writes (0,0,1),
+// so when the toggle is on it authoritatively overrides any custom picks above
+// and maps every seam token onto a live Obsidian theme variable. When the
+// toggle is off the class is absent and the brand fallbacks (or user picks)
+// apply.
+body.minisheet-obsidian-native {
+  --ms-accent-red: var(--text-accent);
+  --ms-accent-gold: var(--text-accent-hover, var(--interactive-accent));
+  --ms-font-display: var(--font-interface);
+  --ms-font-label: var(--font-interface);
+  --ms-font-body: var(--font-text, var(--font-interface));
+}

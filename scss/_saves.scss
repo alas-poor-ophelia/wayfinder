@@ -7,7 +7,7 @@
   /* Old: inline-flex shrink-wraps the row, so the flourishes hug the save
      cluster instead of sitting at the sheet edges; parent centers it. */
   .ms-saves {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     display: inline-flex;
     flex-wrap: nowrap;
     align-items: center;

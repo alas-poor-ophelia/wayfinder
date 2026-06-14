@@ -114,7 +114,7 @@
     background: rgba(140, 30, 30, 0.7);
     box-shadow: none;
     color: white;
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 11px;
     cursor: pointer;
   }

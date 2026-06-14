@@ -67,7 +67,19 @@ Deploy target: `MiniSheet Dev/.obsidian/plugins/minisheet/`.
   Crimson Text intentionally resolves through its fallback stack (the old vault
   never embedded it either).
 - Colors: `--ms-red: #8b0000`, `--ms-gold: #ca9759`, `--ms-bronze`.
-- All selectors scoped under `.minisheet-root`.
+- All selectors scoped under `.minisheet-root` (+ separate roots: config,
+  equipdb, partyinv, spelldb).
+- **Style Settings**: the two accents and three fonts are user-customizable via
+  the community Style Settings plugin. The `/* @settings */` block lives in
+  `scss/_style-settings.scss`. Brand values are exposed as a body-scope SEAM —
+  `--ms-accent-red/gold`, `--ms-font-display/label/body` — which the plugin
+  NEVER defines, only consumes as `var(--ms-accent-gold, #ca9759)`. Defining a
+  default on a `.minisheet-*-root` (class) would beat Style Settings' `body`
+  write and silently break customization, so don't. New brand color/font usage
+  must route through `--ms-gold`/`--ms-red` (or the global seam token) and use
+  `color-mix()` for tints — never a raw brand hex. The reset toggle
+  (`body.minisheet-obsidian-native`) remaps the seam to Obsidian theme vars.
+  `main.ts` fires `parse-style-settings` on layout-ready.
 
 ## Known Legacy Data Hazards
 

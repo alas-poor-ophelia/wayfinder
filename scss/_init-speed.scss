@@ -8,7 +8,7 @@
     justify-content: center;
     align-items: center;
     gap: 24px;
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-weight: bold;
     font-size: 1em;
   }

@@ -12,7 +12,7 @@
     margin-bottom: 10px;
     background: var(--ms-red);
     color: white;
-    font-family: "Norwester", sans-serif;
+    font-family: var(--ms-font-display, "Norwester", sans-serif);
     font-size: 1.1em;
     letter-spacing: 0.08em;
     border: none;
@@ -32,7 +32,7 @@
   }
 
   .ms-adjust__title {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 0.85em;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -87,7 +87,7 @@
   }
 
   .ms-adjust__stat-label {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 0.8em;
     width: 34px;
   }

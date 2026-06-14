@@ -8,7 +8,7 @@
     margin: 10px auto 0;
     padding-top: 8px;
     border-top: 1px solid var(--background-modifier-border);
-    font-family: "Taroca", serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
   }
 
   .ms-xp--untracked {
@@ -18,7 +18,7 @@
   .ms-xp__enable {
     height: 32px;
     padding: 0 14px;
-    font-family: "Taroca", serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 0.78em;
     letter-spacing: 0.06em;
     border: 1px solid var(--background-modifier-border);

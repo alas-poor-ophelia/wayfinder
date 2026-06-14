@@ -7,8 +7,8 @@
    ============================================================================ */
 
 .minisheet-config-root {
-  --ms-red: #8b0000;
-  --ms-gold: #ca9759;
+  --ms-red: var(--ms-accent-red, #8b0000);
+  --ms-gold: var(--ms-accent-gold, #ca9759);
   --ms-bronze: rgb(120, 80, 40);
   --ms-touch: 40px;
 
@@ -26,8 +26,8 @@
   --link: #8aa0c8;
 
   --accent: var(--ms-gold);
-  --accent-soft: rgba(202, 151, 89, 0.13);
-  --accent-line: rgba(202, 151, 89, 0.45);
+  --accent-soft: color-mix(in srgb, var(--ms-gold) 13%, transparent);
+  --accent-line: color-mix(in srgb, var(--ms-gold) 45%, transparent);
 
   --radius: 6px;
   --pad: 18px;
@@ -41,7 +41,7 @@
   max-width: none;
   background: var(--bg-pane);
   color: var(--text);
-  font-family: "Crimson Text", Georgia, serif;
+  font-family: var(--ms-font-body, "Crimson Text", Georgia, serif);
   font-size: var(--fs);
   -webkit-font-smoothing: antialiased;
 
@@ -53,9 +53,9 @@
 
   /* per-category accents -------------------------------------------------- */
   .acc-gold {
-    --accent: #ca9759;
-    --accent-soft: rgba(202, 151, 89, 0.13);
-    --accent-line: rgba(202, 151, 89, 0.42);
+    --accent: var(--ms-gold);
+    --accent-soft: color-mix(in srgb, var(--ms-gold) 13%, transparent);
+    --accent-line: color-mix(in srgb, var(--ms-gold) 42%, transparent);
   }
   .acc-red {
     --accent: #c25b51;
@@ -94,7 +94,7 @@
     border-bottom: 1px solid var(--line);
   }
   .cfg__title {
-    font-family: "Norwester", sans-serif;
+    font-family: var(--ms-font-display, "Norwester", sans-serif);
     font-size: 17px;
     letter-spacing: 0.03em;
     margin: 0;
@@ -167,13 +167,13 @@
     color: var(--accent);
   }
   .rail__name {
-    font-family: "Norwester", sans-serif;
+    font-family: var(--ms-font-display, "Norwester", sans-serif);
     font-size: 13.5px;
     letter-spacing: 0.02em;
     flex: 1;
   }
   .rail__count {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10.5px;
     color: var(--text-mute);
   }
@@ -221,7 +221,7 @@
     display: block;
   }
   .sec__title {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 13px;
     letter-spacing: 0.07em;
     text-transform: uppercase;
@@ -341,7 +341,7 @@
   }
   .race-detail__lbl {
     flex: 0 0 74px;
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -449,7 +449,7 @@
     border-radius: 6px;
     padding: 9px 11px;
     color: var(--text);
-    font-family: "Crimson Text", Georgia, serif;
+    font-family: var(--ms-font-body, "Crimson Text", Georgia, serif);
     font-size: 12px;
     line-height: 1.55;
     white-space: pre-line;
@@ -520,7 +520,7 @@
     height: 15px;
   }
   .miniheads {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10.5px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -577,7 +577,7 @@
     border: 1px solid var(--line-strong);
     background: transparent;
     color: var(--text);
-    font-family: "Norwester", sans-serif;
+    font-family: var(--ms-font-display, "Norwester", sans-serif);
     letter-spacing: 0.02em;
     font-size: 13px;
     padding: 7px 13px;
@@ -766,7 +766,7 @@
     min-width: 0;
   }
   .classrow__stat {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10.5px;
     color: var(--text-mute);
     white-space: nowrap;
@@ -780,7 +780,7 @@
     flex: 1 1 100%;
   }
   .archrow__lbl {
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -828,7 +828,7 @@
     background: var(--bg-soft);
   }
   .synccard__t {
-    font-family: "Norwester", sans-serif;
+    font-family: var(--ms-font-display, "Norwester", sans-serif);
     font-size: 13px;
     display: flex;
     align-items: center;
@@ -893,7 +893,7 @@
     width: 104px;
     flex-shrink: 0;
     text-align: right;
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -996,7 +996,7 @@
   }
   .respool__foot-lbl {
     flex-shrink: 0;
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -1013,7 +1013,7 @@
     align-items: center;
     gap: 8px;
     padding: 4px 6px 6px;
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -1042,7 +1042,7 @@
   }
   .skillrow__ab {
     width: 28px;
-    font-family: "Taroca", sans-serif;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
     font-size: 10px;
     color: var(--text-mute);
   }

@@ -39,7 +39,12 @@ export default class MiniSheetPlugin extends Plugin {
     this.customItems = new CustomItemsStore(this);
     this.customItems.init();
     // vault files resolve after layout-ready; locate the items file then
-    this.app.workspace.onLayoutReady(() => void this.customItems.load());
+    this.app.workspace.onLayoutReady(() => {
+      void this.customItems.load();
+      // Let the Style Settings plugin (if installed) re-scan our styles.css
+      // for the `/* @settings */` block once our CSS is in the DOM.
+      this.app.workspace.trigger("parse-style-settings");
+    });
 
     this.rulesIndex = new RulesIndex(this);
     this.rulesIndex.init();
