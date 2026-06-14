@@ -51,32 +51,55 @@
     box-sizing: border-box;
   }
 
+  // ---- section tabs (ledger underline) ----
   .ms-equipdb__sections {
     display: flex;
-    gap: 4px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid var(--background-modifier-border);
-    padding-bottom: 8px;
+    gap: 2px;
+    border-bottom: 1px solid var(--eq-line);
   }
 
   .ms-equipdb__section {
-    padding: 4px 12px;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 6px;
-    background: var(--background-primary);
-    color: var(--text-muted);
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    margin-bottom: -1px; // overlap the row hairline with the active border
+    border: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--eq-text-mute);
+    font-family: var(--eq-font-display);
+    font-size: 14.5px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1;
     cursor: pointer;
 
     &:hover {
-      background: var(--background-modifier-hover);
+      color: var(--eq-text);
+      background: transparent;
     }
 
     &.is-on {
-      background: var(--interactive-accent);
-      border-color: var(--interactive-accent);
-      color: var(--text-on-accent);
+      color: var(--eq-gold);
+      border-bottom-color: var(--eq-gold);
+      background: transparent;
     }
+  }
+
+  .ms-equipdb__section-icon {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+  }
+
+  .ms-equipdb__section-count {
+    font-family: var(--eq-font-label);
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    color: var(--eq-text-mute);
   }
 
   .ms-equipdb__header {

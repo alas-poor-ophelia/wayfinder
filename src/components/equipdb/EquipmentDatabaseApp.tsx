@@ -17,18 +17,19 @@ import type {
   MagicItemDef,
 } from "../../types/equipment";
 import type { InventoryItem } from "../../types/inventory";
+import { Icon } from "../common/Icon";
 import { EquipFilters } from "./EquipFilters";
 import { EquipTable, formatGp, sortRows, type EquipColumn } from "./EquipTable";
 import { ForgePanel } from "./ForgePanel";
 
 export const PAGE_SIZE = 50;
 
-const SECTIONS: Array<{ key: EquipDbState["section"]; label: string }> = [
-  { key: "weapons", label: "Weapons" },
-  { key: "armor", label: "Armor" },
-  { key: "magic", label: "Magic Items" },
-  { key: "custom", label: "Custom" },
-  { key: "forge", label: "Forge" },
+const SECTIONS: Array<{ key: EquipDbState["section"]; label: string; icon: string }> = [
+  { key: "weapons", label: "Weapons", icon: "ra-crossed-swords" },
+  { key: "armor", label: "Armor", icon: "ra-shield" },
+  { key: "magic", label: "Magic Items", icon: "ra-aura" },
+  { key: "custom", label: "Custom", icon: "ra-gem-pendant" },
+  { key: "forge", label: "Forge", icon: "ra-anvil" },
 ];
 
 // ---- filtering (pure) ----
@@ -93,10 +94,12 @@ function pageSlice<T>(
 function Sections({
   db,
   store,
+  counts,
   onSwitch,
 }: {
   db: EquipDbState;
   store: MiniSheetPlugin["store"];
+  counts: Partial<Record<EquipDbState["section"], number>>;
   onSwitch?(): void;
 }) {
   return (
@@ -115,7 +118,11 @@ function Sections({
             });
           }}
         >
-          {s.label}
+          <Icon id={s.icon} class="ms-equipdb__section-icon" />
+          <span class="ms-equipdb__section-label">{s.label}</span>
+          {counts[s.key] != null && (
+            <span class="ms-equipdb__section-count">{counts[s.key]}</span>
+          )}
         </button>
       ))}
     </div>
@@ -133,6 +140,13 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
     characters.find((c) => c.id === store.data.value.ui.activeCharacterId) ??
     characters[0] ??
     null;
+
+  const counts: Partial<Record<EquipDbState["section"], number>> = {
+    weapons: WEAPONS.length,
+    armor: ARMOR.length,
+    magic: MAGIC_ITEMS.length,
+    custom: customItems.length,
+  };
 
   const weaponColumns: EquipColumn<BaseWeaponDef>[] = [
     { key: "name", label: "Name", val: (w) => w.name },
@@ -231,7 +245,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
   if (db.section === "forge") {
     return (
       <div class="ms-equipdb">
-        <Sections db={db} store={store} onSwitch={() => setEditing(null)} />
+        <Sections db={db} store={store} counts={counts} onSwitch={() => setEditing(null)} />
         <ForgePanel
           plugin={plugin}
           editItem={editing}
@@ -357,7 +371,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
 
   return (
     <div class="ms-equipdb">
-      <Sections db={db} store={store} onSwitch={() => setEditing(null)} />
+      <Sections db={db} store={store} counts={counts} onSwitch={() => setEditing(null)} />
       <div class="ms-equipdb__header">
         <input
           type="search"
