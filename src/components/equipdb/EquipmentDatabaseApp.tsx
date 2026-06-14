@@ -151,36 +151,37 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
 
   const weaponColumns: EquipColumn<BaseWeaponDef>[] = [
     { key: "name", label: "Name", val: (w) => w.name },
-    { key: "cost", label: "Cost", val: (w) => w.costGp, render: (w) => formatGp(w.costGp) },
+    { key: "cost", label: "Cost", num: true, cls: "ms-equipdb__cost", val: (w) => w.costGp, render: (w) => formatGp(w.costGp) },
     { key: "dmg", label: "Dmg (M)", val: (w) => w.dmgM || "—" },
     {
       key: "crit",
       label: "Crit",
       val: (w) => (w.critMult ? `${w.critRange}/×${w.critMult}` : "—"),
     },
-    { key: "range", label: "Range", val: (w) => w.rangeFt ?? 0, render: (w) => (w.rangeFt ? `${w.rangeFt} ft.` : "—") },
-    { key: "weight", label: "Wt", val: (w) => w.weightLbs, render: (w) => (w.weightLbs ? `${w.weightLbs} lbs.` : "—") },
+    { key: "range", label: "Range", num: true, val: (w) => w.rangeFt ?? 0, render: (w) => (w.rangeFt ? `${w.rangeFt} ft.` : "—") },
+    { key: "weight", label: "Wt", num: true, val: (w) => w.weightLbs, render: (w) => (w.weightLbs ? `${w.weightLbs} lbs.` : "—") },
     { key: "type", label: "Type", val: (w) => w.dmgType || "—" },
-    { key: "proficiency", label: "Prof.", val: (w) => w.proficiency },
-    { key: "category", label: "Category", val: (w) => w.category },
-    { key: "source", label: "Source", val: (w) => w.source },
+    { key: "proficiency", label: "Prof.", cls: "ms-equipdb__dim", val: (w) => w.proficiency },
+    { key: "category", label: "Category", cls: "ms-equipdb__dim", val: (w) => w.category },
+    { key: "source", label: "Source", cls: "ms-equipdb__dim", val: (w) => w.source },
   ];
 
   const armorColumns: EquipColumn<BaseArmorDef>[] = [
     { key: "name", label: "Name", val: (a) => a.name },
-    { key: "cost", label: "Cost", val: (a) => a.costGp, render: (a) => formatGp(a.costGp) },
-    { key: "ac", label: "AC", val: (a) => a.acBonus, render: (a) => `+${a.acBonus}` },
+    { key: "cost", label: "Cost", num: true, cls: "ms-equipdb__cost", val: (a) => a.costGp, render: (a) => formatGp(a.costGp) },
+    { key: "ac", label: "AC", num: true, val: (a) => a.acBonus, render: (a) => `+${a.acBonus}` },
     {
       key: "maxDex",
       label: "Max Dex",
+      num: true,
       val: (a) => a.maxDex ?? 99,
       render: (a) => (a.maxDex === null ? "—" : `+${a.maxDex}`),
     },
-    { key: "acp", label: "ACP", val: (a) => a.acp, render: (a) => String(a.acp) },
-    { key: "asf", label: "ASF", val: (a) => a.asfPct, render: (a) => `${a.asfPct}%` },
-    { key: "weight", label: "Wt", val: (a) => a.weightLbs, render: (a) => `${a.weightLbs} lbs.` },
-    { key: "category", label: "Category", val: (a) => a.category },
-    { key: "source", label: "Source", val: (a) => a.source },
+    { key: "acp", label: "ACP", num: true, val: (a) => a.acp, render: (a) => String(a.acp) },
+    { key: "asf", label: "ASF", num: true, val: (a) => a.asfPct, render: (a) => `${a.asfPct}%` },
+    { key: "weight", label: "Wt", num: true, val: (a) => a.weightLbs, render: (a) => `${a.weightLbs} lbs.` },
+    { key: "category", label: "Category", cls: "ms-equipdb__dim", val: (a) => a.category },
+    { key: "source", label: "Source", cls: "ms-equipdb__dim", val: (a) => a.source },
   ];
 
   const magicColumns: EquipColumn<MagicItemDef>[] = [
@@ -202,10 +203,10 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
         </span>
       ),
     },
-    { key: "price", label: "Price", val: (m) => m.priceGp, render: (m) => formatGp(m.priceGp) },
-    { key: "group", label: "Type", val: (m) => m.group },
-    { key: "slot", label: "Slot", val: (m) => m.slot },
-    { key: "cl", label: "CL", val: (m) => m.casterLevel, render: (m) => (m.casterLevel ? String(m.casterLevel) : "—") },
+    { key: "price", label: "Price", num: true, cls: "ms-equipdb__cost", val: (m) => m.priceGp, render: (m) => formatGp(m.priceGp) },
+    { key: "group", label: "Type", cls: "ms-equipdb__dim", val: (m) => m.group },
+    { key: "slot", label: "Slot", cls: "ms-equipdb__dim", val: (m) => m.slot },
+    { key: "cl", label: "CL", num: true, val: (m) => m.casterLevel, render: (m) => (m.casterLevel ? String(m.casterLevel) : "—") },
     {
       key: "bonuses",
       label: "Bonuses",
@@ -215,7 +216,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
           ? m.modifiers.map((mod) => `${mod.value > 0 ? "+" : ""}${mod.value} ${mod.target}`).join(", ")
           : "—",
     },
-    { key: "source", label: "Source", val: (m) => m.source },
+    { key: "source", label: "Source", cls: "ms-equipdb__dim", val: (m) => m.source },
   ];
 
   const addTo = (draft: Omit<InventoryItem, "id">, after?: () => void) => {
@@ -227,9 +228,9 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
 
   const customColumns: EquipColumn<CustomItemDef>[] = [
     { key: "name", label: "Name", val: (c) => c.name },
-    { key: "kind", label: "Kind", val: (c) => c.kind },
-    { key: "price", label: "Price", val: (c) => c.priceGp, render: (c) => formatGp(c.priceGp) },
-    { key: "weight", label: "Wt", val: (c) => c.weightLbs, render: (c) => `${c.weightLbs} lbs.` },
+    { key: "kind", label: "Kind", cls: "ms-equipdb__dim", val: (c) => c.kind },
+    { key: "price", label: "Price", num: true, cls: "ms-equipdb__cost", val: (c) => c.priceGp, render: (c) => formatGp(c.priceGp) },
+    { key: "weight", label: "Wt", num: true, val: (c) => c.weightLbs, render: (c) => `${c.weightLbs} lbs.` },
     {
       key: "bonuses",
       label: "Bonuses",
@@ -239,7 +240,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
           .map((m) => `${m.value > 0 ? "+" : ""}${m.value} ${m.type} ${m.target}`)
           .join(", ") || "—",
     },
-    { key: "note", label: "Abilities", val: (c) => c.note || "—" },
+    { key: "note", label: "Abilities", cls: "ms-equipdb__dim", val: (c) => c.note || "—" },
   ];
 
   // forge replaces the whole search/table surface
@@ -334,14 +335,14 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
                   store.updateEquipDb({ section: "forge" });
                 }}
               >
-                ✎
+                <UI.pencil />
               </button>
               <button
                 class="ms-equipdb__row-action ms-equipdb__row-action--danger"
                 aria-label={`Delete ${c.name}`}
                 onClick={() => plugin.customItems.removeItem(c.id)}
               >
-                ✕
+                <UI.trash />
               </button>
             </>
           )}
