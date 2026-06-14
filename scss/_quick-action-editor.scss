@@ -12,6 +12,72 @@
   .qa-intro {
     margin: 0 0 12px;
   }
+
+  /* Detail strip: legend for the icon-only grid. Tracks the hovered /
+     focused / touched cell; defaults to the first on-sheet action. */
+  .qa-detail {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.12);
+    padding: 8px 10px;
+    margin: 0 0 12px;
+  }
+  .qa-detail__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .qa-detail__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    background: rgba(60, 60, 80, 0.3);
+    flex-shrink: 0;
+  }
+  .qa-detail__icon svg {
+    width: 17px;
+    height: 17px;
+    color: #fff;
+    opacity: 0.9;
+  }
+  .qa-detail__name {
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--text-normal);
+  }
+  .qa-detail__where {
+    margin-left: auto;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-mute);
+  }
+  .qa-detail__summary {
+    margin-top: 5px;
+    font-size: 12px;
+    color: var(--text-muted, var(--text-mute));
+    white-space: normal;
+  }
+  .qa-detail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 6px;
+  }
+  .qa-detail__tag {
+    font-size: 10.5px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--ms-gold, #ca9759) 14%, transparent);
+    color: var(--text-muted, var(--text-mute));
+  }
+  .qa-cell.is-focus .squircle {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ms-gold, #ca9759) 70%, transparent);
+  }
   .qa-zone {
     margin-bottom: 14px;
   }

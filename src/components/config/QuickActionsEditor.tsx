@@ -429,6 +429,9 @@ export function QuickActionsSection({
     overIndex: number;
   } | null>(null);
   const [drag, setDrag] = useState<DragState | null>(null);
+  // The action whose details show in the strip — driven by hover, keyboard
+  // focus, and touch (onDown), so an icon-only grid is still legible.
+  const [focusId, setFocusId] = useState<string | null>(null);
 
   const setQa = (next: QuickActionDef[]) => store.setCharacterField(character.id, "quickActions", next);
 
@@ -439,6 +442,13 @@ export function QuickActionsSection({
     ...hiddenActions.map((def) => ({ def, cat: false })),
     ...catalog.map((def) => ({ def, cat: true })),
   ];
+  // Default to the first on-sheet action so the strip is never empty on a
+  // touch device (where hover never fires).
+  const focused =
+    (focusId && [...shown, ...bench.map((b) => b.def)].find((d) => d.id === focusId)) ||
+    shown[0] ||
+    bench[0]?.def ||
+    null;
 
   const zoneOf = (x: number, y: number): "sheet" | "bench" | null => {
     const inR = (ref: typeof sheetRef) => {
@@ -494,6 +504,7 @@ export function QuickActionsSection({
   };
 
   const onDown = (item: BenchItem, zone: "sheet" | "bench", e: PointerEvent) => {
+    setFocusId(item.def.id);
     down.current = {
       id: item.def.id,
       item,
@@ -548,9 +559,12 @@ export function QuickActionsSection({
         data-id={a.id}
         data-i={zone === "sheet" ? i : undefined}
         title={a.name + (item.cat ? " — tap to add" : "")}
+        aria-label={a.name}
         class={`qa-cell${drag && drag.id === a.id ? " is-drag" : ""}${
           zone === "sheet" && drag && drag.overZone === "sheet" && drag.overIndex === i ? " is-drop" : ""
-        }`}
+        }${focused && focused.id === a.id ? " is-focus" : ""}`}
+        onPointerEnter={() => setFocusId(a.id)}
+        onFocus={() => setFocusId(a.id)}
         onPointerDown={(e) => onDown(item, zone, e as unknown as PointerEvent)}
         onPointerMove={(e) => onMove(e as unknown as PointerEvent)}
         onPointerUp={() => onUp(item)}
@@ -570,6 +584,42 @@ export function QuickActionsSection({
   return (
     <Sec icon="ra-lightning-bolt" title="Quick Actions" desc={`${shown.length} on sheet`} collapsible={false}>
       <p class="help qa-intro">Drag between zones to show or hide, drag within to reorder, tap to edit.</p>
+      {focused && (
+        <div class="qa-detail" aria-live="polite">
+          <div class="qa-detail__head">
+            <span class="qa-detail__icon">
+              <Icon id={focused.icon} />
+            </span>
+            <span class="qa-detail__name">{focused.name}</span>
+            <span class="qa-detail__where">
+              {shown.some((a) => a.id === focused.id)
+                ? "On sheet"
+                : hiddenActions.some((a) => a.id === focused.id)
+                  ? "Benched"
+                  : "Library"}
+            </span>
+          </div>
+          <div class="qa-detail__summary">{defSummary(focused)}</div>
+          <div class="qa-detail__meta">
+            {focused.stages.length > 1 && (
+              <span class="qa-detail__tag">
+                {focused.stages.length} stages: {focused.stages.map((s, i) => s.name || `Stage ${i + 1}`).join(" → ")}
+              </span>
+            )}
+            {focused.gate && (
+              <span class="qa-detail__tag">
+                Spends {focused.gate.resourceId}
+                {focused.gate.min ? ` (≥${focused.gate.min})` : ""}
+              </span>
+            )}
+            {focused.requires && (
+              <span class="qa-detail__tag">
+                Needs {focused.requires.className} {focused.requires.minLevel}+
+              </span>
+            )}
+          </div>
+        </div>
+      )}
       <div class="qa-zone">
         <div class="qa-zone__label">
           On your sheet <span class="n">· {shown.length}</span>
