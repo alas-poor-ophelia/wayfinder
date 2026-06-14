@@ -348,3 +348,79 @@
     min-height: var(--ms-touch);
   }
 }
+
+// ===========================================================================
+// Equipment DB redesign — same treatment for .minisheet-equipdb-root. It is a
+// separate root scope from .minisheet-root, so none of the rules above reach
+// its buttons; without this block Obsidian's mobile build inflates every
+// equip/forge button (injected padding/background-color/box-shadow on
+// button:not(.clickable-icon)). `.is-tablet .minisheet-equipdb-root` is (0,3,1)
+// so it beats the injection (0,2,1); state rules add a class for (0,4,1).
+// --eq-* vars resolve here because they are declared on this same element.
+// ===========================================================================
+.is-tablet .minisheet-equipdb-root {
+  --ms-touch: 45px;
+
+  button {
+    box-shadow: none;
+  }
+
+  /* shape / icon buttons: flat, no injected padding */
+  button:is(.ms-equipdb__add, .ms-equipdb__row-action),
+  .ms-equipdb__pager button {
+    padding: 0;
+  }
+
+  /* padded text buttons: re-assert their intended geometry */
+  button.ms-equipdb__section {
+    padding: 9px 14px;
+  }
+  button.ms-equipdb__filters-toggle {
+    padding: 7px 12px;
+  }
+  button.ms-equipdb__clear {
+    padding: 7px 8px;
+  }
+
+  /* re-assert the transparent backgrounds the mobile build stomps */
+  button:is(
+    .ms-equipdb__section,
+    .ms-equipdb__filters-toggle,
+    .ms-equipdb__clear,
+    .ms-equipdb__add,
+    .ms-equipdb__row-action
+  ),
+  .ms-equipdb__pager button {
+    background-color: transparent;
+  }
+
+  /* state backgrounds (extra class -> higher specificity, so they win) */
+  button.ms-equipdb__filters-toggle.is-on {
+    background-color: var(--eq-gold-soft);
+  }
+  button.ms-equipdb__add:hover {
+    background-color: var(--eq-gold);
+  }
+  button.ms-equipdb__cta {
+    background-color: var(--eq-gold);
+  }
+
+  /* comfortable touch targets */
+  button:is(
+    .ms-equipdb__section,
+    .ms-equipdb__filters-toggle,
+    .ms-equipdb__clear,
+    .ms-equipdb__cta
+  ) {
+    min-height: var(--ms-touch);
+  }
+  button:is(.ms-equipdb__add, .ms-equipdb__row-action) {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+  }
+  .ms-equipdb__pager button {
+    width: 36px;
+    height: 36px;
+  }
+}

@@ -1,6 +1,7 @@
 import type { ComponentChildren } from "preact";
 import type MiniSheetPlugin from "../../main";
 import type { EquipDbState } from "../../types/data-file";
+import { UI } from "../config/glyphs";
 
 /** One sortable column: `val` feeds sort + default rendering. */
 export interface EquipColumn<T> {
@@ -8,6 +9,10 @@ export interface EquipColumn<T> {
   label: string;
   val(item: T): string | number;
   render?(item: T): ComponentChildren;
+  /** right-align + tabular-nums for numeric columns */
+  num?: boolean;
+  /** extra cell class, e.g. ms-equipdb__cost (gold price) / ms-equipdb__dim */
+  cls?: string;
 }
 
 export function sortRows<T extends { name: string }>(
@@ -36,6 +41,7 @@ export function EquipTable<T extends { id: string; name: string }>({
   columns,
   onAdd,
   actions,
+  emptyText = "No matches — adjust your search or filters.",
 }: {
   plugin: MiniSheetPlugin;
   db: EquipDbState;
@@ -45,6 +51,8 @@ export function EquipTable<T extends { id: string; name: string }>({
   onAdd: ((item: T) => void) | null;
   /** optional trailing per-row actions (edit/delete on custom items) */
   actions?(item: T): ComponentChildren;
+  /** message shown when there are no rows */
+  emptyText?: string;
 }) {
   const store = plugin.store;
 
@@ -57,16 +65,31 @@ export function EquipTable<T extends { id: string; name: string }>({
   };
 
   return (
+    <>
     <table class="ms-equipdb__table">
       <thead>
         <tr>
           {onAdd && <th class="ms-equipdb__add-col" />}
-          {columns.map((col) => (
-            <th key={col.key} onClick={() => setSort(col.key)}>
-              {col.label}
-              {db.sortKey === col.key ? (db.sortDir === "asc" ? " ▲" : " ▼") : ""}
-            </th>
-          ))}
+          {columns.map((col) => {
+            const active = db.sortKey === col.key;
+            return (
+              <th
+                key={col.key}
+                class={
+                  `${col.num ? "ms-equipdb__numcol" : ""}${active ? " is-sort" : ""}`.trim() ||
+                  undefined
+                }
+                onClick={() => setSort(col.key)}
+              >
+                {col.label}
+                {active && (
+                  <span class="ms-equipdb__sortcaret">
+                    {db.sortDir === "asc" ? "▲" : "▼"}
+                  </span>
+                )}
+              </th>
+            );
+          })}
           {actions && <th />}
         </tr>
       </thead>
@@ -80,18 +103,28 @@ export function EquipTable<T extends { id: string; name: string }>({
                   aria-label={`Add ${item.name}`}
                   onClick={() => onAdd(item)}
                 >
-                  +
+                  <UI.plus />
                 </button>
               </td>
             )}
-            {columns.map((col) => (
-              <td key={col.key}>{col.render ? col.render(item) : col.val(item)}</td>
-            ))}
+            {columns.map((col) => {
+              const cls =
+                `${col.num ? "ms-equipdb__numcol" : ""}${col.cls ? " " + col.cls : ""}`.trim();
+              return (
+                <td key={col.key} class={cls || undefined}>
+                  {col.render ? col.render(item) : col.val(item)}
+                </td>
+              );
+            })}
             {actions && <td class="ms-equipdb__actions">{actions(item)}</td>}
           </tr>
         ))}
       </tbody>
     </table>
+    {rows.length === 0 && (
+      <div class="ms-equipdb__empty ms-equipdb__muted">{emptyText}</div>
+    )}
+    </>
   );
 }
 

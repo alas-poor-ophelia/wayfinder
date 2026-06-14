@@ -17,18 +17,20 @@ import type {
   MagicItemDef,
 } from "../../types/equipment";
 import type { InventoryItem } from "../../types/inventory";
+import { Icon } from "../common/Icon";
+import { UI } from "../config/glyphs";
 import { EquipFilters } from "./EquipFilters";
 import { EquipTable, formatGp, sortRows, type EquipColumn } from "./EquipTable";
 import { ForgePanel } from "./ForgePanel";
 
 export const PAGE_SIZE = 50;
 
-const SECTIONS: Array<{ key: EquipDbState["section"]; label: string }> = [
-  { key: "weapons", label: "Weapons" },
-  { key: "armor", label: "Armor" },
-  { key: "magic", label: "Magic Items" },
-  { key: "custom", label: "Custom" },
-  { key: "forge", label: "Forge" },
+const SECTIONS: Array<{ key: EquipDbState["section"]; label: string; icon: string }> = [
+  { key: "weapons", label: "Weapons", icon: "ra-crossed-swords" },
+  { key: "armor", label: "Armor", icon: "ra-shield" },
+  { key: "magic", label: "Magic Items", icon: "ra-aura" },
+  { key: "custom", label: "Custom", icon: "ra-gem-pendant" },
+  { key: "forge", label: "Forge", icon: "ra-anvil" },
 ];
 
 // ---- filtering (pure) ----
@@ -93,10 +95,12 @@ function pageSlice<T>(
 function Sections({
   db,
   store,
+  counts,
   onSwitch,
 }: {
   db: EquipDbState;
   store: MiniSheetPlugin["store"];
+  counts: Partial<Record<EquipDbState["section"], number>>;
   onSwitch?(): void;
 }) {
   return (
@@ -107,15 +111,29 @@ function Sections({
           class={`ms-equipdb__section${db.section === s.key ? " is-on" : ""}`}
           onClick={() => {
             onSwitch?.();
+            // tab switch resets sort, page, search, and all filters (handoff)
             store.updateEquipDb({
               section: s.key,
               page: 0,
               sortKey: "name",
               sortDir: "asc",
+              search: "",
+              proficiency: "",
+              category: "",
+              group: "",
+              slot: "",
+              source: "",
+              priceMin: null,
+              priceMax: null,
+              stattedOnly: false,
             });
           }}
         >
-          {s.label}
+          <Icon id={s.icon} class="ms-equipdb__section-icon" />
+          <span class="ms-equipdb__section-label">{s.label}</span>
+          {counts[s.key] != null && (
+            <span class="ms-equipdb__section-count">{counts[s.key]}</span>
+          )}
         </button>
       ))}
     </div>
@@ -134,38 +152,46 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
     characters[0] ??
     null;
 
+  const counts: Partial<Record<EquipDbState["section"], number>> = {
+    weapons: WEAPONS.length,
+    armor: ARMOR.length,
+    magic: MAGIC_ITEMS.length,
+    custom: customItems.length,
+  };
+
   const weaponColumns: EquipColumn<BaseWeaponDef>[] = [
     { key: "name", label: "Name", val: (w) => w.name },
-    { key: "cost", label: "Cost", val: (w) => w.costGp, render: (w) => formatGp(w.costGp) },
+    { key: "cost", label: "Cost", num: true, cls: "ms-equipdb__cost", val: (w) => w.costGp, render: (w) => formatGp(w.costGp) },
     { key: "dmg", label: "Dmg (M)", val: (w) => w.dmgM || "—" },
     {
       key: "crit",
       label: "Crit",
       val: (w) => (w.critMult ? `${w.critRange}/×${w.critMult}` : "—"),
     },
-    { key: "range", label: "Range", val: (w) => w.rangeFt ?? 0, render: (w) => (w.rangeFt ? `${w.rangeFt} ft.` : "—") },
-    { key: "weight", label: "Wt", val: (w) => w.weightLbs, render: (w) => (w.weightLbs ? `${w.weightLbs} lbs.` : "—") },
+    { key: "range", label: "Range", num: true, val: (w) => w.rangeFt ?? 0, render: (w) => (w.rangeFt ? `${w.rangeFt} ft.` : "—") },
+    { key: "weight", label: "Wt", num: true, val: (w) => w.weightLbs, render: (w) => (w.weightLbs ? `${w.weightLbs} lbs.` : "—") },
     { key: "type", label: "Type", val: (w) => w.dmgType || "—" },
-    { key: "proficiency", label: "Prof.", val: (w) => w.proficiency },
-    { key: "category", label: "Category", val: (w) => w.category },
-    { key: "source", label: "Source", val: (w) => w.source },
+    { key: "proficiency", label: "Prof.", cls: "ms-equipdb__dim", val: (w) => w.proficiency },
+    { key: "category", label: "Category", cls: "ms-equipdb__dim", val: (w) => w.category },
+    { key: "source", label: "Source", cls: "ms-equipdb__dim", val: (w) => w.source },
   ];
 
   const armorColumns: EquipColumn<BaseArmorDef>[] = [
     { key: "name", label: "Name", val: (a) => a.name },
-    { key: "cost", label: "Cost", val: (a) => a.costGp, render: (a) => formatGp(a.costGp) },
-    { key: "ac", label: "AC", val: (a) => a.acBonus, render: (a) => `+${a.acBonus}` },
+    { key: "cost", label: "Cost", num: true, cls: "ms-equipdb__cost", val: (a) => a.costGp, render: (a) => formatGp(a.costGp) },
+    { key: "ac", label: "AC", num: true, val: (a) => a.acBonus, render: (a) => `+${a.acBonus}` },
     {
       key: "maxDex",
       label: "Max Dex",
+      num: true,
       val: (a) => a.maxDex ?? 99,
       render: (a) => (a.maxDex === null ? "—" : `+${a.maxDex}`),
     },
-    { key: "acp", label: "ACP", val: (a) => a.acp, render: (a) => String(a.acp) },
-    { key: "asf", label: "ASF", val: (a) => a.asfPct, render: (a) => `${a.asfPct}%` },
-    { key: "weight", label: "Wt", val: (a) => a.weightLbs, render: (a) => `${a.weightLbs} lbs.` },
-    { key: "category", label: "Category", val: (a) => a.category },
-    { key: "source", label: "Source", val: (a) => a.source },
+    { key: "acp", label: "ACP", num: true, val: (a) => a.acp, render: (a) => String(a.acp) },
+    { key: "asf", label: "ASF", num: true, val: (a) => a.asfPct, render: (a) => `${a.asfPct}%` },
+    { key: "weight", label: "Wt", num: true, val: (a) => a.weightLbs, render: (a) => `${a.weightLbs} lbs.` },
+    { key: "category", label: "Category", cls: "ms-equipdb__dim", val: (a) => a.category },
+    { key: "source", label: "Source", cls: "ms-equipdb__dim", val: (a) => a.source },
   ];
 
   const magicColumns: EquipColumn<MagicItemDef>[] = [
@@ -187,10 +213,10 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
         </span>
       ),
     },
-    { key: "price", label: "Price", val: (m) => m.priceGp, render: (m) => formatGp(m.priceGp) },
-    { key: "group", label: "Type", val: (m) => m.group },
-    { key: "slot", label: "Slot", val: (m) => m.slot },
-    { key: "cl", label: "CL", val: (m) => m.casterLevel, render: (m) => (m.casterLevel ? String(m.casterLevel) : "—") },
+    { key: "price", label: "Price", num: true, cls: "ms-equipdb__cost", val: (m) => m.priceGp, render: (m) => formatGp(m.priceGp) },
+    { key: "group", label: "Type", cls: "ms-equipdb__dim", val: (m) => m.group },
+    { key: "slot", label: "Slot", cls: "ms-equipdb__dim", val: (m) => m.slot },
+    { key: "cl", label: "CL", num: true, val: (m) => m.casterLevel, render: (m) => (m.casterLevel ? String(m.casterLevel) : "—") },
     {
       key: "bonuses",
       label: "Bonuses",
@@ -200,7 +226,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
           ? m.modifiers.map((mod) => `${mod.value > 0 ? "+" : ""}${mod.value} ${mod.target}`).join(", ")
           : "—",
     },
-    { key: "source", label: "Source", val: (m) => m.source },
+    { key: "source", label: "Source", cls: "ms-equipdb__dim", val: (m) => m.source },
   ];
 
   const addTo = (draft: Omit<InventoryItem, "id">, after?: () => void) => {
@@ -212,9 +238,9 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
 
   const customColumns: EquipColumn<CustomItemDef>[] = [
     { key: "name", label: "Name", val: (c) => c.name },
-    { key: "kind", label: "Kind", val: (c) => c.kind },
-    { key: "price", label: "Price", val: (c) => c.priceGp, render: (c) => formatGp(c.priceGp) },
-    { key: "weight", label: "Wt", val: (c) => c.weightLbs, render: (c) => `${c.weightLbs} lbs.` },
+    { key: "kind", label: "Kind", cls: "ms-equipdb__dim", val: (c) => c.kind },
+    { key: "price", label: "Price", num: true, cls: "ms-equipdb__cost", val: (c) => c.priceGp, render: (c) => formatGp(c.priceGp) },
+    { key: "weight", label: "Wt", num: true, val: (c) => c.weightLbs, render: (c) => `${c.weightLbs} lbs.` },
     {
       key: "bonuses",
       label: "Bonuses",
@@ -224,14 +250,14 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
           .map((m) => `${m.value > 0 ? "+" : ""}${m.value} ${m.type} ${m.target}`)
           .join(", ") || "—",
     },
-    { key: "note", label: "Abilities", val: (c) => c.note || "—" },
+    { key: "note", label: "Abilities", cls: "ms-equipdb__dim", val: (c) => c.note || "—" },
   ];
 
   // forge replaces the whole search/table surface
   if (db.section === "forge") {
     return (
       <div class="ms-equipdb">
-        <Sections db={db} store={store} onSwitch={() => setEditing(null)} />
+        <Sections db={db} store={store} counts={counts} onSwitch={() => setEditing(null)} />
         <ForgePanel
           plugin={plugin}
           editItem={editing}
@@ -309,6 +335,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
               ? (c) => addTo(customDraft(c, getBaseWeapon(c.baseId)))
               : null
           }
+          emptyText="No custom items yet — forge one in the Forge tab."
           actions={(c) => (
             <>
               <button
@@ -319,23 +346,18 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
                   store.updateEquipDb({ section: "forge" });
                 }}
               >
-                ✎
+                <UI.pencil />
               </button>
               <button
                 class="ms-equipdb__row-action ms-equipdb__row-action--danger"
                 aria-label={`Delete ${c.name}`}
                 onClick={() => plugin.customItems.removeItem(c.id)}
               >
-                ✕
+                <UI.trash />
               </button>
             </>
           )}
         />
-        {customItems.length === 0 && (
-          <div class="ms-equipdb__muted ms-equipdb__empty">
-            No custom items yet — forge one in the Forge tab.
-          </div>
-        )}
       </>
     );
   } else {
@@ -357,27 +379,33 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
 
   return (
     <div class="ms-equipdb">
-      <Sections db={db} store={store} onSwitch={() => setEditing(null)} />
+      <Sections db={db} store={store} counts={counts} onSwitch={() => setEditing(null)} />
       <div class="ms-equipdb__header">
-        <input
-          type="search"
-          class="ms-equipdb__search"
-          placeholder={`Search ${db.section}…`}
-          value={db.search}
-          onInput={(e) =>
-            store.updateEquipDb({
-              search: (e.target as HTMLInputElement).value,
-              page: 0,
-            })
-          }
-        />
-        <button
-          class="ms-equipdb__filters-toggle"
-          aria-expanded={db.filtersOpen}
-          onClick={() => store.updateEquipDb({ filtersOpen: !db.filtersOpen })}
-        >
-          Filters
-        </button>
+        <div class="ms-equipdb__search">
+          <UI.search />
+          <input
+            type="search"
+            class="ms-equipdb__search-input"
+            placeholder={`Search ${db.section}…`}
+            value={db.search}
+            onInput={(e) =>
+              store.updateEquipDb({
+                search: (e.target as HTMLInputElement).value,
+                page: 0,
+              })
+            }
+          />
+        </div>
+        {db.section !== "custom" && (
+          <button
+            class={`ms-equipdb__filters-toggle${db.filtersOpen ? " is-on" : ""}`}
+            aria-expanded={db.filtersOpen}
+            onClick={() => store.updateEquipDb({ filtersOpen: !db.filtersOpen })}
+          >
+            <UI.sliders />
+            Filters
+          </button>
+        )}
         <button
           class="ms-equipdb__clear"
           onClick={() =>
@@ -398,7 +426,7 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
           Clear all
         </button>
         <span class="ms-equipdb__count">
-          Showing {filteredCount} of {totalCount}
+          Showing <b>{filteredCount}</b> of {totalCount}
         </span>
         {characters.length > 0 && (
           <label class="ms-equipdb__target">
@@ -427,18 +455,20 @@ export function EquipmentDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
         <div class="ms-equipdb__pager">
           <button
             disabled={page === 0}
+            aria-label="Previous page"
             onClick={() => store.updateEquipDb({ page: page - 1 })}
           >
-            ←
+            <UI.arrowL />
           </button>
           <span>
             Page {page + 1} / {pageCount}
           </span>
           <button
             disabled={page >= pageCount - 1}
+            aria-label="Next page"
             onClick={() => store.updateEquipDb({ page: page + 1 })}
           >
-            →
+            <UI.arrowR />
           </button>
         </div>
       )}
