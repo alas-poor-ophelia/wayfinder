@@ -51,6 +51,12 @@
     box-sizing: border-box;
   }
 
+  // size container so the Forge can stack on a narrow main pane (the pane
+  // width is independent of the viewport, so a media query won't do)
+  .ms-equipdb {
+    container: equipdb / inline-size;
+  }
+
   // ---- section tabs (ledger underline) ----
   .ms-equipdb__sections {
     display: flex;
@@ -543,6 +549,17 @@
 
   .ms-equipdb__forge-main {
     min-width: 0;
+  }
+
+  // narrow main pane → stack the aside above the builder
+  @container equipdb (max-width: 620px) {
+    .ms-equipdb__forge {
+      grid-template-columns: 1fr;
+    }
+
+    .ms-equipdb__forge-aside {
+      position: static;
+    }
   }
 
   // ---- block labels (gold, hairline rule) ----
