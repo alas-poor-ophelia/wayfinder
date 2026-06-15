@@ -1,29 +1,35 @@
-// XP tracker (Adjustments tab) — legacy XpTracker.jsx geometry preserved:
-// 245px centered column, 20px bar with #C14343 fill (parity hex), 28px
-// controls. The mismatch dot on the level label is new UX.
+// XP region of the Adjustments campaign-day header (redesign 2026-06).
+// Renders inside .ms-adjust__day, so it inherits the --adj-*/--f-* tokens
+// defined on .ms-adjust (see _adjust.scss). Brand colour stays on the
+// Style-Settings seam (var(--ms-gold/--ms-red)); the medium-track math and the
+// class-vs-XP mismatch dot are preserved from the prior tracker.
 
 .minisheet-root {
-  .ms-xp {
-    max-width: 245px;
-    margin: 10px auto 0;
-    padding-top: 8px;
-    border-top: 1px solid var(--background-modifier-border);
-    font-family: var(--ms-font-label, "Taroca", sans-serif);
+  .ms-adjust__xp {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
   }
 
-  .ms-xp--untracked {
-    text-align: center;
+  .ms-adjust__xp--untracked {
+    align-items: center;
+    justify-content: center;
   }
 
-  .ms-xp__enable {
-    height: 32px;
+  .ms-adjust__xp-enable {
+    height: 30px;
     padding: 0 14px;
-    font-family: var(--ms-font-label, "Taroca", sans-serif);
-    font-size: 0.78em;
+    font-family: var(--f-deco, var(--ms-font-label, "Taroca", sans-serif));
+    font-size: 11px;
     letter-spacing: 0.06em;
+    text-transform: uppercase;
     border: 1px solid var(--background-modifier-border);
-    border-radius: 4px;
-    background-color: var(--background-secondary);
+    border-radius: 6px;
+    background-color: transparent;
     color: var(--text-muted);
     box-shadow: none;
     cursor: pointer;
@@ -34,112 +40,101 @@
     }
   }
 
-  .ms-xp__current {
-    text-align: center;
-    font-size: 0.85em;
-    color: var(--text-normal);
-    margin-bottom: 4px;
-  }
-
-  .ms-xp__levels {
+  .ms-xp__lvlrow {
     display: flex;
+    align-items: baseline;
     justify-content: space-between;
-    margin-bottom: 4px;
+    gap: 8px;
   }
 
-  .ms-xp__level {
+  .ms-xp__lvl {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 0.8em;
-    font-weight: 600;
+    font-family: var(--f-title, var(--ms-font-display, "Norwester", sans-serif));
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ms-gold);
 
-    &--next {
-      color: var(--text-muted);
+    b {
+      color: #f0e7d6;
     }
+  }
 
-    &.has-mismatch::after {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--ms-gold);
-      box-shadow: 0 0 5px color-mix(in srgb, var(--ms-gold) 60%, transparent);
-    }
+  .ms-xp__mismatch {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ms-gold);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--ms-gold) 60%, transparent);
+  }
+
+  .ms-xp__pct {
+    font-family: var(--f-ui, inherit);
+    font-size: 10px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
   .ms-xp__bar {
     position: relative;
-    height: 20px;
-    border-radius: 10px;
-    background: var(--background-modifier-border);
+    height: 16px;
+    border-radius: 8px;
     overflow: hidden;
+    background: #0e0e0f;
+    border: 1px solid var(--background-modifier-border);
   }
 
   .ms-xp__fill {
-    height: 100%;
-    border-radius: 10px;
-    background: #c14343; // legacy parity hex
-    box-shadow: 0 0 10px rgba(193, 67, 67, 0.3);
-    transition: width 0.3s ease;
-  }
-
-  .ms-xp__percent {
     position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    font-size: 0.75em;
-    font-weight: 600;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-  }
+    inset: 0 auto 0 0;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ms-red, #8b0000) 70%, #ff8f8f),
+      color-mix(in srgb, var(--ms-red, #8b0000) 55%, #ff8f8f)
+    );
+    border-radius: 8px 0 0 8px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px -2px color-mix(in srgb, var(--ms-red, #8b0000) 50%, #ff8f8f);
 
-  .ms-xp__next {
-    margin-top: 4px;
-    text-align: center;
-    font-size: 0.75em;
-    color: var(--text-muted);
-  }
-
-  .ms-xp__controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-    margin-top: 8px;
-  }
-
-  .ms-xp__minus,
-  .ms-xp__plus {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border: none;
-    border-radius: 4px;
-    font-size: 1em;
-    font-weight: 700;
-    color: var(--text-on-accent);
-    box-shadow: none;
-    cursor: pointer;
-    transition: opacity 0.2s;
-
-    &:hover {
-      opacity: 0.8;
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #ffffff30, transparent 60%);
     }
   }
 
-  .ms-xp__minus {
-    background-color: var(--background-modifier-error);
+  .ms-xp__nums {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--f-ui, inherit);
+    font-size: 10.5px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
   }
 
-  .ms-xp__plus {
-    background-color: var(--ms-gold);
-  }
-
-  .ms-xp__input {
-    width: 80px;
-    height: 28px;
+  .ms-xp__edit {
+    width: 62px;
     text-align: center;
+    background: none;
+    border: none;
+    border-bottom: 1px dashed color-mix(in srgb, var(--ms-gold, #ca9759) 76%, #000);
+    color: var(--text-normal);
+    font: inherit;
+    font-weight: 600;
+    padding: 0 0 1px;
+    outline: none;
+    cursor: text;
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
 }

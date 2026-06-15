@@ -1,99 +1,578 @@
-// Adjustments tab — rest button, condition/buff chips, adjust inputs.
+// Adjustments tab — "Active First" redesign (Direction B, 2026-06).
+// Campaign-day header (Rest + XP), collapsible Now Active tray, collapsible
+// Conditions / Buffs chip libraries, always-open One-off Adjustment card.
+//
+// Brand colour/font usage routes through the Style-Settings seam
+// (var(--ms-gold/--ms-red), var(--ms-font-*)) with color-mix() for tints —
+// never a raw brand hex. Neutral slate values stay literal. The XP half of
+// the campaign-day header lives in _xp.scss and inherits these --adj-* tokens.
 
 .minisheet-root {
   .ms-adjust {
-    padding: 4px 8px;
+    // ---- local tokens (brand routed through the seam) ----
+    --adj-gold: var(--ms-gold, #ca9759);
+    --adj-gold-dim: color-mix(in srgb, var(--ms-gold, #ca9759) 76%, #000);
+    --adj-red: var(--ms-red, #8b0000);
+    --adj-red-lit: color-mix(in srgb, var(--ms-red, #8b0000) 55%, #ff8f8f);
+    --adj-green: #7aa86a; // semantic buff tint (not a brand accent)
+    --adj-bg2: #131314;
+    --adj-border: var(--background-modifier-border);
+    --adj-text: var(--text-normal);
+    --adj-muted: var(--text-muted);
+    --adj-faint: #5f6063;
+    --adj-ease: cubic-bezier(0.2, 0.85, 0.25, 1);
+    --adj-ease-back: cubic-bezier(0.34, 1.4, 0.5, 1);
+
+    --f-title: var(--ms-font-display, "Norwester", sans-serif);
+    --f-deco: var(--ms-font-label, "Taroca", sans-serif);
+    --f-body: var(--ms-font-body, "Crimson Text", Georgia, "Times New Roman", serif);
+    --f-ui: var(--font-interface, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 11px 18px;
+    color: var(--adj-text);
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+  }
+
+  // ===================================================================
+  // Campaign-day header (Rest + XP fused)
+  // ===================================================================
+  .ms-adjust__day {
+    border: 1px solid color-mix(in srgb, var(--adj-gold) 26%, var(--adj-border));
+    border-radius: 10px;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--adj-gold) 12%, transparent), transparent 55%),
+      var(--adj-bg2);
+  }
+
+  .ms-adjust__day-top {
+    display: flex;
+    align-items: stretch;
   }
 
   .ms-adjust__rest {
-    display: block;
-    width: 100%;
-    min-height: var(--ms-touch);
-    margin-bottom: 10px;
-    background: var(--ms-red);
-    color: white;
-    font-family: var(--ms-font-display, "Norwester", sans-serif);
-    font-size: 1.1em;
-    letter-spacing: 0.08em;
-    border: none;
-    border-radius: 6px;
+    flex: 0 0 88px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 0;
+    // Obsidian's base `button { height: var(--input-height) }` pins the button
+    // height, which defeats the parent's align-items:stretch — reset to auto so
+    // Rest fills the campaign-day card next to the XP region.
+    height: auto;
+    padding: 9px 6px;
     cursor: pointer;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--adj-red) 88%, var(--adj-red-lit)), var(--adj-red));
+    border: none;
+    border-right: 1px solid #00000050;
+    border-radius: 0;
+    color: #f3e6df;
+    font-family: var(--f-title);
+    font-size: 15px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    box-shadow: inset 0 1px 0 #ffffff14;
+    transition: filter 0.15s, transform 0.12s var(--adj-ease-back);
 
     &:hover {
-      filter: brightness(1.15);
+      filter: brightness(1.12);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &.is-pulse {
+      animation: ms-adj-rest-pulse 0.6s var(--adj-ease);
     }
   }
 
-  .ms-adjust__section {
-    margin-bottom: 10px;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 6px;
-    padding: 6px;
+  .ms-adjust__rest-sub {
+    font-family: var(--f-ui);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    opacity: 0.72;
   }
 
-  .ms-adjust__title {
-    font-family: var(--ms-font-label, "Taroca", sans-serif);
-    font-size: 0.85em;
+  // Non-PC: no XP region, Rest spans the card.
+  .ms-adjust__day.is-rest-only .ms-adjust__rest {
+    flex: 1;
+    flex-direction: row;
+    gap: 8px;
+    border-right: none;
+  }
+
+  @keyframes ms-adj-rest-pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--adj-red-lit) 40%, transparent), inset 0 1px 0 #ffffff14;
+    }
+    60% {
+      box-shadow: 0 0 0 12px transparent, inset 0 1px 0 #ffffff14;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent, inset 0 1px 0 #ffffff14;
+    }
+  }
+
+  // ===================================================================
+  // Section headers (shared) — Codex gold, fading rule
+  // ===================================================================
+  .ms-adjust__sec {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .ms-adjust__sechead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--f-deco);
+    font-size: 13px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--ms-gold);
-    cursor: pointer;
+    letter-spacing: 0.07em;
+    color: var(--adj-gold);
   }
 
+  .ms-adjust__sechead-ic {
+    color: var(--adj-gold-dim);
+    display: flex;
+    flex: 0 0 auto;
+  }
+
+  .ms-adjust__sechead-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--adj-gold-dim), transparent);
+  }
+
+  .ms-adjust__sechead--btn {
+    width: 100%;
+    background: none;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    padding: 3px 0 4px;
+    text-align: left;
+    transition: color 0.15s;
+
+    &:hover {
+      color: color-mix(in srgb, var(--adj-gold) 78%, #fff);
+    }
+
+    &:hover .ms-adjust__sechead-ic,
+    &:hover .ms-adjust__sechead-chev {
+      color: var(--adj-gold);
+    }
+  }
+
+  .ms-adjust__sechead-chev {
+    display: flex;
+    flex: 0 0 auto;
+    color: var(--adj-gold-dim);
+    transition: transform 0.3s var(--adj-ease);
+
+    &.is-open {
+      transform: rotate(90deg);
+    }
+  }
+
+  .ms-adjust__sechead-active {
+    font-family: var(--f-ui);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #1a1a1b;
+    background: var(--adj-gold);
+    border-radius: 999px;
+    padding: 2px 7px;
+    line-height: 1.4;
+  }
+
+  .ms-adjust__secbody {
+    animation: ms-adj-sec-reveal 0.26s var(--adj-ease) both;
+  }
+
+  @keyframes ms-adj-sec-reveal {
+    from {
+      transform: translateY(-4px);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  // ===================================================================
+  // Now Active tray
+  // ===================================================================
+  .ms-adjust__active {
+    border: 1px solid var(--adj-border);
+    border-radius: 10px;
+    background: var(--adj-bg2);
+    overflow: hidden;
+  }
+
+  .ms-adjust__active-head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    cursor: pointer;
+    padding: 11px 12px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: var(--f-deco);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--adj-gold);
+    transition: background 0.15s;
+
+    &:hover {
+      background: #ffffff06;
+    }
+  }
+
+  .ms-adjust__active-chev {
+    margin-left: 2px;
+    color: var(--adj-gold-dim);
+    display: flex;
+    transition: transform 0.3s var(--adj-ease);
+  }
+
+  .ms-adjust__active.is-open .ms-adjust__active-chev {
+    transform: rotate(90deg);
+  }
+
+  .ms-adjust__pill {
+    margin-left: auto;
+    font-family: var(--f-ui);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #1a1a1b;
+    background: var(--adj-gold);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+
+  .ms-adjust__active-body {
+    padding: 2px 10px 10px;
+  }
+
+  .ms-adjust__active-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .ms-adjust__token {
+    --tint: var(--adj-gold);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 8px 7px 10px;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--tint) 38%, transparent);
+    background: color-mix(in srgb, var(--tint) 12%, #161616);
+    animation: ms-adj-token-in 0.34s var(--adj-ease) both;
+  }
+
+  @keyframes ms-adj-token-in {
+    from {
+      opacity: 1;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .ms-adjust__token-bar {
+    width: 3px;
+    align-self: stretch;
+    border-radius: 2px;
+    background: var(--tint);
+    flex: 0 0 auto;
+  }
+
+  .ms-adjust__token-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ms-adjust__token-name {
+    font-family: var(--f-title);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: #ece6da;
+    line-height: 1.1;
+  }
+
+  .ms-adjust__token-eff {
+    font-family: var(--f-body);
+    font-size: 12px;
+    color: var(--adj-muted);
+    line-height: 1.25;
+    margin-top: 1px;
+  }
+
+  .ms-adjust__token-x {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #ffffff0c;
+    box-shadow: none;
+    color: var(--adj-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: background 0.14s, color 0.14s;
+
+    &:hover {
+      background: color-mix(in srgb, var(--adj-red-lit) 40%, transparent);
+      color: #fff;
+    }
+  }
+
+  .ms-adjust__active-empty {
+    text-align: center;
+    padding: 16px 10px;
+    color: var(--adj-faint);
+    font-family: var(--f-body);
+    font-size: 13.5px;
+    font-style: italic;
+
+    svg {
+      color: var(--adj-gold-dim);
+      opacity: 0.5;
+      margin-bottom: 5px;
+    }
+  }
+
+  // ===================================================================
+  // Chips (conditions / buffs)
+  // ===================================================================
   .ms-adjust__chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
-    padding: 6px 0;
+    gap: 5px;
   }
 
-  .ms-chip {
-    font-size: 0.75em;
+  .ms-adjust__chip {
+    --tint: var(--adj-gold);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--f-ui);
+    font-size: 11.5px;
+    line-height: 1;
     padding: 6px 10px;
-    min-height: 30px;
-    border-radius: 14px;
-    border: 1px solid var(--background-modifier-border);
-    background: transparent;
-    color: var(--text-muted);
+    min-height: 28px;
+    border-radius: 999px;
+    border: 1px solid var(--adj-border);
+    background: #ffffff0a;
+    box-shadow: none;
+    color: var(--adj-muted);
     cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.16s, color 0.16s, border-color 0.16s, transform 0.12s var(--adj-ease-back);
+
+    &:hover {
+      color: var(--adj-text);
+      border-color: #4a4a4c;
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
 
     &.is-on {
-      background: var(--ms-red);
-      border-color: var(--ms-red);
-      color: white;
+      background: color-mix(in srgb, var(--tint) 20%, #1a1a1b);
+      border-color: color-mix(in srgb, var(--tint) 60%, transparent);
+      color: color-mix(in srgb, var(--tint) 72%, #fff 30%);
+      font-weight: 600;
     }
   }
 
-  .ms-adjust__row {
+  .ms-adjust__chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    background: color-mix(in srgb, var(--tint) 75%, transparent);
+  }
+
+  .ms-adjust__chip.is-on .ms-adjust__chip-dot {
+    background: var(--tint);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--tint) 70%, transparent);
+  }
+
+  .ms-adjust__chip--neg {
+    --tint: var(--adj-red-lit);
+  }
+
+  .ms-adjust__chip--pos {
+    --tint: var(--adj-green);
+  }
+
+  // ===================================================================
+  // One-off Adjustment
+  // ===================================================================
+  .ms-adjust__quick {
+    border: 1px dashed color-mix(in srgb, var(--adj-gold) 30%, var(--adj-border));
+    border-radius: 10px;
+    background: #ffffff05;
+    padding: 10px;
     display: flex;
-    gap: 8px;
-    padding-top: 6px;
-
-    .ms-field {
-      flex-direction: column;
-      align-items: stretch;
-
-      .ms-field__label {
-        flex-basis: auto;
-      }
-    }
+    flex-direction: column;
+    gap: 9px;
   }
 
-  .ms-adjust__stat-row {
+  .ms-adjust__trio {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+  }
+
+  .ms-adjust__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .ms-adjust__field-label {
+    font-family: var(--f-ui);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--adj-muted);
+  }
+
+  // Negative levels — labelled row beneath the trio (README groups it with
+  // the one-off adjustments though the visual omitted it).
+  .ms-adjust__negrow {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin: 4px 0;
+    justify-content: space-between;
+    gap: 10px;
+
+    .ms-adjust__field-label {
+      flex: 1;
+    }
+
+    .ms-adjust__input {
+      flex: 0 0 92px;
+      width: 92px;
+    }
   }
 
-  .ms-adjust__stat-label {
-    font-family: var(--ms-font-label, "Taroca", sans-serif);
-    font-size: 0.8em;
-    width: 34px;
+  .ms-adjust__input {
+    width: 100%;
+    min-width: 0;
+    height: 34px;
+    text-align: center;
+    background: var(--adj-bg2);
+    border: 1px solid var(--adj-border);
+    border-radius: 6px;
+    color: var(--adj-text);
+    font-family: var(--f-ui);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &:focus {
+      border-color: var(--adj-gold-dim);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--ms-gold, #ca9759) 13%, transparent);
+    }
+
+    &::placeholder {
+      color: var(--adj-faint);
+    }
   }
 
-  .ms-adjust__stat-input {
-    width: 64px;
-    min-height: 30px;
+  .ms-adjust__more {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    font-family: var(--f-ui);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--adj-gold-dim);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 0;
+
+    &:hover {
+      color: var(--adj-gold);
+    }
+  }
+
+  .ms-adjust__statgrid {
+    display: grid;
+    grid-template-columns: 30px repeat(3, 1fr);
+    gap: 5px 7px;
+    align-items: center;
+    margin-top: 2px;
+
+    .ms-adjust__input {
+      height: 29px;
+      font-size: 13px;
+    }
+  }
+
+  .ms-adjust__statgrid-h {
+    font-family: var(--f-ui);
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--adj-faint);
+    text-align: center;
+  }
+
+  .ms-adjust__statgrid-ab {
+    font-family: var(--f-title);
+    font-size: 12px;
+    color: var(--adj-gold-dim);
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ms-adjust__secbody,
+    .ms-adjust__token {
+      animation: none;
+    }
   }
 }

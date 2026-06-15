@@ -1,14 +1,16 @@
-import { useState } from "preact/hooks";
 import type { ComputedCharacter } from "../../calc";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 
 /**
- * XP tracker — port of the legacy Datacore XpTracker.jsx (lived on the old
- * sheet's Settings tab; relocated to the Adjustments tab). PCs only.
- * Without an `xp` field the character shows a "Track XP" entry point; the
- * mismatch dot on the level label is new UX (display-only — class levels
- * are never auto-changed).
+ * XP region of the campaign-day header (Adjustments tab). Renders the level
+ * row, progress bar, and an absolute-edit XP field (redesign, 2026-06).
+ *
+ * Two real-data states the hardcoded design sample skipped are preserved:
+ *  - PCs with no `xp` field get a "Track XP" entry-point.
+ *  - A class-vs-XP level mismatch surfaces a gold dot (display-only — class
+ *    levels are never auto-changed).
+ * Non-PCs render nothing (the day card shows Rest only).
  */
 export function XpTracker({
   store,
@@ -19,14 +21,13 @@ export function XpTracker({
   character: CharacterRecord;
   computed: ComputedCharacter;
 }) {
-  const [input, setInput] = useState("");
   if (character.characterType !== "pc") return null;
 
   if (character.xp === undefined) {
     return (
-      <div class="ms-xp ms-xp--untracked">
+      <div class="ms-adjust__xp ms-adjust__xp--untracked">
         <button
-          class="ms-xp__enable"
+          class="ms-adjust__xp-enable"
           onClick={() => store.setCharacterField(character.id, "xp", 0)}
         >
           Track XP
@@ -38,58 +39,50 @@ export function XpTracker({
   const xp = computed.xp;
   if (!xp) return null;
 
-  // legacy modifyXP: parseInt(x) || 0, no-op on 0, clamp result >= 0
-  const modify = (sign: 1 | -1) => {
-    const amount = parseInt(input, 10) || 0;
-    if (amount === 0) return;
-    store.setCharacterField(
-      character.id,
-      "xp",
-      Math.max(0, (character.xp ?? 0) + sign * amount)
-    );
-    setInput("");
-  };
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  const atMax = xp.level >= 20;
+  const toNext = Math.max(0, xp.xpForNextLevel - (character.xp ?? 0));
 
   return (
-    <div class="ms-xp">
-      <div class="ms-xp__current">{(character.xp ?? 0).toLocaleString("en-US")} XP</div>
-      <div class="ms-xp__levels">
-        <span
-          class={`ms-xp__level${xp.mismatch ? " has-mismatch" : ""}`}
-          title={
-            xp.mismatch
-              ? `XP supports level ${xp.level}; classes total ${xp.classLevelTotal}`
-              : undefined
-          }
-        >
-          LVL {xp.level}
+    <div class="ms-adjust__xp">
+      <div class="ms-xp__lvlrow">
+        <span class="ms-xp__lvl">
+          LEVEL <b>{xp.level}</b>
+          {xp.mismatch && (
+            <span
+              class="ms-xp__mismatch"
+              title={`XP supports level ${xp.level}; classes total ${xp.classLevelTotal}`}
+            />
+          )}
         </span>
-        <span class="ms-xp__level ms-xp__level--next">LVL {xp.nextLevel}</span>
+        <span class="ms-xp__pct">
+          {atMax ? "Max level" : `${fmt(toNext)} XP to ${xp.nextLevel}`}
+        </span>
       </div>
+
       <div class="ms-xp__bar">
-        <div class="ms-xp__fill" style={`width:${xp.progressPercent}%`} />
-        <span class="ms-xp__percent">{xp.progressPercent.toFixed(1)}%</span>
+        <span class="ms-xp__fill" style={`width:${xp.progressPercent}%`} />
       </div>
-      <div class="ms-xp__next">
-        Next: {xp.xpForNextLevel.toLocaleString("en-US")} XP
-      </div>
-      <div class="ms-xp__controls">
-        <button class="ms-xp__minus" aria-label="Subtract XP" onClick={() => modify(-1)}>
-          −
-        </button>
-        <input
-          type="number"
-          class="ms-xp__input"
-          placeholder="XP"
-          value={input}
-          onInput={(e) => setInput((e.target as HTMLInputElement).value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") modify(1);
-          }}
-        />
-        <button class="ms-xp__plus" aria-label="Add XP" onClick={() => modify(1)}>
-          +
-        </button>
+
+      <div class="ms-xp__nums">
+        <span>
+          <input
+            class="ms-xp__edit"
+            type="number"
+            min={0}
+            value={character.xp ?? 0}
+            onInput={(e) => {
+              const v = Number((e.target as HTMLInputElement).value);
+              store.setCharacterField(
+                character.id,
+                "xp",
+                Number.isNaN(v) ? 0 : Math.max(0, v)
+              );
+            }}
+          />{" "}
+          XP
+        </span>
+        <span>next {fmt(xp.xpForNextLevel)}</span>
       </div>
     </div>
   );

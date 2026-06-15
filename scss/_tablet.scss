@@ -34,24 +34,12 @@
   .ms-inv-row__expand,
   .ms-inv-row__edit,
   .ms-inv-row__delete,
-  .ms-xp__minus,
-  .ms-xp__plus
+  .ms-adjust__sechead--btn,
+  .ms-adjust__token-x,
+  .ms-adjust__more
 ) {
   padding: 0;
   box-shadow: none;
-}
-
-/* XP ± buttons grow to touch size; longhand background-color only */
-.is-tablet button.ms-xp__minus {
-  width: 35px;
-  height: 32px;
-  background-color: var(--background-modifier-error);
-}
-
-.is-tablet button.ms-xp__plus {
-  width: 35px;
-  height: 32px;
-  background-color: var(--ms-gold);
 }
 
 /* Inventory buttons keep their _inventory.scss geometry on tablet; only
@@ -184,10 +172,14 @@
   box-shadow: none;
 }
 
+/* Rest keeps its _adjust.scss campaign-day geometry (gradient + column); the
+   mobile build only stomps background-color, so the `background` gradient
+   survives — just re-assert padding, the inset highlight, and compact height. */
 .is-tablet button.ms-adjust__rest {
-  padding: 4px 8px;
-  background: var(--ms-red);
-  box-shadow: none;
+  padding: 9px 6px;
+  box-shadow: inset 0 1px 0 #ffffff14;
+  min-height: 0;
+  height: auto; /* override Obsidian's button height so Rest fills the card */
 }
 
 /* Touch-toggle hand icon is a pure masked shape; flat reset + re-assert
@@ -199,10 +191,29 @@
   background-color: rgba(144, 108, 70, 0.55);
 }
 
-.is-tablet button.ms-chip {
+/* Adjustments tab (.minisheet-root scope) — re-assert each button's intended
+   geometry/background at .is-tablet specificity so Obsidian's mobile build
+   doesn't inflate them. Flat shape buttons (sechead--btn, token-x, more) are
+   handled by the :is() reset above; these need their backgrounds re-asserted. */
+.is-tablet button.ms-adjust__chip {
   padding: 6px 10px;
-  background: transparent;
+  background: #ffffff0a; /* is-on fill wins at higher specificity */
+}
+
+.is-tablet button:is(.ms-adjust__sechead--btn, .ms-adjust__more) {
+  background: none;
+}
+
+.is-tablet button.ms-adjust__token-x {
+  background-color: #ffffff0c;
+  width: 32px;
+  height: 32px;
+}
+
+.is-tablet button.ms-adjust__xp-enable {
+  padding: 0 14px;
   box-shadow: none;
+  background-color: transparent;
 }
 
 .is-tablet button.ms-config__add {
