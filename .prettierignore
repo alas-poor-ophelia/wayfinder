@@ -1,0 +1,13 @@
+# Build artifacts
+main.js
+styles.css
+
+# Vendored / generated
+node_modules/
+mcp/node_modules/
+
+# Data fixtures (large generated characterization data)
+tests/unit/fixtures/
+
+# Scraped data blobs
+src/data/**/*.json
