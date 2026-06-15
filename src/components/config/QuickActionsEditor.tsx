@@ -898,7 +898,7 @@ export function QAEditor({
     i: number,
     p: Partial<QuickActionDef["stages"][number]>,
   ) => upd({ stages: m.stages.map((s, k) => (k === i ? { ...s, ...p } : s)) });
-  const eff0 = m.stages[0].effects;
+  const eff0 = m.stages[0]!.effects;
 
   const save = () => {
     const actions = character.quickActions ?? [];

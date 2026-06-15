@@ -263,5 +263,5 @@ export const COMPANION_TABLE: CompanionRow[] = [
 /** The companion stat row for an effective level, clamped to 1-20. */
 export function companionRow(level: number): CompanionRow {
   const L = Math.max(1, Math.min(20, Math.floor(level || 1)));
-  return COMPANION_TABLE[L - 1];
+  return COMPANION_TABLE[L - 1]!;
 }

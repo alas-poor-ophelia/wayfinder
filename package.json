@@ -13,7 +13,7 @@
     "gen:icons": "bun scripts/generate-icons.mjs",
     "scrape:equipment": "bun scripts/scrape-equipment/index.ts",
     "scrape:rules": "bun scripts/scrape-rules/index.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"tests/**/*.ts\" \"scss/**/*.scss\"",

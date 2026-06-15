@@ -70,9 +70,9 @@ function cells(row: HTMLElement, tag: string): string[] {
 function tableToMarkdown(table: HTMLElement): string {
   const rows = table.querySelectorAll("tr");
   if (!rows.length) return "";
-  const header = cells(rows[0], "th").length
-    ? cells(rows[0], "th")
-    : cells(rows[0], "td");
+  const header = cells(rows[0]!, "th").length
+    ? cells(rows[0]!, "th")
+    : cells(rows[0]!, "td");
   const bodyRows = rows
     .slice(1)
     .map((r) => cells(r, "td"))
@@ -152,6 +152,7 @@ export function extractNote(
       if (a) crumbs.push(a.text.trim());
     }
   }
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- an empty leading crumb should fall through to the default
   const category = crumbs[0] || "Reference";
 
   // source: <b>Source</b> <i>book pg. N</i>
@@ -159,7 +160,7 @@ export function extractNote(
     container.innerHTML,
   );
   const source = srcM
-    ? decode(srcM[1])
+    ? decode(srcM[1]!)
         .replace(/\s+pg\.\s*\d+.*$/, "")
         .trim()
     : "";

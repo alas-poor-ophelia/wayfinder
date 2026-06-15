@@ -18,10 +18,10 @@ export interface AbilityModInput {
   conditionAdjust?: Partial<Record<AbilityKey, unknown>>;
   /** racial ability adjustments — only when the character has a raceKey
    *  (legacy characters bake these into base and pass nothing here) */
-  racial?: Partial<Record<AbilityKey, unknown>>;
+  racial?: Partial<Record<AbilityKey, unknown>> | undefined;
   /** modifier-engine resolved ability bonuses (equipped gear: belts,
    *  headbands...) — already stacked, just an offset here */
-  typed?: Partial<Record<AbilityKey, unknown>>;
+  typed?: Partial<Record<AbilityKey, unknown>> | undefined;
   drain?: Partial<Record<AbilityKey, unknown>>;
   damage?: Partial<Record<AbilityKey, unknown>>;
 }

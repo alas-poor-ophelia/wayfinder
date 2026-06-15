@@ -307,14 +307,14 @@ function getEnlargedDamageDie(originalDie: string, sizeAdjust: number): string {
   const adjustments = SIZE_LOOKUP[originalDie];
   if (!adjustments) return originalDie;
   const index = Math.min(sizeAdjust - 1, adjustments.length - 1);
-  return adjustments[index];
+  return adjustments[index]!;
 }
 
 function getRangedWeaponProperties(
   attackStyle: string,
   adjustedStats: { str: number },
 ): RangedWeapon & { damageStat: number } {
-  const weapon = WEAPON_DATABASE[attackStyle] || WEAPON_DATABASE.Longbow;
+  const weapon = WEAPON_DATABASE[attackStyle] || WEAPON_DATABASE.Longbow!;
   // Handle damage stat reference
   const damageStat =
     weapon.damageStat === "str" ? adjustedStats.str : weapon.damageStat;
@@ -557,14 +557,14 @@ function createWeaponAttack(params: WeaponAttackParams): WeaponAttack {
     const rangeParts = params.critRange.split("-");
     if (rangeParts.length === 2) {
       // Range like "19-20" becomes "17-20"
-      const baseRange = parseInt(rangeParts[0]);
-      const topRange = parseInt(rangeParts[1]);
+      const baseRange = parseInt(rangeParts[0]!);
+      const topRange = parseInt(rangeParts[1]!);
       const threatRange = topRange - baseRange + 1; // e.g., 20-19+1 = 2
       const newBaseRange = topRange - threatRange * 2 + 1; // e.g., 20-(2*2)+1 = 17
       critInfo = ` (${newBaseRange}-${topRange}/x${params.critMultiplier})`;
     } else {
       // Range like "20" becomes "19-20"
-      const baseRange = parseInt(rangeParts[0]);
+      const baseRange = parseInt(rangeParts[0]!);
       critInfo = ` (${baseRange - 1}-${baseRange}/x${params.critMultiplier})`;
     }
   } else {

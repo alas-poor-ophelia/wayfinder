@@ -87,9 +87,9 @@ export interface InventoryPanelProps {
   scope: InventoryScope;
   inventory: InventoryState;
   variant: "sidebar" | "party";
-  encumbrance?: EncumbranceComputed;
-  ownerChoices?: string[];
-  customItems?: CustomItemDef[];
+  encumbrance?: EncumbranceComputed | undefined;
+  ownerChoices?: string[] | undefined;
+  customItems?: CustomItemDef[] | undefined;
   filters: PartyInvState;
   onFilters: (patch: Partial<PartyInvState>) => void;
 }

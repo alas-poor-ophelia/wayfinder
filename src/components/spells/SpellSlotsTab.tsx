@@ -20,7 +20,7 @@ export function SpellSlotsTab({
   computed?: SpellbookComputed;
 }) {
   const slots = computed
-    ? SPELL_LEVELS.filter((level) => computed.levels[level].maxSlots > 0)
+    ? SPELL_LEVELS.filter((level) => computed.levels[level]!.maxSlots > 0)
     : [];
 
   if (slots.length === 0) {
@@ -35,7 +35,7 @@ export function SpellSlotsTab({
   return (
     <div class="ms-spells">
       {slots.map((level) => {
-        const lc = computed!.levels[level];
+        const lc = computed!.levels[level]!;
         return (
           <Tracker
             key={level}

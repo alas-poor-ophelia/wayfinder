@@ -31,12 +31,12 @@ export function carryingCapacity(str: number): CarryingCapacity {
   if (score <= 0) return { light: 0, medium: 0, heavy: 0 };
   let heavy: number;
   if (score <= 29) {
-    heavy = HEAVY_LOAD[score - 1];
+    heavy = HEAVY_LOAD[score - 1]!;
   } else {
     // PF1e: beyond 29, use the entry for 20 + (str mod 10), ×4 per full
     // 10 points of Strength above that.
     heavy =
-      HEAVY_LOAD[20 + ((score - 20) % 10) - 1] *
+      HEAVY_LOAD[20 + ((score - 20) % 10) - 1]! *
       Math.pow(4, Math.floor((score - 20) / 10));
   }
   // light = ⅓ heavy, medium = ⅔ heavy (floored) reproduces the official

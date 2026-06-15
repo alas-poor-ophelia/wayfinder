@@ -21,7 +21,7 @@ const STROKE_ICONS: Record<string, string> = {
 };
 
 export function AdjIcon({ name, size = 18 }: { name: string; size?: number }) {
-  const inner = STROKE_ICONS[name] ?? STROKE_ICONS.bolt;
+  const inner = STROKE_ICONS[name] ?? STROKE_ICONS.bolt!;
   return (
     <svg
       class="ms-adjust__ic-svg"

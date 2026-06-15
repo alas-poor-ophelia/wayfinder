@@ -41,7 +41,7 @@ export function SpellLevelSection({
   );
   if (relevantSpells.length === 0) return null;
 
-  const levelComputed = computed.levels[level];
+  const levelComputed = computed.levels[level]!;
 
   return (
     <CollapseSection

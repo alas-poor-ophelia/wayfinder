@@ -177,7 +177,7 @@ export function createSlotOnlySpellbook(
   for (const { level, current, max } of slots) {
     const key = getSpellLevelKey(level);
     overrides[key] = max;
-    book.levels[key].remaining = current;
+    book.levels[key]!.remaining = current;
   }
   book.slotOverrides = overrides;
   return book;

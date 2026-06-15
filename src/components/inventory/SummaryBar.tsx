@@ -19,7 +19,7 @@ export function SummaryBar({
   /** the currently visible (filtered) items — totals follow the filters, like legacy */
   items: InventoryItem[];
   inventory: InventoryState;
-  encumbrance?: EncumbranceComputed;
+  encumbrance?: EncumbranceComputed | undefined;
   filters: PartyInvState;
 }) {
   const totals = inventoryTotals(items);

@@ -62,9 +62,9 @@ export function ItemEditor({
   store: MiniSheetStore;
   scope: InventoryScope;
   variant: "sidebar" | "party";
-  ownerChoices?: string[];
+  ownerChoices?: string[] | undefined;
   /** equipment-DB custom items, included in the name autocomplete */
-  customItems?: CustomItemDef[];
+  customItems?: CustomItemDef[] | undefined;
   onClose: () => void;
 }) {
   const [draft, setDraft] = useState<Draft>(() =>

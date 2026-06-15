@@ -91,7 +91,7 @@ function selectValue(
 ): string {
   const s = str(value, fallback);
   if (s.includes("|")) {
-    const first = s.split("|")[0];
+    const first = s.split("|")[0]!;
     warnings.push(`${field} held an option list ("${s}"); took "${first}"`);
     return first;
   }
@@ -528,7 +528,7 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     const paren = /\(([^)]+)\)/.exec(className);
     const archetype = paren
       ? listArchetypes(className).find(
-          (a) => a.name.toLowerCase() === paren[1].trim().toLowerCase(),
+          (a) => a.name.toLowerCase() === paren[1]!.trim().toLowerCase(),
         )
       : undefined;
     if (archetype) {

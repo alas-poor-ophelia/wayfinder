@@ -106,7 +106,7 @@ export function activeEffects(
 ): QuickActionEffect[] {
   if (!state || state.stage <= 0 || def.stages.length === 0) return [];
   // defs can be edited while active — clamp a stale stage to the last one
-  const stage = def.stages[Math.min(state.stage, def.stages.length) - 1];
+  const stage = def.stages[Math.min(state.stage, def.stages.length) - 1]!;
   const variant = def.variants?.find((v) => v.id === state.variantId);
   return variant ? [...stage.effects, ...variant.effects] : [...stage.effects];
 }

@@ -6,7 +6,7 @@ interface SavesProps {
   character: CharacterRecord;
   saves: SaveValues;
   /** situational racial modifiers per save (computed.racial.saveNotes) */
-  racialNotes?: { fort: string[]; ref: string[]; will: string[] };
+  racialNotes?: { fort: string[]; ref: string[]; will: string[] } | undefined;
 }
 
 const KINDS = ["fort", "ref", "will"] as const;

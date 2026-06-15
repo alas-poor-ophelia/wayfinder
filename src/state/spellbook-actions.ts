@@ -264,7 +264,10 @@ export function prepareSpell(
     );
     if (idx >= 0) {
       nextPreps = [...preps];
-      nextPreps[idx] = { ...nextPreps[idx], count: nextPreps[idx].count + 1 };
+      nextPreps[idx] = {
+        ...nextPreps[idx]!,
+        count: nextPreps[idx]!.count + 1,
+      };
     } else {
       nextPreps = [
         ...preps,
@@ -653,7 +656,10 @@ export function addSpellToLoadout(
     const idx = l.spells.findIndex((s) => loadoutEntryKey(s) === key);
     if (idx >= 0) {
       const spells = [...l.spells];
-      spells[idx] = { ...spells[idx], count: spells[idx].count + entry.count };
+      spells[idx] = {
+        ...spells[idx]!,
+        count: spells[idx]!.count + entry.count,
+      };
       return { ...l, spells };
     }
     return { ...l, spells: [...l.spells, entry] };

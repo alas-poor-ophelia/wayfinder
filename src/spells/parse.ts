@@ -21,10 +21,10 @@ export function parseSpellLevel(spellLevelStr: string): ParsedSpellLevel {
     const match = entry.match(/^(.+?)\s+(\d+)$/);
     if (match) {
       const [, classNames, level] = match;
-      const classes = classNames.split("/").map((c) => c.trim());
+      const classes = classNames!.split("/").map((c) => c.trim());
       for (const cls of classes) {
         if (!result.classes.includes(cls)) result.classes.push(cls);
-        result.levels[cls] = parseInt(level);
+        result.levels[cls] = parseInt(level!);
       }
     }
   }
@@ -150,7 +150,7 @@ export function transformSpellForSpellbook(
     selectedLevel !== null && selectedClasses
       ? `${doc.id}_L${selectedLevel}_${selectedClasses.join("_").replace(/[^a-zA-Z0-9]/g, "")}`
       : doc.id;
-  const processedRange = (doc.range || "").split("(")[0].trim();
+  const processedRange = (doc.range || "").split("(")[0]!.trim();
   const processedCastingTime = (doc.castingTime || "")
     .replace(/standard/gi, "std")
     .replace(/\s*action\s*/gi, "")

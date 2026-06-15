@@ -1,0 +1,11 @@
+{
+  // Tests are type-checked at the base strictness, without
+  // noUncheckedIndexedAccess — that flag's value is runtime safety, and in
+  // tests a bad index assumption just fails the test, so the extra `!`
+  // ceremony would only hurt readability.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": false
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts"]
+}

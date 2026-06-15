@@ -21,7 +21,7 @@ export function InventoryControls({
   filters: PartyInvState;
   onFilters: (patch: Partial<PartyInvState>) => void;
   onAdd: () => void;
-  ownerChoices?: string[];
+  ownerChoices?: string[] | undefined;
 }) {
   const containers = items.filter(isContainer);
   const owners = ownerChoices ?? [];
@@ -126,7 +126,7 @@ export function InventoryControls({
             >
               {SORT_KEYS.map((k) => (
                 <option key={k} value={k}>
-                  {k[0].toUpperCase() + k.slice(1)}
+                  {k[0]!.toUpperCase() + k.slice(1)}
                 </option>
               ))}
             </select>

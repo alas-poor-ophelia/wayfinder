@@ -32,7 +32,7 @@ export interface SavesInput {
   /** familiar rule: per save, use max(own base, master's base) before adding
    *  the familiar's OWN ability mods. The familiar never inherits the master's
    *  ability mods, resistance, or divine grace. */
-  masterBaseSaves?: SaveValues;
+  masterBaseSaves?: SaveValues | undefined;
 }
 
 export interface SaveValues {

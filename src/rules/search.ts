@@ -42,14 +42,14 @@ function fuzzyScore(query: string, text: string): FuzzyHit | null {
     } else {
       run = 0;
     }
-    const before = ti === 0 ? " " : t[ti - 1];
+    const before = ti === 0 ? " " : t[ti - 1]!;
     if (" -/(.,".includes(before)) s += 9; // word start
     score += s;
     prev = ti;
     qi++;
   }
   if (qi < q.length) return null;
-  const span = positions[positions.length - 1] - positions[0] + 1;
+  const span = positions[positions.length - 1]! - positions[0]! + 1;
   score -= Math.max(0, span - q.length) * 0.6; // gap penalty
   score += Math.max(0, 14 - t.length * 0.06); // prefer short fields
   return { score, positions };

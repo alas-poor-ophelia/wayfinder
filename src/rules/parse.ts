@@ -27,7 +27,7 @@ const BLOCK_RE = /^\s*<!--\s*block:\s*([\s\S]*?)-->\s*$/i;
 
 interface Attrs {
   /** the leading bare word, e.g. `ability` in `ref: ability cost:"..."` */
-  type?: string;
+  type?: string | undefined;
   pairs: [string, string][];
 }
 
@@ -38,8 +38,8 @@ function parseAttrs(s: string): Attrs {
   const re = /(\w+):"([^"]*)"|(\w+):(\S+)|(\S+)/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(s))) {
-    if (m[1] !== undefined) pairs.push([m[1].toLowerCase(), m[2]]);
-    else if (m[3] !== undefined) pairs.push([m[3].toLowerCase(), m[4]]);
+    if (m[1] !== undefined) pairs.push([m[1].toLowerCase(), m[2]!]);
+    else if (m[3] !== undefined) pairs.push([m[3].toLowerCase(), m[4]!]);
     else if (m[5] !== undefined && type === undefined)
       type = m[5].toLowerCase();
   }
@@ -80,7 +80,7 @@ function splitRow(line: string): string[] {
 
 function parseTable(group: string[], caption?: string): RuleBlock {
   const rows = group.filter((l) => l.includes("|"));
-  const cols = rows.length ? splitRow(rows[0]) : [];
+  const cols = rows.length ? splitRow(rows[0]!) : [];
   let bodyStart = 1;
   if (rows[1] && /^[\s:|-]+$/.test(rows[1])) bodyStart = 2; // skip separator
   const body = rows.slice(bodyStart).map(splitRow);
@@ -93,7 +93,7 @@ function stripBullet(line: string): string {
 
 function termItem(text: string): { term?: string; text: string } {
   const m = text.match(TERM_RE);
-  return m ? { term: m[1].trim(), text: m[2].trim() } : { text };
+  return m ? { term: m[1]!.trim(), text: m[2]!.trim() } : { text };
 }
 
 function parseCallout(group: string[], cite?: string): RuleBlock {
@@ -101,10 +101,10 @@ function parseCallout(group: string[], cite?: string): RuleBlock {
   // a trailing `— attribution` line inside the quote becomes the cite
   let c = cite;
   if (!c && lines.length) {
-    const last = lines[lines.length - 1].trim();
+    const last = lines[lines.length - 1]!.trim();
     const cm = last.match(/^[—–-]{1,2}\s*(.+)$/);
     if (cm) {
-      c = cm[1].trim();
+      c = cm[1]!.trim();
       lines.pop();
     }
   }
@@ -126,7 +126,7 @@ function parseFlow(lines: string[]): FlowNode[] {
   const nodes: FlowNode[] = [];
   let i = 0;
   while (i < lines.length) {
-    const raw = lines[i];
+    const raw = lines[i]!;
     const line = raw.trim();
     if (!line) {
       i++;
@@ -139,8 +139,8 @@ function parseFlow(lines: string[]): FlowNode[] {
       i++;
       continue;
     }
-    const key = m[1].toLowerCase();
-    const rest = m[2].trim();
+    const key = m[1]!.toLowerCase();
+    const rest = m[2]!.trim();
     if (key === "start" || key === "note" || key === "check") {
       nodes.push({ kind: key, text: rest });
       i++;
@@ -161,13 +161,13 @@ function parseFlow(lines: string[]): FlowNode[] {
       }[] = [];
       i++;
       while (i < lines.length) {
-        const bm = lines[i].trim().match(/^(success|fail)\s*:\s*(.*)$/i);
+        const bm = lines[i]!.trim().match(/^(success|fail)\s*:\s*(.*)$/i);
         if (!bm) break;
-        const tone = bm[1].toLowerCase() as "success" | "fail";
+        const tone = bm[1]!.toLowerCase() as "success" | "fail";
         branches.push({
           label: tone === "success" ? "Success" : "Failure",
           tone,
-          text: bm[2].trim(),
+          text: bm[2]!.trim(),
         });
         i++;
       }
@@ -216,7 +216,7 @@ function classify(group: string[], override: Attrs | null): RuleBlock {
   }
   if (
     forced === "checklist" ||
-    (forced === undefined && CHECK_RE.test(group[0]))
+    (forced === undefined && CHECK_RE.test(group[0]!))
   ) {
     return {
       t: "checklist",
@@ -227,7 +227,7 @@ function classify(group: string[], override: Attrs | null): RuleBlock {
   }
   if (
     forced === "steps" ||
-    (forced === undefined && ORDERED_RE.test(group[0]))
+    (forced === undefined && ORDERED_RE.test(group[0]!))
   ) {
     return {
       t: "steps",
@@ -238,7 +238,7 @@ function classify(group: string[], override: Attrs | null): RuleBlock {
   }
   if (
     forced === "bullets" ||
-    (forced === undefined && BULLET_RE.test(group[0]))
+    (forced === undefined && BULLET_RE.test(group[0]!))
   ) {
     return {
       t: "bullets",
@@ -249,14 +249,14 @@ function classify(group: string[], override: Attrs | null): RuleBlock {
   }
   if (
     forced === "callout" ||
-    (forced === undefined && QUOTE_RE.test(group[0]))
+    (forced === undefined && QUOTE_RE.test(group[0]!))
   ) {
     return parseCallout(group, cite);
   }
   // default: a prose paragraph (raw markdown, with an optional lead term)
   const text = group.join("\n").trim();
   const tm = text.match(TERM_RE);
-  if (tm) return { t: "p", term: tm[1].trim(), text: tm[2].trim() };
+  if (tm) return { t: "p", term: tm[1]!.trim(), text: tm[2]!.trim() };
   return { t: "p", text };
 }
 
@@ -266,14 +266,14 @@ function parseBlocks(text: string): RuleBlock[] {
   let pending: Attrs | null = null;
   let i = 0;
   while (i < lines.length) {
-    const line = lines[i];
+    const line = lines[i]!;
     if (!line.trim()) {
       i++;
       continue;
     }
     const bm = line.match(BLOCK_RE);
     if (bm) {
-      pending = parseAttrs(bm[1]);
+      pending = parseAttrs(bm[1]!);
       // dice carries its whole payload in the directive — emit immediately
       if (pending.type === "dice") {
         blocks.push(diceFromAttrs(pending));
@@ -284,11 +284,11 @@ function parseBlocks(text: string): RuleBlock[] {
     }
     const fence = line.match(/^\s*```(\S*)\s*$/);
     if (fence) {
-      const lang = fence[1];
+      const lang = fence[1]!;
       const buf: string[] = [];
       i++;
-      while (i < lines.length && !/^\s*```\s*$/.test(lines[i])) {
-        buf.push(lines[i]);
+      while (i < lines.length && !/^\s*```\s*$/.test(lines[i]!)) {
+        buf.push(lines[i]!);
         i++;
       }
       i++; // consume closing fence
@@ -306,8 +306,8 @@ function parseBlocks(text: string): RuleBlock[] {
     // a `<!-- block: flow -->` tag applied to an indented list (not a fence)
     if (pending?.type === "flow") {
       const group: string[] = [];
-      while (i < lines.length && lines[i].trim() && !BLOCK_RE.test(lines[i])) {
-        group.push(lines[i]);
+      while (i < lines.length && lines[i]!.trim() && !BLOCK_RE.test(lines[i]!)) {
+        group.push(lines[i]!);
         i++;
       }
       blocks.push({ t: "flow", nodes: parseFlow(group) });
@@ -317,11 +317,11 @@ function parseBlocks(text: string): RuleBlock[] {
     const group: string[] = [];
     while (
       i < lines.length &&
-      lines[i].trim() &&
-      !BLOCK_RE.test(lines[i]) &&
-      !/^\s*```/.test(lines[i])
+      lines[i]!.trim() &&
+      !BLOCK_RE.test(lines[i]!) &&
+      !/^\s*```/.test(lines[i]!)
     ) {
-      group.push(lines[i]);
+      group.push(lines[i]!);
       i++;
     }
     blocks.push(classify(group, pending));
@@ -333,7 +333,7 @@ function parseBlocks(text: string): RuleBlock[] {
 function inferType(blocks: RuleBlock[]): ContentType {
   if (blocks.some((b) => b.t === "flow")) return "flowchart";
   if (blocks.some((b) => b.t === "dice")) return "formula";
-  if (blocks.length && blocks[0].t === "callout") return "lore";
+  if (blocks.length && blocks[0]!.t === "callout") return "lore";
   if (blocks.some((b) => b.t === "checklist" || b.t === "steps"))
     return "process";
   const tables = blocks.filter((b) => b.t === "table").length;
@@ -376,7 +376,7 @@ export function parseNote(
     text = text.replace(HEADING_RE, "");
     const refM = text.match(REF_RE);
     if (refM && !refMatched) {
-      refAttrs = parseAttrs(refM[1]);
+      refAttrs = parseAttrs(refM[1]!);
       text = text.slice(refM[0].length);
       refMatched = true;
     }

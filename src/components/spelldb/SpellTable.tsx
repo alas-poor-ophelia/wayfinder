@@ -82,14 +82,12 @@ export function SpellTable({
   docs: SpellDoc[];
   target: CharacterRecord | null;
   /** when the add-target is a loadout, the +Add button turns red */
-  targetIsLoadout?: boolean;
+  targetIsLoadout?: boolean | undefined;
   knownIds: Set<string>;
   /** Stage B overrides: route add/remove at a loadout instead of the spellbook */
-  onAdd?: (
-    doc: SpellDoc,
-    level: number | null,
-    classes: string[] | null,
-  ) => void;
+  onAdd?:
+    | ((doc: SpellDoc, level: number | null, classes: string[] | null) => void)
+    | undefined;
   onRemove?: (doc: SpellDoc) => void;
 }) {
   const store = plugin.store;

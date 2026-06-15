@@ -113,7 +113,7 @@ export function PreparedLevelSection({
       ? (sb.preparations[getSpellLevelKey(storageLevel)] ?? [])
       : [];
 
-  const levelComputed = computed.levels[level];
+  const levelComputed = computed.levels[level]!;
   // legacy render gate uses the STORED remaining values (null = fresh level,
   // hidden until something is prepared or a reset writes the maxima)
   const levelState = sb.levels[getSpellLevelKey(level)];

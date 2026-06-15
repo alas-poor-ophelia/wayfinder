@@ -66,7 +66,7 @@ const ABILITY_LABELS: Record<string, string> = {
 };
 const ABIL: [string, string][] = ABILITY_KEYS.map((k) => [
   k,
-  ABILITY_LABELS[k],
+  ABILITY_LABELS[k]!,
 ]);
 const ENERGY: [string, string, string][] = [
   ["cold", "Cold", "ra-snowflake"],
@@ -86,7 +86,7 @@ function formatMods(mods: Partial<Record<AbilityKey, number>>): string {
 
 const CUSTOM_RACE = "(custom)";
 const BASE_HERITAGE = "— (base)";
-const RACE_NAME_OPTIONS = RACE_KEYS.map((k) => RACE_DATA[k].name).sort();
+const RACE_NAME_OPTIONS = RACE_KEYS.map((k) => RACE_DATA[k]!.name).sort();
 
 function setter(store: MiniSheetStore, character: CharacterRecord) {
   return (path: string, value: unknown) =>
@@ -785,13 +785,14 @@ export function SkillsSection({ store, character }: SectionProps) {
   const filtered = names.filter((n) =>
     n.toLowerCase().includes(q.toLowerCase()),
   );
-  const classCount = names.filter((n) => character.skills[n].classSkill).length;
+  const classCount = names.filter(
+    (n) => character.skills[n]!.classSkill,
+  ).length;
 
   const addStandard = () => {
     const skills: Record<string, SkillEntry> = { ...character.skills };
     for (const [name, ability] of Object.entries(STANDARD_SKILLS)) {
-      if (!skills[name])
-        skills[name] = { ability, ranks: 0, misc: 0, classSkill: false };
+      skills[name] ??= { ability, ranks: 0, misc: 0, classSkill: false };
     }
     set("skills", skills);
   };
@@ -820,7 +821,7 @@ export function SkillsSection({ store, character }: SectionProps) {
             <span class="col">Class</span>
           </div>
           {filtered.map((name) => {
-            const sk = character.skills[name];
+            const sk = character.skills[name]!;
             return (
               <div class="skillrow" key={name}>
                 <span class="skillrow__name">{name}</span>
@@ -863,7 +864,7 @@ const RES_FORMULA_SOURCES: { value: string; label: string }[] = [
 ];
 const RES_ABILITY_OPTIONS = ABILITY_KEYS.map((k) => ({
   value: k,
-  label: ABILITY_LABELS[k],
+  label: ABILITY_LABELS[k]!,
 }));
 
 export function ResourcesSection({ store, character }: SectionProps) {

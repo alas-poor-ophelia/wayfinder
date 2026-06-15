@@ -77,7 +77,7 @@ export function deriveModifiers(name: string, description: string): Modifier[] {
     if (value) {
       mods.push({
         target: "save.all",
-        type: save[2].toLowerCase() as Modifier["type"],
+        type: save[2]!.toLowerCase() as Modifier["type"],
         value,
         source: name,
       });
@@ -137,11 +137,11 @@ export function deriveModifiers(name: string, description: string): Modifier[] {
     );
   if (skill) {
     const value = pick(skill[1]);
-    const skillName = SKILL_BY_LOWER[skill[3].trim().toLowerCase()];
+    const skillName = SKILL_BY_LOWER[skill[3]!.trim().toLowerCase()];
     if (value && skillName) {
       mods.push({
         target: `skill.${skillName}`,
-        type: skill[2].toLowerCase() as Modifier["type"],
+        type: skill[2]!.toLowerCase() as Modifier["type"],
         value,
         source: name,
       });
@@ -158,7 +158,7 @@ export function deriveModifiers(name: string, description: string): Modifier[] {
     if (value) {
       mods.push({
         target: "initiative",
-        type: init[2].toLowerCase() as Modifier["type"],
+        type: init[2]!.toLowerCase() as Modifier["type"],
         value,
         source: name,
       });

@@ -36,14 +36,19 @@ export type FlowNode =
 /** A typed content block. Prose (`p`) keeps raw markdown for hybrid render
  *  through Obsidian's MarkdownRenderer; everything else is bespoke. */
 export type RuleBlock =
-  | { t: "p"; term?: string; text: string }
-  | { t: "table"; caption?: string; cols: string[]; rows: string[][] }
+  | { t: "p"; term?: string | undefined; text: string }
+  | {
+      t: "table";
+      caption?: string | undefined;
+      cols: string[];
+      rows: string[][];
+    }
   | { t: "flow"; nodes: FlowNode[] }
-  | { t: "dice"; expr: string; mod?: number; label?: string }
+  | { t: "dice"; expr: string; mod?: number | undefined; label?: string | undefined }
   | { t: "checklist"; items: { text: string }[] }
   | { t: "steps"; items: { text: string }[] }
-  | { t: "bullets"; items: { term?: string; text: string }[] }
-  | { t: "callout"; text: string; cite?: string };
+  | { t: "bullets"; items: { term?: string | undefined; text: string }[] }
+  | { t: "callout"; text: string; cite?: string | undefined };
 
 /** The parser's output for one note body (the per-note fields beyond the
  *  index-level path/title/category/headings). */

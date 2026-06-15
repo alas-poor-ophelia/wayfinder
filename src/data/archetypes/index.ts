@@ -144,7 +144,7 @@ export function resolveArchetypeEffects(
   };
 
   for (let i = 0; i < classes.length; i++) {
-    const entry = classes[i];
+    const entry = classes[i]!;
     const keys = entry.archetypeKeys ?? [];
     if (keys.length === 0) continue;
     effects.any = true;
@@ -160,9 +160,9 @@ export function resolveArchetypeEffects(
             const mech = featureMech[ref.feature];
             if (!mech) continue;
             if (mech.resource)
-              effects.suppressedResources[i].add(mech.resource);
+              effects.suppressedResources[i]!.add(mech.resource);
             if (mech.quickAction)
-              effects.suppressedQuickActions[i].add(mech.quickAction);
+              effects.suppressedQuickActions[i]!.add(mech.quickAction);
             if (mech.gate === "divineGrace") {
               effects.divineGraceMinLevel = Number.POSITIVE_INFINITY;
             }
@@ -182,10 +182,10 @@ export function resolveArchetypeEffects(
       if (!def || mechanics.classKey !== def.classKey) continue;
       const label = `${entry.className} (${def.name})`;
       for (const id of mechanics.removesResources ?? []) {
-        effects.suppressedResources[i].add(id);
+        effects.suppressedResources[i]!.add(id);
       }
       for (const id of mechanics.removesQuickActions ?? []) {
-        effects.suppressedQuickActions[i].add(id);
+        effects.suppressedQuickActions[i]!.add(id);
       }
       for (const resourceDef of mechanics.addsResources ?? []) {
         effects.addedResources.push({

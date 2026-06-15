@@ -257,7 +257,7 @@ export class MiniSheetStore {
     const idx = d.characters.findIndex((c) => c.id === id);
     if (idx === -1) throw new Error(`No character with id "${id}"`);
     const characters = [...d.characters];
-    characters[idx] = { ...characters[idx], ...patch };
+    characters[idx] = { ...characters[idx]!, ...patch };
     this.commit({ ...d, characters });
   }
 
@@ -333,7 +333,7 @@ export class MiniSheetStore {
     const d = this.data.value;
     const idx = d.characters.findIndex((c) => c.id === id);
     if (idx === -1) throw new Error(`No character with id "${id}"`);
-    const record = structuredClone(d.characters[idx]);
+    const record = structuredClone(d.characters[idx]!);
     const keys = dotPath.split(".");
     let cursor: Record<string, unknown> = record as unknown as Record<
       string,
@@ -346,7 +346,7 @@ export class MiniSheetStore {
       }
       cursor = cursor[key] as Record<string, unknown>;
     }
-    cursor[keys[keys.length - 1]] = value;
+    cursor[keys[keys.length - 1]!] = value;
     const characters = [...d.characters];
     characters[idx] = record;
     this.commit({ ...d, characters });
@@ -435,7 +435,7 @@ export class MiniSheetStore {
           ...(pool.footer ? { footer: pool.footer } : {}),
         });
       } else {
-        const existing = resources[idx];
+        const existing = resources[idx]!;
         resources[idx] = {
           ...existing,
           max: pool.max,
@@ -461,7 +461,7 @@ export class MiniSheetStore {
     const classPoolIds = new Set(suggested.map((p) => p.id));
     const ctx = { classes: record.classes, mods, scores: computed.scores };
     for (let i = 0; i < resources.length; i++) {
-      const pool = resources[i];
+      const pool = resources[i]!;
       if (!pool.formula || classPoolIds.has(pool.id)) continue;
       const max = evaluateResourceFormula(pool.formula, ctx);
       resources[i] = { ...pool, max, current: Math.min(pool.current, max) };

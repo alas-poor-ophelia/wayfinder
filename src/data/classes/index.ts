@@ -73,12 +73,12 @@ export function classResources(
   const fx = resolveArchetypeEffects(classes);
   const pools: SuggestedPool[] = [];
   for (let i = 0; i < classes.length; i++) {
-    const { className, level } = classes[i];
+    const { className, level } = classes[i]!;
     if (!level) continue;
     const data = getClassData(className);
     if (!data?.resources) continue;
     for (const def of data.resources) {
-      if (fx.suppressedResources[i].has(def.id)) continue;
+      if (fx.suppressedResources[i]!.has(def.id)) continue;
       if (level < (def.minLevel ?? 1)) continue;
       pools.push({
         id: def.id,
@@ -118,11 +118,11 @@ export function classQuickActionIds(classes: ClassEntry[]): string[] {
   const fx = resolveArchetypeEffects(classes);
   const ids = new Set<string>();
   for (let i = 0; i < classes.length; i++) {
-    const { className, level } = classes[i];
+    const { className, level } = classes[i]!;
     if (!level) continue;
     const data = getClassData(className);
     for (const qa of data?.quickActions ?? []) {
-      if (fx.suppressedQuickActions[i].has(qa.id)) continue;
+      if (fx.suppressedQuickActions[i]!.has(qa.id)) continue;
       if (level >= (qa.minLevel ?? 1)) ids.add(qa.id);
     }
   }

@@ -155,9 +155,9 @@ export const CASTER_CONFIGS: Record<string, CasterConfig> = {
 
 export function getCasterConfig(castingClass: unknown): CasterConfig {
   if (!castingClass || typeof castingClass !== "string") {
-    return CASTER_CONFIGS.wizard;
+    return CASTER_CONFIGS.wizard!;
   }
-  return CASTER_CONFIGS[castingClass.toLowerCase()] ?? CASTER_CONFIGS.wizard;
+  return CASTER_CONFIGS[castingClass.toLowerCase()] ?? CASTER_CONFIGS.wizard!;
 }
 
 /**
@@ -587,8 +587,8 @@ export const SPELL_TABLES: Record<string, (number | null)[][]> = {
 // Classes whose printed slots match an existing table (their CLASS_DATA
 // tableKeys already say so) get name-keyed aliases so the live spellbook
 // path — which resolves by class name — finds them too.
-SPELL_TABLES["antipaladin"] = SPELL_TABLES.paladin;
-SPELL_TABLES["shaman"] = SPELL_TABLES.witch;
+SPELL_TABLES["antipaladin"] = SPELL_TABLES.paladin!;
+SPELL_TABLES["shaman"] = SPELL_TABLES.witch!;
 
 /** Arcanist casts/day (separate from preparation slots). */
 export const ARCANIST_CASTS_TABLE: (number | null)[][] = [
@@ -694,10 +694,10 @@ export function getSpellsPerLevelTable(
   if (classLevel < 1 || classLevel > 20) {
     throw new Error("Class level must be between 1 and 20");
   }
-  const progression = table[classLevel - 1];
+  const progression = table[classLevel - 1]!;
   const out: Record<number, number> = {};
   for (let spellLevel = 0; spellLevel < progression.length; spellLevel++) {
-    const count = progression[spellLevel];
+    const count = progression[spellLevel]!;
     if (count !== null) out[spellLevel] = count;
   }
   return out;
@@ -739,7 +739,7 @@ export function getArcanistCasts(
   if (classLevel < 1 || classLevel > 20) {
     throw new Error("Class level must be between 1 and 20");
   }
-  const baseCasts = ARCANIST_CASTS_TABLE[classLevel - 1][spellLevel] || 0;
+  const baseCasts = ARCANIST_CASTS_TABLE[classLevel - 1]![spellLevel] || 0;
   return baseCasts + getBonusSpells(castingStatModifier, spellLevel);
 }
 

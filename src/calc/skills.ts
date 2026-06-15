@@ -108,12 +108,12 @@ export function calculateSkills(input: SkillsInput): SkillRow[] {
   return Object.keys(input.skills)
     .sort()
     .map((name) => {
-      const entry = input.skills[name];
+      const entry = input.skills[name]!;
       const usesPerform =
         vp &&
         (name === "Sense Motive" || name === "Bluff") &&
         !!input.skills["Perform (Sing)"];
-      const effective = usesPerform ? input.skills["Perform (Sing)"] : entry;
+      const effective = usesPerform ? input.skills["Perform (Sing)"]! : entry;
       // Legacy quirk: the Versatile Performance recursion omits the acp
       // argument, so (otherBonus + undefined) || 0 collapses the whole
       // "other" term to 0 for the substituted total. Preserved.

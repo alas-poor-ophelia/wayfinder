@@ -21,7 +21,7 @@ export function sortRows<T extends { name: string }>(
   sortKey: string,
   sortDir: "asc" | "desc",
 ): T[] {
-  const col = columns.find((c) => c.key === sortKey) ?? columns[0];
+  const col = columns.find((c) => c.key === sortKey) ?? columns[0]!;
   const dir = sortDir === "desc" ? -1 : 1;
   return [...rows].sort((a, b) => {
     const av = col.val(a);

@@ -17,7 +17,7 @@ export const XP_BREAKPOINTS: readonly number[] = [
 /** Legacy backward scan: highest level whose threshold ≤ xp, minimum 1. */
 export function getLevelFromXP(xp: number): number {
   for (let i = XP_BREAKPOINTS.length - 1; i >= 0; i--) {
-    if (xp >= XP_BREAKPOINTS[i]) return i + 1;
+    if (xp >= XP_BREAKPOINTS[i]!) return i + 1;
   }
   return 1;
 }
@@ -38,7 +38,7 @@ export function computeXp(xp: number, classes: ClassEntry[]): XpComputed {
   const level = getLevelFromXP(xp);
   const nextLevel = Math.min(level + 1, 20);
   const xpForCurrentLevel = XP_BREAKPOINTS[level - 1] || 0;
-  const xpForNextLevel = XP_BREAKPOINTS[nextLevel - 1] || XP_BREAKPOINTS[19];
+  const xpForNextLevel = XP_BREAKPOINTS[nextLevel - 1] || XP_BREAKPOINTS[19]!;
   const xpNeeded = xpForNextLevel - xpForCurrentLevel;
   // legacy divided by zero at level 20 (NaN at the exact floor); pin to 100
   const progressPercent =

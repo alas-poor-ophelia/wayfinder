@@ -46,7 +46,7 @@ export default defineConfig([
     languageOptions: {
       parser: tsparser,
       parserOptions: {
-        projectService: true,
+        project: "./tsconfig.json",
         tsconfigRootDir: import.meta.dirname,
         ecmaFeatures: { jsx: true },
       },
@@ -120,7 +120,7 @@ export default defineConfig([
     languageOptions: {
       parser: tsparser,
       parserOptions: {
-        projectService: true,
+        project: "./tsconfig.test.json",
         tsconfigRootDir: import.meta.dirname,
       },
     },
