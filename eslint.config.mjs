@@ -33,6 +33,7 @@ export default defineConfig([
       "**/*.cjs",
       "*.config.ts",
       "tests/unit/fixtures/**",
+      "src/data/icons/registry.ts",
     ],
   },
 

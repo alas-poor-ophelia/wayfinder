@@ -11,3 +11,6 @@ tests/unit/fixtures/
 
 # Scraped data blobs
 src/data/**/*.json
+
+# Generated files (owned by their generator script)
+src/data/icons/registry.ts
