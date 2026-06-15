@@ -73,6 +73,15 @@ function str(value: unknown, fallback = ""): string {
   return typeof value === "string" && value.length > 0 ? value : fallback;
 }
 
+/** Coerce a legacy scalar (string/number/boolean) to text; objects → "". */
+function scalarText(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+  return "";
+}
+
 /** Old select values occasionally hold the whole option list ("A|B|C"). */
 function selectValue(
   value: unknown,
@@ -233,8 +242,8 @@ function importKnownSpells(raw: unknown, warnings: string[]): KnownSpell[] {
       continue;
     }
     const spell: KnownSpell = {
-      id: String(entry.id as string | number),
-      name: String(entry.name as string | number),
+      id: scalarText(entry.id),
+      name: scalarText(entry.name),
       baseLevel: clampSpellLevel(entry.baseLevel),
       known: entry.known === true || entry.known === "true",
       range: str(entry.range),
@@ -273,7 +282,7 @@ function importPreparations(
       continue;
     }
     out.push({
-      spellId: String(entry.spellId as string | number),
+      spellId: scalarText(entry.spellId),
       adjustedLevel:
         entry.adjustedLevel === undefined
           ? level
@@ -443,7 +452,7 @@ export function importSpellbook(
           warnings.push("spellbook: malformed SLA entry skipped");
           continue;
         }
-        const spellId = String(entry.spellId as string | number);
+        const spellId = scalarText(entry.spellId);
         const linked = sb.spells.find((s) => s.id === spellId);
         if (!linked) {
           warnings.push(
@@ -887,7 +896,7 @@ export function importLegacyInventory(
       num(it.charges) > 0
     ) {
       warnings.push(
-        `"${name}": charges on a non-wand (${String(it.charges as string | number)}); dropped`,
+        `"${name}": charges on a non-wand (${scalarText(it.charges)}); dropped`,
       );
     }
     items.push({

@@ -115,6 +115,15 @@ export default defineConfig([
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-floating-promises": "off",
       "no-console": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
       // Test code legitimately uses Node builtins (fixture loading) and
       // loosely-typed helpers; the plugin-runtime guardrails do not apply.
       "import/no-nodejs-modules": "off",

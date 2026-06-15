@@ -84,7 +84,7 @@ export function ConfigSurface({
     ) as Category;
   });
   const [modal, setModal] = useState<Modal>(null);
-  useEffect(() => plugin.app.saveLocalStorage("msr_cat", cat), [cat]);
+  useEffect(() => plugin.app.saveLocalStorage("msr_cat", cat), [plugin, cat]);
 
   const onSheetCount = (character.quickActions ?? []).filter(
     (a) => !a.hidden,

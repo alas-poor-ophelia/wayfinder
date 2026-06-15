@@ -21,7 +21,7 @@ function NoteBody({ plugin, doc }: { plugin: MiniSheetPlugin; doc: RuleDoc }) {
     component.load();
     void MarkdownRenderer.render(plugin.app, doc.body, el, doc.path, component);
     return () => component.unload();
-  }, [doc.path]);
+  }, [plugin, doc.path, doc.body]);
   return <div class="ms-bref__body" ref={ref} />;
 }
 

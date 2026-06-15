@@ -1,5 +1,5 @@
 import type { RefObject } from "preact";
-import { useEffect } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 
 /**
  * Close an anchored overlay panel on any pointerdown (mouse + touch)
@@ -10,14 +10,18 @@ export function useOutsideClose(
   active: boolean,
   onClose: () => void,
 ): void {
+  // Keep the latest onClose without resubscribing the listener every render.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   useEffect(() => {
     if (!active) return;
     const onPointerDown = (e: PointerEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
-        onClose();
+        onCloseRef.current();
       }
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [active]);
+  }, [active, ref]);
 }
