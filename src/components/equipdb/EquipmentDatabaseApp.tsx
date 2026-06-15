@@ -113,7 +113,7 @@ function Sections({
   db: EquipDbState;
   store: MiniSheetPlugin["store"];
   counts: Partial<Record<EquipDbState["section"], number>>;
-  onSwitch?(): void;
+  onSwitch?: () => void;
 }) {
   return (
     <div class="ms-equipdb__sections">

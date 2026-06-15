@@ -25,7 +25,7 @@ export class SpellDatabaseView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Spell Database";
+    return "Spell database";
   }
 
   getIcon(): string {

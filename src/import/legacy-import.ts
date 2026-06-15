@@ -233,8 +233,8 @@ function importKnownSpells(raw: unknown, warnings: string[]): KnownSpell[] {
       continue;
     }
     const spell: KnownSpell = {
-      id: String(entry.id),
-      name: String(entry.name),
+      id: String(entry.id as string | number),
+      name: String(entry.name as string | number),
       baseLevel: clampSpellLevel(entry.baseLevel),
       known: entry.known === true || entry.known === "true",
       range: str(entry.range),
@@ -273,7 +273,7 @@ function importPreparations(
       continue;
     }
     out.push({
-      spellId: String(entry.spellId),
+      spellId: String(entry.spellId as string | number),
       adjustedLevel:
         entry.adjustedLevel === undefined
           ? level
@@ -443,7 +443,7 @@ export function importSpellbook(
           warnings.push("spellbook: malformed SLA entry skipped");
           continue;
         }
-        const spellId = String(entry.spellId);
+        const spellId = String(entry.spellId as string | number);
         const linked = sb.spells.find((s) => s.id === spellId);
         if (!linked) {
           warnings.push(
@@ -887,7 +887,7 @@ export function importLegacyInventory(
       num(it.charges) > 0
     ) {
       warnings.push(
-        `"${name}": charges on a non-wand (${String(it.charges)}); dropped`,
+        `"${name}": charges on a non-wand (${String(it.charges as string | number)}); dropped`,
       );
     }
     items.push({

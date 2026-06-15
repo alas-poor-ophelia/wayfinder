@@ -2,7 +2,7 @@
    A flat list of expandable/collapsible sections grouped by category, with a
    simple title/body search. Renders note markdown through Obsidian's
    MarkdownRenderer; no cards, typed blocks, tagging, pins, or filters. */
-import { MarkdownRenderer } from "obsidian";
+import { Component, MarkdownRenderer } from "obsidian";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import type MiniSheetPlugin from "../../main";
 import type { CharacterRecord } from "../../types/character";
@@ -14,7 +14,13 @@ function NoteBody({ plugin, doc }: { plugin: MiniSheetPlugin; doc: RuleDoc }) {
     const el = ref.current;
     if (!el) return;
     el.empty();
-    void MarkdownRenderer.render(plugin.app, doc.body, el, doc.path, plugin);
+    // Tie rendered child components to a Component scoped to this effect so
+    // they are torn down on note change / unmount (passing the plugin would
+    // leak them until the plugin itself unloads).
+    const component = new Component();
+    component.load();
+    void MarkdownRenderer.render(plugin.app, doc.body, el, doc.path, component);
+    return () => component.unload();
   }, [doc.path]);
   return <div class="ms-bref__body" ref={ref} />;
 }
@@ -61,7 +67,8 @@ export function BarebonesReferences({
   const toggle = (path: string) =>
     setOpen((prev) => {
       const n = new Set(prev);
-      n.has(path) ? n.delete(path) : n.add(path);
+      if (n.has(path)) n.delete(path);
+      else n.add(path);
       return n;
     });
 

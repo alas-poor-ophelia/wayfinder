@@ -16,7 +16,7 @@ function Select({
   label: string;
   value: string;
   options: Array<{ value: string; label: string }>;
-  onChange(value: string): void;
+  onChange: (value: string) => void;
 }) {
   return (
     <div class="ms-equipdb__filter-group">

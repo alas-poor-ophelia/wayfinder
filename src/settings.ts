@@ -38,6 +38,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
       )
       .addText((text) =>
         text
+          // eslint-disable-next-line obsidianmd/ui/sentence-case -- example vault path, not prose
           .setPlaceholder("MiniSheet/z_Components/database/spells")
           .setValue(this.plugin.store.data.value.settings.spellsFolder)
           .onChange((value) => {
@@ -56,6 +57,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
       )
       .addText((text) =>
         text
+          // eslint-disable-next-line obsidianmd/ui/sentence-case -- example file name, not prose
           .setPlaceholder("minisheet-items.json")
           .setValue(this.plugin.store.data.value.settings.customItemsFileName)
           .onChange((value) => {
@@ -66,6 +68,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
+      // eslint-disable-next-line obsidianmd/ui/sentence-case -- "Elephant in the Room" is the proper name of the feat-tax ruleset
       .setName("Elephant in the Room")
       .setDesc(
         "Apply the Elephant in the Room feat-tax houserules vault-wide: " +
@@ -93,6 +96,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
     // through Carrel's board (themed to the sheet) instead of the barebones list.
     if (isCarrelInstalled(this.app)) {
       new Setting(containerEl)
+        // eslint-disable-next-line obsidianmd/ui/sentence-case -- "Carrel" is a proper noun (the partner plugin)
         .setName("Use Carrel for References")
         .setDesc(
           "Render the References tab with the Carrel plugin's board — typed " +

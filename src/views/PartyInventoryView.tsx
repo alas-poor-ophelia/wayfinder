@@ -25,7 +25,7 @@ export class PartyInventoryView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Party Inventory";
+    return "Party inventory";
   }
 
   getIcon(): string {

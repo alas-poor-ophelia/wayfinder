@@ -170,7 +170,8 @@ export function installBridge(plugin: MiniSheetPlugin): void {
   window.__minisheet = {
     version: plugin.manifest.version,
     buildStamp: __BUILD_STAMP__,
-    getState: () => JSON.parse(JSON.stringify(store.data.value)),
+    getState: () =>
+      JSON.parse(JSON.stringify(store.data.value)) as typeof store.data.value,
     setTab: (tab) => store.setTab(tab),
     listCharacters: () =>
       store.data.value.characters.map((c) => ({ id: c.id, name: c.name })),

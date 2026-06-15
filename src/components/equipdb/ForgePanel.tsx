@@ -28,7 +28,7 @@ export function ForgePanel({
   plugin: MiniSheetPlugin;
   /** present = editing an existing custom item (recompute + re-stamp) */
   editItem: CustomItemDef | null;
-  onDone(): void;
+  onDone: () => void;
 }) {
   const [kind, setKind] = useState<ForgeSelection["kind"]>(
     editItem?.kind ?? "weapon",

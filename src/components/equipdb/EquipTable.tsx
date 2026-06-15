@@ -50,7 +50,7 @@ export function EquipTable<T extends { id: string; name: string }>({
   /** null hides the add column (no characters in the vault) */
   onAdd: ((item: T) => void) | null;
   /** optional trailing per-row actions (edit/delete on custom items) */
-  actions?(item: T): ComponentChildren;
+  actions?: (item: T) => ComponentChildren;
   /** message shown when there are no rows */
   emptyText?: string;
 }) {

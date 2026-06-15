@@ -10,7 +10,7 @@
  * and the in-Obsidian importer (src/rules/import-rule.ts, which feeds it HTML
  * fetched via Obsidian's mobile-safe requestUrl).
  */
-import { parse, type HTMLElement, type Node } from "node-html-parser";
+import { parse, NodeType, type HTMLElement, type Node } from "node-html-parser";
 
 export interface ScrapedNote {
   title: string;
@@ -21,7 +21,7 @@ export interface ScrapedNote {
 }
 
 function isEl(n: Node): n is HTMLElement {
-  return (n as HTMLElement).nodeType === 1;
+  return (n as HTMLElement).nodeType === NodeType.ELEMENT_NODE;
 }
 
 function decode(s: string): string {

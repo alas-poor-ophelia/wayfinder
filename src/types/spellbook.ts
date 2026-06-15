@@ -151,7 +151,7 @@ export interface SpellbookState {
   appliedLoadoutId?: string;
 }
 
-export function getSpellLevelKey(level: SpellLevel | number): string {
+export function getSpellLevelKey(level: number): string {
   return `level${level}`;
 }
 

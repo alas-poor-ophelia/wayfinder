@@ -26,7 +26,7 @@ export class EquipmentDatabaseView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Equipment Database";
+    return "Equipment database";
   }
 
   getIcon(): string {

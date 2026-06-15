@@ -115,6 +115,13 @@ export default defineConfig([
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-floating-promises": "off",
       "no-console": "off",
+      // Test code legitimately uses Node builtins (fixture loading) and
+      // loosely-typed helpers; the plugin-runtime guardrails do not apply.
+      "import/no-nodejs-modules": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/unbound-method": "off",
     },
   },
 

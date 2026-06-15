@@ -25,7 +25,7 @@ export class ConfigView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Character Configuration";
+    return "Character configuration";
   }
 
   getIcon(): string {

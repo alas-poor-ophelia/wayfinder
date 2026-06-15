@@ -131,10 +131,12 @@ export class ImportRuleModal extends Modal {
   }
 
   onOpen(): void {
+    // eslint-disable-next-line obsidianmd/ui/sentence-case -- "AoN" is an acronym (Archives of Nethys)
     this.titleEl.setText("Import rule from AoN");
     const { contentEl } = this;
 
     const hint = contentEl.createEl("p", {
+      // eslint-disable-next-line obsidianmd/ui/sentence-case -- contains proper nouns (Archives of Nethys) and "URL"
       text: "Paste an Archives of Nethys rule URL (or a rule name). The page is fetched, converted to a typed note in your rules folder, and linked to the active character.",
     });
     hint.style.cssText =
@@ -157,6 +159,7 @@ export class ImportRuleModal extends Modal {
 
     new Setting(contentEl)
       .setName("Category")
+      // eslint-disable-next-line obsidianmd/ui/sentence-case -- "AoN" is an acronym (Archives of Nethys)
       .setDesc("Optional — overrides the AoN breadcrumb category.")
       .addText((t) => {
         t.setPlaceholder("(from page)");

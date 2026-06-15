@@ -97,8 +97,11 @@ export function sortSpells(docs: SpellDoc[], db: SpellDbState): SpellDoc[] {
     let cmp: number;
     if (key === "level") cmp = lowest(a) - lowest(b);
     else {
-      const av = String((a as unknown as Record<string, unknown>)[key] ?? "");
-      const bv = String((b as unknown as Record<string, unknown>)[key] ?? "");
+      const row = (d: (typeof docs)[number]): string | number =>
+        (d as unknown as Record<string, string | number | undefined>)[key] ??
+        "";
+      const av = String(row(a));
+      const bv = String(row(b));
       cmp = av.localeCompare(bv);
     }
     return cmp === 0 ? a.name.localeCompare(b.name) : cmp * dir;

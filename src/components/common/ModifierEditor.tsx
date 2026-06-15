@@ -86,7 +86,7 @@ export function ModifierEditor({
   modifiers: Modifier[];
   /** default source stamped on new rows (e.g. the item/buff name) */
   source: string;
-  onChange(modifiers: Modifier[]): void;
+  onChange: (modifiers: Modifier[]) => void;
 }) {
   const update = (idx: number, patch: Partial<Modifier>) =>
     onChange(modifiers.map((m, i) => (i === idx ? { ...m, ...patch } : m)));

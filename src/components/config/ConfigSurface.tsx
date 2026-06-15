@@ -64,24 +64,6 @@ const CATEGORIES: {
 const accentOf = (id: string) =>
   CATEGORIES.find((c) => c.id === id)?.accent ?? "gold";
 
-const ls = {
-  get(key: string, fallback: string): string {
-    try {
-      const raw = localStorage.getItem("msr_" + key);
-      return raw ? (JSON.parse(raw) as string) : fallback;
-    } catch {
-      return fallback;
-    }
-  },
-  set(key: string, value: string) {
-    try {
-      localStorage.setItem("msr_" + key, JSON.stringify(value));
-    } catch {
-      /* private mode / quota — non-fatal */
-    }
-  },
-};
-
 type Modal =
   | { mode: "edit"; id: string }
   | { mode: "add" }
@@ -95,13 +77,14 @@ export function ConfigSurface({
   onClose,
 }: ConfigSurfaceProps) {
   const [cat, setCat] = useState<Category>(() => {
-    const saved = ls.get("cat", "character");
+    const saved =
+      (plugin.app.loadLocalStorage("msr_cat") as string | null) ?? "character";
     return (
       CATEGORIES.some((c) => c.id === saved) ? saved : "character"
     ) as Category;
   });
   const [modal, setModal] = useState<Modal>(null);
-  useEffect(() => ls.set("cat", cat), [cat]);
+  useEffect(() => plugin.app.saveLocalStorage("msr_cat", cat), [cat]);
 
   const onSheetCount = (character.quickActions ?? []).filter(
     (a) => !a.hidden,

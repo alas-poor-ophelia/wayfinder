@@ -77,6 +77,7 @@ export default class MiniSheetPlugin extends Plugin {
       (leaf) => new EquipmentDatabaseView(leaf, this),
     );
 
+    // eslint-disable-next-line obsidianmd/ui/sentence-case -- "Wayfinder" is the plugin's proper name
     this.addRibbonIcon("shield", "Open Wayfinder", () => {
       void this.activateView();
     });
