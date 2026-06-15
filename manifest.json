@@ -1,9 +1,9 @@
 {
-	"id": "minisheet",
-	"name": "MiniSheet",
+	"id": "wayfinder",
+	"name": "Wayfinder",
 	"version": "0.1.0",
 	"minAppVersion": "1.4.11",
-	"description": "Pathfinder 1e character sheet for the sidebar, optimized for iPad.",
+	"description": "A Pathfinder 1e toolkit for Obsidian — character sheets, spellbook, equipment, and references, optimized for iPad.",
 	"author": "alas, poor ophelia",
 	"authorUrl": "https://github.com/alas-poor-ophelia",
 	"isDesktopOnly": false

@@ -24,7 +24,7 @@ const SCREENSHOT_DIR = path.resolve(
 );
 
 /** The standalone plugin's manifest id (= reload id) */
-const MINISHEET_PLUGIN_ID = "minisheet";
+const MINISHEET_PLUGIN_ID = "wayfinder";
 
 /** Legacy plugin IDs (the old Meta Bind sheet), reloadable by explicit id */
 const LEGACY_PLUGIN_IDS = ["datacore", "obsidian-meta-bind-plugin", "js-engine"];

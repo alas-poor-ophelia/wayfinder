@@ -38,7 +38,7 @@ bun run typecheck    # tsc --noEmit
 bun run test:unit    # vitest (tests/unit)
 ```
 
-Deploy target: `MiniSheet Dev/.obsidian/plugins/minisheet/`.
+Deploy target: `MiniSheet Dev/.obsidian/plugins/wayfinder/`.
 
 ### Development cycle (MANDATORY)
 

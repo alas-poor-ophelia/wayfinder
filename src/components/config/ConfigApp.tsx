@@ -21,7 +21,7 @@ export function ConfigApp({
       <div class="ms-placeholder">
         <div>No character yet</div>
         <div class="ms-muted">
-          Run the “MiniSheet: New character” command to create one
+          Run the “Wayfinder: New character” command to create one
         </div>
       </div>
     );

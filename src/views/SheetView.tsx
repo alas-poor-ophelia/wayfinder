@@ -18,7 +18,7 @@ export class SheetView extends ItemView {
   }
 
   getDisplayText(): string {
-    return this.plugin.store.getCharacter()?.name ?? "MiniSheet";
+    return this.plugin.store.getCharacter()?.name ?? "Wayfinder";
   }
 
   getIcon(): string {

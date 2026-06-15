@@ -77,7 +77,7 @@ export default class MiniSheetPlugin extends Plugin {
       (leaf) => new EquipmentDatabaseView(leaf, this)
     );
 
-    this.addRibbonIcon("shield", "Open MiniSheet", () => {
+    this.addRibbonIcon("shield", "Open Wayfinder", () => {
       void this.activateView();
     });
 
@@ -174,7 +174,7 @@ export default class MiniSheetPlugin extends Plugin {
     // spell-name links in the sheet + database trigger hover-link events;
     // registering the source makes Page Preview honor them (no Ctrl needed)
     this.registerHoverLinkSource(PLUGIN_ID, {
-      display: "MiniSheet",
+      display: "Wayfinder",
       defaultMod: false,
     });
 

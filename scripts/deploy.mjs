@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 
 const repoRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const VAULT_PLUGIN_DIR =
-  "C:/Users/whipl/OneDrive/Documents/MiniSheet Dev/.obsidian/plugins/minisheet";
+  "C:/Users/whipl/OneDrive/Documents/MiniSheet Dev/.obsidian/plugins/wayfinder";
 const FILES = ["main.js", "styles.css", "manifest.json"];
 
 // Tripwire: deploys only reach other devices (iPad) through Obsidian Sync.
