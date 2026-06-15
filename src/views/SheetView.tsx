@@ -1,4 +1,5 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
+import { ItemView } from "obsidian";
 import { render } from "preact";
 import { App } from "../components/App";
 import { VIEW_TYPE_MINISHEET } from "../constants";

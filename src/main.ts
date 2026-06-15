@@ -1,4 +1,5 @@
-import { Notice, Plugin, TFile, WorkspaceLeaf } from "obsidian";
+import type { TFile, WorkspaceLeaf } from "obsidian";
+import { Notice, Plugin } from "obsidian";
 import { signal, type Signal } from "@preact/signals";
 import { installBridge, removeBridge } from "./bridge/mcp-bridge";
 import { num } from "./calc/abilities";

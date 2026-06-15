@@ -23,7 +23,7 @@ function adaptLegacyInput(input: Record<string, unknown>): ACInput {
     adapted.bravoLevel = adapted.paladinLevel;
     delete adapted.paladinLevel;
   }
-  return adapted as ACInput;
+  return adapted;
 }
 
 function expectMatch(rawInput: ACInput, expected: ACFixtureOutput) {
@@ -40,8 +40,8 @@ function expectMatch(rawInput: ACInput, expected: ACFixtureOutput) {
 describe("calculateACValues (characterization vs old ac-renderer)", () => {
   it("live Adarin baseline", () => {
     expectMatch(
-      fixtures.acLive.input as ACInput,
-      fixtures.acLive.output as ACFixtureOutput,
+      fixtures.acLive.input,
+      fixtures.acLive.output,
     );
   });
 
@@ -49,7 +49,7 @@ describe("calculateACValues (characterization vs old ac-renderer)", () => {
   for (const c of fixtures.acMatrix) {
     it(`acMatrix: ${c.name}`, () => {
       const input = { ...base, ...c.overrides } as ACInput;
-      expectMatch(input, c.output as ACFixtureOutput);
+      expectMatch(input, c.output);
     });
   }
 
@@ -67,14 +67,14 @@ describe("calculateACValues (characterization vs old ac-renderer)", () => {
         ...base,
         conditionEffects: effects!.output,
       } as ACInput;
-      expectMatch(input, c.ac as ACFixtureOutput);
+      expectMatch(input, c.ac);
     });
   }
 
   it("hwayoung baseline", () => {
     expectMatch(
-      fixtures.hwayoung.input as ACInput,
-      fixtures.hwayoung.ac as ACFixtureOutput,
+      fixtures.hwayoung.input,
+      fixtures.hwayoung.ac,
     );
   });
 });

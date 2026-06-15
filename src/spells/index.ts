@@ -136,9 +136,7 @@ export class SpellIndex {
   }
 
   private indexFile(file: TFile): SpellDoc | null {
-    const fm = this.app.metadataCache.getFileCache(file)?.frontmatter as
-      | Record<string, unknown>
-      | undefined;
+    const fm = this.app.metadataCache.getFileCache(file)?.frontmatter;
     // skip non-spell files (the folder also holds ALL_SPELLS.json etc.)
     if (!fm || fm.id === undefined || fm.spellLevel === undefined) return null;
     const spellLevelRaw = fmStr(fm, "spellLevel");

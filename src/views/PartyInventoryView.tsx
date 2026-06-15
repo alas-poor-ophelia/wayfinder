@@ -1,4 +1,5 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
+import { ItemView } from "obsidian";
 import { render } from "preact";
 import { PartyInventoryApp } from "../components/partyinv/PartyInventoryApp";
 import { VIEW_TYPE_PARTY_INV } from "../constants";

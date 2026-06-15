@@ -138,7 +138,7 @@ export function forgeItem(
     );
   }
 
-  const base = (weapon ?? armor) as BaseWeaponDef | BaseArmorDef | undefined;
+  const base = (weapon ?? armor);
   const flatGp = abilities.reduce((sum, a) => sum + (a.flatPriceGp ?? 0), 0);
   const eb = totalBonusEquivalent;
   const priceGp = base

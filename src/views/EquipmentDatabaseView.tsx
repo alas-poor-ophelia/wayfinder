@@ -1,4 +1,5 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
+import { ItemView } from "obsidian";
 import { render } from "preact";
 import { EquipmentDatabaseApp } from "../components/equipdb/EquipmentDatabaseApp";
 import { VIEW_TYPE_EQUIP_DB } from "../constants";

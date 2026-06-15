@@ -487,8 +487,8 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
 
   // --- identity ---
   const race = config.race as Record<string, unknown> | undefined;
-  record.race = str(config.raceChoice, str(race?.type as string));
-  const baseSpeed = str(race?.base_speed as string, "30");
+  record.race = str(config.raceChoice, str(race?.type));
+  const baseSpeed = str(race?.base_speed, "30");
   record.speed = `${baseSpeed}ft`;
   if (typeof sheet.banner === "string") record.bannerImage = sheet.banner;
 

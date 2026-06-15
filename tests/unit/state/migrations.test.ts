@@ -118,7 +118,7 @@ describe("migrateData v4 -> v5 (spell slots into the spellbook)", () => {
     // a real caster: computed maxima stay authoritative, no overrides
     const c = createDefaultCharacter("x", "X");
     c.spellbook = createDefaultSpellbook("skald", "cha");
-    c.spellbook!.levels.level1.remaining = 5; // already initialized
+    c.spellbook.levels.level1.remaining = 5; // already initialized
     c.resources = [
       { id: "spellSlotsL1", name: "Level 1 Slots", current: 2, max: 4 },
       { id: "spellSlotsL2", name: "Level 2 Slots", current: 1, max: 2 },

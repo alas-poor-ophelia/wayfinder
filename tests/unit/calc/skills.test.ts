@@ -11,7 +11,7 @@ function fromTuple(tuple: unknown[]): SkillEntry {
   return {
     ability: String(ability).toLowerCase() as AbilityKey,
     ranks: Number(ranks) || 0,
-    misc: hasOther ? (a as number) : 0,
+    misc: hasOther ? (a) : 0,
     classSkill: Boolean(hasOther ? b : a),
   };
 }

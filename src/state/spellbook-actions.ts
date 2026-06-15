@@ -499,12 +499,12 @@ export function resetSpellbook(
   for (let level = 0 as SpellLevel; level <= 9; level++) {
     const key = getSpellLevelKey(level);
     if (!next.levels[key]) continue;
-    const max = maxSlotsFor(character, level as SpellLevel, castingStatBonus);
+    const max = maxSlotsFor(character, level, castingStatBonus);
     next.levels[key].remaining = max > 0 ? max : null;
     if (paradigm === "hybrid") {
       const maxCasts = maxCastsFor(
         character,
-        level as SpellLevel,
+        level,
         castingStatBonus,
       );
       next.levels[key].castsRemaining = maxCasts > 0 ? maxCasts : null;
@@ -762,7 +762,7 @@ export function applyLoadout(
 
   // 2. rebuild preparations from the loadout
   for (let level = 0; level <= 9; level++) {
-    next.preparations[getSpellLevelKey(level as SpellLevel)] = [];
+    next.preparations[getSpellLevelKey(level)] = [];
   }
   for (const entry of loadout.spells) {
     const key = getSpellLevelKey(entry.level);

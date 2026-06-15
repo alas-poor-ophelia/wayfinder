@@ -5,7 +5,7 @@ import fixtures from "../fixtures/captured-fixtures.json";
 describe("calculateSaves (characterization vs old MiniSheetSaves block)", () => {
   it("reproduces Adarin's stored save values", () => {
     const inputs = fixtures.savesFixture.inputs;
-    const stored = fixtures.savesFixture.storedSaves!;
+    const stored = fixtures.savesFixture.storedSaves;
     // The old saves block reads class levels from the CONFIG note
     // (paladin 5 there) - the savesFixture inputs carry those values.
     const result = calculateSaves({

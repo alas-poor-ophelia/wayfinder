@@ -298,10 +298,10 @@ function ValueField({
           inputs rather than flush below the label */}
       <span class="effect__num__vals">
         {!isF ? (
-          <Num value={value as number} onChange={(n) => onChange(n)} />
+          <Num value={value} onChange={(n) => onChange(n)} />
         ) : (
           <FormulaBody
-            value={value as QuickActionFormula}
+            value={value}
             onChange={onChange}
           />
         )}
@@ -760,8 +760,8 @@ export function QuickActionsSection({
         }${focused && focused.id === a.id ? " is-focus" : ""}`}
         onPointerEnter={() => setFocusId(a.id)}
         onFocus={() => setFocusId(a.id)}
-        onPointerDown={(e) => onDown(item, zone, e as unknown as PointerEvent)}
-        onPointerMove={(e) => onMove(e as unknown as PointerEvent)}
+        onPointerDown={(e) => onDown(item, zone, e)}
+        onPointerMove={(e) => onMove(e)}
         onPointerUp={() => onUp(item)}
         onPointerCancel={() => {
           down.current = null;

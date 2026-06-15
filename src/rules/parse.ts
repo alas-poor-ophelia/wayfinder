@@ -142,7 +142,7 @@ function parseFlow(lines: string[]): FlowNode[] {
     const key = m[1].toLowerCase();
     const rest = m[2].trim();
     if (key === "start" || key === "note" || key === "check") {
-      nodes.push({ kind: key as "start" | "note" | "check", text: rest });
+      nodes.push({ kind: key, text: rest });
       i++;
     } else if (key === "options") {
       nodes.push({
@@ -174,7 +174,7 @@ function parseFlow(lines: string[]): FlowNode[] {
       nodes.push({ kind: "branch", branches });
     } else if (key === "success" || key === "fail") {
       // a bare success/fail outside an explicit branch — fold into one
-      const tone = key as "success" | "fail";
+      const tone = key;
       nodes.push({
         kind: "branch",
         branches: [

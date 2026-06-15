@@ -8,16 +8,16 @@ const adarin = importLegacy({
   id: "adarin",
   name: "Adarin",
   characterType: "pc",
-  sheet: fixtures.frontmatter.adarinSheet as Record<string, unknown>,
-  config: fixtures.frontmatter.adarinConfig as Record<string, unknown>,
+  sheet: fixtures.frontmatter.adarinSheet,
+  config: fixtures.frontmatter.adarinConfig,
 });
 
 const hwayoung = importLegacy({
   id: "hwayoung",
   name: "Hwayoung",
   characterType: "familiar",
-  sheet: fixtures.frontmatter.hwayoungSheet as Record<string, unknown>,
-  config: fixtures.frontmatter.hwayoungConfig as Record<string, unknown>,
+  sheet: fixtures.frontmatter.hwayoungSheet,
+  config: fixtures.frontmatter.hwayoungConfig,
 });
 
 describe("importLegacy(Adarin) -> computeAll", () => {
@@ -61,7 +61,7 @@ describe("importLegacy(Adarin) -> computeAll", () => {
   });
 
   it("saves match the stored values (20/21/14)", () => {
-    const stored = fixtures.savesFixture.storedSaves!;
+    const stored = fixtures.savesFixture.storedSaves;
     expect(computed.saves.fort).toBe(stored.fort.value);
     expect(computed.saves.ref).toBe(stored.ref.value);
     expect(computed.saves.will).toBe(stored.will.value);
@@ -77,7 +77,7 @@ describe("importLegacy(Adarin) -> computeAll", () => {
       // panache is a resources[] pool since schema v4
       panachePoints: adarin.record.resources.find((r) => r.id === "panache")!
         .current,
-    } as never);
+    });
     expect(computed.attacks).toEqual(expected);
   });
 
@@ -134,11 +134,7 @@ describe("importLegacy(Hwayoung) -> computeAll", () => {
   });
 
   it("attacks match the live capture", () => {
-    const expected = fixtures.hwayoung.attacks as {
-      waveblade: string;
-      ranged: string;
-      unarmed: string;
-    };
+    const expected = fixtures.hwayoung.attacks;
     expect(computed.attacks.melee).toBe(expected.waveblade);
     expect(computed.attacks.ranged).toBe(expected.ranged);
     expect(computed.attacks.unarmed).toBe(expected.unarmed);

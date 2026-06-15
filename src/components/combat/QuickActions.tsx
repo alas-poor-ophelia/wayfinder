@@ -72,7 +72,7 @@ export function QuickActions({ store, character }: QuickActionsProps) {
         title={title}
         onClick={(e) =>
           hasVariants
-            ? openVariantMenu(def, e as unknown as MouseEvent)
+            ? openVariantMenu(def, e)
             : store.cycleQuickAction(character.id, def.id)
         }
       >
@@ -102,7 +102,7 @@ export function QuickActions({ store, character }: QuickActionsProps) {
           key={`caption-${def.id}`}
           class="ms-toggle-song-label"
           title={def.name}
-          onClick={(e) => openVariantMenu(def, e as unknown as MouseEvent)}
+          onClick={(e) => openVariantMenu(def, e)}
         >
           {label}
         </button>

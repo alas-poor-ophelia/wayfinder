@@ -1,4 +1,5 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import type { WorkspaceLeaf } from "obsidian";
+import { ItemView } from "obsidian";
 import { render } from "preact";
 import { SpellDatabaseApp } from "../components/spelldb/SpellDatabaseApp";
 import { VIEW_TYPE_SPELL_DB } from "../constants";

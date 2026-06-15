@@ -10,7 +10,6 @@ import {
   createDefaultCharacter,
   type CharacterRecord,
 } from "../../../src/types/character";
-import type { Modifier } from "../../../src/calc/modifiers";
 
 function fixture(): CharacterRecord {
   const c = createDefaultCharacter("test", "Test");
@@ -66,7 +65,7 @@ describe("speed derivation", () => {
             type: "enhancement",
             value: 10,
             source: "Boots",
-          } as Modifier,
+          },
         ],
       },
     ];
