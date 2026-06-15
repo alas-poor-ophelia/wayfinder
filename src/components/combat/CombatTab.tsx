@@ -20,7 +20,12 @@ interface CombatTabProps {
   computed: ComputedCharacter;
 }
 
-export function CombatTab({ plugin, store, character, computed }: CombatTabProps) {
+export function CombatTab({
+  plugin,
+  store,
+  character,
+  computed,
+}: CombatTabProps) {
   const sub = store.data.value.ui.combatSub ?? "main";
 
   const subtabBar = (
@@ -44,7 +49,12 @@ export function CombatTab({ plugin, store, character, computed }: CombatTabProps
     return (
       <div class="ms-combat">
         {subtabBar}
-        <InventorySubtab plugin={plugin} store={store} character={character} computed={computed} />
+        <InventorySubtab
+          plugin={plugin}
+          store={store}
+          character={character}
+          computed={computed}
+        />
       </div>
     );
   }

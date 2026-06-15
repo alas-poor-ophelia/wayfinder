@@ -1,4 +1,9 @@
-import { BONUS_TYPES, type BonusType, type Modifier, type ModifierTarget } from "../../calc/modifiers";
+import {
+  BONUS_TYPES,
+  type BonusType,
+  type Modifier,
+  type ModifierTarget,
+} from "../../calc/modifiers";
 import { STANDARD_SKILLS } from "../../calc/skills";
 
 /**
@@ -95,7 +100,9 @@ export function ModifierEditor({
             aria-label="Bonus target"
             value={mod.target}
             onChange={(e) =>
-              update(idx, { target: (e.target as HTMLSelectElement).value as ModifierTarget })
+              update(idx, {
+                target: (e.target as HTMLSelectElement).value as ModifierTarget,
+              })
             }
           >
             {TARGET_GROUPS.map((group) => (
@@ -113,7 +120,9 @@ export function ModifierEditor({
             aria-label="Bonus type"
             value={mod.type}
             onChange={(e) =>
-              update(idx, { type: (e.target as HTMLSelectElement).value as BonusType })
+              update(idx, {
+                type: (e.target as HTMLSelectElement).value as BonusType,
+              })
             }
           >
             {BONUS_TYPES.map((t) => (

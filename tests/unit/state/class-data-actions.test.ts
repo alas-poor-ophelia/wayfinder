@@ -77,7 +77,9 @@ describe("syncClassResources", () => {
     store.setCharacterField("hero", "resources", [
       ...pools.map((p) => (p.id === "kiPool" ? { ...p, current: 4 } : p)),
     ]);
-    store.setCharacterField("hero", "classes", [{ className: "Monk", level: 8 }]);
+    store.setCharacterField("hero", "classes", [
+      { className: "Monk", level: 8 },
+    ]);
     store.syncClassResources("hero");
     pools = store.getCharacter("hero")!.resources;
     expect(pools.find((p) => p.id === "kiPool")).toMatchObject({

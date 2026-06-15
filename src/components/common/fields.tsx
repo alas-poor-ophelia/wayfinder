@@ -8,7 +8,13 @@ interface NumberFieldProps {
   onChange: (value: number) => void;
 }
 
-export function NumberField({ label, value, min, max, onChange }: NumberFieldProps) {
+export function NumberField({
+  label,
+  value,
+  min,
+  max,
+  onChange,
+}: NumberFieldProps) {
   return (
     <label class="ms-field">
       <span class="ms-field__label">{label}</span>
@@ -34,7 +40,12 @@ interface TextFieldProps {
   onChange: (value: string) => void;
 }
 
-export function TextField({ label, value, placeholder, onChange }: TextFieldProps) {
+export function TextField({
+  label,
+  value,
+  placeholder,
+  onChange,
+}: TextFieldProps) {
   return (
     <label class="ms-field">
       <span class="ms-field__label">{label}</span>
@@ -56,7 +67,12 @@ interface SelectFieldProps {
   onChange: (value: string) => void;
 }
 
-export function SelectField({ label, value, options, onChange }: SelectFieldProps) {
+export function SelectField({
+  label,
+  value,
+  options,
+  onChange,
+}: SelectFieldProps) {
   return (
     <label class="ms-field">
       <span class="ms-field__label">{label}</span>

@@ -1,7 +1,10 @@
 import { Menu } from "obsidian";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
-import type { QuickActionDef, QuickActionState } from "../../types/quick-actions";
+import type {
+  QuickActionDef,
+  QuickActionState,
+} from "../../types/quick-actions";
 import { Icon } from "../common/Icon";
 
 /**
@@ -18,7 +21,9 @@ interface QuickActionsProps {
 }
 
 export function QuickActions({ store, character }: QuickActionsProps) {
-  const defs = (character.quickActions ?? []).filter((d) => !d.hidden && d.stages.length > 0);
+  const defs = (character.quickActions ?? []).filter(
+    (d) => !d.hidden && d.stages.length > 0,
+  );
   const stateOf = (def: QuickActionDef): QuickActionState =>
     character.quickActionState?.[def.id] ?? { stage: 0 };
 
@@ -29,14 +34,16 @@ export function QuickActions({ store, character }: QuickActionsProps) {
       item
         .setTitle("Off")
         .setChecked(state.stage === 0)
-        .onClick(() => store.setQuickActionVariant(character.id, def.id, null))
+        .onClick(() => store.setQuickActionVariant(character.id, def.id, null)),
     );
     for (const variant of def.variants ?? []) {
       menu.addItem((item) =>
         item
           .setTitle(variant.name)
           .setChecked(state.stage > 0 && state.variantId === variant.id)
-          .onClick(() => store.setQuickActionVariant(character.id, def.id, variant.id))
+          .onClick(() =>
+            store.setQuickActionVariant(character.id, def.id, variant.id),
+          ),
       );
     }
     menu.showAtMouseEvent(e);
@@ -45,8 +52,12 @@ export function QuickActions({ store, character }: QuickActionsProps) {
   const button = (def: QuickActionDef) => {
     const state = stateOf(def);
     const on = state.stage > 0;
-    const stage = on ? def.stages[Math.min(state.stage, def.stages.length) - 1] : undefined;
-    const variant = on ? def.variants?.find((v) => v.id === state.variantId) : undefined;
+    const stage = on
+      ? def.stages[Math.min(state.stage, def.stages.length) - 1]
+      : undefined;
+    const variant = on
+      ? def.variants?.find((v) => v.id === state.variantId)
+      : undefined;
     const hasVariants = (def.variants?.length ?? 0) > 0;
     const title =
       def.name +
@@ -74,7 +85,9 @@ export function QuickActions({ store, character }: QuickActionsProps) {
   const captions = defs
     .filter((def) => (def.variants?.length ?? 0) > 0 && stateOf(def).stage > 0)
     .map((def) => {
-      const variant = def.variants!.find((v) => v.id === stateOf(def).variantId);
+      const variant = def.variants!.find(
+        (v) => v.id === stateOf(def).variantId,
+      );
       return variant ? { def, label: variant.name } : null;
     })
     .filter((c): c is { def: QuickActionDef; label: string } => c !== null);

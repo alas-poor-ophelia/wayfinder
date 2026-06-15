@@ -41,7 +41,7 @@ function matchRank(nameLower: string, queryLower: string): number | null {
 export function suggestEquipment(
   query: string,
   customItems: CustomItemDef[] = [],
-  limit = SUGGEST_LIMIT
+  limit = SUGGEST_LIMIT,
 ): EquipSuggestion[] {
   const q = query.trim().toLowerCase();
   if (q.length < SUGGEST_MIN_CHARS) return [];
@@ -54,7 +54,13 @@ export function suggestEquipment(
     const draft = customDraft(c, getBaseWeapon(c.baseId));
     ranked.push({
       rank,
-      s: { key: `custom:${c.id}`, name: c.name, kind: "Custom", priceGp: c.priceGp, draft },
+      s: {
+        key: `custom:${c.id}`,
+        name: c.name,
+        kind: "Custom",
+        priceGp: c.priceGp,
+        draft,
+      },
     });
   }
   for (const w of WEAPONS) {
@@ -62,7 +68,13 @@ export function suggestEquipment(
     if (rank === null) continue;
     ranked.push({
       rank,
-      s: { key: `weapon:${w.id}`, name: w.name, kind: "Weapon", priceGp: w.costGp, draft: weaponDraft(w) },
+      s: {
+        key: `weapon:${w.id}`,
+        name: w.name,
+        kind: "Weapon",
+        priceGp: w.costGp,
+        draft: weaponDraft(w),
+      },
     });
   }
   for (const a of ARMOR) {
@@ -71,7 +83,13 @@ export function suggestEquipment(
     const draft = armorDraft(a);
     ranked.push({
       rank,
-      s: { key: `armor:${a.id}`, name: a.name, kind: draft.type, priceGp: a.costGp, draft },
+      s: {
+        key: `armor:${a.id}`,
+        name: a.name,
+        kind: draft.type,
+        priceGp: a.costGp,
+        draft,
+      },
     });
   }
   for (const m of MAGIC_ITEMS) {

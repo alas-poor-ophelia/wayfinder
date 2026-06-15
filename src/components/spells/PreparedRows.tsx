@@ -1,5 +1,9 @@
 import type MiniSheetPlugin from "../../main";
-import type { KnownSpell, SpellLevel, SpellPreparation } from "../../types/spellbook";
+import type {
+  KnownSpell,
+  SpellLevel,
+  SpellPreparation,
+} from "../../types/spellbook";
 import { SpellInfoRow, SpellLink } from "./SpellRow";
 
 /** Legacy gold metamagic suffix: first two words ("Still Spell"). */
@@ -46,16 +50,24 @@ export function PreparedKnownRow({
         />
         <div class="ms-spell__name">
           <span class="spell-name-display">
-            <SpellLink plugin={plugin} name={spell.name} cls="spell-base-name" />
+            <SpellLink
+              plugin={plugin}
+              name={spell.name}
+              cls="spell-base-name"
+            />
             {activeMetamagics.length > 0 && (
-              <span class="ms-spell__metamagic"> ({goldNames(activeMetamagics)})</span>
-            )}
-            {activeMetamagics.length > 0 && adjustedLevel !== spell.baseLevel && (
-              <span class="ms-spell__level-adjust">
-                <span class="ms-spell__level-arrow">↑</span>
-                {adjustedLevel}
+              <span class="ms-spell__metamagic">
+                {" "}
+                ({goldNames(activeMetamagics)})
               </span>
             )}
+            {activeMetamagics.length > 0 &&
+              adjustedLevel !== spell.baseLevel && (
+                <span class="ms-spell__level-adjust">
+                  <span class="ms-spell__level-arrow">↑</span>
+                  {adjustedLevel}
+                </span>
+              )}
           </span>
           <SpellInfoRow
             spell={spell}
@@ -117,7 +129,10 @@ export function PreparedSpellRow({
         <div class="ms-prepared__name">
           <SpellLink plugin={plugin} name={spell.name} />
           {displayMetamagics.length > 0 && (
-            <span class="ms-prepared__metamagic"> ({italicNames(displayMetamagics)})</span>
+            <span class="ms-prepared__metamagic">
+              {" "}
+              ({italicNames(displayMetamagics)})
+            </span>
           )}
         </div>
         <SpellInfoRow

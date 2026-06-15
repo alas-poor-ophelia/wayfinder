@@ -18,8 +18,14 @@ import {
   snapshotCurrentPrep,
 } from "../../../src/state/spellbook-actions";
 import type { MiniSheetStore } from "../../../src/state/store";
-import { createDefaultCharacter, type CharacterRecord } from "../../../src/types/character";
-import { createDefaultSpellbook, type KnownSpell } from "../../../src/types/spellbook";
+import {
+  createDefaultCharacter,
+  type CharacterRecord,
+} from "../../../src/types/character";
+import {
+  createDefaultSpellbook,
+  type KnownSpell,
+} from "../../../src/types/spellbook";
 
 /** Minimal store double: one character + the real dot-path set semantics. */
 function fakeStore(character: CharacterRecord) {
@@ -68,7 +74,10 @@ function arcanist7(): CharacterRecord {
   c.classes = [{ className: "Arcanist", level: 7 }];
   c.baseAbilities.int = 18; // +4
   c.spellbook = createDefaultSpellbook("arcanist", "int");
-  c.spellbook.spells = [spell("a1", "Shield", 1), spell("a0", "Detect Magic", 0)];
+  c.spellbook.spells = [
+    spell("a1", "Shield", 1),
+    spell("a0", "Detect Magic", 0),
+  ];
   return c;
 }
 
@@ -110,7 +119,9 @@ describe("prepared caster flows (cleric 5, WIS +3)", () => {
         count: 1,
       },
     ]);
-    expect(c.spellbook!.levels.level2.remaining).toBe(getSpellSlots("cleric", 5, 2, 3) - 1);
+    expect(c.spellbook!.levels.level2.remaining).toBe(
+      getSpellSlots("cleric", 5, 2, 3) - 1,
+    );
     // level 1 slots untouched
     expect(c.spellbook!.levels.level1.remaining).toBeNull();
   });
@@ -175,7 +186,9 @@ describe("hybrid caster flows (arcanist 7, INT +4)", () => {
     expect(c.spellbook!.preparations.level1).toHaveLength(1);
     // ...but the slot burns at final level 2
     expect(c.spellbook!.levels.level1.remaining).toBeNull();
-    expect(c.spellbook!.levels.level2.remaining).toBe(getSpellSlots("arcanist", 7, 2, 0) - 1);
+    expect(c.spellbook!.levels.level2.remaining).toBe(
+      getSpellSlots("arcanist", 7, 2, 0) - 1,
+    );
   });
 
   it("cast burns from the casts pool and keeps the preparation", () => {
@@ -234,9 +247,24 @@ describe("loadouts (schema v14)", () => {
     const c = cleric5();
     const store = fakeStore(c);
     const id = createLoadout(store, c);
-    addSpellToLoadout(store, c, id, { spellId: "c1", level: 1, metamagic: [], count: 1 });
-    addSpellToLoadout(store, c, id, { spellId: "c1", level: 1, metamagic: [], count: 1 });
-    addSpellToLoadout(store, c, id, { spellId: "c0", level: 0, metamagic: [], count: 1 });
+    addSpellToLoadout(store, c, id, {
+      spellId: "c1",
+      level: 1,
+      metamagic: [],
+      count: 1,
+    });
+    addSpellToLoadout(store, c, id, {
+      spellId: "c1",
+      level: 1,
+      metamagic: [],
+      count: 1,
+    });
+    addSpellToLoadout(store, c, id, {
+      spellId: "c0",
+      level: 0,
+      metamagic: [],
+      count: 1,
+    });
     const lo = getLoadouts(c)[0];
     expect(lo.spells).toEqual([
       { spellId: "c1", level: 1, metamagic: [], count: 2 },
@@ -269,7 +297,12 @@ describe("loadouts (schema v14)", () => {
     // pre-existing prep that apply must clear
     prepareSpell(store, c, "c0", 3);
     const id = createLoadout(store, c);
-    addSpellToLoadout(store, c, id, { spellId: "c1", level: 1, metamagic: [], count: 2 });
+    addSpellToLoadout(store, c, id, {
+      spellId: "c1",
+      level: 1,
+      metamagic: [],
+      count: 2,
+    });
     applyLoadout(store, c, id, 3);
     expect(c.spellbook!.preparations.level1).toEqual([
       { spellId: "c1", adjustedLevel: 1, metamagic: [], count: 2 },

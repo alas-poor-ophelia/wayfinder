@@ -37,14 +37,18 @@ export function App({ plugin, store }: AppProps) {
     );
   }
 
-  const master = character.link ? store.getCharacter(character.link.masterId) : null;
+  const master = character.link
+    ? store.getCharacter(character.link.masterId)
+    : null;
   const computed = computeAll(character, master, {
     elephantInTheRoom: eitrEnabled(store.data.value.settings),
   });
 
   // References tab: use Carrel's board when the user opted in AND Carrel is
   // installed; otherwise fall back to the barebones flat list.
-  const carrelApi = data.settings.useCarrelReferences ? getCarrelApi(plugin.app) : null;
+  const carrelApi = data.settings.useCarrelReferences
+    ? getCarrelApi(plugin.app)
+    : null;
 
   return (
     <div class="ms-sheet ms-sheet--with-banner">
@@ -75,7 +79,11 @@ export function App({ plugin, store }: AppProps) {
         ) : active === "skills" ? (
           <SkillsTab computed={computed} />
         ) : active === "adjustments" ? (
-          <AdjustmentsTab store={store} character={character} computed={computed} />
+          <AdjustmentsTab
+            store={store}
+            character={character}
+            computed={computed}
+          />
         ) : active === "rules" ? (
           carrelApi ? (
             <CarrelEmbed api={carrelApi} characterId={character.id} />

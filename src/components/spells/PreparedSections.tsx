@@ -43,14 +43,14 @@ export function PreparedKnownSection({
   const sb = character.spellbook;
   if (!sb) return null;
   const knownSpells = sb.spells.filter(
-    (spell) => spell.known && spell.baseLevel === level
+    (spell) => spell.known && spell.baseLevel === level,
   );
   if (knownSpells.length === 0) return null;
 
   const activeMetamagics =
     sb.levels[getSpellLevelKey(level)]?.activeMetamagics ?? [];
   const adjustedLevel = clampLevel(
-    level + totalMetamagicAdjustment(activeMetamagics)
+    level + totalMetamagicAdjustment(activeMetamagics),
   );
 
   return (
@@ -110,7 +110,7 @@ export function PreparedLevelSection({
   const storageLevel = level - globalAdj;
   const preparations =
     storageLevel >= 0 && storageLevel <= 9
-      ? sb.preparations[getSpellLevelKey(storageLevel)] ?? []
+      ? (sb.preparations[getSpellLevelKey(storageLevel)] ?? [])
       : [];
 
   const levelComputed = computed.levels[level];
@@ -119,11 +119,18 @@ export function PreparedLevelSection({
   const levelState = sb.levels[getSpellLevelKey(level)];
   const hasRemainingSlots = (levelState?.remaining ?? 0) > 0;
   const hasRemainingCasts = (levelState?.castsRemaining ?? 0) > 0;
-  if (preparations.length === 0 && !hasRemainingSlots && !(hybrid && hasRemainingCasts)) {
+  if (
+    preparations.length === 0 &&
+    !hasRemainingSlots &&
+    !(hybrid && hasRemainingCasts)
+  ) {
     return null;
   }
 
-  const totalPrepared = preparations.reduce((sum, p) => sum + (p.count || 1), 0);
+  const totalPrepared = preparations.reduce(
+    (sum, p) => sum + (p.count || 1),
+    0,
+  );
 
   return (
     <CollapseSection
@@ -141,7 +148,8 @@ export function PreparedLevelSection({
                 name: "Per Day",
                 current: levelComputed.remaining,
                 max: levelComputed.maxSlots,
-                set: (value) => setLevelRemaining(store, character, level, value),
+                set: (value) =>
+                  setLevelRemaining(store, character, level, value),
               }}
             />
           )}
@@ -152,7 +160,8 @@ export function PreparedLevelSection({
                 name: "Casts",
                 current: levelComputed.castsRemaining ?? 0,
                 max: levelComputed.arcanistCasts!,
-                set: (value) => setCastsRemaining(store, character, level, value),
+                set: (value) =>
+                  setCastsRemaining(store, character, level, value),
               }}
             />
           )}
@@ -186,11 +195,16 @@ export function PreparedLevelSection({
                 character,
                 clampLevel(storageLevel),
                 prepIndex,
-                computed.castingStatBonus
+                computed.castingStatBonus,
               )
             }
             onRemove={() =>
-              removePreparation(store, character, clampLevel(storageLevel), prepIndex)
+              removePreparation(
+                store,
+                character,
+                clampLevel(storageLevel),
+                prepIndex,
+              )
             }
           />
         );

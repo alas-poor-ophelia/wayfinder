@@ -38,8 +38,18 @@ interface SpellFixtures {
     casterLevel: number;
     castingStatBonus: number;
     slotsByLevel: number[];
-    casterConfig: { type: string; usesSpellbook: boolean; spontaneousCasting: boolean };
-    spells: { name: string; baseLevel: number; dc: number; range: string; saveType: string }[];
+    casterConfig: {
+      type: string;
+      usesSpellbook: boolean;
+      spontaneousCasting: boolean;
+    };
+    spells: {
+      name: string;
+      baseLevel: number;
+      dc: number;
+      range: string;
+      saveType: string;
+    }[];
   };
   slotsMatrix: Record<string, Record<string, number[][]>>;
   arcanistCasts: Record<string, number[][]>;
@@ -52,11 +62,17 @@ interface SpellFixtures {
   metamagicUnknown: number;
   metamagicSubsets: { subset: string[]; total: number }[];
   saveTypes: { input: { saveType?: string; save?: string }; out: string }[];
-  casterConfigs: Record<string, { type: string; usesSpellbook: boolean; spontaneousCasting: boolean }>;
+  casterConfigs: Record<
+    string,
+    { type: string; usesSpellbook: boolean; spontaneousCasting: boolean }
+  >;
 }
 
 const fixtures: SpellFixtures = JSON.parse(
-  readFileSync(fileURLToPath(new URL("../fixtures/spell-fixtures.json", import.meta.url)), "utf-8")
+  readFileSync(
+    fileURLToPath(new URL("../fixtures/spell-fixtures.json", import.meta.url)),
+    "utf-8",
+  ),
 );
 
 describe("getSpellSlots", () => {
@@ -99,7 +115,9 @@ describe("getSpellSlots", () => {
 
   it("throws on unknown classes with the legacy message", () => {
     expect(fixtures.unknownClass.threw).toBe(true);
-    expect(() => getSpellSlots("monk", 5, 1, 0)).toThrow(fixtures.unknownClass.message);
+    expect(() => getSpellSlots("monk", 5, 1, 0)).toThrow(
+      fixtures.unknownClass.message,
+    );
   });
 });
 
@@ -109,14 +127,18 @@ describe("getArcanistCasts", () => {
       const statMod = Number(mod);
       for (let cl = 1; cl <= 20; cl++) {
         for (let L = 0; L <= 9; L++) {
-          expect(getArcanistCasts("arcanist", cl, L, statMod)).toBe(grid[cl - 1][L]);
+          expect(getArcanistCasts("arcanist", cl, L, statMod)).toBe(
+            grid[cl - 1][L],
+          );
         }
       }
     }
   });
 
   it("falls through to getSpellSlots for non-arcanists", () => {
-    expect(getArcanistCasts("wizard", 5, 1, 3)).toBe(getSpellSlots("wizard", 5, 1, 3));
+    expect(getArcanistCasts("wizard", 5, 1, 3)).toBe(
+      getSpellSlots("wizard", 5, 1, 3),
+    );
   });
 });
 
@@ -152,7 +174,9 @@ describe("metamagic", () => {
     // Quicken Spell is now in the catalog (it was absent from the legacy 5)
     expect(getMetamagicLevelAdjustment("Quicken Spell (+4 levels)")).toBe(4);
     // a string not in the catalog falls back to 0
-    expect(getMetamagicLevelAdjustment("Totally Made Up Spell (+9 levels)")).toBe(0);
+    expect(
+      getMetamagicLevelAdjustment("Totally Made Up Spell (+9 levels)"),
+    ).toBe(0);
   });
 
   it("matches all 32 captured subsets", () => {
@@ -192,7 +216,11 @@ describe("computeSpellbook (Adarin live integration)", () => {
     ];
     record.baseAbilities.cha = 20;
     const warnings: string[] = [];
-    const spellbook = importSpellbook(fixtures.adarinSpellbook, record, warnings);
+    const spellbook = importSpellbook(
+      fixtures.adarinSpellbook,
+      record,
+      warnings,
+    );
     return { record, spellbook, warnings };
   }
 
@@ -204,9 +232,13 @@ describe("computeSpellbook (Adarin live integration)", () => {
       mods: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 5 },
     });
     expect(computed.casterLevel).toBe(fixtures.adarinLive.casterLevel);
-    expect(computed.castingStatBonus).toBe(fixtures.adarinLive.castingStatBonus);
+    expect(computed.castingStatBonus).toBe(
+      fixtures.adarinLive.castingStatBonus,
+    );
     expect(computed.paradigm).toBe(fixtures.adarinLive.casterConfig.type);
-    expect(computed.levels.map((l) => l.maxSlots)).toEqual(fixtures.adarinLive.slotsByLevel);
+    expect(computed.levels.map((l) => l.maxSlots)).toEqual(
+      fixtures.adarinLive.slotsByLevel,
+    );
   });
 
   it("renders stored remaining counts, with null meaning never-initialized (= max)", () => {
@@ -245,14 +277,22 @@ describe("computeSpellbook (Adarin live integration)", () => {
 
   it("computes arcanist dual pools (preps ignore stat bonus, casts use it)", () => {
     const { spellbook } = adarinSpellbookState();
-    const arcanist = { ...spellbook, castingClass: "arcanist", castingStat: "int" as const };
+    const arcanist = {
+      ...spellbook,
+      castingClass: "arcanist",
+      castingStat: "int" as const,
+    };
     const computed = computeSpellbook({
       spellbook: arcanist,
       classes: [{ className: "Arcanist", level: 7 }],
       mods: { str: 0, dex: 0, con: 0, int: 4, wis: 0, cha: 0 },
     });
-    expect(computed.levels[1].maxSlots).toBe(getSpellSlots("arcanist", 7, 1, 0));
-    expect(computed.levels[1].arcanistCasts).toBe(getArcanistCasts("arcanist", 7, 1, 4));
+    expect(computed.levels[1].maxSlots).toBe(
+      getSpellSlots("arcanist", 7, 1, 0),
+    );
+    expect(computed.levels[1].arcanistCasts).toBe(
+      getArcanistCasts("arcanist", 7, 1, 4),
+    );
   });
 
   it("slotOverrides replace computed maxima (slot-only books, schema v5)", () => {

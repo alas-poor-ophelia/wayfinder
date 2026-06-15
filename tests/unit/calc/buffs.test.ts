@@ -66,7 +66,9 @@ describe("RAW deltas from legacy (documented changes)", () => {
   it("bless: +1 morale attack; saves UNCHANGED (legacy: +1 all saves, always)", () => {
     const c = computeAll(makeChar(["bless"]));
     expect(c.saves).toEqual(bare.saves); // DELTA: legacy added +1 fort/ref/will
-    expect(c.modifierReport?.conditional.some((n) => n.includes("vs fear"))).toBe(true);
+    expect(
+      c.modifierReport?.conditional.some((n) => n.includes("vs fear")),
+    ).toBe(true);
     // attack +1 shows in the melee string
     expect(c.attacks.melee).not.toEqual(bare.attacks.melee);
   });
@@ -78,7 +80,7 @@ describe("RAW deltas from legacy (documented changes)", () => {
     baseline.enhancements.meleeWeapon = 1;
     // DELTA: legacy produced +2 (1 + 1); RAW enhancement suppresses to +1
     expect(computeAll(withConfig).attacks.melee).toEqual(
-      computeAll(baseline).attacks.melee
+      computeAll(baseline).attacks.melee,
     );
   });
 
@@ -96,7 +98,9 @@ describe("RAW deltas from legacy (documented changes)", () => {
       note: null,
       charges: null,
       equipped: true,
-      modifiers: [{ target: "ac.all", type: "armor", value: 4, source: "Chain Shirt" }],
+      modifiers: [
+        { target: "ac.all", type: "armor", value: 4, source: "Chain Shirt" },
+      ],
     });
     const computed = computeAll(c);
     // DELTA: legacy stacked to +8; same-type armor bonuses suppress to +4
@@ -120,14 +124,23 @@ describe("custom buffs", () => {
       {
         id: "warchant",
         name: "War Chant",
-        modifiers: [{ target: "attack.all", type: "morale", value: 2, source: "War Chant" }],
+        modifiers: [
+          {
+            target: "attack.all",
+            type: "morale",
+            value: 2,
+            source: "War Chant",
+          },
+        ],
       },
     ];
     const blessOnly = computeAll(makeChar(["bless"]));
     const both = computeAll(c);
     // morale 2 beats bless's morale 1 — net +1 over bless alone
     expect(both.attacks.melee).not.toEqual(blessOnly.attacks.melee);
-    expect(both.modifierReport?.suppressed.some((n) => n.includes("Bless"))).toBe(true);
+    expect(
+      both.modifierReport?.suppressed.some((n) => n.includes("Bless")),
+    ).toBe(true);
   });
 
   it("unknown buff keys are ignored (legacy behavior preserved)", () => {

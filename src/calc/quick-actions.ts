@@ -47,7 +47,11 @@ export interface ResolvedQuickActions {
   versatilePerformance: boolean;
   /** flurry replaces the base attack with `attacks` swings at full bonus */
   flurry: { active: boolean; attacks: number } | null;
-  smiteOverride: { atkBonus: number; dmgBonus: number; description: string } | null;
+  smiteOverride: {
+    atkBonus: number;
+    dmgBonus: number;
+    description: string;
+  } | null;
   preciseStrikeOverride: number | null;
   /** joined dice riders per weapon bucket (legacy dmgExtra slot) */
   extraDamageDice: { melee: string; ranged: string; unarmed: string };
@@ -66,7 +70,10 @@ function classLevel(classes: ClassEntry[], match: string): number {
 }
 
 /** flatBonus + multiplier * floor(base / divisor) — multiplier POST-floor. */
-export function evaluateQAValue(value: QAValue, ctx: QuickActionContext): number {
+export function evaluateQAValue(
+  value: QAValue,
+  ctx: QuickActionContext,
+): number {
   if (typeof value === "number") return value;
   let base = 0;
   switch (value.source) {
@@ -95,7 +102,7 @@ export function evaluateQAValue(value: QAValue, ctx: QuickActionContext): number
 /** The effects active for one action given its state (stage + variant). */
 export function activeEffects(
   def: QuickActionDef,
-  state: { stage: number; variantId?: string } | undefined
+  state: { stage: number; variantId?: string } | undefined,
 ): QuickActionEffect[] {
   if (!state || state.stage <= 0 || def.stages.length === 0) return [];
   // defs can be edited while active — clamp a stale stage to the last one
@@ -106,7 +113,9 @@ export function activeEffects(
 
 function gateOpen(def: QuickActionDef, ctx: QuickActionContext): boolean {
   if (def.requires) {
-    if (classLevel(ctx.classes, def.requires.className) < def.requires.minLevel) {
+    if (
+      classLevel(ctx.classes, def.requires.className) < def.requires.minLevel
+    ) {
       return false;
     }
   }
@@ -122,7 +131,7 @@ const DICE_BUCKETS = ["melee", "ranged", "unarmed"] as const;
 export function resolveQuickActions(
   defs: QuickActionDef[],
   state: QuickActionStateMap,
-  ctx: QuickActionContext
+  ctx: QuickActionContext,
 ): ResolvedQuickActions {
   const out: ResolvedQuickActions = {
     modifiers: [],
@@ -139,7 +148,11 @@ export function resolveQuickActions(
     attackNoteLines: [],
     sheetNotes: [],
   };
-  const dice = { melee: [] as string[], ranged: [] as string[], unarmed: [] as string[] };
+  const dice = {
+    melee: [] as string[],
+    ranged: [] as string[],
+    unarmed: [] as string[],
+  };
 
   for (const def of defs) {
     const effects = activeEffects(def, state[def.id]);
@@ -167,7 +180,8 @@ export function resolveQuickActions(
           break;
         case "extraAttacks": {
           const count = evaluateQAValue(effect.count, ctx);
-          for (let i = 0; i < count; i++) out.extraAttacks.push(effect.penalty ?? 0);
+          for (let i = 0; i < count; i++)
+            out.extraAttacks.push(effect.penalty ?? 0);
           break;
         }
         case "damageDice":
@@ -185,7 +199,8 @@ export function resolveQuickActions(
           }
           break;
         case "note":
-          if (effect.placement === "attack") out.attackNoteLines.push(effect.text);
+          if (effect.placement === "attack")
+            out.attackNoteLines.push(effect.text);
           else out.sheetNotes.push(effect.text);
           break;
         case "smite":
@@ -197,15 +212,20 @@ export function resolveQuickActions(
           break;
         case "preciseStrike":
           out.preciseStrikeOverride =
-            (out.preciseStrikeOverride ?? 0) + evaluateQAValue(effect.damage, ctx);
+            (out.preciseStrikeOverride ?? 0) +
+            evaluateQAValue(effect.damage, ctx);
           break;
         case "flurryAttacks":
-          out.flurry = { active: true, attacks: evaluateQAValue(effect.count, ctx) };
+          out.flurry = {
+            active: true,
+            attacks: evaluateQAValue(effect.count, ctx),
+          };
           break;
         case "special":
           if (effect.op === "agileWeapon") out.agileWeapon = true;
           else if (effect.op === "weaponFinesse") out.weaponFinesse = true;
-          else if (effect.op === "versatilePerformance") out.versatilePerformance = true;
+          else if (effect.op === "versatilePerformance")
+            out.versatilePerformance = true;
           break;
       }
     }

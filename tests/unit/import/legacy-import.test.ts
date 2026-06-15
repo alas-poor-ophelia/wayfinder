@@ -26,7 +26,7 @@ describe("importLegacy(Adarin) -> computeAll", () => {
   it("warns about the class-level drift between notes", () => {
     expect(
       adarin.warnings.some((w) => w.includes("paladinLevel")),
-      adarin.warnings.join("; ")
+      adarin.warnings.join("; "),
     ).toBe(true);
   });
 
@@ -44,7 +44,9 @@ describe("importLegacy(Adarin) -> computeAll", () => {
 
   it("BAB and level match the config note (drift-corrected source)", () => {
     expect(computed.bab).toBe(fixtures.frontmatter.adarinConfig.adarinBab);
-    expect(computed.totalLevel).toBe(fixtures.frontmatter.adarinConfig.totalLevel);
+    expect(computed.totalLevel).toBe(
+      fixtures.frontmatter.adarinConfig.totalLevel,
+    );
   });
 
   it("AC matches the live capture", () => {
@@ -73,14 +75,15 @@ describe("importLegacy(Adarin) -> computeAll", () => {
       ...(fixtures.attacksLive.input as never as Record<string, unknown>),
       paladinLevel: 5,
       // panache is a resources[] pool since schema v4
-      panachePoints: adarin.record.resources.find((r) => r.id === "panache")!.current,
+      panachePoints: adarin.record.resources.find((r) => r.id === "panache")!
+        .current,
     } as never);
     expect(computed.attacks).toEqual(expected);
   });
 
   it("skill totals match the old sheet's displayed values", () => {
     for (const [name, total] of Object.entries(
-      fixtures.skillsFixture.expectedTotals as Record<string, number>
+      fixtures.skillsFixture.expectedTotals as Record<string, number>,
     )) {
       const row = computed.skills.find((r) => r.name === name);
       expect(row, `missing skill ${name}`).toBeDefined();
@@ -100,8 +103,12 @@ describe("importLegacy(Adarin) -> computeAll", () => {
     expect(ids).toContain("smiteEvil");
     expect(ids).toContain("weaponSongRounds");
     // item-granted pools carry kind for the Items tab
-    expect(adarin.record.resources.find((r) => r.id === "plumeOfPanache")?.kind).toBe("item");
-    expect(adarin.record.resources.find((r) => r.id === "quickrunners")?.kind).toBe("item");
+    expect(
+      adarin.record.resources.find((r) => r.id === "plumeOfPanache")?.kind,
+    ).toBe("item");
+    expect(
+      adarin.record.resources.find((r) => r.id === "quickrunners")?.kind,
+    ).toBe("item");
   });
 
   it("imports identity and misc fields", () => {

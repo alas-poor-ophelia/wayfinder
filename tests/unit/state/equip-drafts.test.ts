@@ -82,13 +82,15 @@ describe("inventory drafts", () => {
   });
 
   it("ammunition and no-damage entries get no attack stats", () => {
-    expect(weaponStatsFor({ ...longbow, category: "ammunition" })).toBeUndefined();
+    expect(
+      weaponStatsFor({ ...longbow, category: "ammunition" }),
+    ).toBeUndefined();
     expect(weaponStatsFor({ ...longsword, dmgM: "" })).toBeUndefined();
   });
 
   it("crit fields default for no-crit weapons", () => {
     expect(
-      weaponStatsFor({ ...longsword, critRange: "", critMult: "" })
+      weaponStatsFor({ ...longsword, critRange: "", critMult: "" }),
     ).toMatchObject({ critRange: "20", critMult: "2" });
   });
 
@@ -123,7 +125,11 @@ describe("inventory drafts", () => {
     // melee monk weapons (kama) get no ranged flurry flag, but a light
     // weapon IS finesse-able, so it stamps finesse
     expect(
-      weaponStatsFor({ ...longsword, special: ["monk", "trip"], category: "light" })
+      weaponStatsFor({
+        ...longsword,
+        special: ["monk", "trip"],
+        category: "light",
+      }),
     ).toEqual({
       kind: "melee",
       damageDie: "1d8",
@@ -153,7 +159,12 @@ describe("inventory drafts", () => {
       source: "Core",
       shortDesc: "",
       modifiers: [
-        { target: "ability.str", type: "enhancement", value: 2, source: "Belt" },
+        {
+          target: "ability.str",
+          type: "enhancement",
+          value: 2,
+          source: "Belt",
+        },
       ],
     };
     expect(magicDraft(belt).modifiers).toHaveLength(1);
@@ -209,6 +220,8 @@ describe("inventory drafts", () => {
     // no base resolved (stale baseId) → no stats, still a valid item
     expect(customDraft(forged).weapon).toBeUndefined();
     // armor customs never get attack stats even when a base is passed
-    expect(customDraft({ ...forged, kind: "armor" }, longsword).weapon).toBeUndefined();
+    expect(
+      customDraft({ ...forged, kind: "armor" }, longsword).weapon,
+    ).toBeUndefined();
   });
 });

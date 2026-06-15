@@ -57,7 +57,7 @@ export function loadLevel(carried: number, cap: CarryingCapacity): LoadLevel {
 
 export function computeEncumbrance(
   str: number,
-  carried: number
+  carried: number,
 ): EncumbranceComputed {
   const capacity = carryingCapacity(str);
   return { capacity, carried, level: loadLevel(carried, capacity) };

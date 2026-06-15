@@ -8,7 +8,11 @@
 
 import { seedQuickActionsFromToggles } from "../data/quick-actions";
 import { getRaceData } from "../data/races";
-import { defaultToggles, type CharacterRecord, type ResourcePool } from "../types/character";
+import {
+  defaultToggles,
+  type CharacterRecord,
+  type ResourcePool,
+} from "../types/character";
 import type { QuickActionEffect } from "../types/quick-actions";
 import type { MiniSheetData } from "../types/data-file";
 import {
@@ -25,7 +29,9 @@ const LEGACY_ITEM_POOL_IDS = new Set([
   "avengingBracers",
 ]);
 
-export function migrateData(raw: Partial<MiniSheetData>): Partial<MiniSheetData> {
+export function migrateData(
+  raw: Partial<MiniSheetData>,
+): Partial<MiniSheetData> {
   const version = typeof raw.schemaVersion === "number" ? raw.schemaVersion : 0;
   let data = raw;
   if (version < 4) data = migrateToV4(data);
@@ -85,14 +91,14 @@ function migrateCharacterToV4(record: CharacterRecord): CharacterRecord {
   let resources: ResourcePool[] = (next.resources ?? []).map((pool) =>
     LEGACY_ITEM_POOL_IDS.has(pool.id) && !pool.kind
       ? { ...pool, kind: "item" as const }
-      : pool
+      : pool,
   );
 
   const panache = next.panache;
   const hasPanachePool = resources.some((r) => r.id === "panache");
   if (panache && (panache.max > 0 || panache.current > 0) && !hasPanachePool) {
     const isSwashbuckler = (next.classes ?? []).some(
-      (c) => c.className.toLowerCase().includes("swashbuckler") && c.level > 0
+      (c) => c.className.toLowerCase().includes("swashbuckler") && c.level > 0,
     );
     resources = [
       {
@@ -103,7 +109,13 @@ function migrateCharacterToV4(record: CharacterRecord): CharacterRecord {
         footer: "points",
         // matches the Swashbuckler classResource def (Cha mod, min 1)
         ...(isSwashbuckler
-          ? { formula: { source: "abilityMod" as const, ability: "cha" as const, minimum: 1 } }
+          ? {
+              formula: {
+                source: "abilityMod" as const,
+                ability: "cha" as const,
+                minimum: 1,
+              },
+            }
           : {}),
       },
       // panache rendered first in the legacy crease; keep that order
@@ -130,7 +142,9 @@ function migrateToV5(raw: Partial<MiniSheetData>): Partial<MiniSheetData> {
 const SPELL_SLOT_POOL = /^spellSlotsL(\d)$/;
 
 function migrateCharacterToV5(record: CharacterRecord): CharacterRecord {
-  const slotPools = (record.resources ?? []).filter((r) => SPELL_SLOT_POOL.test(r.id));
+  const slotPools = (record.resources ?? []).filter((r) =>
+    SPELL_SLOT_POOL.test(r.id),
+  );
   if (slotPools.length === 0) return record;
 
   const resources = record.resources.filter((r) => !SPELL_SLOT_POOL.test(r.id));
@@ -209,11 +223,21 @@ function migrateCharacterToV7(record: CharacterRecord): CharacterRecord {
         ? {
             ...variant,
             effects: [
-              { kind: "modifier", target: "attack.melee", type: "enhancement", value: 1 },
-              { kind: "modifier", target: "attack.ranged", type: "enhancement", value: 1 },
+              {
+                kind: "modifier",
+                target: "attack.melee",
+                type: "enhancement",
+                value: 1,
+              },
+              {
+                kind: "modifier",
+                target: "attack.ranged",
+                type: "enhancement",
+                value: 1,
+              },
             ] satisfies QuickActionEffect[],
           }
-        : variant
+        : variant,
     );
     return { ...def, variants };
   });
@@ -238,7 +262,7 @@ function migrateCharacterToV9(record: CharacterRecord): CharacterRecord {
   const classes = record.classes.map((entry) =>
     /\bmonk\b/i.test(entry.className) && entry.level > 0 && !entry.archetypeKeys
       ? { ...entry, archetypeKeys: ["scaled-fist"] }
-      : entry
+      : entry,
   );
   return { ...record, classes };
 }
@@ -261,13 +285,15 @@ function migrateToV10(raw: Partial<MiniSheetData>): Partial<MiniSheetData> {
 function migrateCharacterToV10(record: CharacterRecord): CharacterRecord {
   if (!record.classes?.length) return record;
   const hasWeaponSongPool = record.resources?.some(
-    (r) => r.id === "weaponSongRounds"
+    (r) => r.id === "weaponSongRounds",
   );
   if (!hasWeaponSongPool) return record;
   const classes = record.classes.map((entry) =>
-    /\bskald\b/i.test(entry.className) && entry.level > 0 && !entry.archetypeKeys
+    /\bskald\b/i.test(entry.className) &&
+    entry.level > 0 &&
+    !entry.archetypeKeys
       ? { ...entry, archetypeKeys: ["spell-warrior"] }
-      : entry
+      : entry,
   );
   return { ...record, classes };
 }

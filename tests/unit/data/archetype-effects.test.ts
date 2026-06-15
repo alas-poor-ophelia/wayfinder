@@ -34,9 +34,20 @@ describe("resolveArchetypeEffects", () => {
     expect(fx.divineGraceMinLevel).toBe(Number.POSITIVE_INFINITY);
     // Defensive Stance prose (hand-authored): no spellcasting
     expect(fx.removedSpellcastingClassKeys.has("Paladin")).toBe(true);
-    const stonestrike = fx.addedResources.find((r) => r.def.id === "stonestrike");
+    const stonestrike = fx.addedResources.find(
+      (r) => r.def.id === "stonestrike",
+    );
     expect(stonestrike).toBeDefined();
-    expect(stonestrike!.def.max(7, { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 })).toBe(7);
+    expect(
+      stonestrike!.def.max(7, {
+        str: 0,
+        dex: 0,
+        con: 0,
+        int: 0,
+        wis: 0,
+        cha: 0,
+      }),
+    ).toBe(7);
     expect(stonestrike!.label).toBe("Paladin (Stonelord)");
   });
 
@@ -51,21 +62,29 @@ describe("resolveArchetypeEffects", () => {
     expect(fx.suppressedQuickActions[0].has("smiteEvil")).toBe(false);
     expect(fx.divineGraceMinLevel).toBe(Number.POSITIVE_INFINITY);
     expect(fx.removedSpellcastingClassKeys.size).toBe(0);
-    expect([...fx.classSkillAdds].sort()).toEqual(["Bluff", "Disguise", "Intimidate"]);
+    expect([...fx.classSkillAdds].sort()).toEqual([
+      "Bluff",
+      "Disguise",
+      "Intimidate",
+    ]);
   });
 
   it("chosen-one: divine grace delayed to 4, not removed", () => {
     const fx = resolveArchetypeEffects([pal(3, "chosen-one")]);
     expect(fx.divineGraceMinLevel).toBe(4);
     expect(fx.suppressedResources[0].has("smiteEvil")).toBe(true);
-    expect(fx.addedResources.find((r) => r.def.id === "smiteEvil")?.def.minLevel).toBe(2);
+    expect(
+      fx.addedResources.find((r) => r.def.id === "smiteEvil")?.def.minLevel,
+    ).toBe(2);
   });
 
   it("virtuous-bravo: bravo AC, panache+preciseStrike, spellcasting traded via graph", () => {
     const fx = resolveArchetypeEffects([pal(7, "virtuous-bravo")]);
     expect(fx.grantsBravoAC).toBe(true);
     expect(fx.removedSpellcastingClassKeys.has("Paladin")).toBe(true);
-    expect(fx.addedResources.find((r) => r.def.id === "panache")?.def.minLevel).toBe(4);
+    expect(
+      fx.addedResources.find((r) => r.def.id === "panache")?.def.minLevel,
+    ).toBe(4);
     expect(fx.addedQuickActions).toContainEqual({
       id: "preciseStrike",
       minLevel: 4,
@@ -79,11 +98,15 @@ describe("resolveArchetypeEffects", () => {
     expect(fx.suppressedResources[0].has("layOnHands")).toBe(true);
     const loh = fx.addedResources.find((r) => r.def.id === "layOnHands");
     // level 8, cha +3: base floor(8/2)+3 = 7, plus 1 + floor((8-4)/4) = 2 → 9
-    expect(loh!.def.max(8, { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 3 })).toBe(9);
+    expect(
+      loh!.def.max(8, { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 3 }),
+    ).toBe(9);
   });
 
   it("multiple archetypes on one class union their effects", () => {
-    const fx = resolveArchetypeEffects([pal(7, "warrior-of-the-holy-light", "chosen-one")]);
+    const fx = resolveArchetypeEffects([
+      pal(7, "warrior-of-the-holy-light", "chosen-one"),
+    ]);
     expect(fx.suppressedResources[0].has("layOnHands")).toBe(true);
     expect(fx.suppressedResources[0].has("smiteEvil")).toBe(true);
     expect(fx.divineGraceMinLevel).toBe(4);
@@ -241,7 +264,7 @@ describe("catalog surface", () => {
       "warrior-of-the-holy-light",
     ]) {
       expect(isPartialMechanics(id, "Paladin"), `${id} should be full`).toBe(
-        false
+        false,
       );
     }
     expect(isPartialMechanics("hospitaler", "Paladin")).toBe(true);

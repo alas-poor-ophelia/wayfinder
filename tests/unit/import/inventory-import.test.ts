@@ -75,7 +75,9 @@ describe("importLegacyInventory", () => {
   it("keeps owner only for party scope", () => {
     const party = importLegacyInventory(legacyFrontmatter, { scope: "party" });
     expect(party.inventory.items[2].owner).toBe("Adarin");
-    const char = importLegacyInventory(legacyFrontmatter, { scope: "character" });
+    const char = importLegacyInventory(legacyFrontmatter, {
+      scope: "character",
+    });
     expect("owner" in char.inventory.items[2]).toBe(false);
   });
 
@@ -94,7 +96,7 @@ describe("importLegacyInventory", () => {
           },
         ],
       },
-      { scope: "character" }
+      { scope: "character" },
     );
     expect(inventory.items[0].containerId).toBeNull();
     expect(warnings.some((w) => /moved to top level/.test(w))).toBe(true);
@@ -103,10 +105,12 @@ describe("importLegacyInventory", () => {
   it("warns loudly on an empty source (H-546 guard)", () => {
     const { inventory, warnings } = importLegacyInventory(
       { inventory: [], currency: {} },
-      { scope: "party" }
+      { scope: "party" },
     );
     expect(inventory.items).toHaveLength(0);
-    expect(warnings[0]).toMatch(/verify it is the note the legacy inventory UI binds/);
+    expect(warnings[0]).toMatch(
+      /verify it is the note the legacy inventory UI binds/,
+    );
   });
 
   it("generates ids, normalizes unknown types, truncates notes", () => {
@@ -124,7 +128,7 @@ describe("importLegacyInventory", () => {
         ],
         currency: { gold: 1 },
       },
-      { scope: "character" }
+      { scope: "character" },
     );
     const item = inventory.items[0];
     expect(item.id).toMatch(/^item_/);

@@ -27,7 +27,8 @@ export function SpellLink({
 }) {
   const indexed = plugin.spellIndex?.byName.get(name.toLowerCase());
   const path =
-    indexed?.path ?? `${plugin.store.data.value.settings.spellsFolder}/${name}.md`;
+    indexed?.path ??
+    `${plugin.store.data.value.settings.spellsFolder}/${name}.md`;
   return (
     <a
       class={`internal-link spell-link ${cls}`.trim()}
@@ -70,7 +71,9 @@ export function SpellInfoRow({
   const segments: string[] = [];
   const saveType = getSpellSaveType(spell);
   if (saveType) {
-    segments.push(`DC: ${calculateSpellDC(adjustedLevel, castingStatBonus)} ${saveType}`);
+    segments.push(
+      `DC: ${calculateSpellDC(adjustedLevel, castingStatBonus)} ${saveType}`,
+    );
   } else if (spell.saveType && spell.saveType.toLowerCase() === "none") {
     segments.push("No save");
   }
@@ -119,9 +122,16 @@ export function SpontaneousSpellRow({
         />
         <div class="ms-spell__name">
           <span class="spell-name-display">
-            <SpellLink plugin={plugin} name={spell.name} cls="spell-base-name" />
+            <SpellLink
+              plugin={plugin}
+              name={spell.name}
+              cls="spell-base-name"
+            />
             {globalMetamagics.length > 0 && (
-              <span class="ms-spell__metamagic"> ({metamagicNames(globalMetamagics)})</span>
+              <span class="ms-spell__metamagic">
+                {" "}
+                ({metamagicNames(globalMetamagics)})
+              </span>
             )}
           </span>
           <SpellInfoRow

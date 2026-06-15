@@ -39,7 +39,7 @@ function requireSpellbook(character: CharacterRecord) {
 export function maxSlotsFor(
   character: CharacterRecord,
   level: SpellLevel,
-  castingStatBonus: number
+  castingStatBonus: number,
 ): number {
   const sb = requireSpellbook(character);
   // manual override (schema v5) replaces the computed table max
@@ -48,7 +48,7 @@ export function maxSlotsFor(
   if (!isValidCasterClass(sb.castingClass)) return 0;
   const casterLevel = Math.min(
     Math.max(resolveCasterLevel(sb, character.classes), 1),
-    20
+    20,
   );
   // legacy arcanist workaround: preparation slots ignore the stat bonus
   const statMod = sb.castingClass === "arcanist" ? 0 : castingStatBonus;
@@ -60,7 +60,7 @@ export function castSpontaneous(
   store: MiniSheetStore,
   character: CharacterRecord,
   level: SpellLevel,
-  castingStatBonus: number
+  castingStatBonus: number,
 ): void {
   const sb = requireSpellbook(character);
   const key = getSpellLevelKey(level);
@@ -69,7 +69,7 @@ export function castSpontaneous(
   store.setCharacterField(
     character.id,
     `spellbook.levels.${key}.remaining`,
-    Math.max(0, current - 1)
+    Math.max(0, current - 1),
   );
 }
 
@@ -77,13 +77,13 @@ export function setLevelRemaining(
   store: MiniSheetStore,
   character: CharacterRecord,
   level: SpellLevel,
-  value: number
+  value: number,
 ): void {
   requireSpellbook(character);
   store.setCharacterField(
     character.id,
     `spellbook.levels.${getSpellLevelKey(level)}.remaining`,
-    Math.max(0, value)
+    Math.max(0, value),
   );
 }
 
@@ -91,7 +91,7 @@ export function setLevelRemaining(
 export function castSla(
   store: MiniSheetStore,
   character: CharacterRecord,
-  slaIndex: number
+  slaIndex: number,
 ): void {
   const sb = requireSpellbook(character);
   const entry = sb.slas[slaIndex];
@@ -99,7 +99,7 @@ export function castSla(
   store.setCharacterField(
     character.id,
     `spellbook.slas.${slaIndex}.castsRemaining`,
-    Math.max(0, entry.castsRemaining - 1)
+    Math.max(0, entry.castsRemaining - 1),
   );
 }
 
@@ -107,7 +107,7 @@ export function setSlaRemaining(
   store: MiniSheetStore,
   character: CharacterRecord,
   slaIndex: number,
-  value: number
+  value: number,
 ): void {
   const sb = requireSpellbook(character);
   const entry = sb.slas[slaIndex];
@@ -115,23 +115,27 @@ export function setSlaRemaining(
   store.setCharacterField(
     character.id,
     `spellbook.slas.${slaIndex}.castsRemaining`,
-    Math.min(Math.max(0, value), entry.casts)
+    Math.min(Math.max(0, value), entry.casts),
   );
 }
 
 export function setGlobalMetamagicSelected(
   store: MiniSheetStore,
   character: CharacterRecord,
-  value: string
+  value: string,
 ): void {
   requireSpellbook(character);
-  store.setCharacterField(character.id, "spellbook.globalMetamagic.selected", value);
+  store.setCharacterField(
+    character.id,
+    "spellbook.globalMetamagic.selected",
+    value,
+  );
 }
 
 /** Legacy "+" button: append the selected metamagic if new and non-empty. */
 export function addGlobalMetamagic(
   store: MiniSheetStore,
-  character: CharacterRecord
+  character: CharacterRecord,
 ): void {
   const sb = requireSpellbook(character);
   const selected = sb.globalMetamagic.selected;
@@ -145,13 +149,13 @@ export function addGlobalMetamagic(
 export function removeGlobalMetamagic(
   store: MiniSheetStore,
   character: CharacterRecord,
-  index: number
+  index: number,
 ): void {
   const sb = requireSpellbook(character);
   store.setCharacterField(
     character.id,
     "spellbook.globalMetamagic.active",
-    sb.globalMetamagic.active.filter((_, i) => i !== index)
+    sb.globalMetamagic.active.filter((_, i) => i !== index),
   );
 }
 
@@ -169,13 +173,13 @@ export function setSectionCollapsed(
   store: MiniSheetStore,
   character: CharacterRecord,
   key: string,
-  collapsed: boolean
+  collapsed: boolean,
 ): void {
   requireSpellbook(character);
   store.setCharacterField(
     character.id,
     `spellbook.sectionCollapsed.${key}`,
-    collapsed
+    collapsed,
   );
 }
 
@@ -187,15 +191,20 @@ function clampLevel(level: number): SpellLevel {
 export function maxCastsFor(
   character: CharacterRecord,
   level: SpellLevel,
-  castingStatBonus: number
+  castingStatBonus: number,
 ): number {
   const sb = requireSpellbook(character);
   if (!isValidCasterClass(sb.castingClass)) return 0;
   const casterLevel = Math.min(
     Math.max(resolveCasterLevel(sb, character.classes), 1),
-    20
+    20,
   );
-  return getArcanistCasts(sb.castingClass, casterLevel, level, castingStatBonus);
+  return getArcanistCasts(
+    sb.castingClass,
+    casterLevel,
+    level,
+    castingStatBonus,
+  );
 }
 
 /**
@@ -212,7 +221,7 @@ export function prepareSpell(
   store: MiniSheetStore,
   character: CharacterRecord,
   spellId: string,
-  castingStatBonus: number
+  castingStatBonus: number,
 ): void {
   const sb = requireSpellbook(character);
   const spell = sb.spells.find((s) => s.id === spellId);
@@ -221,7 +230,7 @@ export function prepareSpell(
   const levelMetamagics =
     sb.levels[getSpellLevelKey(spell.baseLevel)]?.activeMetamagics ?? [];
   const adjustedLevel = clampLevel(
-    spell.baseLevel + totalMetamagicAdjustment(levelMetamagics)
+    spell.baseLevel + totalMetamagicAdjustment(levelMetamagics),
   );
   const storageKey = getSpellLevelKey(adjustedLevel);
   const preps = sb.preparations[storageKey] ?? [];
@@ -233,7 +242,7 @@ export function prepareSpell(
     const exists = preps.some(
       (p) =>
         p.spellId === spellId &&
-        JSON.stringify([...p.metamagic].sort()) === sortedMeta
+        JSON.stringify([...p.metamagic].sort()) === sortedMeta,
     );
     if (exists) return; // hybrid preparations are unique
     nextPreps = [
@@ -241,15 +250,17 @@ export function prepareSpell(
       { spellId, adjustedLevel, metamagic: levelMetamagics, count: 1 },
     ];
     const nonDupGlobals = sb.globalMetamagic.active.filter(
-      (g) => !levelMetamagics.includes(g)
+      (g) => !levelMetamagics.includes(g),
     );
-    slotLevel = clampLevel(adjustedLevel + totalMetamagicAdjustment(nonDupGlobals));
+    slotLevel = clampLevel(
+      adjustedLevel + totalMetamagicAdjustment(nonDupGlobals),
+    );
   } else {
     const idx = preps.findIndex(
       (p) =>
         p.spellId === spellId &&
         p.adjustedLevel === adjustedLevel &&
-        JSON.stringify([...p.metamagic].sort()) === sortedMeta
+        JSON.stringify([...p.metamagic].sort()) === sortedMeta,
     );
     if (idx >= 0) {
       nextPreps = [...preps];
@@ -285,7 +296,7 @@ export function castPrepared(
   character: CharacterRecord,
   storageLevel: SpellLevel,
   prepIndex: number,
-  castingStatBonus: number
+  castingStatBonus: number,
 ): void {
   const sb = requireSpellbook(character);
   const paradigm = getCasterConfig(sb.castingClass).type;
@@ -296,10 +307,10 @@ export function castPrepared(
 
   if (paradigm === "hybrid") {
     const nonDupGlobals = sb.globalMetamagic.active.filter(
-      (g) => !prep.metamagic.includes(g)
+      (g) => !prep.metamagic.includes(g),
     );
     const displayLevel = clampLevel(
-      storageLevel + totalMetamagicAdjustment(nonDupGlobals)
+      storageLevel + totalMetamagicAdjustment(nonDupGlobals),
     );
     if (displayLevel === 0) return; // legacy: cantrip cast is a no-op
     const key = getSpellLevelKey(displayLevel);
@@ -311,7 +322,7 @@ export function castPrepared(
     store.setCharacterField(
       character.id,
       `spellbook.levels.${key}.castsRemaining`,
-      Math.max(0, current - 1)
+      Math.max(0, current - 1),
     );
     return;
   }
@@ -325,7 +336,7 @@ export function castPrepared(
   store.setCharacterField(
     character.id,
     `spellbook.preparations.${storageKey}`,
-    nextPreps
+    nextPreps,
   );
 }
 
@@ -334,7 +345,7 @@ export function removePreparation(
   store: MiniSheetStore,
   character: CharacterRecord,
   storageLevel: SpellLevel,
-  prepIndex: number
+  prepIndex: number,
 ): void {
   const sb = requireSpellbook(character);
   const storageKey = getSpellLevelKey(storageLevel);
@@ -344,7 +355,7 @@ export function removePreparation(
   store.setCharacterField(
     character.id,
     `spellbook.preparations.${storageKey}`,
-    preps
+    preps,
   );
 }
 
@@ -352,13 +363,13 @@ export function setCastsRemaining(
   store: MiniSheetStore,
   character: CharacterRecord,
   level: SpellLevel,
-  value: number
+  value: number,
 ): void {
   requireSpellbook(character);
   store.setCharacterField(
     character.id,
     `spellbook.levels.${getSpellLevelKey(level)}.castsRemaining`,
-    Math.max(0, value)
+    Math.max(0, value),
   );
 }
 
@@ -368,20 +379,20 @@ export function setLevelMetamagicSelected(
   store: MiniSheetStore,
   character: CharacterRecord,
   level: SpellLevel,
-  value: string
+  value: string,
 ): void {
   requireSpellbook(character);
   store.setCharacterField(
     character.id,
     `spellbook.levels.${getSpellLevelKey(level)}.selectedMetamagic`,
-    value
+    value,
   );
 }
 
 export function addLevelMetamagic(
   store: MiniSheetStore,
   character: CharacterRecord,
-  level: SpellLevel
+  level: SpellLevel,
 ): void {
   const sb = requireSpellbook(character);
   const state = sb.levels[getSpellLevelKey(level)];
@@ -391,7 +402,7 @@ export function addLevelMetamagic(
   store.setCharacterField(
     character.id,
     `spellbook.levels.${getSpellLevelKey(level)}.activeMetamagics`,
-    [...state.activeMetamagics, selected]
+    [...state.activeMetamagics, selected],
   );
 }
 
@@ -399,7 +410,7 @@ export function removeLevelMetamagic(
   store: MiniSheetStore,
   character: CharacterRecord,
   level: SpellLevel,
-  index: number
+  index: number,
 ): void {
   const sb = requireSpellbook(character);
   const state = sb.levels[getSpellLevelKey(level)];
@@ -407,7 +418,7 @@ export function removeLevelMetamagic(
   store.setCharacterField(
     character.id,
     `spellbook.levels.${getSpellLevelKey(level)}.activeMetamagics`,
-    state.activeMetamagics.filter((_, i) => i !== index)
+    state.activeMetamagics.filter((_, i) => i !== index),
   );
 }
 
@@ -415,14 +426,14 @@ export function removeLevelMetamagic(
 export function toggleMetamagicFeat(
   store: MiniSheetStore,
   character: CharacterRecord,
-  feat: string
+  feat: string,
 ): void {
   const sb = requireSpellbook(character);
   const feats = sb.metamagicFeats ?? [];
   store.setCharacterField(
     character.id,
     "spellbook.metamagicFeats",
-    feats.includes(feat) ? feats.filter((f) => f !== feat) : [...feats, feat]
+    feats.includes(feat) ? feats.filter((f) => f !== feat) : [...feats, feat],
   );
 }
 
@@ -431,20 +442,20 @@ export function toggleMetamagicFeat(
 export function setCastingClass(
   store: MiniSheetStore,
   character: CharacterRecord,
-  castingClass: string
+  castingClass: string,
 ): void {
   requireSpellbook(character);
   store.setCharacterField(
     character.id,
     "spellbook.castingClass",
-    castingClass.toLowerCase()
+    castingClass.toLowerCase(),
   );
 }
 
 export function setCastingStat(
   store: MiniSheetStore,
   character: CharacterRecord,
-  stat: AbilityKey
+  stat: AbilityKey,
 ): void {
   requireSpellbook(character);
   store.setCharacterField(character.id, "spellbook.castingStat", stat);
@@ -453,7 +464,7 @@ export function setCastingStat(
 export function setCasterLevelOverride(
   store: MiniSheetStore,
   character: CharacterRecord,
-  value: number | undefined
+  value: number | undefined,
 ): void {
   requireSpellbook(character);
   store.setCharacterField(character.id, "spellbook.casterLevelOverride", value);
@@ -480,7 +491,7 @@ export function resetSpellbook(
   store: MiniSheetStore,
   character: CharacterRecord,
   castingStatBonus: number,
-  flags: ResetFlags = {}
+  flags: ResetFlags = {},
 ): void {
   const sb = requireSpellbook(character);
   const paradigm = getCasterConfig(sb.castingClass).type;
@@ -491,7 +502,11 @@ export function resetSpellbook(
     const max = maxSlotsFor(character, level as SpellLevel, castingStatBonus);
     next.levels[key].remaining = max > 0 ? max : null;
     if (paradigm === "hybrid") {
-      const maxCasts = maxCastsFor(character, level as SpellLevel, castingStatBonus);
+      const maxCasts = maxCastsFor(
+        character,
+        level as SpellLevel,
+        castingStatBonus,
+      );
       next.levels[key].castsRemaining = maxCasts > 0 ? maxCasts : null;
     }
     if (flags.resetMetamagics) {
@@ -508,7 +523,7 @@ export function resetSpellbook(
   }
   if (flags.resetSLAs ?? true) {
     next.slas = next.slas.map((sla) =>
-      sla.casts > 0 ? { ...sla, castsRemaining: sla.casts } : sla
+      sla.casts > 0 ? { ...sla, castsRemaining: sla.casts } : sla,
     );
   }
   store.setCharacterField(character.id, "spellbook", next);
@@ -518,24 +533,27 @@ export function resetSpellbook(
 export function addKnownSpell(
   store: MiniSheetStore,
   character: CharacterRecord,
-  spell: KnownSpell
+  spell: KnownSpell,
 ): void {
   const sb = requireSpellbook(character);
   if (sb.spells.some((s) => s.id === spell.id)) return;
-  store.setCharacterField(character.id, "spellbook.spells", [...sb.spells, spell]);
+  store.setCharacterField(character.id, "spellbook.spells", [
+    ...sb.spells,
+    spell,
+  ]);
 }
 
 /** Remove every variant of a database spell (matches originalId ?? id). */
 export function removeKnownSpell(
   store: MiniSheetStore,
   character: CharacterRecord,
-  dbId: string
+  dbId: string,
 ): void {
   const sb = requireSpellbook(character);
   store.setCharacterField(
     character.id,
     "spellbook.spells",
-    sb.spells.filter((s) => (s.originalId ?? s.id) !== dbId)
+    sb.spells.filter((s) => (s.originalId ?? s.id) !== dbId),
   );
 }
 
@@ -557,7 +575,7 @@ function loadoutEntryKey(s: LoadoutSpell): string {
 export function createLoadout(
   store: MiniSheetStore,
   character: CharacterRecord,
-  partial: Partial<Omit<Loadout, "id">> = {}
+  partial: Partial<Omit<Loadout, "id">> = {},
 ): string {
   const sb = requireSpellbook(character);
   const id = newLoadoutId();
@@ -580,12 +598,12 @@ export function updateLoadout(
   store: MiniSheetStore,
   character: CharacterRecord,
   id: string,
-  patch: Partial<Omit<Loadout, "id" | "spells">>
+  patch: Partial<Omit<Loadout, "id" | "spells">>,
 ): void {
   const sb = requireSpellbook(character);
   const next = structuredClone(sb);
   next.loadouts = (next.loadouts ?? []).map((l) =>
-    l.id === id ? { ...l, ...patch } : l
+    l.id === id ? { ...l, ...patch } : l,
   );
   store.setCharacterField(character.id, "spellbook", next);
 }
@@ -593,13 +611,17 @@ export function updateLoadout(
 export function duplicateLoadout(
   store: MiniSheetStore,
   character: CharacterRecord,
-  id: string
+  id: string,
 ): string | null {
   const sb = requireSpellbook(character);
   const src = (sb.loadouts ?? []).find((l) => l.id === id);
   if (!src) return null;
   const newId = newLoadoutId();
-  const copy: Loadout = { ...structuredClone(src), id: newId, name: `${src.name} (copy)` };
+  const copy: Loadout = {
+    ...structuredClone(src),
+    id: newId,
+    name: `${src.name} (copy)`,
+  };
   const next = structuredClone(sb);
   next.loadouts = [...(next.loadouts ?? []), copy];
   store.setCharacterField(character.id, "spellbook", next);
@@ -609,7 +631,7 @@ export function duplicateLoadout(
 export function deleteLoadout(
   store: MiniSheetStore,
   character: CharacterRecord,
-  id: string
+  id: string,
 ): void {
   const sb = requireSpellbook(character);
   const next = structuredClone(sb);
@@ -623,7 +645,7 @@ export function addSpellToLoadout(
   store: MiniSheetStore,
   character: CharacterRecord,
   loadoutId: string,
-  entry: LoadoutSpell
+  entry: LoadoutSpell,
 ): void {
   const sb = requireSpellbook(character);
   const next = structuredClone(sb);
@@ -645,12 +667,14 @@ export function removeLoadoutSpell(
   store: MiniSheetStore,
   character: CharacterRecord,
   loadoutId: string,
-  index: number
+  index: number,
 ): void {
   const sb = requireSpellbook(character);
   const next = structuredClone(sb);
   next.loadouts = (next.loadouts ?? []).map((l) =>
-    l.id === loadoutId ? { ...l, spells: l.spells.filter((_, i) => i !== index) } : l
+    l.id === loadoutId
+      ? { ...l, spells: l.spells.filter((_, i) => i !== index) }
+      : l,
   );
   store.setCharacterField(character.id, "spellbook", next);
 }
@@ -661,14 +685,14 @@ export function setLoadoutSpellCount(
   character: CharacterRecord,
   loadoutId: string,
   index: number,
-  delta: number
+  delta: number,
 ): void {
   const sb = requireSpellbook(character);
   const next = structuredClone(sb);
   next.loadouts = (next.loadouts ?? []).map((l) => {
     if (l.id !== loadoutId) return l;
     const spells = l.spells.map((s, i) =>
-      i === index ? { ...s, count: Math.max(1, s.count + delta) } : s
+      i === index ? { ...s, count: Math.max(1, s.count + delta) } : s,
     );
     return { ...l, spells };
   });
@@ -679,7 +703,7 @@ export function setLoadoutSpellCount(
 export function snapshotCurrentPrep(
   store: MiniSheetStore,
   character: CharacterRecord,
-  name: string
+  name: string,
 ): string | null {
   const sb = requireSpellbook(character);
   const spells: LoadoutSpell[] = [];
@@ -694,7 +718,11 @@ export function snapshotCurrentPrep(
     }
   }
   if (spells.length === 0) return null;
-  return createLoadout(store, character, { name, icon: "ra-scroll-unfurled", spells });
+  return createLoadout(store, character, {
+    name,
+    icon: "ra-scroll-unfurled",
+    spells,
+  });
 }
 
 /**
@@ -708,7 +736,7 @@ export function applyLoadout(
   store: MiniSheetStore,
   character: CharacterRecord,
   loadoutId: string,
-  castingStatBonus: number
+  castingStatBonus: number,
 ): void {
   const sb = requireSpellbook(character);
   const loadout = (sb.loadouts ?? []).find((l) => l.id === loadoutId);
@@ -717,7 +745,11 @@ export function applyLoadout(
   const next = structuredClone(sb);
 
   // 1. reset all level pools to max
-  for (let level = 0 as SpellLevel; level <= 9; level = (level + 1) as SpellLevel) {
+  for (
+    let level = 0 as SpellLevel;
+    level <= 9;
+    level = (level + 1) as SpellLevel
+  ) {
     const key = getSpellLevelKey(level);
     if (!next.levels[key]) continue;
     const max = maxSlotsFor(character, level, castingStatBonus);
@@ -747,9 +779,11 @@ export function applyLoadout(
     let slotLevel: SpellLevel = entry.level;
     if (paradigm === "hybrid") {
       const nonDupGlobals = next.globalMetamagic.active.filter(
-        (g) => !entry.metamagic.includes(g)
+        (g) => !entry.metamagic.includes(g),
       );
-      slotLevel = clampLevel(entry.level + totalMetamagicAdjustment(nonDupGlobals));
+      slotLevel = clampLevel(
+        entry.level + totalMetamagicAdjustment(nonDupGlobals),
+      );
     }
     const lvl = next.levels[getSpellLevelKey(slotLevel)];
     if (lvl && lvl.remaining != null) {

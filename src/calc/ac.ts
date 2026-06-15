@@ -106,17 +106,36 @@ export function calculateACValues(input: ACInput): ACValues {
   if (loseDexToAC) dexMod = 0;
 
   const userAcAdjust = Number(input.acAdjust) || 0;
-  const normalAcAdjust = userAcAdjust + chargingACPenalty + (Number(ce.acAdjust) || 0);
-  const touchAcAdjust = userAcAdjust + chargingACPenalty + (Number(ce.touchAcAdjust) || 0);
-  const ffAcAdjust = userAcAdjust + chargingACPenalty + (Number(ce.ffAcAdjust) || 0);
+  const normalAcAdjust =
+    userAcAdjust + chargingACPenalty + (Number(ce.acAdjust) || 0);
+  const touchAcAdjust =
+    userAcAdjust + chargingACPenalty + (Number(ce.touchAcAdjust) || 0);
+  const ffAcAdjust =
+    userAcAdjust + chargingACPenalty + (Number(ce.ffAcAdjust) || 0);
 
   const normalAC =
-    baseAC + dexMod + naturalAC + deflectionAC + monkACBonus + bravoACBonus +
-    fightingDefensivelyBonus + dodgeAC + hastedACBonus + normalAcAdjust;
+    baseAC +
+    dexMod +
+    naturalAC +
+    deflectionAC +
+    monkACBonus +
+    bravoACBonus +
+    fightingDefensivelyBonus +
+    dodgeAC +
+    hastedACBonus +
+    normalAcAdjust;
   const touchAC =
-    baseAC + dexMod + deflectionAC + monkACBonus + bravoACBonus +
-    fightingDefensivelyBonus + dodgeAC + hastedACBonus + touchAcAdjust;
-  const flatFootedAC = baseAC + naturalAC + deflectionAC + monkACBonus + ffAcAdjust;
+    baseAC +
+    dexMod +
+    deflectionAC +
+    monkACBonus +
+    bravoACBonus +
+    fightingDefensivelyBonus +
+    dodgeAC +
+    hastedACBonus +
+    touchAcAdjust;
+  const flatFootedAC =
+    baseAC + naturalAC + deflectionAC + monkACBonus + ffAcAdjust;
 
   const bab = input.bab || 0;
   // CMB ability: Dex by default (the preserved legacy quirk). When the caller
@@ -125,8 +144,16 @@ export function calculateACValues(input: ACInput): ACValues {
   const cmbAbilityMod = input.cmbAbility === "str" ? strMod : dexMod;
   const cmb = bab + cmbAbilityMod + sizeMod + (ce.cmb || 0);
   const cmd =
-    10 + bab + strMod + dexMod + sizeMod + deflectionAC + monkACBonus +
-    bravoACBonus + dodgeAC + (ce.cmd || 0);
+    10 +
+    bab +
+    strMod +
+    dexMod +
+    sizeMod +
+    deflectionAC +
+    monkACBonus +
+    bravoACBonus +
+    dodgeAC +
+    (ce.cmd || 0);
 
   return { normalAC, touchAC, flatFootedAC, cmb, cmd };
 }

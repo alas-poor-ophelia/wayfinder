@@ -53,7 +53,7 @@ export class CustomItemsStore {
         if (file instanceof TFile && file === this.file) {
           void this.handleExternalModify(file);
         }
-      })
+      }),
     );
     this.plugin.registerEvent(
       vault.on("rename", (file, oldPath) => {
@@ -68,7 +68,7 @@ export class CustomItemsStore {
         } else if (!this.file && file.name === this.fileName()) {
           void this.load(); // something was renamed INTO our tracked name
         }
-      })
+      }),
     );
     this.plugin.registerEvent(
       vault.on("delete", (file) => {
@@ -78,14 +78,18 @@ export class CustomItemsStore {
           this.lastSavedContent = "";
           if (this.status.value === "error") this.status.value = "missing";
         }
-      })
+      }),
     );
     this.plugin.registerEvent(
       vault.on("create", (file) => {
-        if (this.file === null && file instanceof TFile && file.name === this.fileName()) {
+        if (
+          this.file === null &&
+          file instanceof TFile &&
+          file.name === this.fileName()
+        ) {
           void this.load(); // sync delivered the file after startup
         }
-      })
+      }),
     );
   }
 
@@ -122,7 +126,7 @@ export class CustomItemsStore {
       this.status.value = "error";
       new Notice(
         `MiniSheet: "${this.fileName()}" is not a readable custom-items file; ` +
-          `it will not be overwritten. Fix it or point the setting elsewhere.`
+          `it will not be overwritten. Fix it or point the setting elsewhere.`,
       );
       return;
     }
@@ -148,7 +152,7 @@ export class CustomItemsStore {
   setItems(next: CustomItemDef[]): void {
     if (this.status.value === "error") {
       throw new Error(
-        `custom items file "${this.fileName()}" is unreadable; refusing to overwrite`
+        `custom items file "${this.fileName()}" is unreadable; refusing to overwrite`,
       );
     }
     this.items.value = next;

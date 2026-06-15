@@ -25,7 +25,11 @@ const BOF_CHOICES = [
  * conditions and buffs with remove buttons and the calc notes. Hidden
  * entirely when nothing is active.
  */
-export function ConditionNotes({ store, character, effects }: ConditionNotesProps) {
+export function ConditionNotes({
+  store,
+  character,
+  effects,
+}: ConditionNotesProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   useOutsideClose(rootRef, open, () => setOpen(false));
@@ -36,9 +40,15 @@ export function ConditionNotes({ store, character, effects }: ConditionNotesProp
   if (!hasConditions && !hasBuffs) return null;
 
   const count =
-    character.conditions.length + character.buffs.length + (negLevels > 0 ? 1 : 0);
+    character.conditions.length +
+    character.buffs.length +
+    (negLevels > 0 ? 1 : 0);
   const tone =
-    hasConditions && hasBuffs ? "is-mixed" : hasConditions ? "is-conditions" : "is-buffs";
+    hasConditions && hasBuffs
+      ? "is-mixed"
+      : hasConditions
+        ? "is-conditions"
+        : "is-buffs";
 
   const removeFrom = (field: "conditions" | "buffs", name: string) => {
     const list = character[field].filter((x) => x !== name);
@@ -78,12 +88,18 @@ export function ConditionNotes({ store, character, effects }: ConditionNotesProp
               ))}
               {negLevels > 0 && (
                 <div class="ms-cond-notes__item">
-                  <span class="ms-cond-notes__name">negative levels ×{negLevels}</span>
+                  <span class="ms-cond-notes__name">
+                    negative levels ×{negLevels}
+                  </span>
                   <button
                     class="ms-cond-notes__remove"
                     aria-label="Clear negative levels"
                     onClick={() =>
-                      store.setCharacterField(character.id, "adjustments.negativeLevels", 0)
+                      store.setCharacterField(
+                        character.id,
+                        "adjustments.negativeLevels",
+                        0,
+                      )
                     }
                   >
                     ✕
@@ -118,12 +134,16 @@ export function ConditionNotes({ store, character, effects }: ConditionNotesProp
                     store.setCharacterField(
                       character.id,
                       "bofChoice",
-                      (e.target as HTMLSelectElement).value
+                      (e.target as HTMLSelectElement).value,
                     )
                   }
                 >
                   {BOF_CHOICES.map((choice) => (
-                    <option key={choice} value={choice} selected={choice === character.bofChoice}>
+                    <option
+                      key={choice}
+                      value={choice}
+                      selected={choice === character.bofChoice}
+                    >
                       {choice}
                     </option>
                   ))}

@@ -76,7 +76,8 @@
     color: var(--text-muted, var(--text-mute));
   }
   .qa-cell.is-focus .squircle {
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ms-gold, #ca9759) 70%, transparent);
+    box-shadow: 0 0 0 2px
+      color-mix(in srgb, var(--ms-gold, #ca9759) 70%, transparent);
   }
   .qa-zone {
     margin-bottom: 14px;
@@ -105,7 +106,9 @@
     background: rgba(0, 0, 0, 0.2);
     min-height: 52px;
     align-content: flex-start;
-    transition: border-color 0.12s, background 0.12s;
+    transition:
+      border-color 0.12s,
+      background 0.12s;
   }
   .qa-tray.is-over {
     border-color: var(--accent-line);

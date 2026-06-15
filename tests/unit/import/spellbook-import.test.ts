@@ -6,11 +6,20 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { importLegacy, importSpellbook } from "../../../src/import/legacy-import";
-import { createDefaultCharacter, type CharacterRecord } from "../../../src/types/character";
+import {
+  importLegacy,
+  importSpellbook,
+} from "../../../src/import/legacy-import";
+import {
+  createDefaultCharacter,
+  type CharacterRecord,
+} from "../../../src/types/character";
 
 const fixtures = JSON.parse(
-  readFileSync(fileURLToPath(new URL("../fixtures/spell-fixtures.json", import.meta.url)), "utf-8")
+  readFileSync(
+    fileURLToPath(new URL("../fixtures/spell-fixtures.json", import.meta.url)),
+    "utf-8",
+  ),
 ) as { adarinSpellbook: Record<string, unknown> };
 
 function adarinRecord(): CharacterRecord {
@@ -26,7 +35,11 @@ function adarinRecord(): CharacterRecord {
 describe("importSpellbook (Adarin live frontmatter)", () => {
   function run() {
     const warnings: string[] = [];
-    const spellbook = importSpellbook(fixtures.adarinSpellbook, adarinRecord(), warnings);
+    const spellbook = importSpellbook(
+      fixtures.adarinSpellbook,
+      adarinRecord(),
+      warnings,
+    );
     return { spellbook, warnings };
   }
 
@@ -45,9 +58,15 @@ describe("importSpellbook (Adarin live frontmatter)", () => {
     const record = adarinRecord();
     record.classes = [{ className: "Skald", level: 3 }];
     const warnings: string[] = [];
-    const spellbook = importSpellbook(fixtures.adarinSpellbook, record, warnings);
+    const spellbook = importSpellbook(
+      fixtures.adarinSpellbook,
+      record,
+      warnings,
+    );
     expect(spellbook.casterLevelOverride).toBe(2);
-    expect(warnings.some((w) => w.includes("casterLevel 2 disagrees"))).toBe(true);
+    expect(warnings.some((w) => w.includes("casterLevel 2 disagrees"))).toBe(
+      true,
+    );
   });
 
   it("warns on castingStatBonus drift (derived value wins, nothing stored)", () => {
@@ -55,15 +74,31 @@ describe("importSpellbook (Adarin live frontmatter)", () => {
     record.baseAbilities.cha = 18; // derived +4, stored 5
     const warnings: string[] = [];
     importSpellbook(fixtures.adarinSpellbook, record, warnings);
-    expect(warnings.some((w) => w.includes("castingStatBonus 5 differs from derived cha mod 4"))).toBe(true);
+    expect(
+      warnings.some((w) =>
+        w.includes("castingStatBonus 5 differs from derived cha mod 4"),
+      ),
+    ).toBe(true);
   });
 
   it("imports all 14 spells with legacy ids stringified verbatim", () => {
     const { spellbook } = run();
     expect(spellbook.spells).toHaveLength(14);
     expect(spellbook.spells.map((s) => s.id)).toEqual([
-      "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-      "PFRPGC_436", "APG_240_L0_bardmesmerist",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "PFRPGC_436",
+      "APG_240_L0_bardmesmerist",
     ]);
     const readMagic = spellbook.spells[0];
     expect(readMagic).toMatchObject({
@@ -123,7 +158,9 @@ describe("importSpellbook (Adarin live frontmatter)", () => {
       "Extend Spell (+1 level)",
       "Silent Spell (+1 level)",
     ]);
-    expect(warnings.some((w) => w.includes("metamagic feats derived"))).toBe(true);
+    expect(warnings.some((w) => w.includes("metamagic feats derived"))).toBe(
+      true,
+    );
   });
 
   it("global metamagic: the UI-bound nested selectedGlobalMetamagic wins", () => {
@@ -133,7 +170,9 @@ describe("importSpellbook (Adarin live frontmatter)", () => {
     // key ("") was only read by a dead accessor. Empty root = no drift warning.
     expect(spellbook.globalMetamagic.selected).toBe("Silent Spell (+1 level)");
     expect(spellbook.globalMetamagic.active).toEqual([]);
-    expect(warnings.some((w) => w.includes("selectedGlobalMetamagic"))).toBe(false);
+    expect(warnings.some((w) => w.includes("selectedGlobalMetamagic"))).toBe(
+      false,
+    );
   });
 
   it("imports empty preparations and the three SLAs from spellPreparations.sla", () => {
@@ -175,7 +214,12 @@ describe("importLegacy with a spellbook note", () => {
       name: "Adarin",
       characterType: "pc",
       sheet: {
-        str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20,
+        str: 10,
+        dex: 10,
+        con: 10,
+        int: 10,
+        wis: 10,
+        cha: 20,
         level1SpellSlotsCurrent: 3,
       },
       config: { classes: ["Skald"], skaldLevel: 2 },
@@ -183,7 +227,9 @@ describe("importLegacy with a spellbook note", () => {
     });
     expect(record.spellbook).toBeDefined();
     expect(record.spellbook!.castingClass).toBe("skald");
-    expect(record.resources.some((r) => r.id.startsWith("spellSlots"))).toBe(false);
+    expect(record.resources.some((r) => r.id.startsWith("spellSlots"))).toBe(
+      false,
+    );
   });
 
   it("builds a slot-only spellbook when no spellbook note exists (schema v5)", () => {
@@ -195,7 +241,9 @@ describe("importLegacy with a spellbook note", () => {
       sheet: { level1SpellSlotsCurrent: 3 },
       config: {},
     });
-    expect(record.resources.some((r) => r.id.startsWith("spellSlots"))).toBe(false);
+    expect(record.resources.some((r) => r.id.startsWith("spellSlots"))).toBe(
+      false,
+    );
     expect(record.spellbook).toBeDefined();
     expect(record.spellbook!.castingClass).toBe("");
     expect(record.spellbook!.slotOverrides).toEqual({ level1: 3 });
@@ -207,7 +255,11 @@ describe("importLegacy with a spellbook note", () => {
 describe("importSpellbook leniency", () => {
   it("defaults and warns on missing castingClass/castingStat", () => {
     const warnings: string[] = [];
-    const spellbook = importSpellbook({}, createDefaultCharacter("x", "X"), warnings);
+    const spellbook = importSpellbook(
+      {},
+      createDefaultCharacter("x", "X"),
+      warnings,
+    );
     expect(spellbook.castingClass).toBe("wizard");
     expect(spellbook.castingStat).toBe("int");
     expect(warnings.some((w) => w.includes("castingClass"))).toBe(true);
@@ -226,20 +278,29 @@ describe("importSpellbook leniency", () => {
           null,
         ],
         spellPreparations: {
-          level1: [{ spellId: 1, adjustedLevel: 1, metamagic: [], count: 2 }, { bogus: true }],
+          level1: [
+            { spellId: 1, adjustedLevel: 1, metamagic: [], count: 2 },
+            { bogus: true },
+          ],
           sla: [{ spellId: 99, casts: 1, castsRemaining: 1 }, { nope: 1 }],
         },
       },
       createDefaultCharacter("x", "X"),
-      warnings
+      warnings,
     );
     expect(spellbook.spells).toHaveLength(1);
     expect(spellbook.preparations.level1).toEqual([
       { spellId: "1", adjustedLevel: 1, metamagic: [], count: 2 },
     ]);
-    expect(spellbook.slas).toEqual([{ spellId: "99", casts: 1, castsRemaining: 1 }]);
-    expect(warnings.some((w) => w.includes("spell entry without id/name"))).toBe(true);
-    expect(warnings.some((w) => w.includes("malformed preparation"))).toBe(true);
+    expect(spellbook.slas).toEqual([
+      { spellId: "99", casts: 1, castsRemaining: 1 },
+    ]);
+    expect(
+      warnings.some((w) => w.includes("spell entry without id/name")),
+    ).toBe(true);
+    expect(warnings.some((w) => w.includes("malformed preparation"))).toBe(
+      true,
+    );
     expect(warnings.some((w) => w.includes("not in spells[]"))).toBe(true);
     expect(warnings.some((w) => w.includes("malformed SLA"))).toBe(true);
   });

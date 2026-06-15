@@ -28,7 +28,12 @@ export interface AbilityModInput {
 
 /** Coerce a frontmatter-ish value ("" | null | "3" | 3) to a number, falsy → 0. */
 export function num(value: unknown): number {
-  if (value === null || value === undefined || value === "" || value === false) {
+  if (
+    value === null ||
+    value === undefined ||
+    value === "" ||
+    value === false
+  ) {
     return 0;
   }
   const n = Number(value);

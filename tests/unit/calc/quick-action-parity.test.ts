@@ -16,8 +16,15 @@
 import { describe, expect, it } from "vitest";
 import { computeAll } from "../../../src/calc";
 import { seedQuickActionsFromToggles } from "../../../src/data/quick-actions";
-import { defaultToggles, type CharacterRecord } from "../../../src/types/character";
-import { buildMatrix, snapshot, type ParitySnapshot } from "../fixtures/qa-parity-matrix";
+import {
+  defaultToggles,
+  type CharacterRecord,
+} from "../../../src/types/character";
+import {
+  buildMatrix,
+  snapshot,
+  type ParitySnapshot,
+} from "../fixtures/qa-parity-matrix";
 import fixture from "../fixtures/quick-action-parity.json";
 
 const FIXTURE = fixture as Record<string, ParitySnapshot>;
@@ -62,7 +69,9 @@ it("fixture and matrix cover the same cases", () => {
 describe("pre-v6 fallback path (toggles drive the calc) — byte parity", () => {
   for (const { name, record } of MATRIX) {
     it(name, () => {
-      expect(snapshot(computeAll(fallbackRecord(record)))).toEqual(FIXTURE[name]);
+      expect(snapshot(computeAll(fallbackRecord(record)))).toEqual(
+        FIXTURE[name],
+      );
     });
   }
 });
@@ -71,21 +80,29 @@ describe("converted path (seeded quick actions, toggles zeroed) — byte parity"
   for (const { name, record } of MATRIX) {
     if (RAW_DELTA_CASES.has(name)) continue;
     it(name, () => {
-      expect(snapshot(computeAll(convertedRecord(record)))).toEqual(FIXTURE[name]);
+      expect(snapshot(computeAll(convertedRecord(record)))).toEqual(
+        FIXTURE[name],
+      );
     });
   }
 });
 
 describe("approved RAW deltas (converted path only)", () => {
   it("song Enhancement does not stack with a +2 magic weapon — the larger applies", () => {
-    const { record } = MATRIX.find((c) => c.name === "song enhancement + magic weapon enh2")!;
+    const { record } = MATRIX.find(
+      (c) => c.name === "song enhancement + magic weapon enh2",
+    )!;
     const out = computeAll(convertedRecord(record));
     const legacy = FIXTURE["song enhancement + magic weapon enh2"];
 
     // legacy melee was 2 (weapon) + 1 (song, flat) = +3 attack/+3 damage;
     // RAW takes max(2, 1) = +2/+2 — one point lower on both.
-    const legacyMelee = /Standard Attack:\*\* \+(\d+) \(1d6\+(\d+)\)/.exec(legacy.melee)!;
-    const rawMelee = /Standard Attack:\*\* \+(\d+) \(1d6\+(\d+)\)/.exec(out.attacks.melee)!;
+    const legacyMelee = /Standard Attack:\*\* \+(\d+) \(1d6\+(\d+)\)/.exec(
+      legacy.melee,
+    )!;
+    const rawMelee = /Standard Attack:\*\* \+(\d+) \(1d6\+(\d+)\)/.exec(
+      out.attacks.melee,
+    )!;
     expect(Number(rawMelee[1])).toBe(Number(legacyMelee[1]) - 1);
     expect(Number(rawMelee[2])).toBe(Number(legacyMelee[2]) - 1);
 
@@ -97,7 +114,7 @@ describe("approved RAW deltas (converted path only)", () => {
 
     // the losing song bonus surfaces as suppressed in the modifier report
     expect(
-      out.modifierReport?.suppressed.some((s) => s.includes("Weapon Song"))
+      out.modifierReport?.suppressed.some((s) => s.includes("Weapon Song")),
     ).toBe(true);
   });
 

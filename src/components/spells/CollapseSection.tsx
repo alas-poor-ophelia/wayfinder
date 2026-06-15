@@ -1,8 +1,5 @@
 import type { ComponentChildren } from "preact";
-import {
-  sectionKey,
-  setSectionCollapsed,
-} from "../../state/spellbook-actions";
+import { sectionKey, setSectionCollapsed } from "../../state/spellbook-actions";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 
@@ -57,7 +54,9 @@ export function CollapseSection({
           <path d="m6 9 6 6 6-6" />
         </svg>
       </button>
-      {!collapsed && <div class="ms-spellbook-callout__content">{children}</div>}
+      {!collapsed && (
+        <div class="ms-spellbook-callout__content">{children}</div>
+      )}
     </section>
   );
 }

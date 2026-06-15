@@ -3,7 +3,12 @@
  * against the PRD; the shape block guards generated entries.
  */
 import { describe, expect, it } from "vitest";
-import { findRaceByName, getRaceData, RACE_DATA, racialAbilityMods } from "../../../src/data/races";
+import {
+  findRaceByName,
+  getRaceData,
+  RACE_DATA,
+  racialAbilityMods,
+} from "../../../src/data/races";
 import { resolveModifiers } from "../../../src/calc/modifiers";
 import { STANDARD_SKILLS } from "../../../src/calc/skills";
 
@@ -11,7 +16,8 @@ const races = Object.values(RACE_DATA);
 
 describe("RACE_DATA coverage", () => {
   it("has the full scoped roster (7 core, 16 featured, 14 uncommon)", () => {
-    const count = (cat: string) => races.filter((r) => r.category === cat).length;
+    const count = (cat: string) =>
+      races.filter((r) => r.category === cat).length;
     expect(count("core")).toBe(7);
     expect(count("featured")).toBe(16);
     expect(count("uncommon")).toBe(14);
@@ -71,7 +77,11 @@ describe("core race spot-checks (PRD-verified)", () => {
     expect(racialAbilityMods(human)).toEqual({});
     expect(racialAbilityMods(human, "str")).toEqual({ str: 2 });
     const dwarf = getRaceData("dwarf")!;
-    expect(racialAbilityMods(dwarf, "str")).toEqual({ con: 2, wis: 2, cha: -2 });
+    expect(racialAbilityMods(dwarf, "str")).toEqual({
+      con: 2,
+      wis: 2,
+      cha: -2,
+    });
   });
 
   it("finds races by legacy free-text name, case-insensitively", () => {

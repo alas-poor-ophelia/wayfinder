@@ -149,7 +149,9 @@ export interface HouseRules {
 /** Read the Elephant in the Room houserule with the established default (ON).
  *  Absence — older data.json, settings not yet migrated — means the default,
  *  which keeps the legacy Dex-to-CMB behaviour every captured sheet has. */
-export function eitrEnabled(settings: Pick<MiniSheetSettings, "houseRules">): boolean {
+export function eitrEnabled(
+  settings: Pick<MiniSheetSettings, "houseRules">,
+): boolean {
   return settings.houseRules?.elephantInTheRoom ?? true;
 }
 

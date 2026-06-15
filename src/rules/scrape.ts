@@ -39,7 +39,8 @@ function decode(s: string): string {
 }
 
 function inline(node: Node): string {
-  if (!isEl(node)) return decode((node as Node & { rawText: string }).rawText ?? "");
+  if (!isEl(node))
+    return decode((node as Node & { rawText: string }).rawText ?? "");
   const tag = node.rawTagName?.toLowerCase();
   const inner = node.childNodes.map(inline).join("");
   switch (tag) {
@@ -61,14 +62,21 @@ function inline(node: Node): string {
 }
 
 function cells(row: HTMLElement, tag: string): string[] {
-  return row.querySelectorAll(tag).map((c) => inline(c).replace(/\s+/g, " ").trim() || " ");
+  return row
+    .querySelectorAll(tag)
+    .map((c) => inline(c).replace(/\s+/g, " ").trim() || " ");
 }
 
 function tableToMarkdown(table: HTMLElement): string {
   const rows = table.querySelectorAll("tr");
   if (!rows.length) return "";
-  const header = cells(rows[0], "th").length ? cells(rows[0], "th") : cells(rows[0], "td");
-  const bodyRows = rows.slice(1).map((r) => cells(r, "td")).filter((r) => r.length);
+  const header = cells(rows[0], "th").length
+    ? cells(rows[0], "th")
+    : cells(rows[0], "td");
+  const bodyRows = rows
+    .slice(1)
+    .map((r) => cells(r, "td"))
+    .filter((r) => r.length);
   const width = header.length || (bodyRows[0]?.length ?? 0);
   if (!width) return "";
   const pad = (r: string[]) => {
@@ -76,7 +84,11 @@ function tableToMarkdown(table: HTMLElement): string {
     while (c.length < width) c.push(" ");
     return `| ${c.join(" | ")} |`;
   };
-  const lines = [pad(header), `| ${Array(width).fill("---").join(" | ")} |`, ...bodyRows.map(pad)];
+  const lines = [
+    pad(header),
+    `| ${Array(width).fill("---").join(" | ")} |`,
+    ...bodyRows.map(pad),
+  ];
   return lines.join("\n");
 }
 
@@ -92,7 +104,11 @@ function bodyToMarkdown(nodes: Node[]): string {
       }
       if (tag === "ul" || tag === "ol") {
         const marker = tag === "ol" ? (i: number) => `${i + 1}.` : () => "-";
-        const items = n.querySelectorAll("li").map((li, i) => `${marker(i)} ${inline(li).replace(/\s+/g, " ").trim()}`);
+        const items = n
+          .querySelectorAll("li")
+          .map(
+            (li, i) => `${marker(i)} ${inline(li).replace(/\s+/g, " ").trim()}`,
+          );
         out += "\n\n" + items.join("\n") + "\n\n";
         continue;
       }
@@ -112,12 +128,16 @@ function bodyToMarkdown(nodes: Node[]): string {
     .trim();
 }
 
-export function extractNote(html: string, fallbackTitle = "Rule"): ScrapedNote | null {
+export function extractNote(
+  html: string,
+  fallbackTitle = "Rule",
+): ScrapedNote | null {
   const root = parse(html);
   const container = root.querySelector("#MainContent_DetailedOutput");
   if (!container) return null;
 
-  const h1 = container.querySelector("h1.title") || container.querySelector("h1");
+  const h1 =
+    container.querySelector("h1.title") || container.querySelector("h1");
   const title = (h1?.text ?? "").trim() || fallbackTitle;
 
   // breadcrumb: the leading <a> links before the title; first = top category
@@ -125,15 +145,24 @@ export function extractNote(html: string, fallbackTitle = "Rule"): ScrapedNote |
   for (const child of container.childNodes) {
     if (child === h1) break;
     if (isEl(child)) {
-      const a = child.rawTagName?.toLowerCase() === "a" ? child : child.querySelector?.("a");
+      const a =
+        child.rawTagName?.toLowerCase() === "a"
+          ? child
+          : child.querySelector?.("a");
       if (a) crumbs.push(a.text.trim());
     }
   }
   const category = crumbs[0] || "Reference";
 
   // source: <b>Source</b> <i>book pg. N</i>
-  const srcM = /<b>\s*Source\s*<\/b>\s*(?:<a[^>]*>)?\s*<i>([^<]+)<\/i>/i.exec(container.innerHTML);
-  const source = srcM ? decode(srcM[1]).replace(/\s+pg\.\s*\d+.*$/, "").trim() : "";
+  const srcM = /<b>\s*Source\s*<\/b>\s*(?:<a[^>]*>)?\s*<i>([^<]+)<\/i>/i.exec(
+    container.innerHTML,
+  );
+  const source = srcM
+    ? decode(srcM[1])
+        .replace(/\s+pg\.\s*\d+.*$/, "")
+        .trim()
+    : "";
 
   // body = nodes after the h1, with a leading Source run removed
   const kids = container.childNodes;
@@ -145,8 +174,15 @@ export function extractNote(html: string, fallbackTitle = "Rule"): ScrapedNote |
   for (const n of body) {
     const t = isEl(n) ? n.rawTagName?.toLowerCase() : "";
     const txt = (n as HTMLElement).text?.trim?.() ?? "";
-    if (!sawSource && t === "b" && /source/i.test(txt)) { sawSource = true; skip++; continue; }
-    if (sawSource && (t === "a" || t === "br" || txt === "")) { skip++; continue; }
+    if (!sawSource && t === "b" && /source/i.test(txt)) {
+      sawSource = true;
+      skip++;
+      continue;
+    }
+    if (sawSource && (t === "a" || t === "br" || txt === "")) {
+      skip++;
+      continue;
+    }
     break;
   }
   body = body.slice(skip);

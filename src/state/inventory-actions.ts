@@ -25,17 +25,24 @@ import type { MiniSheetStore } from "./store";
 
 // ---- pure transforms ----
 
-function sanitizeDraft(draft: Omit<InventoryItem, "id">): Omit<InventoryItem, "id"> {
+function sanitizeDraft(
+  draft: Omit<InventoryItem, "id">,
+): Omit<InventoryItem, "id"> {
   return {
     ...draft,
     name: draft.name.trim(),
     count: Math.max(1, Math.floor(draft.count || 1)),
     weight: Math.max(0, draft.weight || 0),
     value: Math.max(0, draft.value || 0),
-    note: draft.note ? draft.note.trim().slice(0, NOTE_MAX_LENGTH) || null : null,
+    note: draft.note
+      ? draft.note.trim().slice(0, NOTE_MAX_LENGTH) || null
+      : null,
     charges:
       draft.type === "Wand"
-        ? Math.min(Math.max(0, draft.charges ?? WAND_MAX_CHARGES), WAND_MAX_CHARGES)
+        ? Math.min(
+            Math.max(0, draft.charges ?? WAND_MAX_CHARGES),
+            WAND_MAX_CHARGES,
+          )
         : null,
   };
 }
@@ -45,7 +52,7 @@ function sanitizeDraft(draft: Omit<InventoryItem, "id">): Omit<InventoryItem, "i
 export function wouldCycle(
   items: InventoryItem[],
   itemId: string,
-  targetId: string | null
+  targetId: string | null,
 ): boolean {
   let cursor = targetId;
   const seen = new Set<string>();
@@ -61,7 +68,7 @@ export function wouldCycle(
 export function applyAddItem(
   inv: InventoryState,
   draft: Omit<InventoryItem, "id">,
-  id = newItemId()
+  id = newItemId(),
 ): InventoryState {
   if (!draft.name.trim()) throw new Error("Item name is required");
   const clean = sanitizeDraft(draft);
@@ -74,7 +81,7 @@ export function applyAddItem(
 export function applyUpdateItem(
   inv: InventoryState,
   id: string,
-  patch: Partial<Omit<InventoryItem, "id">>
+  patch: Partial<Omit<InventoryItem, "id">>,
 ): InventoryState {
   const existing = inv.items.find((i) => i.id === id);
   if (!existing) throw new Error(`No item with id "${id}"`);
@@ -94,7 +101,10 @@ export function applyUpdateItem(
 
 /** Remove an item; a removed container's contents move to top level
  *  (containerId → null), matching legacy. */
-export function applyRemoveItem(inv: InventoryState, id: string): InventoryState {
+export function applyRemoveItem(
+  inv: InventoryState,
+  id: string,
+): InventoryState {
   return {
     ...inv,
     items: inv.items
@@ -104,20 +114,23 @@ export function applyRemoveItem(inv: InventoryState, id: string): InventoryState
 }
 
 /** Wand "Use": decrement charges, clamped at 0. Non-wands are no-ops. */
-export function applySpendCharge(inv: InventoryState, id: string): InventoryState {
+export function applySpendCharge(
+  inv: InventoryState,
+  id: string,
+): InventoryState {
   return {
     ...inv,
     items: inv.items.map((i) =>
       i.id === id && i.type === "Wand" && (i.charges ?? 0) > 0
         ? { ...i, charges: (i.charges ?? 0) - 1 }
-        : i
+        : i,
     ),
   };
 }
 
 export function applySetCurrency(
   inv: InventoryState,
-  patch: Partial<CurrencyState>
+  patch: Partial<CurrencyState>,
 ): InventoryState {
   const next = { ...inv.currency };
   for (const key of ["copper", "silver", "gold", "platinum"] as const) {
@@ -135,7 +148,7 @@ export type InventoryScope =
 
 export function readInventory(
   store: MiniSheetStore,
-  scope: InventoryScope
+  scope: InventoryScope,
 ): InventoryState {
   if (scope.kind === "party") return store.getPartyInventory();
   const record = store.getCharacter(scope.id);
@@ -148,7 +161,7 @@ export function readInventory(
 export function writeInventory(
   store: MiniSheetStore,
   scope: InventoryScope,
-  next: InventoryState
+  next: InventoryState,
 ): void {
   if (scope.kind === "party") store.setPartyInventory(next);
   else store.setCharacterField(scope.id, "inventory", next);
@@ -157,10 +170,14 @@ export function writeInventory(
 export function addItem(
   store: MiniSheetStore,
   scope: InventoryScope,
-  draft: Omit<InventoryItem, "id">
+  draft: Omit<InventoryItem, "id">,
 ): string {
   const id = newItemId();
-  writeInventory(store, scope, applyAddItem(readInventory(store, scope), draft, id));
+  writeInventory(
+    store,
+    scope,
+    applyAddItem(readInventory(store, scope), draft, id),
+  );
   return id;
 }
 
@@ -168,31 +185,47 @@ export function updateItem(
   store: MiniSheetStore,
   scope: InventoryScope,
   id: string,
-  patch: Partial<Omit<InventoryItem, "id">>
+  patch: Partial<Omit<InventoryItem, "id">>,
 ): void {
-  writeInventory(store, scope, applyUpdateItem(readInventory(store, scope), id, patch));
+  writeInventory(
+    store,
+    scope,
+    applyUpdateItem(readInventory(store, scope), id, patch),
+  );
 }
 
 export function removeItem(
   store: MiniSheetStore,
   scope: InventoryScope,
-  id: string
+  id: string,
 ): void {
-  writeInventory(store, scope, applyRemoveItem(readInventory(store, scope), id));
+  writeInventory(
+    store,
+    scope,
+    applyRemoveItem(readInventory(store, scope), id),
+  );
 }
 
 export function spendCharge(
   store: MiniSheetStore,
   scope: InventoryScope,
-  id: string
+  id: string,
 ): void {
-  writeInventory(store, scope, applySpendCharge(readInventory(store, scope), id));
+  writeInventory(
+    store,
+    scope,
+    applySpendCharge(readInventory(store, scope), id),
+  );
 }
 
 export function setCurrency(
   store: MiniSheetStore,
   scope: InventoryScope,
-  patch: Partial<CurrencyState>
+  patch: Partial<CurrencyState>,
 ): void {
-  writeInventory(store, scope, applySetCurrency(readInventory(store, scope), patch));
+  writeInventory(
+    store,
+    scope,
+    applySetCurrency(readInventory(store, scope), patch),
+  );
 }

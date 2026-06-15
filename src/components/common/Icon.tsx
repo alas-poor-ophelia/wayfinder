@@ -14,13 +14,21 @@ export function Icon({ id, class: cls }: { id: string; class?: string }) {
   const def = ICONS[id];
   if (!def) {
     return (
-      <svg class={`ms-icon ms-icon--missing${cls ? " " + cls : ""}`} viewBox="0 0 512 512" aria-hidden="true">
+      <svg
+        class={`ms-icon ms-icon--missing${cls ? " " + cls : ""}`}
+        viewBox="0 0 512 512"
+        aria-hidden="true"
+      >
         <path d={FALLBACK_PATH} fill="currentColor" />
       </svg>
     );
   }
   return (
-    <svg class={`ms-icon${cls ? " " + cls : ""}`} viewBox={def.viewBox} aria-hidden="true">
+    <svg
+      class={`ms-icon${cls ? " " + cls : ""}`}
+      viewBox={def.viewBox}
+      aria-hidden="true"
+    >
       <path d={def.path} fill="currentColor" transform={def.transform} />
     </svg>
   );

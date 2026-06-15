@@ -76,7 +76,7 @@ export function XpTracker({
               store.setCharacterField(
                 character.id,
                 "xp",
-                Number.isNaN(v) ? 0 : Math.max(0, v)
+                Number.isNaN(v) ? 0 : Math.max(0, v),
               );
             }}
           />{" "}

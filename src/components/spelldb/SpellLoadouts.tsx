@@ -56,7 +56,7 @@ class ConfirmModal extends Modal {
     plugin: MiniSheetPlugin,
     private titleText: string,
     private body: string,
-    private onConfirm: () => void
+    private onConfirm: () => void,
   ) {
     super(plugin.app);
   }
@@ -113,8 +113,8 @@ export function SpellLoadouts({
       <div class="ms-spelldb__placeholder">
         <b>Loadouts are for prepared casters</b>
         <span>
-          {character.name} is a spontaneous caster — their known spells are fixed,
-          so there are no daily preparations to swap.
+          {character.name} is a spontaneous caster — their known spells are
+          fixed, so there are no daily preparations to swap.
         </span>
       </div>
     );
@@ -130,7 +130,9 @@ export function SpellLoadouts({
   const spName = (id: string) =>
     known.get(id)?.name ?? plugin.spellIndex.byId.get(id)?.name ?? id;
   const spSchool = (id: string) =>
-    known.get(id)?.school ?? plugin.spellIndex.byId.get(id)?.school ?? "universal";
+    known.get(id)?.school ??
+    plugin.spellIndex.byId.get(id)?.school ??
+    "universal";
 
   const newLoadout = () => {
     const id = createLoadout(store, character);
@@ -141,7 +143,7 @@ export function SpellLoadouts({
     const id = snapshotCurrentPrep(
       store,
       character,
-      `${character.name.split(" ")[0]}'s Prep`
+      `${character.name.split(" ")[0]}'s Prep`,
     );
     if (id) setActiveId(id);
   };
@@ -161,7 +163,7 @@ export function SpellLoadouts({
       plugin,
       `Apply "${lo.name}"?`,
       `This replaces ${character.name}'s current prepared spells with this loadout (${totalCount(lo)} prepared) and refills the day's slots.`,
-      () => applyLoadout(store, character, lo.id, castingStatBonus)
+      () => applyLoadout(store, character, lo.id, castingStatBonus),
     ).open();
   };
   const buildFromDb = (loadoutId: string) => {
@@ -177,8 +179,12 @@ export function SpellLoadouts({
       if (!byLevel.has(s.level)) byLevel.set(s.level, []);
       byLevel.get(s.level)!.push({ s, i });
     });
-    for (const [lv, arr] of [...byLevel.entries()].sort((a, b) => a[0] - b[0])) {
-      arr.sort((a, b) => spName(a.s.spellId).localeCompare(spName(b.s.spellId)));
+    for (const [lv, arr] of [...byLevel.entries()].sort(
+      (a, b) => a[0] - b[0],
+    )) {
+      arr.sort((a, b) =>
+        spName(a.s.spellId).localeCompare(spName(b.s.spellId)),
+      );
       grouped.push([lv, arr]);
     }
   }
@@ -207,7 +213,10 @@ export function SpellLoadouts({
               </span>
             )}
             <div class="ms-spelldb__loadcard-top">
-              <span class="ms-spelldb__loadcard-icon" style={{ color: l.color }}>
+              <span
+                class="ms-spelldb__loadcard-icon"
+                style={{ color: l.color }}
+              >
                 <Icon id={l.icon} />
               </span>
               <span class="ms-spelldb__loadcard-name">{l.name}</span>
@@ -270,11 +279,18 @@ export function SpellLoadouts({
                 <UI.check />
                 Apply
               </button>
-              <button class="ms-spelldb__ghostbtn" onClick={() => buildFromDb(lo.id)}>
+              <button
+                class="ms-spelldb__ghostbtn"
+                onClick={() => buildFromDb(lo.id)}
+              >
                 <UI.plus />
                 Add from database
               </button>
-              <button class="ms-spelldb__ghostbtn" title="Duplicate" onClick={duplicate}>
+              <button
+                class="ms-spelldb__ghostbtn"
+                title="Duplicate"
+                onClick={duplicate}
+              >
                 <UI.plus />
               </button>
               <button
@@ -296,7 +312,9 @@ export function SpellLoadouts({
                     <button
                       key={ic}
                       class={`ms-spelldb__appear-icon${lo.icon === ic ? " is-on" : ""}`}
-                      onClick={() => updateLoadout(store, character, lo.id, { icon: ic })}
+                      onClick={() =>
+                        updateLoadout(store, character, lo.id, { icon: ic })
+                      }
                     >
                       <Icon id={ic} />
                     </button>
@@ -311,7 +329,9 @@ export function SpellLoadouts({
                       key={c}
                       class={`ms-spelldb__appear-color${lo.color === c ? " is-on" : ""}`}
                       style={{ background: c }}
-                      onClick={() => updateLoadout(store, character, lo.id, { color: c })}
+                      onClick={() =>
+                        updateLoadout(store, character, lo.id, { color: c })
+                      }
                     />
                   ))}
                 </div>
@@ -322,10 +342,19 @@ export function SpellLoadouts({
           {lo.spells.length === 0 ? (
             <div class="ms-spelldb__load-empty">
               <b>This loadout is empty</b>
-              Add spells from the database, or save your current preparations as a
-              starting point.
-              <div style={{ marginTop: "16px", display: "flex", justifyContent: "center" }}>
-                <button class="ms-spelldb__cta" onClick={() => buildFromDb(lo.id)}>
+              Add spells from the database, or save your current preparations as
+              a starting point.
+              <div
+                style={{
+                  marginTop: "16px",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <button
+                  class="ms-spelldb__cta"
+                  onClick={() => buildFromDb(lo.id)}
+                >
                   <UI.plus />
                   Add from database
                 </button>
@@ -348,7 +377,9 @@ export function SpellLoadouts({
                     const ink = getSchoolInk(spSchool(s.spellId));
                     return (
                       <div class="ms-spelldb__prep" key={s.spellId + i}>
-                        <span class="ms-spelldb__prep-name">{spName(s.spellId)}</span>
+                        <span class="ms-spelldb__prep-name">
+                          {spName(s.spellId)}
+                        </span>
                         <span
                           class="ms-spelldb__school"
                           style={{
@@ -367,14 +398,30 @@ export function SpellLoadouts({
                         <span class="ms-spelldb__prep-qty">
                           <button
                             class="ms-spelldb__prep-qtybtn"
-                            onClick={() => setLoadoutSpellCount(store, character, lo.id, i, -1)}
+                            onClick={() =>
+                              setLoadoutSpellCount(
+                                store,
+                                character,
+                                lo.id,
+                                i,
+                                -1,
+                              )
+                            }
                           >
                             <UI.minus />
                           </button>
                           <span class="ms-spelldb__prep-count">{s.count}</span>
                           <button
                             class="ms-spelldb__prep-qtybtn"
-                            onClick={() => setLoadoutSpellCount(store, character, lo.id, i, 1)}
+                            onClick={() =>
+                              setLoadoutSpellCount(
+                                store,
+                                character,
+                                lo.id,
+                                i,
+                                1,
+                              )
+                            }
                           >
                             <UI.plus />
                           </button>
@@ -382,7 +429,9 @@ export function SpellLoadouts({
                         <button
                           class="ms-spelldb__prep-del"
                           title="Remove"
-                          onClick={() => removeLoadoutSpell(store, character, lo.id, i)}
+                          onClick={() =>
+                            removeLoadoutSpell(store, character, lo.id, i)
+                          }
                         >
                           <UI.trash />
                         </button>

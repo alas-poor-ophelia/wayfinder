@@ -14,7 +14,11 @@ interface HPDropletProps {
  * overlay, effects-panel pattern): current/max readout, amount input,
  * Heal / Dmg / Temp actions. Closes on outside pointerdown.
  */
-export function HPDroplet({ store, character, hpMaxEffective }: HPDropletProps) {
+export function HPDroplet({
+  store,
+  character,
+  hpMaxEffective,
+}: HPDropletProps) {
   const [editing, setEditing] = useState(false);
   const [amount, setAmount] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);

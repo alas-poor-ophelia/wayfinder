@@ -35,7 +35,7 @@ export class ConfigView extends ItemView {
     this.root = this.contentEl.createDiv({ cls: "minisheet-config-root" });
     render(
       <ConfigApp plugin={this.plugin} onClose={() => this.leaf.detach()} />,
-      this.root
+      this.root,
     );
   }
 

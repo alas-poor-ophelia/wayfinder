@@ -10,7 +10,11 @@ import { forgeItem, type ForgeCatalog } from "../../../src/calc/forge";
 import armorJson from "../../../src/data/equipment/armor.json";
 import weaponsJson from "../../../src/data/equipment/weapons.json";
 import { createDefaultCharacter } from "../../../src/types/character";
-import type { BaseArmorDef, BaseWeaponDef, ItemAbilityDef } from "../../../src/types/equipment";
+import type {
+  BaseArmorDef,
+  BaseWeaponDef,
+  ItemAbilityDef,
+} from "../../../src/types/equipment";
 import { createDefaultInventory } from "../../../src/types/inventory";
 
 const FLAMING: ItemAbilityDef = {
@@ -75,7 +79,7 @@ describe("forgeItem pricing", () => {
   it("+1 longsword = 15 + 300 + 2,000 = 2,315 gp", () => {
     const r = forgeItem(
       { kind: "weapon", baseId: "longsword", enhancement: 1, abilityIds: [] },
-      catalog
+      catalog,
     );
     expect(r.valid).toBe(true);
     expect(r.priceGp).toBe(2315);
@@ -84,8 +88,13 @@ describe("forgeItem pricing", () => {
 
   it("+1 Flaming longsword (eb 2) = 15 + 300 + 8,000 = 8,315 gp", () => {
     const r = forgeItem(
-      { kind: "weapon", baseId: "longsword", enhancement: 1, abilityIds: ["flaming"] },
-      catalog
+      {
+        kind: "weapon",
+        baseId: "longsword",
+        enhancement: 1,
+        abilityIds: ["flaming"],
+      },
+      catalog,
     );
     expect(r.valid).toBe(true);
     expect(r.totalBonusEquivalent).toBe(2);
@@ -96,7 +105,7 @@ describe("forgeItem pricing", () => {
   it("+3 full plate = 1,500 + 150 + 9,000 = 10,650 gp", () => {
     const r = forgeItem(
       { kind: "armor", baseId: "full-plate", enhancement: 3, abilityIds: [] },
-      catalog
+      catalog,
     );
     expect(r.valid).toBe(true);
     expect(r.priceGp).toBe(10650);
@@ -104,8 +113,13 @@ describe("forgeItem pricing", () => {
 
   it("flat-gp ability adds linearly: +1 Glamered chain shirt = 100 + 150 + 1,000 + 2,700 = 3,950 gp", () => {
     const r = forgeItem(
-      { kind: "armor", baseId: "chain-shirt", enhancement: 1, abilityIds: ["glamered"] },
-      catalog
+      {
+        kind: "armor",
+        baseId: "chain-shirt",
+        enhancement: 1,
+        abilityIds: ["glamered"],
+      },
+      catalog,
     );
     expect(r.valid).toBe(true);
     expect(r.totalBonusEquivalent).toBe(1); // flat abilities add no equivalence
@@ -116,8 +130,13 @@ describe("forgeItem pricing", () => {
 describe("forgeItem validation", () => {
   it("enforces the +10 effective-bonus cap (+5 enh + 6 equiv = 11)", () => {
     const r = forgeItem(
-      { kind: "weapon", baseId: "longsword", enhancement: 5, abilityIds: ["huge-power"] },
-      catalog
+      {
+        kind: "weapon",
+        baseId: "longsword",
+        enhancement: 5,
+        abilityIds: ["huge-power"],
+      },
+      catalog,
     );
     expect(r.valid).toBe(false);
     expect(r.errors.join(" ")).toMatch(/\+11 exceeds the \+10 cap/);
@@ -127,7 +146,7 @@ describe("forgeItem validation", () => {
     for (const enhancement of [0, 6, 2.5]) {
       const r = forgeItem(
         { kind: "weapon", baseId: "longsword", enhancement, abilityIds: [] },
-        catalog
+        catalog,
       );
       expect(r.valid).toBe(false);
     }
@@ -135,44 +154,74 @@ describe("forgeItem validation", () => {
 
   it("rejects melee-only abilities on ranged weapons and vice versa", () => {
     const keenBow = forgeItem(
-      { kind: "weapon", baseId: "longbow", enhancement: 1, abilityIds: ["keen"] },
-      catalog
+      {
+        kind: "weapon",
+        baseId: "longbow",
+        enhancement: 1,
+        abilityIds: ["keen"],
+      },
+      catalog,
     );
     expect(keenBow.valid).toBe(false);
     const distanceSword = forgeItem(
-      { kind: "weapon", baseId: "longsword", enhancement: 1, abilityIds: ["distance"] },
-      catalog
+      {
+        kind: "weapon",
+        baseId: "longsword",
+        enhancement: 1,
+        abilityIds: ["distance"],
+      },
+      catalog,
     );
     expect(distanceSword.valid).toBe(false);
   });
 
   it("rejects duplicates, unknown abilities, and kind mismatches", () => {
     const dup = forgeItem(
-      { kind: "weapon", baseId: "longsword", enhancement: 1, abilityIds: ["flaming", "flaming"] },
-      catalog
+      {
+        kind: "weapon",
+        baseId: "longsword",
+        enhancement: 1,
+        abilityIds: ["flaming", "flaming"],
+      },
+      catalog,
     );
     expect(dup.valid).toBe(false);
     const unknown = forgeItem(
-      { kind: "weapon", baseId: "longsword", enhancement: 1, abilityIds: ["nope"] },
-      catalog
+      {
+        kind: "weapon",
+        baseId: "longsword",
+        enhancement: 1,
+        abilityIds: ["nope"],
+      },
+      catalog,
     );
     expect(unknown.valid).toBe(false);
     const notShield = forgeItem(
       { kind: "shield", baseId: "chain-shirt", enhancement: 1, abilityIds: [] },
-      catalog
+      catalog,
     );
     expect(notShield.valid).toBe(false);
   });
 
   it("armor-or-shield abilities fit both armor and shields", () => {
     const onArmor = forgeItem(
-      { kind: "armor", baseId: "chain-shirt", enhancement: 1, abilityIds: ["light-fortification"] },
-      catalog
+      {
+        kind: "armor",
+        baseId: "chain-shirt",
+        enhancement: 1,
+        abilityIds: ["light-fortification"],
+      },
+      catalog,
     );
     expect(onArmor.valid).toBe(true);
     const onShield = forgeItem(
-      { kind: "shield", baseId: "heavy-steel-shield", enhancement: 1, abilityIds: ["light-fortification"] },
-      catalog
+      {
+        kind: "shield",
+        baseId: "heavy-steel-shield",
+        enhancement: 1,
+        abilityIds: ["light-fortification"],
+      },
+      catalog,
     );
     expect(onShield.valid).toBe(true);
   });
@@ -181,11 +230,21 @@ describe("forgeItem validation", () => {
 describe("forgeItem modifier emission", () => {
   it("+1 melee weapon emits ONE attack.melee enhancement modifier", () => {
     const r = forgeItem(
-      { kind: "weapon", baseId: "longsword", enhancement: 1, abilityIds: ["flaming"] },
-      catalog
+      {
+        kind: "weapon",
+        baseId: "longsword",
+        enhancement: 1,
+        abilityIds: ["flaming"],
+      },
+      catalog,
     );
     expect(r.modifiers).toEqual([
-      { target: "attack.melee", type: "enhancement", value: 1, source: "+1 Flaming Longsword" },
+      {
+        target: "attack.melee",
+        type: "enhancement",
+        value: 1,
+        source: "+1 Flaming Longsword",
+      },
     ]);
     expect(r.noteLines[0]).toMatch(/^Flaming: /);
   });
@@ -193,7 +252,7 @@ describe("forgeItem modifier emission", () => {
   it("+1 ranged weapon targets attack.ranged", () => {
     const r = forgeItem(
       { kind: "weapon", baseId: "longbow", enhancement: 1, abilityIds: [] },
-      catalog
+      catalog,
     );
     expect(r.modifiers[0]).toMatchObject({ target: "attack.ranged" });
   });
@@ -201,7 +260,7 @@ describe("forgeItem modifier emission", () => {
   it("+1 chain shirt folds into ONE {ac.all, armor, 5} modifier", () => {
     const r = forgeItem(
       { kind: "armor", baseId: "chain-shirt", enhancement: 1, abilityIds: [] },
-      catalog
+      catalog,
     );
     expect(r.modifiers).toEqual([
       { target: "ac.all", type: "armor", value: 5, source: "+1 Chain shirt" },
@@ -210,11 +269,21 @@ describe("forgeItem modifier emission", () => {
 
   it("+2 heavy steel shield folds into ONE {ac.all, shield, 4} modifier", () => {
     const r = forgeItem(
-      { kind: "shield", baseId: "heavy-steel-shield", enhancement: 2, abilityIds: [] },
-      catalog
+      {
+        kind: "shield",
+        baseId: "heavy-steel-shield",
+        enhancement: 2,
+        abilityIds: [],
+      },
+      catalog,
     );
     expect(r.modifiers).toEqual([
-      { target: "ac.all", type: "shield", value: 4, source: "+2 Heavy steel shield" },
+      {
+        target: "ac.all",
+        type: "shield",
+        value: 4,
+        source: "+2 Heavy steel shield",
+      },
     ]);
   });
 });
@@ -223,7 +292,7 @@ describe("forged item through computeAll", () => {
   it("equipped forged +1 chain shirt raises normal AC by exactly 5", () => {
     const forged = forgeItem(
       { kind: "armor", baseId: "chain-shirt", enhancement: 1, abilityIds: [] },
-      catalog
+      catalog,
     );
     const mk = (equipped: boolean) => {
       const c = createDefaultCharacter("t", "T");

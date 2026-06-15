@@ -154,9 +154,30 @@ interface RangedWeapon {
 }
 
 const WEAPON_DATABASE: Record<string, RangedWeapon> = {
-  Ray: { name: "Ray", damageDie: "", critRange: "20", critMult: "2", damageStat: 0, touchAttack: true },
-  Shuriken: { name: "Shuriken", damageDie: "1d2", critRange: "20", critMult: "2", damageStat: "str", touchAttack: false },
-  Longbow: { name: "Longbow", damageDie: "1d8", critRange: "20", critMult: "3", damageStat: 0, touchAttack: false },
+  Ray: {
+    name: "Ray",
+    damageDie: "",
+    critRange: "20",
+    critMult: "2",
+    damageStat: 0,
+    touchAttack: true,
+  },
+  Shuriken: {
+    name: "Shuriken",
+    damageDie: "1d2",
+    critRange: "20",
+    critMult: "2",
+    damageStat: "str",
+    touchAttack: false,
+  },
+  Longbow: {
+    name: "Longbow",
+    damageDie: "1d8",
+    critRange: "20",
+    critMult: "3",
+    damageStat: 0,
+    touchAttack: false,
+  },
 };
 
 interface SongValues {
@@ -172,7 +193,12 @@ interface WeaponSongEffect {
   notes: string[];
 }
 
-const NO_SONG: SongValues = { atkBonus: 0, dmgBonus: 0, dmgExtra: "", isCrit: false };
+const NO_SONG: SongValues = {
+  atkBonus: 0,
+  dmgBonus: 0,
+  dmgExtra: "",
+  isCrit: false,
+};
 
 const WEAPON_SONG_EFFECTS: Record<string, WeaponSongEffect> = {
   Enhancement: {
@@ -183,7 +209,9 @@ const WEAPON_SONG_EFFECTS: Record<string, WeaponSongEffect> = {
   Defending: {
     melee: NO_SONG,
     ranged: NO_SONG,
-    notes: ["**Defending:** You can use the enhancement bonus as a bonus to your AC. Designate when the song begins."],
+    notes: [
+      "**Defending:** You can use the enhancement bonus as a bonus to your AC. Designate when the song begins.",
+    ],
   },
   Distance: {
     melee: NO_SONG,
@@ -203,7 +231,9 @@ const WEAPON_SONG_EFFECTS: Record<string, WeaponSongEffect> = {
   "Ghost Touch": {
     melee: NO_SONG,
     ranged: NO_SONG,
-    notes: ["**Ghost Touch:** Your weapon can strike incorporeal creatures without miss chance and deals full damage to them."],
+    notes: [
+      "**Ghost Touch:** Your weapon can strike incorporeal creatures without miss chance and deals full damage to them.",
+    ],
   },
   Keen: {
     melee: { atkBonus: 0, dmgBonus: 0, dmgExtra: "", isCrit: true },
@@ -213,22 +243,38 @@ const WEAPON_SONG_EFFECTS: Record<string, WeaponSongEffect> = {
   "Mighty Cleaving": {
     melee: NO_SONG,
     ranged: NO_SONG,
-    notes: ["**Mighty Cleaving:** If you hit your target, you can make an additional attack against another opponent within reach at the same attack bonus."],
+    notes: [
+      "**Mighty Cleaving:** If you hit your target, you can make an additional attack against another opponent within reach at the same attack bonus.",
+    ],
   },
   Returning: {
     melee: NO_SONG,
     ranged: NO_SONG,
-    notes: ["**Returning:** A thrown weapon returns to your hand immediately after it is thrown, allowing you to make a full attack with it."],
+    notes: [
+      "**Returning:** A thrown weapon returns to your hand immediately after it is thrown, allowing you to make a full attack with it.",
+    ],
   },
   Shock: {
-    melee: { atkBonus: 0, dmgBonus: 0, dmgExtra: "+1d6 electricity", isCrit: false },
-    ranged: { atkBonus: 0, dmgBonus: 0, dmgExtra: "+1d6 electricity", isCrit: false },
+    melee: {
+      atkBonus: 0,
+      dmgBonus: 0,
+      dmgExtra: "+1d6 electricity",
+      isCrit: false,
+    },
+    ranged: {
+      atkBonus: 0,
+      dmgBonus: 0,
+      dmgExtra: "+1d6 electricity",
+      isCrit: false,
+    },
     notes: [],
   },
   Seeking: {
     melee: NO_SONG,
     ranged: NO_SONG,
-    notes: ["**Seeking:** Negates the miss chance for concealment (not total concealment) for ranged attacks."],
+    notes: [
+      "**Seeking:** Negates the miss chance for concealment (not total concealment) for ranged attacks.",
+    ],
   },
 };
 
@@ -266,11 +312,12 @@ function getEnlargedDamageDie(originalDie: string, sizeAdjust: number): string {
 
 function getRangedWeaponProperties(
   attackStyle: string,
-  adjustedStats: { str: number }
+  adjustedStats: { str: number },
 ): RangedWeapon & { damageStat: number } {
   const weapon = WEAPON_DATABASE[attackStyle] || WEAPON_DATABASE.Longbow;
   // Handle damage stat reference
-  const damageStat = weapon.damageStat === "str" ? adjustedStats.str : weapon.damageStat;
+  const damageStat =
+    weapon.damageStat === "str" ? adjustedStats.str : weapon.damageStat;
   return { ...weapon, damageStat };
 }
 
@@ -279,14 +326,20 @@ interface PowerAttackValues {
   bonus: number;
 }
 
-function getPowerAttackValues(bab: number, hasPowerAttack: boolean): PowerAttackValues {
+function getPowerAttackValues(
+  bab: number,
+  hasPowerAttack: boolean,
+): PowerAttackValues {
   if (!hasPowerAttack) return { penalty: 0, bonus: 0 };
   const penalty = -1 - Math.floor(bab / 4);
   const bonus = 2 + Math.floor(bab / 4) * 2;
   return { penalty, bonus };
 }
 
-function getDefensivePenalty(isDefending: boolean, hasCraneStyle: boolean): number {
+function getDefensivePenalty(
+  isDefending: boolean,
+  hasCraneStyle: boolean,
+): number {
   return isDefending ? (hasCraneStyle ? -2 : -4) : 0;
 }
 
@@ -300,9 +353,10 @@ function getSmiteEvilValues(
   isSmiteEvil: boolean,
   isOutsider: boolean,
   paladinLvl: number,
-  chaMod: number
+  chaMod: number,
 ): SmiteEvilValues {
-  if (!isSmiteEvil || paladinLvl <= 0) return { atkBonus: 0, dmgBonus: 0, description: "" };
+  if (!isSmiteEvil || paladinLvl <= 0)
+    return { atkBonus: 0, dmgBonus: 0, description: "" };
   return {
     atkBonus: chaMod,
     dmgBonus: isOutsider ? paladinLvl * 2 : paladinLvl,
@@ -314,7 +368,7 @@ function getPreciseStrikeDamage(
   hasPreciseStrike: boolean,
   hasDoublePrecise: boolean,
   paladinLvl: number,
-  panachePoints: number | string
+  panachePoints: number | string,
 ): number {
   if (!hasPreciseStrike || toInt(panachePoints) <= 0) return 0;
   let damage = paladinLvl;
@@ -346,7 +400,7 @@ function calculateAttacks(
   bab: number,
   extraAttacks: number[] = [],
   canFlurry = true,
-  flurryAttacks?: number
+  flurryAttacks?: number,
 ): number[] {
   const attacks: number[] = [];
 
@@ -386,12 +440,14 @@ function formatAttackStrings(
   damageString: string,
   critInfo: string,
   attacks: number[],
-  touchAttack = false
+  touchAttack = false,
 ): FormattedAttackStrings {
   const touchText = touchAttack ? " (touch)" : "";
   const damageText = damageString ? ` (${damageString})` : "";
   const standard = `${formatAttackBonus(standardBonus)}${touchText}${damageText}${critInfo}`;
-  const fullAttackString = attacks.map((bonus) => formatAttackBonus(bonus)).join("/");
+  const fullAttackString = attacks
+    .map((bonus) => formatAttackBonus(bonus))
+    .join("/");
   const full = `${fullAttackString}${touchText}${damageText}${critInfo}`;
   // critInfo arrives wrapped as " (19-20/x2)"; unwrap for the structured chip.
   const crit = critInfo.replace(/^\s*\((.*)\)$/, "$1");
@@ -448,27 +504,47 @@ function createWeaponAttack(params: WeaponAttackParams): WeaponAttack {
   // NOTE: conditionAttackBonus and conditionAdjust are the same value at every
   // call site — the legacy code double-counts it, and so do we.
   const attackBonus =
-    params.baseAttackBonus + params.attackStat + params.powerAttackValues.penalty +
-    params.defensivePenalty + params.enhancementBonus + params.conditionAttackBonus +
-    params.atkAdjust + params.smiteEvilValues.atkBonus + params.chargeBonus + params.flankingBonus +
-    params.conditionAdjust + params.weaponSongValues.atkBonus;
+    params.baseAttackBonus +
+    params.attackStat +
+    params.powerAttackValues.penalty +
+    params.defensivePenalty +
+    params.enhancementBonus +
+    params.conditionAttackBonus +
+    params.atkAdjust +
+    params.smiteEvilValues.atkBonus +
+    params.chargeBonus +
+    params.flankingBonus +
+    params.conditionAdjust +
+    params.weaponSongValues.atkBonus;
 
   const damageBonus =
-    params.damageStat + params.powerAttackValues.bonus + params.preciseStrikeDamage +
-    params.enhancementBonus + params.dmgAdjust + params.smiteEvilValues.dmgBonus +
-    params.weaponSongValues.dmgBonus + params.conditionDamageBonus;
+    params.damageStat +
+    params.powerAttackValues.bonus +
+    params.preciseStrikeDamage +
+    params.enhancementBonus +
+    params.dmgAdjust +
+    params.smiteEvilValues.dmgBonus +
+    params.weaponSongValues.dmgBonus +
+    params.conditionDamageBonus;
 
   // Create damage string
   let damageString: string;
   if (params.damageDie === "") {
     // For rays, show only bonus damage if any exists.
     // QUIRK: smite damage is added a second time on top of damageBonus here.
-    const totalBonus = damageBonus + (params.smiteEvilValues.dmgBonus > 0 ? params.smiteEvilValues.dmgBonus : 0);
-    const hasAnyDamage = totalBonus > 0 || params.smiteEvilValues.description || params.weaponSongValues.dmgExtra;
+    const totalBonus =
+      damageBonus +
+      (params.smiteEvilValues.dmgBonus > 0
+        ? params.smiteEvilValues.dmgBonus
+        : 0);
+    const hasAnyDamage =
+      totalBonus > 0 ||
+      params.smiteEvilValues.description ||
+      params.weaponSongValues.dmgExtra;
     damageString = hasAnyDamage
-      ? (totalBonus > 0
-          ? `+${totalBonus}${params.smiteEvilValues.description}${params.weaponSongValues.dmgExtra ? " " + params.weaponSongValues.dmgExtra : ""}`
-          : `${params.smiteEvilValues.description}${params.weaponSongValues.dmgExtra ? params.weaponSongValues.dmgExtra : ""}`)
+      ? totalBonus > 0
+        ? `+${totalBonus}${params.smiteEvilValues.description}${params.weaponSongValues.dmgExtra ? " " + params.weaponSongValues.dmgExtra : ""}`
+        : `${params.smiteEvilValues.description}${params.weaponSongValues.dmgExtra ? params.weaponSongValues.dmgExtra : ""}`
       : "";
   } else {
     damageString = `${params.damageDie}+${damageBonus}${params.smiteEvilValues.description}${params.weaponSongValues.dmgExtra ? " " + params.weaponSongValues.dmgExtra : ""}`;
@@ -570,28 +646,64 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
   const sizeAdjust = conditionEffects.sizeAdjust || 0;
 
   // Calculate common values
-  const { notes: weaponSongNotes, melee: rawMeleeSong, ranged: rawRangedSong } = processWeaponSong(options.weaponSong);
+  const {
+    notes: weaponSongNotes,
+    melee: rawMeleeSong,
+    ranged: rawRangedSong,
+  } = processWeaponSong(options.weaponSong);
   // Quick-action dice/keen channels merge into the song values so the
   // dmgExtra slot and keen crit math downstream stay byte-identical.
-  const mergeSong = (base: SongValues, extraDice?: string, keen?: boolean): SongValues =>
+  const mergeSong = (
+    base: SongValues,
+    extraDice?: string,
+    keen?: boolean,
+  ): SongValues =>
     extraDice || keen
       ? {
           ...base,
-          dmgExtra: base.dmgExtra && extraDice ? `${base.dmgExtra} ${extraDice}` : extraDice || base.dmgExtra,
+          dmgExtra:
+            base.dmgExtra && extraDice
+              ? `${base.dmgExtra} ${extraDice}`
+              : extraDice || base.dmgExtra,
           isCrit: base.isCrit || Boolean(keen),
         }
       : base;
-  const meleeSong = mergeSong(rawMeleeSong, input.extraDamageDice?.melee, input.keen?.melee);
-  const rangedSong = mergeSong(rawRangedSong, input.extraDamageDice?.ranged, input.keen?.ranged);
-  const unarmedSong = mergeSong(NO_SONG, input.extraDamageDice?.unarmed, input.keen?.unarmed);
+  const meleeSong = mergeSong(
+    rawMeleeSong,
+    input.extraDamageDice?.melee,
+    input.keen?.melee,
+  );
+  const rangedSong = mergeSong(
+    rawRangedSong,
+    input.extraDamageDice?.ranged,
+    input.keen?.ranged,
+  );
+  const unarmedSong = mergeSong(
+    NO_SONG,
+    input.extraDamageDice?.unarmed,
+    input.keen?.unarmed,
+  );
   const powerAttackValues = getPowerAttackValues(stats.bab, flags.powerAttack);
-  const defensivePenalty = getDefensivePenalty(flags.defending, flags.craneStyle);
+  const defensivePenalty = getDefensivePenalty(
+    flags.defending,
+    flags.craneStyle,
+  );
   const smiteEvilValues =
     input.smiteOverride ??
-    getSmiteEvilValues(flags.smiteEvil, flags.smiteEvilOutsider, levels.paladin, stats.cha);
+    getSmiteEvilValues(
+      flags.smiteEvil,
+      flags.smiteEvilOutsider,
+      levels.paladin,
+      stats.cha,
+    );
   const preciseStrikeDamage =
     input.preciseStrikeOverride ??
-    getPreciseStrikeDamage(flags.preciseStrike, flags.doublePrecise, levels.paladin, options.panachePoints);
+    getPreciseStrikeDamage(
+      flags.preciseStrike,
+      flags.doublePrecise,
+      levels.paladin,
+      options.panachePoints,
+    );
   const chargeBonus = flags.charging ? 2 : 0;
   const flankingBonus = flags.flanking ? 2 : 0;
 
@@ -623,7 +735,9 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
   // with finesse. The legacy agileWeapon toggle moved damage too — preserved.
   const dexDamage =
     (flags.eitr && weaponFinessable) ||
-    (input.meleeWeapon?.agile && weaponFinessable && (flags.weaponFinesse || flags.eitr));
+    (input.meleeWeapon?.agile &&
+      weaponFinessable &&
+      (flags.weaponFinesse || flags.eitr));
   const meleeDamageStat =
     dexBeatsStr && (flags.agileWeapon || dexDamage) ? stats.dex : stats.str;
 
@@ -632,8 +746,8 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     damageDie: meleeTouch
       ? ""
       : getEnlargedDamageDie(input.meleeWeapon?.damageDie ?? "1d6", sizeAdjust),
-    critRange: meleeTouch ? "20" : input.meleeWeapon?.critRange ?? "18-20",
-    critMultiplier: meleeTouch ? "2" : input.meleeWeapon?.critMult ?? "2",
+    critRange: meleeTouch ? "20" : (input.meleeWeapon?.critRange ?? "18-20"),
+    critMultiplier: meleeTouch ? "2" : (input.meleeWeapon?.critMult ?? "2"),
     attackStat: meleeAttackStat,
     damageStat: meleeTouch ? 0 : meleeDamageStat,
     enhancementBonus: enhancements.melee,
@@ -654,14 +768,14 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     stats.bab,
     conditionEffects.extraAttacks || [],
     true,
-    input.flurryAttacks
+    input.flurryAttacks,
   );
   const meleeAttackStrings = formatAttackStrings(
     meleeAttack.attackBonus,
     meleeAttack.damageString,
     meleeAttack.critInfo,
     meleeAttacks,
-    meleeTouch
+    meleeTouch,
   );
 
   // RANGED ATTACK
@@ -705,14 +819,14 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     stats.bab,
     conditionEffects.extraAttacks || [],
     canUseFlurryForRanged,
-    input.flurryAttacks
+    input.flurryAttacks,
   );
   const rangedAttackStrings = formatAttackStrings(
     rangedAttack.attackBonus,
     rangedAttack.damageString,
     rangedAttack.critInfo,
     rangedAttacks,
-    rangedWeaponProps.touchAttack
+    rangedWeaponProps.touchAttack,
   );
 
   // UNARMED ATTACK
@@ -741,9 +855,14 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
     stats.bab,
     conditionEffects.extraAttacks || [],
     true,
-    input.flurryAttacks
+    input.flurryAttacks,
   );
-  const unarmedAttackStrings = formatAttackStrings(unarmedAttack.attackBonus, unarmedAttack.damageString, unarmedAttack.critInfo, unarmedAttacks);
+  const unarmedAttackStrings = formatAttackStrings(
+    unarmedAttack.attackBonus,
+    unarmedAttack.damageString,
+    unarmedAttack.critInfo,
+    unarmedAttacks,
+  );
 
   // Format output
   const weaponSongNotesText =

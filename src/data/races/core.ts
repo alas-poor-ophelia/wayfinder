@@ -30,7 +30,8 @@ export const CORE_RACES: RaceData[] = [
         type: "racial",
         value: 2,
         source: "Dwarf: Greed",
-        condition: "to price nonmagical goods with precious metals or gemstones",
+        condition:
+          "to price nonmagical goods with precious metals or gemstones",
       },
       {
         target: "save.all",
@@ -62,9 +63,19 @@ export const CORE_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Slow and Steady", summary: "Speed is never modified by armor or encumbrance." },
-      { name: "Stonecunning", summary: "Free Perception check within 10 ft of unusual stonework." },
-      { name: "Weapon Familiarity", summary: "Proficient with battleaxes, heavy picks, and warhammers; 'dwarven' weapons are martial." },
+      {
+        name: "Slow and Steady",
+        summary: "Speed is never modified by armor or encumbrance.",
+      },
+      {
+        name: "Stonecunning",
+        summary: "Free Perception check within 10 ft of unusual stonework.",
+      },
+      {
+        name: "Weapon Familiarity",
+        summary:
+          "Proficient with battleaxes, heavy picks, and warhammers; 'dwarven' weapons are martial.",
+      },
     ],
   },
   {
@@ -108,7 +119,11 @@ export const CORE_RACES: RaceData[] = [
     ],
     traits: [
       { name: "Elven Immunities", summary: "Immune to magic sleep effects." },
-      { name: "Weapon Familiarity", summary: "Proficient with longbows, longswords, rapiers, shortbows; 'elven' weapons are martial." },
+      {
+        name: "Weapon Familiarity",
+        summary:
+          "Proficient with longbows, longswords, rapiers, shortbows; 'elven' weapons are martial.",
+      },
     ],
   },
   {
@@ -158,7 +173,11 @@ export const CORE_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Gnome Magic", summary: "+1 DC on illusion spells; spell-like abilities 1/day with Cha 11+." },
+      {
+        name: "Gnome Magic",
+        summary:
+          "+1 DC on illusion spells; spell-like abilities 1/day with Cha 11+.",
+      },
       { name: "Weapon Familiarity", summary: "'Gnome' weapons are martial." },
     ],
   },
@@ -189,7 +208,10 @@ export const CORE_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Adaptability", summary: "Skill Focus as a bonus feat at 1st level." },
+      {
+        name: "Adaptability",
+        summary: "Skill Focus as a bonus feat at 1st level.",
+      },
       { name: "Elf Blood", summary: "Counts as both elf and human." },
       { name: "Elven Immunities", summary: "Immune to magic sleep effects." },
       { name: "Multitalented", summary: "Two favored classes." },
@@ -216,8 +238,15 @@ export const CORE_RACES: RaceData[] = [
     ],
     traits: [
       { name: "Orc Blood", summary: "Counts as both orc and human." },
-      { name: "Orc Ferocity", summary: "1/day, fight on for 1 round when brought below 0 hp." },
-      { name: "Weapon Familiarity", summary: "Proficient with greataxes and falchions; 'orc' weapons are martial." },
+      {
+        name: "Orc Ferocity",
+        summary: "1/day, fight on for 1 round when brought below 0 hp.",
+      },
+      {
+        name: "Weapon Familiarity",
+        summary:
+          "Proficient with greataxes and falchions; 'orc' weapons are martial.",
+      },
     ],
   },
   {
@@ -264,7 +293,10 @@ export const CORE_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Weapon Familiarity", summary: "Proficient with slings; 'halfling' weapons are martial." },
+      {
+        name: "Weapon Familiarity",
+        summary: "Proficient with slings; 'halfling' weapons are martial.",
+      },
     ],
   },
   {

@@ -35,8 +35,18 @@ const WEAPON_SONG_VARIANTS: QuickActionVariant[] = [
     // the legacy calculator (createWeaponAttack), exactly like a magic
     // weapon's bonus.
     effects: [
-      { kind: "modifier", target: "attack.melee", type: "enhancement", value: 1 },
-      { kind: "modifier", target: "attack.ranged", type: "enhancement", value: 1 },
+      {
+        kind: "modifier",
+        target: "attack.melee",
+        type: "enhancement",
+        value: 1,
+      },
+      {
+        kind: "modifier",
+        target: "attack.ranged",
+        type: "enhancement",
+        value: 1,
+      },
     ],
   },
   {
@@ -172,7 +182,12 @@ export const DEFAULT_QUICK_ACTIONS: QuickActionDef[] = [
     stages: [
       {
         effects: [
-          { kind: "modifier", target: "attack.all", type: "untyped", value: -4 },
+          {
+            kind: "modifier",
+            target: "attack.all",
+            type: "untyped",
+            value: -4,
+          },
           { kind: "acChannels", normal: 3, touch: 3 },
         ],
       },
@@ -185,8 +200,18 @@ export const DEFAULT_QUICK_ACTIONS: QuickActionDef[] = [
     stages: [
       {
         effects: [
-          { kind: "modifier", target: "attack.melee", type: "untyped", value: 2 },
-          { kind: "modifier", target: "attack.unarmed", type: "untyped", value: 2 },
+          {
+            kind: "modifier",
+            target: "attack.melee",
+            type: "untyped",
+            value: 2,
+          },
+          {
+            kind: "modifier",
+            target: "attack.unarmed",
+            type: "untyped",
+            value: 2,
+          },
           { kind: "acChannels", normal: -2, touch: -2, ff: -2 },
         ],
       },
@@ -199,8 +224,18 @@ export const DEFAULT_QUICK_ACTIONS: QuickActionDef[] = [
     stages: [
       {
         effects: [
-          { kind: "modifier", target: "attack.melee", type: "untyped", value: 2 },
-          { kind: "modifier", target: "attack.unarmed", type: "untyped", value: 2 },
+          {
+            kind: "modifier",
+            target: "attack.melee",
+            type: "untyped",
+            value: 2,
+          },
+          {
+            kind: "modifier",
+            target: "attack.unarmed",
+            type: "untyped",
+            value: 2,
+          },
         ],
       },
     ],
@@ -217,7 +252,12 @@ export const DEFAULT_QUICK_ACTIONS: QuickActionDef[] = [
           {
             kind: "flurryAttacks",
             // 2 base attacks, 3 at monk 11+ (legacy thresholds)
-            count: { source: "classLevel", className: "monk", divisor: 11, flatBonus: 2 },
+            count: {
+              source: "classLevel",
+              className: "monk",
+              divisor: 11,
+              flatBonus: 2,
+            },
           },
         ],
       },
@@ -251,7 +291,11 @@ export const DEFAULT_QUICK_ACTIONS: QuickActionDef[] = [
         effects: [
           {
             kind: "preciseStrike",
-            damage: { source: "classLevel", className: "paladin", multiplier: 2 },
+            damage: {
+              source: "classLevel",
+              className: "paladin",
+              multiplier: 2,
+            },
           },
         ],
       },
@@ -282,7 +326,11 @@ export const DEFAULT_QUICK_ACTIONS: QuickActionDef[] = [
           {
             kind: "smite",
             attack: { source: "abilityMod", ability: "cha" },
-            damage: { source: "classLevel", className: "paladin", multiplier: 2 },
+            damage: {
+              source: "classLevel",
+              className: "paladin",
+              multiplier: 2,
+            },
             description: " (2x vs outsider)",
           },
         ],
@@ -338,12 +386,14 @@ export function defaultQuickActions(): QuickActionDef[] {
 /** Catalog lookup (defaults + the crane variant) — fresh clone per call. */
 export function getCatalogQuickAction(id: string): QuickActionDef | null {
   const def = [...DEFAULT_QUICK_ACTIONS, FIGHTING_DEFENSIVELY_CRANE].find(
-    (d) => d.id === id
+    (d) => d.id === id,
   );
   return def ? structuredClone(def) : null;
 }
 
-const SONG_VARIANT_BY_NAME = new Map(WEAPON_SONG_VARIANTS.map((v) => [v.name, v.id]));
+const SONG_VARIANT_BY_NAME = new Map(
+  WEAPON_SONG_VARIANTS.map((v) => [v.name, v.id]),
+);
 
 export interface SeededQuickActions {
   quickActions: QuickActionDef[];
@@ -357,7 +407,7 @@ export interface SeededQuickActions {
  * in CombatToggles and is not seeded here.)
  */
 export function seedQuickActionsFromToggles(
-  toggles: Partial<CombatToggles>
+  toggles: Partial<CombatToggles>,
 ): SeededQuickActions {
   const quickActions = defaultQuickActions().map((def) => {
     if (def.id === "fightingDefensively" && toggles.craneStyle) {
@@ -375,7 +425,9 @@ export function seedQuickActionsFromToggles(
   const state: QuickActionStateMap = {};
   if (toggles.powerAttack) state.powerAttack = { stage: 1 };
   if (toggles.fightingDefensively) {
-    state[toggles.craneStyle ? "fightingDefensivelyCrane" : "fightingDefensively"] = {
+    state[
+      toggles.craneStyle ? "fightingDefensivelyCrane" : "fightingDefensively"
+    ] = {
       stage: 1,
     };
   }

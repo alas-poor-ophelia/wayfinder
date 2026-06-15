@@ -76,11 +76,14 @@ function docText(d: RuleDoc): string {
         s += " " + b.items.map((i) => i.text).join(" ");
         break;
       case "bullets":
-        s += " " + b.items.map((i) => (i.term ? i.term + " " : "") + i.text).join(" ");
+        s +=
+          " " +
+          b.items.map((i) => (i.term ? i.term + " " : "") + i.text).join(" ");
         break;
       case "flow":
         for (const n of b.nodes) {
-          if (n.kind === "branch") s += " " + n.branches.map((x) => x.text).join(" ");
+          if (n.kind === "branch")
+            s += " " + n.branches.map((x) => x.text).join(" ");
           else if (n.kind === "options") s += " " + n.items.join(" ");
           else s += " " + n.text;
         }
@@ -112,9 +115,17 @@ function tokenScore(tok: string, doc: RuleDoc): TokenHit | null {
  * Rank docs for a query. Multi-word queries are AND — every word must match
  * somewhere. Empty query returns all docs in their incoming order (score 0).
  */
-export function searchRules(docs: RuleDoc[], query: string): RuleSearchResult[] {
-  const tokens = (query || "").trim().toLowerCase().split(/\s+/).filter(Boolean);
-  if (!tokens.length) return docs.map((doc) => ({ doc, score: 0, titlePos: [] }));
+export function searchRules(
+  docs: RuleDoc[],
+  query: string,
+): RuleSearchResult[] {
+  const tokens = (query || "")
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!tokens.length)
+    return docs.map((doc) => ({ doc, score: 0, titlePos: [] }));
 
   const out: RuleSearchResult[] = [];
   for (const doc of docs) {

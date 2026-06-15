@@ -14,7 +14,7 @@ import type { RaceData, RaceHeritage, RaceTrait } from "../types";
 const tieflingSkilled = (
   alt: string,
   skillA: string,
-  skillB: string
+  skillB: string,
 ): Pick<RaceHeritage, "replacesSources" | "modifiers"> => ({
   replacesSources: ["Tiefling: Skilled"],
   modifiers: [
@@ -154,8 +154,18 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     sla: "Summon nature's ally II 1/day.",
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
-      { target: "skill.Handle Animal", type: "racial", value: 2, source: "Aasimar (Idyllkin): Skilled" },
-      { target: "skill.Survival", type: "racial", value: 2, source: "Aasimar (Idyllkin): Skilled" },
+      {
+        target: "skill.Handle Animal",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Idyllkin): Skilled",
+      },
+      {
+        target: "skill.Survival",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Idyllkin): Skilled",
+      },
     ],
   },
   // Blood of Angels pg. 21
@@ -168,8 +178,18 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     sla: "Alter self 1/day.",
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
-      { target: "skill.Heal", type: "racial", value: 2, source: "Aasimar (Angelkin): Skilled" },
-      { target: "skill.Knowledge (planes)", type: "racial", value: 2, source: "Aasimar (Angelkin): Skilled" },
+      {
+        target: "skill.Heal",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Angelkin): Skilled",
+      },
+      {
+        target: "skill.Knowledge (planes)",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Angelkin): Skilled",
+      },
     ],
   },
   // Blood of Angels pg. 22
@@ -182,8 +202,18 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     sla: "Continual flame 1/day.",
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
-      { target: "skill.Intimidate", type: "racial", value: 2, source: "Aasimar (Lawbringer): Skilled" },
-      { target: "skill.Sense Motive", type: "racial", value: 2, source: "Aasimar (Lawbringer): Skilled" },
+      {
+        target: "skill.Intimidate",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Lawbringer): Skilled",
+      },
+      {
+        target: "skill.Sense Motive",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Lawbringer): Skilled",
+      },
     ],
   },
   // Blood of Angels pg. 22
@@ -196,7 +226,12 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     sla: "Glitterdust 1/day.",
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
-      { target: "skill.Diplomacy", type: "racial", value: 2, source: "Aasimar (Musetouched): Skilled" },
+      {
+        target: "skill.Diplomacy",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Musetouched): Skilled",
+      },
       // Perform is a skill GROUP ("Perform (sing)" etc.) — no exact target
       // exists, so this rides as a conditional note, never auto-summed.
       {
@@ -218,8 +253,18 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     sla: "See invisibility 1/day.",
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
-      { target: "skill.Acrobatics", type: "racial", value: 2, source: "Aasimar (Plumekith): Skilled" },
-      { target: "skill.Fly", type: "racial", value: 2, source: "Aasimar (Plumekith): Skilled" },
+      {
+        target: "skill.Acrobatics",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Plumekith): Skilled",
+      },
+      {
+        target: "skill.Fly",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Plumekith): Skilled",
+      },
     ],
   },
   // Blood of Angels pg. 23
@@ -232,8 +277,18 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     sla: "Pyrotechnics 1/day.",
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
-      { target: "skill.Knowledge (planes)", type: "racial", value: 2, source: "Aasimar (Emberkin): Skilled" },
-      { target: "skill.Spellcraft", type: "racial", value: 2, source: "Aasimar (Emberkin): Skilled" },
+      {
+        target: "skill.Knowledge (planes)",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Emberkin): Skilled",
+      },
+      {
+        target: "skill.Spellcraft",
+        type: "racial",
+        value: 2,
+        source: "Aasimar (Emberkin): Skilled",
+      },
     ],
   },
 ];
@@ -262,11 +317,11 @@ export function applyHeritage(race: RaceData, heritageKey?: string): RaceData {
   const heritage = heritageKey ? getHeritage(race.key, heritageKey) : null;
   if (!heritage) return race;
   const kept = race.modifiers.filter(
-    (m) => !heritage.replacesSources.includes(m.source)
+    (m) => !heritage.replacesSources.includes(m.source),
   );
   const traits: RaceTrait[] = [
     ...race.traits.map((t) =>
-      t.name === SLA_TRAIT ? { name: SLA_TRAIT, summary: heritage.sla } : t
+      t.name === SLA_TRAIT ? { name: SLA_TRAIT, summary: heritage.sla } : t,
     ),
     ...(heritage.traits ?? []),
   ];

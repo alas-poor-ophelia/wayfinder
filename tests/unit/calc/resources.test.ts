@@ -9,7 +9,10 @@ import {
   type ResourceFormulaContext,
 } from "../../../src/calc/resources";
 import { computeAll } from "../../../src/calc";
-import { createDefaultCharacter, type ResourcePool } from "../../../src/types/character";
+import {
+  createDefaultCharacter,
+  type ResourcePool,
+} from "../../../src/types/character";
 
 const ctx: ResourceFormulaContext = {
   classes: [
@@ -23,9 +26,21 @@ const ctx: ResourceFormulaContext = {
 
 describe("evaluateResourceFormula", () => {
   it("classLevel matches case-insensitive substrings (same as calc classLevel)", () => {
-    expect(evaluateResourceFormula({ source: "classLevel", className: "paladin" }, ctx)).toBe(5);
-    expect(evaluateResourceFormula({ source: "classLevel", className: "Monk" }, ctx)).toBe(2);
-    expect(evaluateResourceFormula({ source: "classLevel", className: "wizard" }, ctx)).toBe(0);
+    expect(
+      evaluateResourceFormula(
+        { source: "classLevel", className: "paladin" },
+        ctx,
+      ),
+    ).toBe(5);
+    expect(
+      evaluateResourceFormula({ source: "classLevel", className: "Monk" }, ctx),
+    ).toBe(2);
+    expect(
+      evaluateResourceFormula(
+        { source: "classLevel", className: "wizard" },
+        ctx,
+      ),
+    ).toBe(0);
   });
 
   it("characterLevel sums all classes", () => {
@@ -33,8 +48,12 @@ describe("evaluateResourceFormula", () => {
   });
 
   it("abilityMod and abilityScore read the right tables", () => {
-    expect(evaluateResourceFormula({ source: "abilityMod", ability: "cha" }, ctx)).toBe(6);
-    expect(evaluateResourceFormula({ source: "abilityScore", ability: "cha" }, ctx)).toBe(22);
+    expect(
+      evaluateResourceFormula({ source: "abilityMod", ability: "cha" }, ctx),
+    ).toBe(6);
+    expect(
+      evaluateResourceFormula({ source: "abilityScore", ability: "cha" }, ctx),
+    ).toBe(22);
   });
 
   it("floors after multiplier/divisor, then adds the flat bonus", () => {
@@ -42,31 +61,48 @@ describe("evaluateResourceFormula", () => {
     // separate formula; here: floor(5 * 1 / 2) = 2, +3 = 5
     expect(
       evaluateResourceFormula(
-        { source: "classLevel", className: "paladin", divisor: 2, flatBonus: 3 },
-        ctx
-      )
+        {
+          source: "classLevel",
+          className: "paladin",
+          divisor: 2,
+          flatBonus: 3,
+        },
+        ctx,
+      ),
     ).toBe(5);
     expect(
-      evaluateResourceFormula({ source: "characterLevel", multiplier: 3, divisor: 4 }, ctx)
+      evaluateResourceFormula(
+        { source: "characterLevel", multiplier: 3, divisor: 4 },
+        ctx,
+      ),
     ).toBe(7); // floor(30/4)
   });
 
   it("clamps to minimum (panache: Cha mod, min 1)", () => {
-    const panache = { source: "abilityMod" as const, ability: "cha" as const, minimum: 1 };
+    const panache = {
+      source: "abilityMod" as const,
+      ability: "cha" as const,
+      minimum: 1,
+    };
     expect(evaluateResourceFormula(panache, ctx)).toBe(6);
     expect(
-      evaluateResourceFormula(panache, { ...ctx, mods: { ...ctx.mods, cha: -2 } })
+      evaluateResourceFormula(panache, {
+        ...ctx,
+        mods: { ...ctx.mods, cha: -2 },
+      }),
     ).toBe(1);
   });
 
   it("negative mods floor toward -Infinity but minimum 0 default applies", () => {
     // wis -1: floor(-1 * 1 / 1) = -1 → clamped to default minimum 0
-    expect(evaluateResourceFormula({ source: "abilityMod", ability: "wis" }, ctx)).toBe(0);
+    expect(
+      evaluateResourceFormula({ source: "abilityMod", ability: "wis" }, ctx),
+    ).toBe(0);
   });
 
   it("treats divisor 0 as 1 instead of dividing by zero", () => {
     expect(
-      evaluateResourceFormula({ source: "characterLevel", divisor: 0 }, ctx)
+      evaluateResourceFormula({ source: "characterLevel", divisor: 0 }, ctx),
     ).toBe(10);
   });
 });
@@ -76,7 +112,10 @@ describe("evaluateResourceFormula", () => {
  * (Route A), so they track level + ability changes without a manual sync.
  */
 describe("computeAll resourceMaxes (live class-pool derivation)", () => {
-  function paladin(level: number, cha = 16): ReturnType<typeof createDefaultCharacter> {
+  function paladin(
+    level: number,
+    cha = 16,
+  ): ReturnType<typeof createDefaultCharacter> {
     const c = createDefaultCharacter("pal", "Pal");
     c.classes = [{ className: "Paladin", level }];
     c.baseAbilities = { str: 10, dex: 12, con: 12, int: 10, wis: 10, cha };
@@ -159,7 +198,7 @@ describe("evaluateFooterFormula", () => {
         perDieBonus: 2,
         bonusLabel: "self",
       },
-      pal6
+      pal6,
     );
     expect(footer).toBe("3d6 (+6 self)");
   });
@@ -167,18 +206,26 @@ describe("evaluateFooterFormula", () => {
   it("omits the parenthetical when there is no bonus, and supports a suffix", () => {
     expect(
       evaluateFooterFormula(
-        { dice: { source: "classLevel", className: "paladin", divisor: 2 }, dieSize: 6, suffix: "healed" },
-        { ...ctx, classes: [{ className: "Paladin", level: 6 }] }
-      )
+        {
+          dice: { source: "classLevel", className: "paladin", divisor: 2 },
+          dieSize: 6,
+          suffix: "healed",
+        },
+        { ...ctx, classes: [{ className: "Paladin", level: 6 }] },
+      ),
     ).toBe("3d6 healed");
   });
 
   it("supports a flat bonus and a bare count (no die size)", () => {
     expect(
       evaluateFooterFormula(
-        { dice: { source: "abilityMod", ability: "cha" }, flatBonus: 1, bonusLabel: "rounds" },
-        ctx
-      )
+        {
+          dice: { source: "abilityMod", ability: "cha" },
+          flatBonus: 1,
+          bonusLabel: "rounds",
+        },
+        ctx,
+      ),
     ).toBe("6 (+1 rounds)");
   });
 

@@ -8,7 +8,11 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { calculateAttackStrings, type AttackInput, type ConditionEffects } from "../../../src/calc/attacks";
+import {
+  calculateAttackStrings,
+  type AttackInput,
+  type ConditionEffects,
+} from "../../../src/calc/attacks";
 
 interface LegacyAttackOutput {
   waveblade: string;
@@ -19,18 +23,30 @@ interface LegacyAttackOutput {
 interface Fixtures {
   attacksLive: { input: AttackInput; output: LegacyAttackOutput };
   attackMatrixBase: AttackInput;
-  attackMatrix: { name: string; overrides: Partial<AttackInput>; output: LegacyAttackOutput }[];
+  attackMatrix: {
+    name: string;
+    overrides: Partial<AttackInput>;
+    output: LegacyAttackOutput;
+  }[];
   conditionMatrix: { name: string; output: ConditionEffects }[];
   integration: { name: string; attacks: LegacyAttackOutput }[];
   hwayoung: { input: AttackInput; attacks: LegacyAttackOutput };
 }
 
 const fixtures: Fixtures = JSON.parse(
-  readFileSync(fileURLToPath(new URL("../fixtures/captured-fixtures.json", import.meta.url)), "utf-8")
+  readFileSync(
+    fileURLToPath(
+      new URL("../fixtures/captured-fixtures.json", import.meta.url),
+    ),
+    "utf-8",
+  ),
 );
 
 /** Assert port output matches a legacy capture exactly (melee ↔ waveblade). */
-function expectMatchesLegacy(input: AttackInput, expected: LegacyAttackOutput): void {
+function expectMatchesLegacy(
+  input: AttackInput,
+  expected: LegacyAttackOutput,
+): void {
   const result = calculateAttackStrings(input);
   expect(result.melee).toBe(expected.waveblade);
   expect(result.ranged).toBe(expected.ranged);
@@ -40,15 +56,24 @@ function expectMatchesLegacy(input: AttackInput, expected: LegacyAttackOutput): 
 describe("calculateAttackStrings", () => {
   describe("attacksLive (full live input)", () => {
     it("reproduces the live capture exactly", () => {
-      expectMatchesLegacy(fixtures.attacksLive.input, fixtures.attacksLive.output);
+      expectMatchesLegacy(
+        fixtures.attacksLive.input,
+        fixtures.attacksLive.output,
+      );
     });
   });
 
   describe("attackMatrix (base + overrides)", () => {
-    it.each(fixtures.attackMatrix.map((c) => [c.name, c] as const))("%s", (_name, testCase) => {
-      const input: AttackInput = { ...fixtures.attackMatrixBase, ...testCase.overrides };
-      expectMatchesLegacy(input, testCase.output);
-    });
+    it.each(fixtures.attackMatrix.map((c) => [c.name, c] as const))(
+      "%s",
+      (_name, testCase) => {
+        const input: AttackInput = {
+          ...fixtures.attackMatrixBase,
+          ...testCase.overrides,
+        };
+        expectMatchesLegacy(input, testCase.output);
+      },
+    );
   });
 
   describe("integration (base + conditionMatrix conditionEffects)", () => {
@@ -56,18 +81,24 @@ describe("calculateAttackStrings", () => {
     // with "buff:haste", etc. — match on the suffix after the colon.
     function conditionEffectsFor(integrationName: string): ConditionEffects {
       const suffix = integrationName.split(":")[1];
-      const entry = fixtures.conditionMatrix.find((c) => c.name.endsWith(`:${suffix}`));
-      if (!entry) throw new Error(`No conditionMatrix entry for ${integrationName}`);
+      const entry = fixtures.conditionMatrix.find((c) =>
+        c.name.endsWith(`:${suffix}`),
+      );
+      if (!entry)
+        throw new Error(`No conditionMatrix entry for ${integrationName}`);
       return entry.output;
     }
 
-    it.each(fixtures.integration.map((c) => [c.name, c] as const))("%s", (name, testCase) => {
-      const input: AttackInput = {
-        ...fixtures.attackMatrixBase,
-        conditionEffects: conditionEffectsFor(name),
-      };
-      expectMatchesLegacy(input, testCase.attacks);
-    });
+    it.each(fixtures.integration.map((c) => [c.name, c] as const))(
+      "%s",
+      (name, testCase) => {
+        const input: AttackInput = {
+          ...fixtures.attackMatrixBase,
+          conditionEffects: conditionEffectsFor(name),
+        };
+        expectMatchesLegacy(input, testCase.attacks);
+      },
+    );
   });
 
   describe("hwayoung (familiar baseline)", () => {
@@ -89,7 +120,11 @@ describe("calculateAttackStrings", () => {
         meleeWeapon: { damageDie: "1d8", critRange: "19-20", critMult: "2" },
       });
       expect(out.melee).toBe(
-        stock.melee.split("1d6").join("1d8").split("(18-20/x2)").join("(19-20/x2)")
+        stock.melee
+          .split("1d6")
+          .join("1d8")
+          .split("(18-20/x2)")
+          .join("(19-20/x2)"),
       );
       expect(out.ranged).toBe(stock.ranged);
       expect(out.unarmed).toBe(stock.unarmed);
@@ -130,7 +165,9 @@ describe("calculateAttackStrings", () => {
         rangedWeapon: { damageDie: "1d8", critRange: "20", critMult: "3" },
       });
       const slashes = (s: string): number => (s.match(/\//g) ?? []).length;
-      expect(slashes(fullLine(out.ranged))).toBeLessThan(slashes(fullLine(stock.ranged)));
+      expect(slashes(fullLine(out.ranged))).toBeLessThan(
+        slashes(fullLine(stock.ranged)),
+      );
     });
 
     // Inventory-driven Shuriken/Longbow: a rangedWeapon carrying the stamped
@@ -182,7 +219,10 @@ describe("calculateAttackStrings", () => {
     });
 
     it("plain rangedWeapon reproduces the built-in Longbow style exactly", () => {
-      const stock = calculateAttackStrings({ ...base, rangedAttackStyle: "Longbow" });
+      const stock = calculateAttackStrings({
+        ...base,
+        rangedAttackStyle: "Longbow",
+      });
       const out = calculateAttackStrings({
         ...base,
         rangedAttackStyle: "Longbow",

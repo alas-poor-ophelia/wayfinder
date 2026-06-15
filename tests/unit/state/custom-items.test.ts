@@ -23,7 +23,12 @@ const sword: CustomItemDef = {
   priceGp: 8315,
   weightLbs: 4,
   modifiers: [
-    { target: "attack.melee", type: "enhancement", value: 1, source: "+1 Flaming Longsword" },
+    {
+      target: "attack.melee",
+      type: "enhancement",
+      value: 1,
+      source: "+1 Flaming Longsword",
+    },
   ],
   note: "Flaming: +1d6 fire damage",
   createdAt: "2026-06-12T00:00:00.000Z",
@@ -61,7 +66,12 @@ describe("tolerant parsing", () => {
   it("drops malformed entries but keeps well-formed ones", () => {
     const text = JSON.stringify({
       schemaVersion: 1,
-      items: [sword, { id: 42 }, "nope", { id: "x", name: "No Kind", kind: "ring" }],
+      items: [
+        sword,
+        { id: 42 },
+        "nope",
+        { id: "x", name: "No Kind", kind: "ring" },
+      ],
     });
     const parsed = parseCustomItemsFile(text);
     expect(parsed?.items).toEqual([sword]);
@@ -105,19 +115,19 @@ describe("tolerant parsing", () => {
 describe("renamedFileName (name-based tracking)", () => {
   it("path-only move keeps the setting (returns null)", () => {
     expect(
-      renamedFileName("minisheet-items.json", "Gear/minisheet-items.json")
+      renamedFileName("minisheet-items.json", "Gear/minisheet-items.json"),
     ).toBeNull();
     expect(
-      renamedFileName("A/B/minisheet-items.json", "minisheet-items.json")
+      renamedFileName("A/B/minisheet-items.json", "minisheet-items.json"),
     ).toBeNull();
   });
 
   it("basename change returns the new name to store", () => {
     expect(renamedFileName("minisheet-items.json", "party-forge.json")).toBe(
-      "party-forge.json"
+      "party-forge.json",
     );
     expect(
-      renamedFileName("Gear/minisheet-items.json", "Gear/forge.json")
+      renamedFileName("Gear/minisheet-items.json", "Gear/forge.json"),
     ).toBe("forge.json");
   });
 });

@@ -19,8 +19,10 @@ import weaponsJson from "./weapons.json";
 
 export const WEAPONS = weaponsJson as unknown as BaseWeaponDef[];
 export const ARMOR = armorJson as unknown as BaseArmorDef[];
-export const WEAPON_ABILITIES = weaponAbilitiesJson as unknown as ItemAbilityDef[];
-export const ARMOR_ABILITIES = armorAbilitiesJson as unknown as ItemAbilityDef[];
+export const WEAPON_ABILITIES =
+  weaponAbilitiesJson as unknown as ItemAbilityDef[];
+export const ARMOR_ABILITIES =
+  armorAbilitiesJson as unknown as ItemAbilityDef[];
 export const MAGIC_ITEMS = magicItemsJson as unknown as MagicItemDef[];
 
 export const FORGE_CATALOG: ForgeCatalog = {
@@ -51,7 +53,9 @@ export function getMagicItem(id: string): MagicItemDef | undefined {
 }
 
 function uniqueSorted(values: string[]): string[] {
-  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  return [...new Set(values.filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b),
+  );
 }
 
 export const WEAPON_SOURCES = uniqueSorted(WEAPONS.map((w) => w.source));

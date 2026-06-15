@@ -23,7 +23,7 @@ const ABILITY_BY_NAME: Record<string, AbilityKey> = {
 };
 
 const SKILL_BY_LOWER: Record<string, string> = Object.fromEntries(
-  Object.keys(STANDARD_SKILLS).map((name) => [name.toLowerCase(), name])
+  Object.keys(STANDARD_SKILLS).map((name) => [name.toLowerCase(), name]),
 );
 
 /** "+N" baked into the item name ("Belt of Giant Strength (+2)") wins. */
@@ -47,25 +47,30 @@ export function deriveModifiers(name: string, description: string): Modifier[] {
   // or "bonus to X of +N" (both word orders appear in the corpus).
   const abilityFwd =
     /\+(\d+)[^.;]{0,60}?enhancement bonus to (?:the wearer's |his |her )?(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)/i.exec(
-      text
+      text,
     );
   const abilityRev =
     /enhancement bonus to (?:the wearer's |his |her )?(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)(?: score)?(?: of)? \+(\d+)/i.exec(
-      text
+      text,
     );
   const abilityName = abilityFwd?.[2] ?? abilityRev?.[1];
   if (abilityName) {
     const value = pick(abilityFwd?.[1] ?? abilityRev?.[2]);
     const key = ABILITY_BY_NAME[abilityName.toLowerCase()];
     if (value && key) {
-      mods.push({ target: `ability.${key}`, type: "enhancement", value, source: name });
+      mods.push({
+        target: `ability.${key}`,
+        type: "enhancement",
+        value,
+        source: name,
+      });
     }
   }
 
   // +N <type> bonus on (all) saving throws
   const save =
     /\+(\d+)\s+(resistance|luck|insight|morale|competence|sacred|profane)\s+bonus on (?:all )?sav(?:ing|e) throws/i.exec(
-      text
+      text,
     );
   if (save) {
     const value = pick(save[1]);
@@ -84,16 +89,21 @@ export function deriveModifiers(name: string, description: string): Modifier[] {
   // from +1 to +5" (value-trailing form).
   const naturalFwd =
     /\+(\d+)\s+enhancement bonus to (?:the wearer's |his |her )?(?:existing )?natural armor/i.exec(
-      text
+      text,
     );
   const naturalRev =
     /enhancement bonus to (?:the wearer's |his |her )?(?:existing )?natural armor(?: bonus)?(?: of)?(?: from)? \+(\d+)/i.exec(
-      text
+      text,
     );
   if (naturalFwd || naturalRev) {
     const value = pick(naturalFwd?.[1] ?? naturalRev?.[1]);
     if (value) {
-      mods.push({ target: "ac.natural", type: "enhancement", value, source: name });
+      mods.push({
+        target: "ac.natural",
+        type: "enhancement",
+        value,
+        source: name,
+      });
     }
   }
 
@@ -101,11 +111,11 @@ export function deriveModifiers(name: string, description: string): Modifier[] {
   // and Ring of Protection's "deflection bonus of +1 to AC").
   const acFwd =
     /\+(\d+)\s+(deflection|insight|luck|dodge|sacred|profane)\s+bonus to (?:his |her |the wearer's )?(?:AC|Armor Class)/i.exec(
-      text
+      text,
     );
   const acRev =
     /(deflection|insight|luck|dodge|sacred|profane)\s+bonus of \+(\d+)(?: to \+\d+)? to (?:his |her |the wearer's )?(?:AC|Armor Class)/i.exec(
-      text
+      text,
     );
   const acType = acFwd?.[2] ?? acRev?.[1];
   if (acType) {
@@ -123,7 +133,7 @@ export function deriveModifiers(name: string, description: string): Modifier[] {
   // +N competence/circumstance bonus on <Skill> checks (single named skill)
   const skill =
     /\+(\d+)\s+(competence|circumstance|insight|luck)\s+bonus on ([A-Za-z ()]+?) (?:skill )?checks/i.exec(
-      text
+      text,
     );
   if (skill) {
     const value = pick(skill[1]);
@@ -141,7 +151,7 @@ export function deriveModifiers(name: string, description: string): Modifier[] {
   // +N <type> bonus on initiative checks
   const init =
     /\+(\d+)\s+(insight|competence|luck|circumstance)\s+bonus on initiative checks/i.exec(
-      text
+      text,
     );
   if (init) {
     const value = pick(init[1]);

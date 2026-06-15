@@ -95,7 +95,14 @@ export function calculateSkills(input: SkillsInput): SkillRow[] {
     const abilityMod = mods[entry.ability] || 0;
     const classBonus = entry.classSkill && entry.ranks > 0 ? 3 : 0;
     const adjustment = global + (adjusts[entry.ability] || 0);
-    return entry.ranks + abilityMod + classBonus + adjustment + bardicBonus(name, skald) + other;
+    return (
+      entry.ranks +
+      abilityMod +
+      classBonus +
+      adjustment +
+      bardicBonus(name, skald) +
+      other
+    );
   };
 
   return Object.keys(input.skills)

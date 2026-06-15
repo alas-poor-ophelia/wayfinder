@@ -18,7 +18,10 @@ import {
 } from "../../../src/spells/parse";
 
 const fixtures = JSON.parse(
-  readFileSync(fileURLToPath(new URL("../fixtures/spell-fixtures.json", import.meta.url)), "utf-8")
+  readFileSync(
+    fileURLToPath(new URL("../fixtures/spell-fixtures.json", import.meta.url)),
+    "utf-8",
+  ),
 ) as { spellLevelStrings: { distinct: string[] } };
 
 describe("parseSpellLevel", () => {
@@ -61,9 +64,15 @@ describe("parseSpellLevel", () => {
 describe("isEschewMaterialsCompatible", () => {
   it("matches legacy gp-cost detection", () => {
     expect(isEschewMaterialsCompatible("V, S")).toBe(true);
-    expect(isEschewMaterialsCompatible("V, S, M (a ball of bat guano and sulfur)")).toBe(true);
-    expect(isEschewMaterialsCompatible("V, S, M (diamond worth 500 gp)")).toBe(false);
-    expect(isEschewMaterialsCompatible("V, S, M (1,000 gp of gold dust)")).toBe(false);
+    expect(
+      isEschewMaterialsCompatible("V, S, M (a ball of bat guano and sulfur)"),
+    ).toBe(true);
+    expect(isEschewMaterialsCompatible("V, S, M (diamond worth 500 gp)")).toBe(
+      false,
+    );
+    expect(isEschewMaterialsCompatible("V, S, M (1,000 gp of gold dust)")).toBe(
+      false,
+    );
     expect(isEschewMaterialsCompatible("V, S, M (1 gp)")).toBe(true);
     expect(isEschewMaterialsCompatible("")).toBe(true);
   });

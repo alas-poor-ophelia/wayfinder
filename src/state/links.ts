@@ -31,7 +31,7 @@ export function resolvePool(
   resourceMaxes: Record<string, number> = {},
   /** computed.resourceFooters — live composed footer strings keyed by id.
    *  Overrides the pool's static footer when present. */
-  resourceFooters: Record<string, string> = {}
+  resourceFooters: Record<string, string> = {},
 ): ResolvedPool {
   if (!pool.derived) {
     const max = resourceMaxes[pool.id] ?? pool.max;
@@ -43,7 +43,11 @@ export function resolvePool(
       footer: resourceFooters[pool.id] ?? pool.footer,
       kind: pool.kind,
       set: (value) =>
-        store.setCharacterField(character.id, `resources.${index}.current`, value),
+        store.setCharacterField(
+          character.id,
+          `resources.${index}.current`,
+          value,
+        ),
     };
   }
 
@@ -87,7 +91,7 @@ export function resolvePool(
       store.setCharacterField(
         sourceChar.id,
         `resources.${sourceIdx}.current`,
-        next
+        next,
       );
     },
   };

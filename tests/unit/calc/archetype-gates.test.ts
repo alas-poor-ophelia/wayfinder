@@ -121,6 +121,8 @@ describe("virtuous bravo AC relocation", () => {
     expect(computed.ac.normalAC).toBe(13);
     expect(computed.ac.touchAC).toBe(13);
     // flat-footed never included the dodge bonus
-    expect(computed.ac.flatFootedAC).toBe(computeAll(paladin(7)).ac.flatFootedAC);
+    expect(computed.ac.flatFootedAC).toBe(
+      computeAll(paladin(7)).ac.flatFootedAC,
+    );
   });
 });

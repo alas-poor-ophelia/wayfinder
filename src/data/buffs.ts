@@ -32,7 +32,7 @@ const ability = (
   key: string,
   name: string,
   target: Modifier["target"],
-  stat: string
+  stat: string,
 ): BuffDef => ({
   key,
   name,
@@ -61,7 +61,12 @@ export const BUFF_DEFS: BuffDef[] = [
   },
   ability("bull's strength", "Bull's Strength", "ability.str", "Strength"),
   ability("cat's grace", "Cat's Grace", "ability.dex", "Dexterity"),
-  ability("bear's endurance", "Bear's Endurance", "ability.con", "Constitution"),
+  ability(
+    "bear's endurance",
+    "Bear's Endurance",
+    "ability.con",
+    "Constitution",
+  ),
   ability("fox's cunning", "Fox's Cunning", "ability.int", "Intelligence"),
   ability("owl's wisdom", "Owl's Wisdom", "ability.wis", "Wisdom"),
   ability("eagle's splendor", "Eagle's Splendor", "ability.cha", "Charisma"),
@@ -71,7 +76,13 @@ export const BUFF_DEFS: BuffDef[] = [
     // RAW FIX: the save bonus applies vs fear only (legacy: all saves, always)
     modifiers: [
       { target: "attack.all", type: "morale", value: 1, source: "Bless" },
-      { target: "save.all", type: "morale", value: 1, source: "Bless", condition: "vs fear" },
+      {
+        target: "save.all",
+        type: "morale",
+        value: 1,
+        source: "Bless",
+        condition: "vs fear",
+      },
     ],
     note: "- Bless: +1 morale bonus on attack rolls and saving throws against fear effects",
   },
@@ -79,7 +90,12 @@ export const BUFF_DEFS: BuffDef[] = [
     key: "barkskin",
     name: "Barkskin",
     modifiers: [
-      { target: "ac.natural", type: "enhancement", value: 2, source: "Barkskin" },
+      {
+        target: "ac.natural",
+        type: "enhancement",
+        value: 2,
+        source: "Barkskin",
+      },
     ],
     note: "- Barkskin: +2 enhancement bonus to natural armor (does not apply to touch AC)",
   },
@@ -88,20 +104,29 @@ export const BUFF_DEFS: BuffDef[] = [
     name: "Magic Weapon",
     // enhancement rides the weapon-enhancement input: damage follows
     modifiers: [
-      { target: "attack.melee", type: "enhancement", value: 1, source: "Magic Weapon" },
+      {
+        target: "attack.melee",
+        type: "enhancement",
+        value: 1,
+        source: "Magic Weapon",
+      },
     ],
     note: "- Magic Weapon: +1 enhancement bonus to weapon attacks and damage",
   },
   {
     key: "shield",
     name: "Shield",
-    modifiers: [{ target: "ac.all", type: "shield", value: 4, source: "Shield" }],
+    modifiers: [
+      { target: "ac.all", type: "shield", value: 4, source: "Shield" },
+    ],
     note: "- Shield: +4 shield bonus to AC (does not apply to touch AC)",
   },
   {
     key: "mage armor",
     name: "Mage Armor",
-    modifiers: [{ target: "ac.all", type: "armor", value: 4, source: "Mage Armor" }],
+    modifiers: [
+      { target: "ac.all", type: "armor", value: 4, source: "Mage Armor" },
+    ],
     note: "- Mage Armor: +4 armor bonus to AC (does not apply to touch AC)",
   },
 ];

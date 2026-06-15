@@ -25,7 +25,12 @@ function weaponItem(patch: Partial<InventoryItem>): InventoryItem {
     note: null,
     charges: null,
     equipped: true,
-    weapon: { kind: "melee", damageDie: "1d8", critRange: "19-20", critMult: "2" },
+    weapon: {
+      kind: "melee",
+      damageDie: "1d8",
+      critRange: "19-20",
+      critMult: "2",
+    },
     ...patch,
   };
 }
@@ -40,9 +45,7 @@ function withItems(items: InventoryItem[]) {
 
 describe("computeAll attackProfiles", () => {
   it("equipped melee weapon yields a melee profile with its dice", () => {
-    const out = computeAll(
-      withItems([weaponItem({ name: "Longsword" })])
-    );
+    const out = computeAll(withItems([weaponItem({ name: "Longsword" })]));
     expect(out.attackProfiles.melee).toHaveLength(1);
     expect(out.attackProfiles.melee[0].name).toBe("Longsword");
     expect(out.attackProfiles.melee[0].text).toContain("1d8");
@@ -55,9 +58,14 @@ describe("computeAll attackProfiles", () => {
       withItems([
         weaponItem({
           name: "Composite Longbow",
-          weapon: { kind: "ranged", damageDie: "1d8", critRange: "20", critMult: "3" },
+          weapon: {
+            kind: "ranged",
+            damageDie: "1d8",
+            critRange: "20",
+            critMult: "3",
+          },
         }),
-      ])
+      ]),
     );
     expect(out.attackProfiles.ranged).toHaveLength(1);
     expect(out.attackProfiles.melee).toHaveLength(0);
@@ -70,7 +78,7 @@ describe("computeAll attackProfiles", () => {
         weaponItem({ equipped: false }),
         weaponItem({ weapon: undefined }),
         weaponItem({ type: "Gear" }),
-      ])
+      ]),
     );
     expect(out.attackProfiles.melee).toHaveLength(0);
     expect(out.attackProfiles.ranged).toHaveLength(0);
@@ -79,7 +87,7 @@ describe("computeAll attackProfiles", () => {
   it("equipping weapons never changes the legacy attack strings", () => {
     const bare = computeAll(withItems([]));
     const armed = computeAll(
-      withItems([weaponItem({}), weaponItem({ name: "Dagger" })])
+      withItems([weaponItem({}), weaponItem({ name: "Dagger" })]),
     );
     expect(armed.attacks).toEqual(bare.attacks);
     expect(armed.attackProfiles.melee).toHaveLength(2);
@@ -133,17 +141,22 @@ describe("computeAll attackProfiles", () => {
         weaponItem({
           name: "+1 Longsword",
           modifiers: [
-            { target: "attack.melee", type: "enhancement", value: 1, source: "+1" },
+            {
+              target: "attack.melee",
+              type: "enhancement",
+              value: 1,
+              source: "+1",
+            },
           ],
         }),
-      ])
+      ]),
     );
     // standard attack line: "+N (1d8+M) (19-20/x2)" — both attack and
     // damage rise by 1 over the unenhanced profile
     const bonus = (text: string): number =>
       Number(text.match(/\*\*Standard Attack:\*\* \+(\d+)/)?.[1] ?? NaN);
     expect(bonus(enhanced.attackProfiles.melee[0].text)).toBe(
-      bonus(plain.attackProfiles.melee[0].text) + 1
+      bonus(plain.attackProfiles.melee[0].text) + 1,
     );
   });
 });

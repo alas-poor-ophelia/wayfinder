@@ -49,7 +49,7 @@ export function GlobalMetamagic({
               setGlobalMetamagicSelected(
                 store,
                 character,
-                (e.target as HTMLSelectElement).value
+                (e.target as HTMLSelectElement).value,
               )
             }
           >

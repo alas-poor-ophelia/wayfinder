@@ -43,7 +43,9 @@ export function SlaSection({
             />
             <div class="ms-sla__name">
               <SpellLink plugin={plugin} name={name} cls="sla-spell-name" />
-              {sla.casts > 0 && <span class="ms-sla__casts"> ({sla.casts}/day)</span>}
+              {sla.casts > 0 && (
+                <span class="ms-sla__casts"> ({sla.casts}/day)</span>
+              )}
             </div>
             {atWill ? (
               <span class="ms-sla__at-will">At Will</span>
@@ -54,7 +56,8 @@ export function SlaSection({
                   name: "",
                   current: sla.castsRemaining,
                   max: sla.casts,
-                  set: (value) => setSlaRemaining(store, character, index, value),
+                  set: (value) =>
+                    setSlaRemaining(store, character, index, value),
                 }}
               />
             )}

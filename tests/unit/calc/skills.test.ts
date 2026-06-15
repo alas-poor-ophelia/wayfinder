@@ -18,7 +18,10 @@ function fromTuple(tuple: unknown[]): SkillEntry {
 
 describe("calculateSkills (characterization vs old sheet's displayed totals)", () => {
   const inputs = fixtures.skillsFixture.inputs;
-  const expected = fixtures.skillsFixture.expectedTotals as Record<string, number>;
+  const expected = fixtures.skillsFixture.expectedTotals as Record<
+    string,
+    number
+  >;
 
   const skills: Record<string, SkillEntry> = {};
   for (const [name, tuple] of Object.entries(inputs.skills)) {

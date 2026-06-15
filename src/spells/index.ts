@@ -1,4 +1,9 @@
-import { computed, signal, type ReadonlySignal, type Signal } from "@preact/signals";
+import {
+  computed,
+  signal,
+  type ReadonlySignal,
+  type Signal,
+} from "@preact/signals";
 import type { App, TFile } from "obsidian";
 import type MiniSheetPlugin from "../main";
 import { parseSpellLevel, type ParsedSpellLevel } from "./parse";
@@ -74,7 +79,10 @@ export class SpellIndex {
   }
 
   folder(): string {
-    return this.plugin.store.data.value.settings.spellsFolder.replace(/\/$/, "");
+    return this.plugin.store.data.value.settings.spellsFolder.replace(
+      /\/$/,
+      "",
+    );
   }
 
   init(): void {
@@ -82,17 +90,18 @@ export class SpellIndex {
     this.plugin.registerEvent(
       this.app.metadataCache.on("changed", (file) => {
         if (this.inFolder(file.path)) this.scheduleRebuild();
-      })
+      }),
     );
     this.plugin.registerEvent(
       this.app.vault.on("rename", (file, oldPath) => {
-        if (this.inFolder(file.path) || this.inFolder(oldPath)) this.scheduleRebuild();
-      })
+        if (this.inFolder(file.path) || this.inFolder(oldPath))
+          this.scheduleRebuild();
+      }),
     );
     this.plugin.registerEvent(
       this.app.vault.on("delete", (file) => {
         if (this.inFolder(file.path)) this.scheduleRebuild();
-      })
+      }),
     );
   }
 

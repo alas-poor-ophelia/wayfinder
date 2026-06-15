@@ -80,11 +80,13 @@ describe("syncClassResources with archetypes", () => {
   it("never prunes user-formula or item pools", () => {
     const store = makeStore();
     store.syncClassResources("pal");
-    const customized = store.getCharacter("pal")!.resources.map((r) =>
-      r.id === "smiteEvil"
-        ? { ...r, formula: { kind: "flat" as const, value: 9 } }
-        : r
-    );
+    const customized = store
+      .getCharacter("pal")!
+      .resources.map((r) =>
+        r.id === "smiteEvil"
+          ? { ...r, formula: { kind: "flat" as const, value: 9 } }
+          : r,
+      );
     customized.push({
       id: "layOnHands",
       name: "Wand Charges (LoH)",
@@ -140,11 +142,14 @@ describe("syncClassResources with archetypes", () => {
 
   it("spell warrior re-keys raging song to the weapon-song pool, keeping spend", () => {
     const store = makeStore();
-    store.setCharacterField("pal", "classes", [{ className: "Skald", level: 3 }]);
+    store.setCharacterField("pal", "classes", [
+      { className: "Skald", level: 3 },
+    ]);
     store.syncClassResources("pal");
     // cha +3: 3 + 3 + 2·2 = 10
     expect(
-      store.getCharacter("pal")!.resources.find((r) => r.id === "ragingSong")?.max
+      store.getCharacter("pal")!.resources.find((r) => r.id === "ragingSong")
+        ?.max,
     ).toBe(10);
 
     // spend two rounds, then declare the archetype (Adarin-shaped flow:
@@ -188,7 +193,9 @@ describe("syncClassQuickActions with archetypes", () => {
     const store = makeStore();
     store.syncClassQuickActions("pal");
     const has = (qaId: string) =>
-      (store.getCharacter("pal")!.quickActions ?? []).some((a) => a.id === qaId);
+      (store.getCharacter("pal")!.quickActions ?? []).some(
+        (a) => a.id === qaId,
+      );
     expect(has("smiteEvil")).toBe(true);
 
     setArchetypes(store, ["stonelord"]);
@@ -210,7 +217,7 @@ describe("syncClassQuickActions with archetypes", () => {
     store.syncClassQuickActions("pal");
     const has = () =>
       (store.getCharacter("pal")!.quickActions ?? []).some(
-        (a) => a.id === "flurryOfBlows"
+        (a) => a.id === "flurryOfBlows",
       );
     expect(has()).toBe(true);
 
@@ -227,16 +234,16 @@ describe("syncClassQuickActions with archetypes", () => {
     low.syncClassQuickActions("pal");
     expect(
       (low.getCharacter("pal")!.quickActions ?? []).some(
-        (a) => a.id === "preciseStrike"
-      )
+        (a) => a.id === "preciseStrike",
+      ),
     ).toBe(false);
 
     const high = makeStore(4, "virtuous-bravo");
     high.syncClassQuickActions("pal");
     expect(
       (high.getCharacter("pal")!.quickActions ?? []).some(
-        (a) => a.id === "preciseStrike"
-      )
+        (a) => a.id === "preciseStrike",
+      ),
     ).toBe(true);
   });
 });

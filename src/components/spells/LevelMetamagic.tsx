@@ -49,7 +49,7 @@ export function LevelMetamagic({
                 store,
                 character,
                 level,
-                (e.target as HTMLSelectElement).value
+                (e.target as HTMLSelectElement).value,
               )
             }
           >
@@ -81,7 +81,9 @@ export function LevelMetamagic({
                 <button
                   class="ms-metamagic__remove"
                   aria-label={`Remove ${metamagic}`}
-                  onClick={() => removeLevelMetamagic(store, character, level, index)}
+                  onClick={() =>
+                    removeLevelMetamagic(store, character, level, index)
+                  }
                 >
                   <UI.x />
                 </button>

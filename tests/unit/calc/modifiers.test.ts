@@ -21,7 +21,7 @@ describe("resolveModifiers", () => {
         m({ type: "enhancement", value: 2, source: "a" }),
         m({ type: "enhancement", value: 4, source: "b" }),
       ],
-      "save.fort"
+      "save.fort",
     );
     expect(r.total).toBe(4);
     expect(r.applied).toHaveLength(1);
@@ -35,7 +35,7 @@ describe("resolveModifiers", () => {
         m({ type: "morale", value: 2, source: "first" }),
         m({ type: "morale", value: 2, source: "second" }),
       ],
-      "save.fort"
+      "save.fort",
     );
     expect(r.total).toBe(2);
     expect(r.applied[0].source).toBe("first");
@@ -51,7 +51,7 @@ describe("resolveModifiers", () => {
         m({ type: "untyped", value: 1 }),
         m({ type: "untyped", value: 1 }),
       ],
-      "save.fort"
+      "save.fort",
     );
     expect(r.total).toBe(8);
     expect(r.suppressed).toHaveLength(0);
@@ -64,7 +64,7 @@ describe("resolveModifiers", () => {
         m({ type: "enhancement", value: -2 }),
         m({ type: "enhancement", value: -1 }),
       ],
-      "save.fort"
+      "save.fort",
     );
     expect(r.total).toBe(1);
   });
@@ -75,7 +75,7 @@ describe("resolveModifiers", () => {
         m({ type: "racial", value: 2, condition: "vs poison" }),
         m({ type: "luck", value: 1 }),
       ],
-      "save.fort"
+      "save.fort",
     );
     expect(r.total).toBe(1);
     expect(r.conditional).toHaveLength(1);
@@ -84,7 +84,7 @@ describe("resolveModifiers", () => {
   it("group targets: save.all applies to save.fort queries", () => {
     const r = resolveModifiers(
       [m({ target: "save.all", type: "luck", value: 1 })],
-      "save.fort"
+      "save.fort",
     );
     expect(r.total).toBe(1);
   });
@@ -92,7 +92,7 @@ describe("resolveModifiers", () => {
   it("group targets do not leak across families", () => {
     const r = resolveModifiers(
       [m({ target: "save.all", type: "luck", value: 1 })],
-      "skill.Perception"
+      "skill.Perception",
     );
     expect(r.total).toBe(0);
     expect(r.applied).toHaveLength(0);
@@ -101,7 +101,7 @@ describe("resolveModifiers", () => {
   it("unrelated targets are ignored", () => {
     const r = resolveModifiers(
       [m({ target: "skill.Climb", value: 2 })],
-      "skill.Perception"
+      "skill.Perception",
     );
     expect(r.total).toBe(0);
   });
@@ -111,17 +111,29 @@ describe("describeModifier / conditionalNotes", () => {
   it("formats bonuses with type, condition, and source", () => {
     expect(
       describeModifier(
-        m({ type: "racial", value: 2, condition: "vs poison", source: "Dwarf: Hardy" })
-      )
+        m({
+          type: "racial",
+          value: 2,
+          condition: "vs poison",
+          source: "Dwarf: Hardy",
+        }),
+      ),
     ).toBe("+2 racial bonus vs poison (Dwarf: Hardy)");
   });
 
   it("formats untyped penalties without a type word", () => {
-    expect(describeModifier(m({ value: -2, source: "x" }))).toBe("-2 penalty (x)");
+    expect(describeModifier(m({ value: -2, source: "x" }))).toBe(
+      "-2 penalty (x)",
+    );
   });
 
   it("collects only conditional modifiers, deduped", () => {
-    const cond = m({ type: "racial", value: 2, condition: "vs fear", source: "s" });
+    const cond = m({
+      type: "racial",
+      value: 2,
+      condition: "vs fear",
+      source: "s",
+    });
     expect(conditionalNotes([cond, cond, m({})])).toHaveLength(1);
   });
 });

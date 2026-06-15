@@ -32,15 +32,20 @@ export function BarebonesReferences({
   const docs = plugin.rulesIndex.docs.value;
   const linkedPaths = useMemo(
     () => new Set(character.ruleLinks.map((l) => l.path)),
-    [character.ruleLinks]
+    [character.ruleLinks],
   );
   // Show the character's linked rules (parity with the old default); if none are
   // linked, fall back to everything in the rules folder.
-  const pool = linkedPaths.size ? docs.filter((d) => linkedPaths.has(d.path)) : docs;
+  const pool = linkedPaths.size
+    ? docs.filter((d) => linkedPaths.has(d.path))
+    : docs;
 
   const q = query.trim().toLowerCase();
   const filtered = q
-    ? pool.filter((d) => d.title.toLowerCase().includes(q) || d.body.toLowerCase().includes(q))
+    ? pool.filter(
+        (d) =>
+          d.title.toLowerCase().includes(q) || d.body.toLowerCase().includes(q),
+      )
     : pool;
 
   const sections = useMemo(() => {
@@ -63,7 +68,15 @@ export function BarebonesReferences({
   return (
     <div class="ms-bref">
       <div class="ms-bref__search">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+        >
           <circle cx="11" cy="11" r="6.5" />
           <path d="M20 20l-3.6-3.6" />
         </svg>
@@ -75,7 +88,11 @@ export function BarebonesReferences({
           onInput={(e) => setQuery((e.target as HTMLInputElement).value)}
         />
         {query && (
-          <button class="ms-bref__clear" title="Clear" onClick={() => setQuery("")}>
+          <button
+            class="ms-bref__clear"
+            title="Clear"
+            onClick={() => setQuery("")}
+          >
             ✕
           </button>
         )}
@@ -103,9 +120,22 @@ export function BarebonesReferences({
             {ds.map((d) => {
               const isOpen = open.has(d.path);
               return (
-                <div class={"ms-bref__item" + (isOpen ? " is-open" : "")} key={d.path}>
+                <div
+                  class={"ms-bref__item" + (isOpen ? " is-open" : "")}
+                  key={d.path}
+                >
                   <button class="ms-bref__head" onClick={() => toggle(d.path)}>
-                    <svg class="ms-bref__chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                      class="ms-bref__chev"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <path d="M9 6l6 6-6 6" />
                     </svg>
                     <span class="ms-bref__title">{d.title}</span>

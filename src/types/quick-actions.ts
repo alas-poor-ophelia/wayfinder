@@ -63,7 +63,11 @@ export type QuickActionEffect =
   /** haste-style extra attacks at (full bonus - penalty); penalty 0 = full */
   | { kind: "extraAttacks"; count: QAValue; penalty?: number }
   /** dice rider appended in the legacy dmgExtra slot, e.g. "+1d6 fire" */
-  | { kind: "damageDice"; dice: string; appliesTo: "melee" | "ranged" | "unarmed" | "all" }
+  | {
+      kind: "damageDice";
+      dice: string;
+      appliesTo: "melee" | "ranged" | "unarmed" | "all";
+    }
   /** doubles the threat range (legacy Keen crit math) */
   | { kind: "keen"; appliesTo: "melee" | "ranged" | "unarmed" | "all" }
   /**

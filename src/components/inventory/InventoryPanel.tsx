@@ -15,7 +15,7 @@ import { SummaryBar } from "./SummaryBar";
 /** Pure filter, shared with the MCP bridge (like filterSpells). */
 export function filterItems(
   items: InventoryItem[],
-  filters: PartyInvState
+  filters: PartyInvState,
 ): InventoryItem[] {
   return items.filter((item) => {
     if (
@@ -39,7 +39,7 @@ export function filterItems(
 /** Pure sort, shared with the MCP bridge (like sortSpells). */
 export function sortItems(
   items: InventoryItem[],
-  filters: PartyInvState
+  filters: PartyInvState,
 ): InventoryItem[] {
   const dir = filters.sortDir === "desc" ? -1 : 1;
   const key = filters.sortKey;
@@ -63,7 +63,7 @@ export interface DisplayRow {
  *  Items whose parent was filtered out surface at top level. */
 export function buildRows(
   sorted: InventoryItem[],
-  expandedMap: Record<string, boolean>
+  expandedMap: Record<string, boolean>,
 ): DisplayRow[] {
   const byId = new Map(sorted.map((i) => [i.id, i]));
   const rows: DisplayRow[] = [];
@@ -128,7 +128,12 @@ export function InventoryPanel(props: InventoryPanelProps) {
 
   const list = (
     <>
-      <SummaryBar items={visible} inventory={inventory} encumbrance={encumbrance} filters={filters} />
+      <SummaryBar
+        items={visible}
+        inventory={inventory}
+        encumbrance={encumbrance}
+        filters={filters}
+      />
       <InventoryList
         rows={rows}
         allItems={inventory.items}
@@ -149,7 +154,9 @@ export function InventoryPanel(props: InventoryPanelProps) {
         store={store}
         scope={scope}
         open={filters.currencyOpen}
-        onToggle={() => props.onFilters({ currencyOpen: !filters.currencyOpen })}
+        onToggle={() =>
+          props.onFilters({ currencyOpen: !filters.currencyOpen })
+        }
       />
       <InventoryControls
         items={inventory.items}

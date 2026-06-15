@@ -37,7 +37,7 @@ function buildUrl(input: string): string | null {
 export async function importRuleFromUrl(
   plugin: MiniSheetPlugin,
   input: string,
-  opts: { category?: string; overwrite?: boolean } = {}
+  opts: { category?: string; overwrite?: boolean } = {},
 ): Promise<ImportResult> {
   const url = buildUrl(input);
   if (!url) return { ok: false, error: "Enter an AoN rule URL or name." };
@@ -45,10 +45,14 @@ export async function importRuleFromUrl(
   let html: string;
   try {
     const res = await requestUrl({ url });
-    if (res.status >= 400) return { ok: false, error: `Fetch failed (HTTP ${res.status}).` };
+    if (res.status >= 400)
+      return { ok: false, error: `Fetch failed (HTTP ${res.status}).` };
     html = res.text;
   } catch (e) {
-    return { ok: false, error: `Network error: ${e instanceof Error ? e.message : String(e)}` };
+    return {
+      ok: false,
+      error: `Network error: ${e instanceof Error ? e.message : String(e)}`,
+    };
   }
 
   const note = extractNote(html);
@@ -81,7 +85,8 @@ export async function importRuleFromUrl(
   const vault = plugin.app.vault;
   const existing = vault.getAbstractFileByPath(path);
   if (existing instanceof TFile) {
-    if (!opts.overwrite) return { ok: false, exists: true, path, title: note.title, category };
+    if (!opts.overwrite)
+      return { ok: false, exists: true, path, title: note.title, category };
     await vault.modify(existing, content);
   } else {
     if (folder && !vault.getAbstractFileByPath(folder)) {
@@ -99,9 +104,17 @@ export async function importRuleFromUrl(
   if (ch) {
     const links = ch.ruleLinks ?? [];
     if (!links.some((l) => l.path === path)) {
-      plugin.store.updateCharacter(ch.id, { ruleLinks: [...links, { path, category }] });
+      plugin.store.updateCharacter(ch.id, {
+        ruleLinks: [...links, { path, category }],
+      });
     }
   }
 
-  return { ok: true, path, title: note.title, category, created: !(existing instanceof TFile) };
+  return {
+    ok: true,
+    path,
+    title: note.title,
+    category,
+    created: !(existing instanceof TFile),
+  };
 }

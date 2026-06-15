@@ -13,18 +13,19 @@ import type { CharacterRecord } from "../../types/character";
 import type { SpellDbState } from "../../types/data-file";
 import { UI } from "../config/glyphs";
 
-const COLUMNS: { key: string; label: string; num?: boolean; dim?: boolean }[] = [
-  { key: "name", label: "Name" },
-  { key: "level", label: "L", num: true },
-  { key: "school", label: "School" },
-  { key: "castingTime", label: "Cast" },
-  { key: "range", label: "Range" },
-  { key: "duration", label: "Duration" },
-  { key: "components", label: "Comp.", dim: true },
-  { key: "saveType", label: "Save", dim: true },
-  { key: "sr", label: "SR", dim: true },
-  { key: "source", label: "Source", dim: true },
-];
+const COLUMNS: { key: string; label: string; num?: boolean; dim?: boolean }[] =
+  [
+    { key: "name", label: "Name" },
+    { key: "level", label: "L", num: true },
+    { key: "school", label: "School" },
+    { key: "castingTime", label: "Cast" },
+    { key: "range", label: "Range" },
+    { key: "duration", label: "Duration" },
+    { key: "components", label: "Comp.", dim: true },
+    { key: "saveType", label: "Save", dim: true },
+    { key: "sr", label: "SR", dim: true },
+    { key: "source", label: "Source", dim: true },
+  ];
 
 /** Level picker for multi-level spells (replaces the legacy DOM portal). */
 class LevelPickModal extends Modal {
@@ -34,7 +35,7 @@ class LevelPickModal extends Modal {
   constructor(
     plugin: MiniSheetPlugin,
     doc: SpellDoc,
-    onPick: (level: number, classes: string[]) => void
+    onPick: (level: number, classes: string[]) => void,
   ) {
     super(plugin.app);
     this.doc = doc;
@@ -48,7 +49,7 @@ class LevelPickModal extends Modal {
       (groups[level] ??= []).push(cls);
     }
     for (const [level, classes] of Object.entries(groups).sort(
-      ([a], [b]) => Number(a) - Number(b)
+      ([a], [b]) => Number(a) - Number(b),
     )) {
       const btn = this.contentEl.createEl("button", {
         text: `Level ${level} (${classes.join("/")})`,
@@ -86,7 +87,11 @@ export function SpellTable({
   targetIsLoadout?: boolean;
   knownIds: Set<string>;
   /** Stage B overrides: route add/remove at a loadout instead of the spellbook */
-  onAdd?: (doc: SpellDoc, level: number | null, classes: string[] | null) => void;
+  onAdd?: (
+    doc: SpellDoc,
+    level: number | null,
+    classes: string[] | null,
+  ) => void;
   onRemove?: (doc: SpellDoc) => void;
 }) {
   const store = plugin.store;
@@ -106,7 +111,11 @@ export function SpellTable({
       new LevelPickModal(plugin, doc, (level, classes) => {
         if (onAdd) onAdd(doc, level, classes);
         else if (target)
-          addKnownSpell(store, target, transformSpellForSpellbook(doc, level, classes));
+          addKnownSpell(
+            store,
+            target,
+            transformSpellForSpellbook(doc, level, classes),
+          );
       }).open();
     } else if (onAdd) {
       onAdd(doc, null, null);
@@ -122,7 +131,8 @@ export function SpellTable({
 
   const variantCount = (doc: SpellDoc) =>
     target?.spellbook
-      ? target.spellbook.spells.filter((s) => (s.originalId ?? s.id) === doc.id).length
+      ? target.spellbook.spells.filter((s) => (s.originalId ?? s.id) === doc.id)
+          .length
       : 0;
 
   return (
@@ -187,7 +197,11 @@ export function SpellTable({
                       href={doc.path}
                       onClick={(e) => {
                         e.preventDefault();
-                        void plugin.app.workspace.openLinkText(doc.path, "", true);
+                        void plugin.app.workspace.openLinkText(
+                          doc.path,
+                          "",
+                          true,
+                        );
                       }}
                       onMouseOver={(e) => {
                         plugin.app.workspace.trigger("hover-link", {

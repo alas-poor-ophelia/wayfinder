@@ -7,7 +7,8 @@
 import type { ArchetypeMechanics } from "../../types";
 
 /** Base smite uses/day: 1 at 1st, +1 at 4th and every 3 levels after. */
-const baseSmiteUses = (level: number): number => 1 + Math.floor((level - 1) / 3);
+const baseSmiteUses = (level: number): number =>
+  1 + Math.floor((level - 1) / 3);
 
 export const PALADIN_ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
   // "Panache and Deeds ... gains the swashbuckler's panache class feature

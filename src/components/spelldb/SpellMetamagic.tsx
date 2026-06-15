@@ -39,7 +39,9 @@ export function SpellMetamagic({
     return (
       <div class="ms-spelldb__placeholder">
         <b>Metamagic</b>
-        <span>Select a spellcasting character to curate their metamagic feats.</span>
+        <span>
+          Select a spellcasting character to curate their metamagic feats.
+        </span>
       </div>
     );
   }
@@ -59,7 +61,7 @@ export function SpellMetamagic({
 
   const toggleAdj = (v: AdjFilter) =>
     setAdjFilter((cur) =>
-      cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v]
+      cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v],
     );
   const toggle = (f: MetamagicFeat) =>
     toggleMetamagicFeat(store, character, metamagicPickerString(f));
@@ -94,8 +96,8 @@ export function SpellMetamagic({
   return (
     <div class="ms-spelldb__mm">
       <div class="ms-spelldb__mm-intro">
-        Only feats marked <b>Known</b> appear in the spellbook's metamagic pickers.
-        Curate {character.name}'s metamagic feats here.
+        Only feats marked <b>Known</b> appear in the spellbook's metamagic
+        pickers. Curate {character.name}'s metamagic feats here.
       </div>
 
       <div class="ms-spelldb__mm-toolbar">
@@ -156,7 +158,9 @@ export function SpellMetamagic({
         {catalogFeats.length > 0 ? (
           <div class="ms-spelldb__mm-grid">{catalogFeats.map(card)}</div>
         ) : (
-          <div class="ms-spelldb__empty">No catalog feats match the filters.</div>
+          <div class="ms-spelldb__empty">
+            No catalog feats match the filters.
+          </div>
         )}
       </div>
     </div>

@@ -59,12 +59,13 @@ export interface ForgeResult {
 export function abilityFits(
   ability: ItemAbilityDef,
   kind: ForgeSelection["kind"],
-  weapon?: BaseWeaponDef
+  weapon?: BaseWeaponDef,
 ): boolean {
   if (kind === "weapon") {
     if (ability.appliesTo === "weapon") return true;
     const side =
-      weapon && (weapon.category === "ranged" || weapon.category === "ammunition")
+      weapon &&
+      (weapon.category === "ranged" || weapon.category === "ammunition")
         ? "ranged"
         : "melee";
     return ability.appliesTo === side;
@@ -73,7 +74,10 @@ export function abilityFits(
   return ability.appliesTo === kind;
 }
 
-export function forgeItem(sel: ForgeSelection, catalog: ForgeCatalog): ForgeResult {
+export function forgeItem(
+  sel: ForgeSelection,
+  catalog: ForgeCatalog,
+): ForgeResult {
   const errors: string[] = [];
 
   const weapon =
@@ -97,7 +101,11 @@ export function forgeItem(sel: ForgeSelection, catalog: ForgeCatalog): ForgeResu
     errors.push(`"${armor.name}" is not armor`);
   }
 
-  if (!Number.isInteger(sel.enhancement) || sel.enhancement < 1 || sel.enhancement > MAX_ENHANCEMENT) {
+  if (
+    !Number.isInteger(sel.enhancement) ||
+    sel.enhancement < 1 ||
+    sel.enhancement > MAX_ENHANCEMENT
+  ) {
     errors.push(`enhancement must be +1 to +${MAX_ENHANCEMENT}`);
   }
 
@@ -126,7 +134,7 @@ export function forgeItem(sel: ForgeSelection, catalog: ForgeCatalog): ForgeResu
     abilities.reduce((sum, a) => sum + (a.bonusEquivalent ?? 0), 0);
   if (totalBonusEquivalent > MAX_EFFECTIVE_BONUS) {
     errors.push(
-      `total effective bonus +${totalBonusEquivalent} exceeds the +${MAX_EFFECTIVE_BONUS} cap`
+      `total effective bonus +${totalBonusEquivalent} exceeds the +${MAX_EFFECTIVE_BONUS} cap`,
     );
   }
 
@@ -174,7 +182,7 @@ export function forgeItem(sel: ForgeSelection, catalog: ForgeCatalog): ForgeResu
   }
 
   const noteLines = abilities.map((a) =>
-    a.shortDesc ? `${a.name}: ${a.shortDesc}` : a.name
+    a.shortDesc ? `${a.name}: ${a.shortDesc}` : a.name,
   );
 
   return {

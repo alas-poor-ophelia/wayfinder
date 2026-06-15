@@ -30,11 +30,17 @@ export function ForgePanel({
   editItem: CustomItemDef | null;
   onDone(): void;
 }) {
-  const [kind, setKind] = useState<ForgeSelection["kind"]>(editItem?.kind ?? "weapon");
+  const [kind, setKind] = useState<ForgeSelection["kind"]>(
+    editItem?.kind ?? "weapon",
+  );
   const [baseId, setBaseId] = useState(editItem?.baseId ?? "");
   const [enhancement, setEnhancement] = useState(editItem?.enhancement ?? 1);
-  const [abilityIds, setAbilityIds] = useState<string[]>(editItem?.abilityIds ?? []);
-  const [nameOverride, setNameOverride] = useState(editItem ? editItem.name : "");
+  const [abilityIds, setAbilityIds] = useState<string[]>(
+    editItem?.abilityIds ?? [],
+  );
+  const [nameOverride, setNameOverride] = useState(
+    editItem ? editItem.name : "",
+  );
   const [abilQuery, setAbilQuery] = useState("");
   const [bonusFilter, setBonusFilter] = useState("");
 
@@ -43,11 +49,16 @@ export function ForgePanel({
     kind === "weapon"
       ? FORGE_CATALOG.weapons
       : FORGE_CATALOG.armor.filter((a) =>
-          kind === "shield" ? a.kind === "shield" : a.kind === "armor"
+          kind === "shield" ? a.kind === "shield" : a.kind === "armor",
         );
-  const base = kind === "weapon" ? FORGE_CATALOG.weapons.find((w) => w.id === baseId) : undefined;
+  const base =
+    kind === "weapon"
+      ? FORGE_CATALOG.weapons.find((w) => w.id === baseId)
+      : undefined;
   const abilityPool =
-    kind === "weapon" ? FORGE_CATALOG.weaponAbilities : FORGE_CATALOG.armorAbilities;
+    kind === "weapon"
+      ? FORGE_CATALOG.weaponAbilities
+      : FORGE_CATALOG.armorAbilities;
 
   const sel: ForgeSelection = { kind, baseId, enhancement, abilityIds };
   const result = baseId ? forgeItem(sel, FORGE_CATALOG) : null;
@@ -67,7 +78,7 @@ export function ForgePanel({
     setAbilityIds(
       abilityIds.includes(id)
         ? abilityIds.filter((a) => a !== id)
-        : [...abilityIds, id]
+        : [...abilityIds, id],
     );
   };
 
@@ -107,18 +118,21 @@ export function ForgePanel({
     ...new Set(
       legal
         .map((a) => a.bonusEquivalent)
-        .filter((b): b is number => b !== null)
+        .filter((b): b is number => b !== null),
     ),
   ].sort((x, y) => x - y);
-  const groups: Array<{ key: string; label: string; items: ItemAbilityDef[] }> = [];
+  const groups: Array<{ key: string; label: string; items: ItemAbilityDef[] }> =
+    [];
   for (const t of tiers) {
     if (bonusFilter && bonusFilter !== String(t)) continue;
     const items = legal.filter((a) => a.bonusEquivalent === t);
-    if (items.length) groups.push({ key: `t${t}`, label: `+${t} bonus`, items });
+    if (items.length)
+      groups.push({ key: `t${t}`, label: `+${t} bonus`, items });
   }
   if (!bonusFilter || bonusFilter === "flat") {
     const flats = legal.filter((a) => a.bonusEquivalent === null);
-    if (flats.length) groups.push({ key: "flat", label: "Flat cost", items: flats });
+    if (flats.length)
+      groups.push({ key: "flat", label: "Flat cost", items: flats });
   }
 
   const renderAbility = (a: ItemAbilityDef) => {
@@ -135,7 +149,9 @@ export function ForgePanel({
         class={`ms-equipdb__ability${on ? " is-on" : ""}${wouldExceed ? " is-blocked" : ""}`}
         title={a.shortDesc}
       >
-        <span class={`ms-equipdb__check${on ? " is-on" : ""}`}>{on && <UI.check />}</span>
+        <span class={`ms-equipdb__check${on ? " is-on" : ""}`}>
+          {on && <UI.check />}
+        </span>
         <span class="ms-equipdb__ability-name">{a.name}</span>
         <span class="ms-equipdb__ability-cost">{cost}</span>
         <input
@@ -157,7 +173,9 @@ export function ForgePanel({
           {result ? (
             <>
               <div class="ms-equipdb__forge-name">{displayName}</div>
-              <div class={`ms-equipdb__forge-price${result.valid ? "" : " is-invalid"}`}>
+              <div
+                class={`ms-equipdb__forge-price${result.valid ? "" : " is-invalid"}`}
+              >
                 {result.valid ? formatGp(result.priceGp) : "—"}
               </div>
               <div class="ms-equipdb__forge-stats">
@@ -165,16 +183,23 @@ export function ForgePanel({
                   <span class="ms-equipdb__forge-stat-k">Effective bonus</span>
                   <span class="ms-equipdb__forge-stat-v">
                     <b class={over ? "is-over" : ""}>+{usedEquiv}</b>
-                    <span class="ms-equipdb__forge-stat-cap"> / +{MAX_EFFECTIVE_BONUS}</span>
+                    <span class="ms-equipdb__forge-stat-cap">
+                      {" "}
+                      / +{MAX_EFFECTIVE_BONUS}
+                    </span>
                   </span>
                 </div>
                 <div class="ms-equipdb__forge-stat">
                   <span class="ms-equipdb__forge-stat-k">Abilities</span>
-                  <span class="ms-equipdb__forge-stat-v">{abilityIds.length || "—"}</span>
+                  <span class="ms-equipdb__forge-stat-v">
+                    {abilityIds.length || "—"}
+                  </span>
                 </div>
                 <div class="ms-equipdb__forge-stat">
                   <span class="ms-equipdb__forge-stat-k">Weight</span>
-                  <span class="ms-equipdb__forge-stat-v">{result.weightLbs} lb.</span>
+                  <span class="ms-equipdb__forge-stat-v">
+                    {result.weightLbs} lb.
+                  </span>
                 </div>
               </div>
               {result.errors.map((err) => (
@@ -201,8 +226,8 @@ export function ForgePanel({
             </>
           ) : (
             <div class="ms-equipdb__muted ms-equipdb__forge-hint">
-              Pick a base item to begin forging. Price and effective bonus update
-              live.
+              Pick a base item to begin forging. Price and effective bonus
+              update live.
             </div>
           )}
         </div>
@@ -210,7 +235,8 @@ export function ForgePanel({
 
       <div class="ms-equipdb__forge-main">
         <div class="ms-equipdb__blocklabel">
-          Base &amp; enhancement<span class="ms-equipdb__rule" />
+          Base &amp; enhancement
+          <span class="ms-equipdb__rule" />
         </div>
         <div class="ms-equipdb__forge-form">
           <div class="ms-equipdb__filter-group">
@@ -219,7 +245,10 @@ export function ForgePanel({
               class="dropdown"
               value={kind}
               onChange={(e) =>
-                setKindReset((e.target as HTMLSelectElement).value as ForgeSelection["kind"])
+                setKindReset(
+                  (e.target as HTMLSelectElement)
+                    .value as ForgeSelection["kind"],
+                )
               }
             >
               <option value="weapon">Weapon</option>
@@ -249,7 +278,9 @@ export function ForgePanel({
             <select
               class="dropdown"
               value={String(enhancement)}
-              onChange={(e) => setEnhancement(Number((e.target as HTMLSelectElement).value))}
+              onChange={(e) =>
+                setEnhancement(Number((e.target as HTMLSelectElement).value))
+              }
             >
               {[1, 2, 3, 4, 5].map((n) => (
                 <option key={n} value={String(n)}>
@@ -267,13 +298,16 @@ export function ForgePanel({
               type="text"
               placeholder={result?.name ?? "auto"}
               value={nameOverride}
-              onInput={(e) => setNameOverride((e.target as HTMLInputElement).value)}
+              onInput={(e) =>
+                setNameOverride((e.target as HTMLInputElement).value)
+              }
             />
           </div>
         </div>
 
         <div class="ms-equipdb__blocklabel">
-          Special abilities<span class="ms-equipdb__rule" />
+          Special abilities
+          <span class="ms-equipdb__rule" />
           <span class="ms-equipdb__muted">{abilityIds.length} selected</span>
         </div>
 
@@ -284,13 +318,17 @@ export function ForgePanel({
               class="ms-equipdb__search-input"
               placeholder="Search abilities…"
               value={abilQuery}
-              onInput={(e) => setAbilQuery((e.target as HTMLInputElement).value)}
+              onInput={(e) =>
+                setAbilQuery((e.target as HTMLInputElement).value)
+              }
             />
           </div>
           <select
             class="dropdown"
             value={bonusFilter}
-            onChange={(e) => setBonusFilter((e.target as HTMLSelectElement).value)}
+            onChange={(e) =>
+              setBonusFilter((e.target as HTMLSelectElement).value)
+            }
           >
             <option value="">All costs</option>
             <option value="1">+1 bonus</option>

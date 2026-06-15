@@ -26,7 +26,11 @@ const FINESSE_WEAPON_IDS = new Set([
 
 /** A weapon is finesse-able if it is light or one of the named exceptions. */
 export function isFinesseWeapon(w: BaseWeaponDef): boolean {
-  return w.category === "light" || w.special.includes("finesse") || FINESSE_WEAPON_IDS.has(w.id);
+  return (
+    w.category === "light" ||
+    w.special.includes("finesse") ||
+    FINESSE_WEAPON_IDS.has(w.id)
+  );
 }
 
 /** Attack stats stamped onto weapon items (equipped item = attack profile).
@@ -103,9 +107,10 @@ export function magicDraft(m: MagicItemDef): Omit<InventoryItem, "id"> {
  *  carry over so the equipped custom item drives an attack block. */
 export function customDraft(
   c: CustomItemDef,
-  base?: BaseWeaponDef
+  base?: BaseWeaponDef,
 ): Omit<InventoryItem, "id"> {
-  const baseStats = c.kind === "weapon" && base ? weaponStatsFor(base) : undefined;
+  const baseStats =
+    c.kind === "weapon" && base ? weaponStatsFor(base) : undefined;
   // The Agile enchant (Dex to damage in place of Str) is recorded on the
   // forge inputs by ability id; stamp it onto the weapon stats so calc can
   // read it without re-deriving the forge.
@@ -115,7 +120,8 @@ export function customDraft(
       : baseStats;
   return {
     name: c.name,
-    type: c.kind === "weapon" ? "Weapon" : c.kind === "shield" ? "Shield" : "Armor",
+    type:
+      c.kind === "weapon" ? "Weapon" : c.kind === "shield" ? "Shield" : "Armor",
     count: 1,
     weight: c.weightLbs,
     value: c.priceGp,

@@ -18,12 +18,20 @@ describe("abilityMods (characterization vs old Meta Bind math blocks)", () => {
         cha: Number(sheet.cha),
       },
       adjust: {
-        str: sheet.strAdjust, dex: sheet.dexAdjust, con: sheet.conAdjust,
-        int: sheet.intAdjust, wis: sheet.wisAdjust, cha: sheet.chaAdjust,
+        str: sheet.strAdjust,
+        dex: sheet.dexAdjust,
+        con: sheet.conAdjust,
+        int: sheet.intAdjust,
+        wis: sheet.wisAdjust,
+        cha: sheet.chaAdjust,
       },
       conditionAdjust: {
-        str: ce.strAdjust, dex: ce.dexAdjust, con: ce.conAdjust,
-        int: ce.intAdjust, wis: ce.wisAdjust, cha: ce.chaAdjust,
+        str: ce.strAdjust,
+        dex: ce.dexAdjust,
+        con: ce.conAdjust,
+        int: ce.intAdjust,
+        wis: ce.wisAdjust,
+        cha: ce.chaAdjust,
       },
       drain: { str: sheet.strDrain, dex: sheet.dexDrain, con: sheet.conDrain },
       damage: { str: sheet.strDamage, dex: sheet.dexDamage },
@@ -40,9 +48,9 @@ describe("abilityMods (characterization vs old Meta Bind math blocks)", () => {
   it("handles drain/damage/adjust and empty-string frontmatter values", () => {
     const mods = abilityMods({
       base: { str: 14, dex: 14, con: 14, int: 10, wis: 10, cha: 10 },
-      adjust: { str: 4 },          // 18 -> +4
-      drain: { dex: 2 },           // 12 -> +1
-      damage: { con: "3" },        // 11 -> +0
+      adjust: { str: 4 }, // 18 -> +4
+      drain: { dex: 2 }, // 12 -> +1
+      damage: { con: "3" }, // 11 -> +0
       conditionAdjust: { int: "" }, // "" -> 0 -> 10 -> +0
     });
     expect(mods).toEqual({ str: 4, dex: 1, con: 0, int: 0, wis: 0, cha: 0 });

@@ -23,7 +23,7 @@ export function Tracker({ pool }: { pool: ResolvedPool }) {
         class={`ms-pip${i <= pool.current ? " is-filled" : ""}`}
         aria-label={`${pool.name} ${i} of ${pool.max}`}
         onClick={() => pool.set(i === pool.current ? i - 1 : i)}
-      />
+      />,
     );
   }
   return (
@@ -35,7 +35,12 @@ export function Tracker({ pool }: { pool: ResolvedPool }) {
   );
 }
 
-export function Resources({ store, character, resourceMaxes, resourceFooters }: ResourcesProps) {
+export function Resources({
+  store,
+  character,
+  resourceMaxes,
+  resourceFooters,
+}: ResourcesProps) {
   const [group, setGroup] = useState<"combat" | "items">("combat");
   // The crease is held permanently open natively (content stays rendered for
   // the grid-rows fold ease); `expanded` is the visual fold, driven from the
@@ -45,7 +50,9 @@ export function Resources({ store, character, resourceMaxes, resourceFooters }: 
   const pools: ResolvedPool[] = [];
 
   character.resources.forEach((pool, idx) => {
-    pools.push(resolvePool(store, character, pool, idx, resourceMaxes, resourceFooters));
+    pools.push(
+      resolvePool(store, character, pool, idx, resourceMaxes, resourceFooters),
+    );
   });
 
   if (pools.length === 0) return null;
@@ -65,7 +72,10 @@ export function Resources({ store, character, resourceMaxes, resourceFooters }: 
         // Only the crease caret toggles; pip/group clicks (inside .ms-fold)
         // fall through to their own handlers.
         const target = e.target;
-        if (target instanceof Element && target.closest(".ms-resources__toggle")) {
+        if (
+          target instanceof Element &&
+          target.closest(".ms-resources__toggle")
+        ) {
           e.preventDefault(); // suppress the native <details> open/close
           setExpanded((v) => !v);
         }

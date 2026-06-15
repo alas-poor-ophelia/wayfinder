@@ -112,7 +112,8 @@ export const UNCOMMON_RACES: RaceData[] = [
     traits: [
       {
         name: "Amphibious",
-        summary: "Aquatic subtype; breathes both water and air. Swim speed 30 ft.",
+        summary:
+          "Aquatic subtype; breathes both water and air. Swim speed 30 ft.",
       },
       {
         name: "Water Dependent",
@@ -188,7 +189,10 @@ export const UNCOMMON_RACES: RaceData[] = [
         summary:
           "+1 DC on enchantment spells cast; with Cha 11+, dancing lights 3/day (CL = character level).",
       },
-      { name: "Natural Weapons", summary: "Bite attack dealing 1d4 damage in natural form." },
+      {
+        name: "Natural Weapons",
+        summary: "Bite attack dealing 1d4 damage in natural form.",
+      },
     ],
   },
   // http://legacy.aonprd.com/advancedRaceGuide/uncommonRaces/merfolk.html
@@ -336,7 +340,10 @@ export const UNCOMMON_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Flight", summary: "Fly speed of 60 feet (average maneuverability)." },
+      {
+        name: "Flight",
+        summary: "Fly speed of 60 feet (average maneuverability).",
+      },
     ],
   },
   // http://legacy.aonprd.com/advancedRaceGuide/uncommonRaces/sulis.html
@@ -349,7 +356,10 @@ export const UNCOMMON_RACES: RaceData[] = [
     speed: 30,
     abilityMods: { str: 2, cha: 2, int: -2 },
     vision: ["low-light"],
-    languages: ["Common", "one elemental tongue (Aquan, Auran, Ignan, or Terran)"],
+    languages: [
+      "Common",
+      "one elemental tongue (Aquan, Auran, Ignan, or Terran)",
+    ],
     modifiers: [
       {
         target: "skill.Diplomacy",
@@ -363,10 +373,30 @@ export const UNCOMMON_RACES: RaceData[] = [
         value: 2,
         source: "Suli: Negotiator",
       },
-      { target: "energyRes.acid", type: "racial", value: 5, source: "Suli: Energy Resistance" },
-      { target: "energyRes.cold", type: "racial", value: 5, source: "Suli: Energy Resistance" },
-      { target: "energyRes.electricity", type: "racial", value: 5, source: "Suli: Energy Resistance" },
-      { target: "energyRes.fire", type: "racial", value: 5, source: "Suli: Energy Resistance" },
+      {
+        target: "energyRes.acid",
+        type: "racial",
+        value: 5,
+        source: "Suli: Energy Resistance",
+      },
+      {
+        target: "energyRes.cold",
+        type: "racial",
+        value: 5,
+        source: "Suli: Energy Resistance",
+      },
+      {
+        target: "energyRes.electricity",
+        type: "racial",
+        value: 5,
+        source: "Suli: Energy Resistance",
+      },
+      {
+        target: "energyRes.fire",
+        type: "racial",
+        value: 5,
+        source: "Suli: Energy Resistance",
+      },
     ],
     traits: [
       { name: "Native Outsider", summary: "Outsider with the native subtype." },
@@ -452,7 +482,8 @@ export const UNCOMMON_RACES: RaceData[] = [
     traits: [
       {
         name: "Stonecunning",
-        summary: "Free Perception check within 10 ft of unusual stonework (as dwarves).",
+        summary:
+          "Free Perception check within 10 ft of unusual stonework (as dwarves).",
       },
       {
         name: "Svirfneblin Magic",
@@ -534,7 +565,8 @@ export const UNCOMMON_RACES: RaceData[] = [
       },
       {
         name: "Poison Use",
-        summary: "Never accidentally self-poisons when using or applying poison.",
+        summary:
+          "Never accidentally self-poisons when using or applying poison.",
       },
       {
         name: "Toxic",

@@ -66,7 +66,8 @@ export function parseCustomItemsFile(text: string): CustomItemsFile | null {
     if (typeof entry !== "object" || entry === null) continue;
     const e = entry as Record<string, unknown>;
     if (typeof e.id !== "string" || typeof e.name !== "string") continue;
-    if (e.kind !== "weapon" && e.kind !== "armor" && e.kind !== "shield") continue;
+    if (e.kind !== "weapon" && e.kind !== "armor" && e.kind !== "shield")
+      continue;
     items.push({
       id: e.id,
       name: e.name,
@@ -88,7 +89,7 @@ export function parseCustomItemsFile(text: string): CustomItemsFile | null {
               m !== null &&
               typeof m.target === "string" &&
               typeof m.type === "string" &&
-              typeof m.value === "number"
+              typeof m.value === "number",
           )
         : [],
       note: typeof e.note === "string" ? e.note : "",
@@ -103,7 +104,7 @@ export function serializeCustomItemsFile(items: CustomItemDef[]): string {
   return `${JSON.stringify(
     { schemaVersion: CUSTOM_ITEMS_SCHEMA_VERSION, items },
     null,
-    2
+    2,
   )}\n`;
 }
 
@@ -112,7 +113,10 @@ export function serializeCustomItemsFile(items: CustomItemDef[]): string {
  * settings, or null when only the path changed (user moved the file —
  * name-based tracking follows it for free).
  */
-export function renamedFileName(oldPath: string, newPath: string): string | null {
+export function renamedFileName(
+  oldPath: string,
+  newPath: string,
+): string | null {
   const oldName = oldPath.split("/").pop() ?? oldPath;
   const newName = newPath.split("/").pop() ?? newPath;
   return newName === oldName ? null : newName;

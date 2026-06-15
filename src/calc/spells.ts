@@ -30,37 +30,127 @@ export interface CasterConfig {
  */
 export const CASTER_CONFIGS: Record<string, CasterConfig> = {
   wizard: { type: "prepared", usesSpellbook: true, spontaneousCasting: false },
-  cleric: { type: "prepared", usesSpellbook: false, spontaneousCasting: true, domainSlots: true },
+  cleric: {
+    type: "prepared",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+    domainSlots: true,
+  },
   druid: { type: "prepared", usesSpellbook: false, spontaneousCasting: true },
-  paladin: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
+  paladin: {
+    type: "prepared",
+    usesSpellbook: false,
+    spontaneousCasting: false,
+  },
   ranger: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
-  sorcerer: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  sorcerer: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
   bard: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  oracle: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  skald: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  oracle: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  skald: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
   arcanist: { type: "hybrid", usesSpellbook: true, spontaneousCasting: true },
-  witch: { type: "prepared", usesSpellbook: true, spontaneousCasting: false, usesPatrons: true },
-  summoner: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  witch: {
+    type: "prepared",
+    usesSpellbook: true,
+    spontaneousCasting: false,
+    usesPatrons: true,
+  },
+  summoner: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
   magus: { type: "prepared", usesSpellbook: true, spontaneousCasting: false },
-  alchemist: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
-  bloodrager: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  alchemist: {
+    type: "prepared",
+    usesSpellbook: false,
+    spontaneousCasting: false,
+  },
+  bloodrager: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
   // RAW expansion (2026-06): every CLASS_DATA casting class gets an entry
   // so none silently falls back to the wizard config (paradigm match is
   // pinned by tests/unit/calc/spell-tables.test.ts).
-  antipaladin: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
-  inquisitor: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  investigator: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
-  hunter: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  medium: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  mesmerist: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  occultist: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  omdura: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  psychic: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  spiritualist: { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  warpriest: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
+  antipaladin: {
+    type: "prepared",
+    usesSpellbook: false,
+    spontaneousCasting: false,
+  },
+  inquisitor: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  investigator: {
+    type: "prepared",
+    usesSpellbook: false,
+    spontaneousCasting: false,
+  },
+  hunter: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  medium: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  mesmerist: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  occultist: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  omdura: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  psychic: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  spiritualist: {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  warpriest: {
+    type: "prepared",
+    usesSpellbook: false,
+    spontaneousCasting: false,
+  },
   shaman: { type: "prepared", usesSpellbook: false, spontaneousCasting: false },
-  "vampire hunter": { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
-  "summoner (unchained)": { type: "spontaneous", usesSpellbook: false, spontaneousCasting: true },
+  "vampire hunter": {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
+  "summoner (unchained)": {
+    type: "spontaneous",
+    usesSpellbook: false,
+    spontaneousCasting: true,
+  },
 };
 
 export function getCasterConfig(castingClass: unknown): CasterConfig {
@@ -574,13 +664,13 @@ export function normalizeClassName(className: string): string {
 export function isValidCasterClass(className: string): boolean {
   return Object.prototype.hasOwnProperty.call(
     SPELL_TABLES,
-    normalizeClassName(className)
+    normalizeClassName(className),
   );
 }
 
 export function getBonusSpells(
   castingStatModifier: number,
-  spellLevel: number
+  spellLevel: number,
 ): number {
   if (spellLevel === 0) return 0;
   if (castingStatModifier < 1) return 0;
@@ -592,13 +682,13 @@ export function getBonusSpells(
  *  or out-of-range level, exactly like the legacy lookup. */
 export function getSpellsPerLevelTable(
   className: string,
-  classLevel: number
+  classLevel: number,
 ): Record<number, number> {
   const normalized = normalizeClassName(className);
   const table = SPELL_TABLES[normalized];
   if (!table) {
     throw new Error(
-      `Unknown caster class: ${className}. Supported classes: ${Object.keys(SPELL_TABLES).join(", ")}`
+      `Unknown caster class: ${className}. Supported classes: ${Object.keys(SPELL_TABLES).join(", ")}`,
     );
   }
   if (classLevel < 1 || classLevel > 20) {
@@ -624,7 +714,7 @@ export function getSpellSlots(
   className: string,
   classLevel: number,
   spellLevel: number,
-  castingStatModifier = 0
+  castingStatModifier = 0,
 ): number {
   const perLevel = getSpellsPerLevelTable(className, classLevel);
   const baseSlots = perLevel[spellLevel] || 0;
@@ -636,10 +726,15 @@ export function getArcanistCasts(
   className: string,
   classLevel: number,
   spellLevel: number,
-  castingStatModifier = 0
+  castingStatModifier = 0,
 ): number {
   if (normalizeClassName(className) !== "arcanist") {
-    return getSpellSlots(className, classLevel, spellLevel, castingStatModifier);
+    return getSpellSlots(
+      className,
+      classLevel,
+      spellLevel,
+      castingStatModifier,
+    );
   }
   if (classLevel < 1 || classLevel > 20) {
     throw new Error("Class level must be between 1 and 20");
@@ -650,7 +745,7 @@ export function getArcanistCasts(
 
 export function calculateSpellDC(
   spellLevel: number,
-  castingStatBonus: number
+  castingStatBonus: number,
 ): number {
   return 10 + spellLevel + castingStatBonus;
 }
@@ -662,13 +757,15 @@ export function calculateSpellDC(
  * characterization tests keep working; variable-adjustment feats contribute 0
  * to slot math (their increase is player-determined and not modeled yet).
  */
-export const METAMAGIC_OPTIONS: string[] = METAMAGIC_FEATS.map(metamagicPickerString);
+export const METAMAGIC_OPTIONS: string[] = METAMAGIC_FEATS.map(
+  metamagicPickerString,
+);
 
 export const METAMAGIC_ADJUSTMENTS: Record<string, number> = Object.fromEntries(
   METAMAGIC_FEATS.map((f) => [
     metamagicPickerString(f),
     f.adj === "var" ? 0 : f.adj,
-  ])
+  ]),
 );
 
 export function getMetamagicLevelAdjustment(metamagic: string): number {
@@ -678,13 +775,13 @@ export function getMetamagicLevelAdjustment(metamagic: string): number {
 export function totalMetamagicAdjustment(metamagics: string[]): number {
   return metamagics.reduce(
     (total, metamagic) => total + getMetamagicLevelAdjustment(metamagic),
-    0
+    0,
   );
 }
 
 export function calculateSpellRange(
   rangeType: string,
-  casterLevel: number
+  casterLevel: number,
 ): string {
   if (!rangeType) return "";
   const type = rangeType.toLowerCase();
@@ -764,7 +861,7 @@ export interface SpellbookComputeInput {
  *  the v5 migration) matches nothing. */
 export function castingClassMatches(
   castingClass: string,
-  className: string
+  className: string,
 ): boolean {
   const needle = normalizeClassName(castingClass);
   if (!needle) return false;
@@ -774,7 +871,10 @@ export function castingClassMatches(
 /** Sum of levels for class entries matching the casting class (lenient
  *  substring match, mirroring how the sheet matches class names; an empty
  *  casting class deliberately keeps its legacy match-everything behavior). */
-function matchingClassLevel(classes: ClassEntry[], castingClass: string): number {
+function matchingClassLevel(
+  classes: ClassEntry[],
+  castingClass: string,
+): number {
   const needle = normalizeClassName(castingClass);
   return classes
     .filter((c) => c.className.toLowerCase().includes(needle))
@@ -783,7 +883,7 @@ function matchingClassLevel(classes: ClassEntry[], castingClass: string): number
 
 export function resolveCasterLevel(
   spellbook: SpellbookState,
-  classes: ClassEntry[]
+  classes: ClassEntry[],
 ): number {
   if (spellbook.casterLevelOverride !== undefined) {
     return spellbook.casterLevelOverride;
@@ -793,7 +893,7 @@ export function resolveCasterLevel(
 }
 
 export function computeSpellbook(
-  input: SpellbookComputeInput
+  input: SpellbookComputeInput,
 ): SpellbookComputed {
   const { spellbook, classes, mods } = input;
   const casterLevel = resolveCasterLevel(spellbook, classes);
@@ -809,12 +909,17 @@ export function computeSpellbook(
       // legacy getAvailableSpellSlots: arcanist preparations ignore the stat
       // bonus (raw == comparison, before alias normalization — preserved)
       if (spellbook.castingClass === "arcanist") {
-        maxSlots = getSpellSlots(spellbook.castingClass, clampedLevel, level, 0);
+        maxSlots = getSpellSlots(
+          spellbook.castingClass,
+          clampedLevel,
+          level,
+          0,
+        );
         arcanistCasts = getArcanistCasts(
           spellbook.castingClass,
           clampedLevel,
           level,
-          castingStatBonus
+          castingStatBonus,
         );
       } else {
         maxSlots =
@@ -822,7 +927,7 @@ export function computeSpellbook(
             spellbook.castingClass,
             clampedLevel,
             level,
-            castingStatBonus
+            castingStatBonus,
           ) || 0;
       }
     }
@@ -832,7 +937,8 @@ export function computeSpellbook(
     if (override !== undefined) maxSlots = override;
     const levelState = spellbook.levels[getSpellLevelKey(level)];
     const stored = levelState?.remaining;
-    const remaining = stored === null || stored === undefined ? maxSlots : stored;
+    const remaining =
+      stored === null || stored === undefined ? maxSlots : stored;
     const storedCasts = levelState?.castsRemaining;
     return {
       maxSlots,

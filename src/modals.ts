@@ -1,4 +1,12 @@
-import { App, type ButtonComponent, FuzzySuggestModal, Modal, Notice, Setting, TFile } from "obsidian";
+import {
+  App,
+  type ButtonComponent,
+  FuzzySuggestModal,
+  Modal,
+  Notice,
+  Setting,
+  TFile,
+} from "obsidian";
 import type MiniSheetPlugin from "./main";
 import { importRuleFromUrl } from "./rules/import-rule";
 
@@ -67,7 +75,7 @@ export class TextPromptModal extends Modal {
     app: App,
     heading: string,
     label: string,
-    onSubmit: (value: string) => void
+    onSubmit: (value: string) => void,
   ) {
     super(app);
     this.heading = heading;
@@ -88,7 +96,7 @@ export class TextPromptModal extends Modal {
       btn
         .setButtonText("Create")
         .setCta()
-        .onClick(() => this.submit())
+        .onClick(() => this.submit()),
     );
   }
 
@@ -128,10 +136,13 @@ export class ImportRuleModal extends Modal {
     const hint = contentEl.createEl("p", {
       text: "Paste an Archives of Nethys rule URL (or a rule name). The page is fetched, converted to a typed note in your rules folder, and linked to the active character.",
     });
-    hint.style.cssText = "font-size:13px;color:var(--text-muted);margin:0 0 8px;";
+    hint.style.cssText =
+      "font-size:13px;color:var(--text-muted);margin:0 0 8px;";
 
     new Setting(contentEl).setName("URL or rule name").addText((t) => {
-      t.setPlaceholder("https://www.aonprd.com/Rules.aspx?Name=Trip&Category=Combat");
+      t.setPlaceholder(
+        "https://www.aonprd.com/Rules.aspx?Name=Trip&Category=Combat",
+      );
       t.onChange((v) => {
         this.url = v;
         this.resetOverwrite();
@@ -152,7 +163,8 @@ export class ImportRuleModal extends Modal {
       });
 
     this.statusEl = contentEl.createEl("p");
-    this.statusEl.style.cssText = "font-size:13px;min-height:1.2em;margin:4px 0 0;";
+    this.statusEl.style.cssText =
+      "font-size:13px;min-height:1.2em;margin:4px 0 0;";
 
     new Setting(contentEl).addButton((b) => {
       this.importBtn = b;
@@ -170,7 +182,8 @@ export class ImportRuleModal extends Modal {
 
   private setStatus(msg: string, kind: "info" | "error" = "info"): void {
     this.statusEl.setText(msg);
-    this.statusEl.style.color = kind === "error" ? "var(--text-error)" : "var(--text-muted)";
+    this.statusEl.style.color =
+      kind === "error" ? "var(--text-error)" : "var(--text-muted)";
   }
 
   private async run(): Promise<void> {
@@ -195,7 +208,10 @@ export class ImportRuleModal extends Modal {
     if (result.exists) {
       this.pendingOverwrite = true;
       this.importBtn.setButtonText("Overwrite existing");
-      this.setStatus(`"${result.title}" already exists. Click again to overwrite.`, "error");
+      this.setStatus(
+        `"${result.title}" already exists. Click again to overwrite.`,
+        "error",
+      );
       return;
     }
     if (!result.ok) {

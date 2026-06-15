@@ -35,7 +35,10 @@
   // --- surfaces/lines/text inherit the live Obsidian theme (stays native,
   //     works in light themes); brand lives in the accents + type, not chrome ---
   --eq-line: var(--background-modifier-border);
-  --eq-line-strong: var(--background-modifier-border-hover, var(--background-modifier-border));
+  --eq-line-strong: var(
+    --background-modifier-border-hover,
+    var(--background-modifier-border)
+  );
   --eq-text: var(--text-normal);
   --eq-text-dim: var(--text-muted);
   --eq-text-mute: var(--text-faint);

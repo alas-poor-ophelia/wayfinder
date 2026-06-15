@@ -22,7 +22,11 @@ function doc(partial: Partial<RuleDoc> & { title: string }): RuleDoc {
 }
 
 const docs: RuleDoc[] = [
-  doc({ title: "Aura of Courage", category: "Paladin", summary: "Immune to fear." }),
+  doc({
+    title: "Aura of Courage",
+    category: "Paladin",
+    summary: "Immune to fear.",
+  }),
   doc({ title: "Smite Evil", category: "Paladin", summary: "Add Cha to hit." }),
   doc({
     title: "Detect Evil",
@@ -49,7 +53,10 @@ describe("searchRules", () => {
 
   it("treats multiple words as AND across fields", () => {
     const both = searchRules(docs, "evil paladin");
-    expect(both.map((x) => x.doc.title).sort()).toEqual(["Detect Evil", "Smite Evil"]);
+    expect(both.map((x) => x.doc.title).sort()).toEqual([
+      "Detect Evil",
+      "Smite Evil",
+    ]);
     const none = searchRules(docs, "evil wizard");
     expect(none).toHaveLength(0);
   });

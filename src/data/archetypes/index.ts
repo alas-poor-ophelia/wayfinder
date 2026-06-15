@@ -35,7 +35,7 @@ const FILES: ClassArchetypeFile[] = [
 ];
 
 const BY_CLASS = new Map<string, Map<string, ArchetypeDef>>(
-  FILES.map((f) => [f.classKey, new Map(f.archetypes.map((a) => [a.id, a]))])
+  FILES.map((f) => [f.classKey, new Map(f.archetypes.map((a) => [a.id, a]))]),
 );
 
 /** Catalog for a class name, lenient like the sheet's class matching
@@ -49,7 +49,10 @@ function catalogFor(className: string): Map<string, ArchetypeDef> | undefined {
   // unchained catalog even though it also contains "monk".
   let best: { key: string; map: Map<string, ArchetypeDef> } | undefined;
   for (const [key, map] of BY_CLASS) {
-    if (lower.includes(key.toLowerCase()) && key.length > (best?.key.length ?? 0)) {
+    if (
+      lower.includes(key.toLowerCase()) &&
+      key.length > (best?.key.length ?? 0)
+    ) {
       best = { key, map };
     }
   }
@@ -69,13 +72,13 @@ export function listArchetypes(className: string): ArchetypeDef[] {
 
 export function getArchetype(
   className: string,
-  id: string
+  id: string,
 ): ArchetypeDef | undefined {
   return catalogFor(className)?.get(id);
 }
 
 export function getArchetypeMechanics(
-  id: string
+  id: string,
 ): ArchetypeMechanics | undefined {
   return ARCHETYPE_MECHANICS[id];
 }
@@ -122,7 +125,9 @@ export interface ArchetypeEffects {
   any: boolean;
 }
 
-export function resolveArchetypeEffects(classes: ClassEntry[]): ArchetypeEffects {
+export function resolveArchetypeEffects(
+  classes: ClassEntry[],
+): ArchetypeEffects {
   const effects: ArchetypeEffects = {
     suppressedResources: classes.map(() => new Set<string>()),
     suppressedQuickActions: classes.map(() => new Set<string>()),
@@ -150,10 +155,12 @@ export function resolveArchetypeEffects(classes: ClassEntry[]): ArchetypeEffects
       if (def) {
         for (const feature of def.features) {
           for (const ref of feature.replaces) {
-            if (ref.unmatched || (ref.levels && ref.levels.length > 0)) continue;
+            if (ref.unmatched || (ref.levels && ref.levels.length > 0))
+              continue;
             const mech = featureMech[ref.feature];
             if (!mech) continue;
-            if (mech.resource) effects.suppressedResources[i].add(mech.resource);
+            if (mech.resource)
+              effects.suppressedResources[i].add(mech.resource);
             if (mech.quickAction)
               effects.suppressedQuickActions[i].add(mech.quickAction);
             if (mech.gate === "divineGrace") {
@@ -197,7 +204,7 @@ export function resolveArchetypeEffects(classes: ClassEntry[]): ArchetypeEffects
       if (mechanics.divineGraceMinLevel) {
         effects.divineGraceMinLevel = Math.max(
           effects.divineGraceMinLevel,
-          mechanics.divineGraceMinLevel
+          mechanics.divineGraceMinLevel,
         );
       }
       if (mechanics.grantsBravoAC) effects.grantsBravoAC = true;

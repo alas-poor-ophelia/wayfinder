@@ -36,7 +36,11 @@ export function SpellsTab({
   // slot-only book (schema v5): no caster class, maxima from slotOverrides
   if (sb.castingClass === "") {
     return (
-      <SpellSlotsTab store={store} character={character} computed={computed.spellbook} />
+      <SpellSlotsTab
+        store={store}
+        character={character}
+        computed={computed.spellbook}
+      />
     );
   }
 

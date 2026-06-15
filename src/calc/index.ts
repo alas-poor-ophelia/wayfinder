@@ -4,9 +4,17 @@
  * the old sheet's component wiring.
  */
 
-import { ABILITY_KEYS, type AbilityScores, type CharacterRecord } from "../types/character";
+import {
+  ABILITY_KEYS,
+  type AbilityScores,
+  type CharacterRecord,
+} from "../types/character";
 import { inventoryTotals } from "../types/inventory";
-import { abilityMods, effectiveScores, type AbilityModInput } from "./abilities";
+import {
+  abilityMods,
+  effectiveScores,
+  type AbilityModInput,
+} from "./abilities";
 import { computeEncumbrance, type EncumbranceComputed } from "./encumbrance";
 import { calculateACValues, type ACValues } from "./ac";
 import {
@@ -16,10 +24,7 @@ import {
   type ConditionEffects as AttackConditionEffects,
 } from "./attacks";
 import { totalBab, totalLevel } from "./class-stats";
-import {
-  calculateConditionEffects,
-  type ConditionEffects,
-} from "./conditions";
+import { calculateConditionEffects, type ConditionEffects } from "./conditions";
 import { calculateSaves, classBaseSaves, type SaveValues } from "./saves";
 import { calculateSkills, type SkillRow } from "./skills";
 import {
@@ -42,7 +47,12 @@ import { resolveArchetypeEffects } from "../data/archetypes";
 import { classResources } from "../data/classes";
 import { evaluateFooterFormula, evaluateResourceFormula } from "./resources";
 import { getBuffDef } from "../data/buffs";
-import { applyHeritage, getHeritage, getRaceData, racialAbilityMods } from "../data/races";
+import {
+  applyHeritage,
+  getHeritage,
+  getRaceData,
+  racialAbilityMods,
+} from "../data/races";
 import { companionRow } from "../data/companion";
 import type { RaceData } from "../data/types";
 import { resolveQuickActions } from "./quick-actions";
@@ -132,7 +142,7 @@ export interface ComputeOptions {
 export function computeAll(
   character: CharacterRecord,
   master?: CharacterRecord | null,
-  options?: ComputeOptions
+  options?: ComputeOptions,
 ): ComputedCharacter {
   const eitr = options?.elephantInTheRoom ?? true;
   const effects = calculateConditionEffects({
@@ -176,8 +186,16 @@ export function computeAll(
   cfg("ac.natural", "natural", Number(character.ac.natural) || 0);
   cfg("ac.all", "deflection", Number(character.ac.deflection) || 0);
   cfg("ac.all", "dodge", Number(character.ac.dodge) || 0);
-  cfg("attack.melee", "enhancement", Number(character.enhancements.meleeWeapon) || 0);
-  cfg("attack.ranged", "enhancement", Number(character.enhancements.rangedWeapon) || 0);
+  cfg(
+    "attack.melee",
+    "enhancement",
+    Number(character.enhancements.meleeWeapon) || 0,
+  );
+  cfg(
+    "attack.ranged",
+    "enhancement",
+    Number(character.enhancements.rangedWeapon) || 0,
+  );
   cfg("save.all", "resistance", Number(character.enhancements.resistance) || 0);
 
   // Active buffs: registry entries (typed modifiers + display notes) and
@@ -218,25 +236,51 @@ export function computeAll(
   if (compRow) {
     if (compRow.strDex) {
       companionMods.push(
-        { target: "ability.str", type: "untyped", value: compRow.strDex, source: "Animal Companion" },
-        { target: "ability.dex", type: "untyped", value: compRow.strDex, source: "Animal Companion" }
+        {
+          target: "ability.str",
+          type: "untyped",
+          value: compRow.strDex,
+          source: "Animal Companion",
+        },
+        {
+          target: "ability.dex",
+          type: "untyped",
+          value: compRow.strDex,
+          source: "Animal Companion",
+        },
       );
     }
     if (compRow.natArmor) {
-      companionMods.push({ target: "ac.natural", type: "natural", value: compRow.natArmor, source: "Animal Companion" });
+      companionMods.push({
+        target: "ac.natural",
+        type: "natural",
+        value: compRow.natArmor,
+        source: "Animal Companion",
+      });
     }
   }
 
-  const baseMods = [...racialMods, ...gearMods, ...configMods, ...buffMods, ...companionMods];
+  const baseMods = [
+    ...racialMods,
+    ...gearMods,
+    ...configMods,
+    ...buffMods,
+    ...companionMods,
+  ];
 
   // ability.* modifiers (belts, headbands...) resolve through the engine
   // and ride a dedicated offset channel into the ability math
   const abilityInputFor = (modSet: Modifier[]): AbilityModInput => ({
     base: character.baseAbilities,
-    racial: race ? racialAbilityMods(race, character.raceAbilityChoice) : undefined,
+    racial: race
+      ? racialAbilityMods(race, character.raceAbilityChoice)
+      : undefined,
     typed: modSet.length
       ? Object.fromEntries(
-          ABILITY_KEYS.map((k) => [k, resolveModifiers(modSet, `ability.${k}`).total])
+          ABILITY_KEYS.map((k) => [
+            k,
+            resolveModifiers(modSet, `ability.${k}`).total,
+          ]),
         )
       : undefined,
     adjust: character.adjustments.ability,
@@ -254,7 +298,7 @@ export function computeAll(
 
   const masterBab =
     character.link?.babFromMaster && master
-      ? master.babOverride ?? totalBab(master.classes)
+      ? (master.babOverride ?? totalBab(master.classes))
       : null;
   const bab =
     (compRow ? compRow.bab : null) ??
@@ -287,7 +331,7 @@ export function computeAll(
             mods: abilityMods(input0),
             scores: effectiveScores(input0),
             resources: character.resources,
-          }
+          },
         );
       })()
     : null;
@@ -375,9 +419,13 @@ export function computeAll(
   // so its attack total flows whole; damage uses .rest so an explicit
   // enhancement-typed damage modifier can't double-count with the input.
   const meleeAtk = splitEnhancement(resolveModifiers(combined, "attack.melee"));
-  const rangedAtk = splitEnhancement(resolveModifiers(combined, "attack.ranged"));
+  const rangedAtk = splitEnhancement(
+    resolveModifiers(combined, "attack.ranged"),
+  );
   const meleeDmg = splitEnhancement(resolveModifiers(combined, "damage.melee"));
-  const rangedDmg = splitEnhancement(resolveModifiers(combined, "damage.ranged"));
+  const rangedDmg = splitEnhancement(
+    resolveModifiers(combined, "damage.ranged"),
+  );
 
   const attackInput = {
     strMod: mods.str,
@@ -432,7 +480,8 @@ export function computeAll(
           ...(qa.attackNoteLines.length
             ? {
                 attackNoteBlock:
-                  "\n\n**Weapon Song Effects:**\n" + qa.attackNoteLines.join("\n"),
+                  "\n\n**Weapon Song Effects:**\n" +
+                  qa.attackNoteLines.join("\n"),
               }
             : {}),
         }
@@ -453,7 +502,7 @@ export function computeAll(
   // stamped from the catalog) — same shared input, per-weapon dice. The
   // stored character.weapons list is dormant.
   const equippedWeapons = (character.inventory?.items ?? []).filter(
-    (i) => i.type === "Weapon" && i.equipped && i.weapon
+    (i) => i.type === "Weapon" && i.equipped && i.weapon,
   );
   const attackProfiles: ComputedCharacter["attackProfiles"] = {
     // per-weapon profiles always show the WEAPON math: touch mode is
@@ -472,8 +521,16 @@ export function computeAll(
     ranged: equippedWeapons
       .filter((i) => i.weapon!.kind === "ranged")
       .map((i) => {
-        const r = calculateAttackStrings({ ...attackInput, rangedWeapon: i.weapon! });
-        return { id: i.id, name: i.name, text: r.ranged, parts: r.parts.ranged };
+        const r = calculateAttackStrings({
+          ...attackInput,
+          rangedWeapon: i.weapon!,
+        });
+        return {
+          id: i.id,
+          name: i.name,
+          text: r.ranged,
+          parts: r.parts.ranged,
+        };
       }),
   };
 
@@ -551,7 +608,7 @@ export function computeAll(
   const spellcastingRemoved =
     character.spellbook !== undefined &&
     [...archEffects.removedSpellcastingClassKeys].some((classKey) =>
-      castingClassMatches(character.spellbook!.castingClass, classKey)
+      castingClassMatches(character.spellbook!.castingClass, classKey),
     );
   const spellbook =
     character.spellbook && !spellcastingRemoved
@@ -566,7 +623,7 @@ export function computeAll(
   const encumbrance = character.inventory
     ? computeEncumbrance(
         scores.str,
-        inventoryTotals(character.inventory.items).totalWeight
+        inventoryTotals(character.inventory.items).totalWeight,
       )
     : undefined;
 
@@ -580,12 +637,20 @@ export function computeAll(
   let modifierReport: ComputedCharacter["modifierReport"];
   if (combined.length) {
     const suppressedNotes = new Set<string>(
-      acResolved.suppressed.map(describeModifier)
+      acResolved.suppressed.map(describeModifier),
     );
     const reportTargets = [
-      "attack.melee", "attack.ranged", "attack.unarmed",
-      "damage.melee", "damage.ranged", "damage.unarmed",
-      "save.fort", "save.ref", "save.will", "initiative", "speed",
+      "attack.melee",
+      "attack.ranged",
+      "attack.unarmed",
+      "damage.melee",
+      "damage.ranged",
+      "damage.unarmed",
+      "save.fort",
+      "save.ref",
+      "save.will",
+      "initiative",
+      "speed",
       ...ABILITY_KEYS.map((k) => `ability.${k}`),
     ];
     for (const target of reportTargets) {
@@ -611,9 +676,9 @@ export function computeAll(
   const movementMultiplier = effects.movementAdjust ?? 1;
   const speedBase = character.speed
     ? parseInt(character.speed) || 0
-    : race?.speed ?? 30;
+    : (race?.speed ?? 30);
   const speedTotal = Math.floor(
-    (speedBase + (speedResolved?.total ?? 0)) * movementMultiplier
+    (speedBase + (speedResolved?.total ?? 0)) * movementMultiplier,
   );
   const speed = {
     base: speedBase,
@@ -622,9 +687,7 @@ export function computeAll(
       character.speed && speedTotal === (parseInt(character.speed) || 0)
         ? character.speed
         : `${speedTotal}ft`,
-    notes: speedResolved
-      ? speedResolved.conditional.map(describeModifier)
-      : [],
+    notes: speedResolved ? speedResolved.conditional.map(describeModifier) : [],
   };
 
   // Derive class/archetype pool maxima from current level + effective mods,
@@ -649,7 +712,10 @@ export function computeAll(
       resourceMaxes[pool.id] = evaluateResourceFormula(pool.formula, resCtx);
     }
     if (pool.footerFormula) {
-      resourceFooters[pool.id] = evaluateFooterFormula(pool.footerFormula, resCtx);
+      resourceFooters[pool.id] = evaluateFooterFormula(
+        pool.footerFormula,
+        resCtx,
+      );
     }
   }
 
@@ -684,9 +750,15 @@ export function computeAll(
             race,
             notes: conditionalNotes(racialMods),
             saveNotes: {
-              fort: resolveModifiers(racialMods, "save.fort").conditional.map(describeModifier),
-              ref: resolveModifiers(racialMods, "save.ref").conditional.map(describeModifier),
-              will: resolveModifiers(racialMods, "save.will").conditional.map(describeModifier),
+              fort: resolveModifiers(racialMods, "save.fort").conditional.map(
+                describeModifier,
+              ),
+              ref: resolveModifiers(racialMods, "save.ref").conditional.map(
+                describeModifier,
+              ),
+              will: resolveModifiers(racialMods, "save.will").conditional.map(
+                describeModifier,
+              ),
             },
             ...(heritage
               ? {

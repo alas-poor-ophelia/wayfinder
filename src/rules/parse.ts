@@ -40,7 +40,8 @@ function parseAttrs(s: string): Attrs {
   while ((m = re.exec(s))) {
     if (m[1] !== undefined) pairs.push([m[1].toLowerCase(), m[2]]);
     else if (m[3] !== undefined) pairs.push([m[3].toLowerCase(), m[4]]);
-    else if (m[5] !== undefined && type === undefined) type = m[5].toLowerCase();
+    else if (m[5] !== undefined && type === undefined)
+      type = m[5].toLowerCase();
   }
   return { type, pairs };
 }
@@ -63,7 +64,9 @@ function isTableGroup(group: string[]): boolean {
   const pipey = group.filter((l) => l.includes("|")).length;
   if (pipey < 2) return false;
   // a separator row of dashes/colons/pipes confirms a GFM table
-  return group.some((l) => /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(l) && l.includes("-"));
+  return group.some(
+    (l) => /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(l) && l.includes("-"),
+  );
 }
 
 function splitRow(line: string): string[] {
@@ -129,7 +132,9 @@ function parseFlow(lines: string[]): FlowNode[] {
       i++;
       continue;
     }
-    const m = line.match(/^(start|note|check|branch|options|success|fail)\s*:\s*(.*)$/i);
+    const m = line.match(
+      /^(start|note|check|branch|options|success|fail)\s*:\s*(.*)$/i,
+    );
     if (!m) {
       i++;
       continue;
@@ -140,10 +145,20 @@ function parseFlow(lines: string[]): FlowNode[] {
       nodes.push({ kind: key as "start" | "note" | "check", text: rest });
       i++;
     } else if (key === "options") {
-      nodes.push({ kind: "options", items: rest.split("|").map((s) => s.trim()).filter(Boolean) });
+      nodes.push({
+        kind: "options",
+        items: rest
+          .split("|")
+          .map((s) => s.trim())
+          .filter(Boolean),
+      });
       i++;
     } else if (key === "branch") {
-      const branches: { label: string; tone: "success" | "fail"; text: string }[] = [];
+      const branches: {
+        label: string;
+        tone: "success" | "fail";
+        text: string;
+      }[] = [];
       i++;
       while (i < lines.length) {
         const bm = lines[i].trim().match(/^(success|fail)\s*:\s*(.*)$/i);
@@ -163,7 +178,11 @@ function parseFlow(lines: string[]): FlowNode[] {
       nodes.push({
         kind: "branch",
         branches: [
-          { label: tone === "success" ? "Success" : "Failure", tone, text: rest },
+          {
+            label: tone === "success" ? "Success" : "Failure",
+            tone,
+            text: rest,
+          },
         ],
       });
       i++;
@@ -195,7 +214,10 @@ function classify(group: string[], override: Attrs | null): RuleBlock {
   if (forced === "table" || (forced === undefined && isTableGroup(group))) {
     return parseTable(group, caption);
   }
-  if (forced === "checklist" || (forced === undefined && CHECK_RE.test(group[0]))) {
+  if (
+    forced === "checklist" ||
+    (forced === undefined && CHECK_RE.test(group[0]))
+  ) {
     return {
       t: "checklist",
       items: group
@@ -203,7 +225,10 @@ function classify(group: string[], override: Attrs | null): RuleBlock {
         .map((l) => ({ text: l.replace(CHECK_RE, "").trim() })),
     };
   }
-  if (forced === "steps" || (forced === undefined && ORDERED_RE.test(group[0]))) {
+  if (
+    forced === "steps" ||
+    (forced === undefined && ORDERED_RE.test(group[0]))
+  ) {
     return {
       t: "steps",
       items: group
@@ -211,13 +236,21 @@ function classify(group: string[], override: Attrs | null): RuleBlock {
         .map((l) => ({ text: l.replace(ORDERED_RE, "").trim() })),
     };
   }
-  if (forced === "bullets" || (forced === undefined && BULLET_RE.test(group[0]))) {
+  if (
+    forced === "bullets" ||
+    (forced === undefined && BULLET_RE.test(group[0]))
+  ) {
     return {
       t: "bullets",
-      items: group.filter((l) => BULLET_RE.test(l)).map((l) => termItem(stripBullet(l))),
+      items: group
+        .filter((l) => BULLET_RE.test(l))
+        .map((l) => termItem(stripBullet(l))),
     };
   }
-  if (forced === "callout" || (forced === undefined && QUOTE_RE.test(group[0]))) {
+  if (
+    forced === "callout" ||
+    (forced === undefined && QUOTE_RE.test(group[0]))
+  ) {
     return parseCallout(group, cite);
   }
   // default: a prose paragraph (raw markdown, with an optional lead term)
@@ -262,7 +295,10 @@ function parseBlocks(text: string): RuleBlock[] {
       if (lang === "ref-flow" || pending?.type === "flow") {
         blocks.push({ t: "flow", nodes: parseFlow(buf) });
       } else {
-        blocks.push({ t: "p", text: "```" + lang + "\n" + buf.join("\n") + "\n```" });
+        blocks.push({
+          t: "p",
+          text: "```" + lang + "\n" + buf.join("\n") + "\n```",
+        });
       }
       pending = null;
       continue;
@@ -298,7 +334,8 @@ function inferType(blocks: RuleBlock[]): ContentType {
   if (blocks.some((b) => b.t === "flow")) return "flowchart";
   if (blocks.some((b) => b.t === "dice")) return "formula";
   if (blocks.length && blocks[0].t === "callout") return "lore";
-  if (blocks.some((b) => b.t === "checklist" || b.t === "steps")) return "process";
+  if (blocks.some((b) => b.t === "checklist" || b.t === "steps"))
+    return "process";
   const tables = blocks.filter((b) => b.t === "table").length;
   const prose = blocks.filter((b) => b.t === "p").length;
   if (tables > 0 && tables >= prose) return "table";
@@ -309,10 +346,16 @@ const MD_STRIP = /(\*\*|__|\*|_|`)/g;
 const WIKILINK = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
 
 function firstProseText(blocks: RuleBlock[]): string {
-  const p = blocks.find((b): b is { t: "p"; term?: string; text: string } => b.t === "p");
+  const p = blocks.find(
+    (b): b is { t: "p"; term?: string; text: string } => b.t === "p",
+  );
   if (!p) return "";
   const raw = (p.term ? p.term + " — " : "") + p.text;
-  const clean = raw.replace(WIKILINK, "$1").replace(MD_STRIP, "").replace(/\s+/g, " ").trim();
+  const clean = raw
+    .replace(WIKILINK, "$1")
+    .replace(MD_STRIP, "")
+    .replace(/\s+/g, " ")
+    .trim();
   return clean.length > 180 ? clean.slice(0, 177).trimEnd() + "…" : clean;
 }
 
@@ -320,7 +363,7 @@ const HEADING_RE = /^\s*#{1,6}\s+.*(?:\r?\n|$)/;
 
 export function parseNote(
   body: string,
-  frontmatter: Record<string, unknown> = {}
+  frontmatter: Record<string, unknown> = {},
 ): ParsedNote {
   let text = body;
 
@@ -343,7 +386,8 @@ export function parseNote(
   // key/value pairs (excluding the reserved icon/summary keys)
   const meta: RuleMeta[] = [];
   if (Array.isArray(frontmatter.meta)) {
-    for (const v of frontmatter.meta) if (v != null) meta.push({ k: String(v) });
+    for (const v of frontmatter.meta)
+      if (v != null) meta.push({ k: String(v) });
   } else {
     for (const [k, v] of refAttrs.pairs) {
       if (k !== "icon" && k !== "summary") meta.push({ k: v });
@@ -353,15 +397,21 @@ export function parseNote(
   const blocks = parseBlocks(text);
 
   const declared =
-    (typeof frontmatter.type === "string" ? frontmatter.type.toLowerCase() : undefined) ??
-    refAttrs.type;
-  const type: ContentType = isContentType(declared) ? declared : inferType(blocks);
+    (typeof frontmatter.type === "string"
+      ? frontmatter.type.toLowerCase()
+      : undefined) ?? refAttrs.type;
+  const type: ContentType = isContentType(declared)
+    ? declared
+    : inferType(blocks);
 
-  const fmIcon = typeof frontmatter.icon === "string" ? frontmatter.icon : undefined;
+  const fmIcon =
+    typeof frontmatter.icon === "string" ? frontmatter.icon : undefined;
   const icon = fmIcon || attr(refAttrs, "icon") || CONTENT_TYPES[type].glyph;
 
-  const fmSummary = typeof frontmatter.summary === "string" ? frontmatter.summary : undefined;
-  const summary = fmSummary ?? attr(refAttrs, "summary") ?? firstProseText(blocks);
+  const fmSummary =
+    typeof frontmatter.summary === "string" ? frontmatter.summary : undefined;
+  const summary =
+    fmSummary ?? attr(refAttrs, "summary") ?? firstProseText(blocks);
 
   return { type, icon, summary, meta, blocks };
 }

@@ -63,7 +63,13 @@ export interface ItemAbilityDef {
   id: string;
   name: string;
   /** "weapon" = both melee and ranged; "armor-or-shield" = both lists */
-  appliesTo: "weapon" | "melee" | "ranged" | "armor" | "shield" | "armor-or-shield";
+  appliesTo:
+    | "weapon"
+    | "melee"
+    | "ranged"
+    | "armor"
+    | "shield"
+    | "armor-or-shield";
   /** +N effective bonus cost; null when flat-priced */
   bonusEquivalent: number | null;
   /** flat gp adder; null when bonus-equivalent priced */

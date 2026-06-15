@@ -61,9 +61,11 @@ describe("computeAll heritage integration", () => {
     pit.raceHeritageKey = "demon-spawn";
     const computed = computeAll(pit);
     // Fiendish Resistance (cold/electricity/fire 5) belongs to base tiefling
-    expect(computed.racial?.race.modifiers.some(
-      (m) => m.source === "Tiefling: Fiendish Resistance"
-    )).toBe(true);
+    expect(
+      computed.racial?.race.modifiers.some(
+        (m) => m.source === "Tiefling: Fiendish Resistance",
+      ),
+    ).toBe(true);
     expect(computed.racial?.heritage).toEqual({
       key: "demon-spawn",
       name: "Demon-Spawn (Pitborn)",

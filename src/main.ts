@@ -11,7 +11,12 @@ import {
   VIEW_TYPE_SPELL_DB,
 } from "./constants";
 import { importLegacy, importLegacyInventory } from "./import/legacy-import";
-import { ImportRuleModal, ImportSummaryModal, NotePickModal, TextPromptModal } from "./modals";
+import {
+  ImportRuleModal,
+  ImportSummaryModal,
+  NotePickModal,
+  TextPromptModal,
+} from "./modals";
 import { RulesIndex } from "./rules/index";
 import { MiniSheetSettingTab } from "./settings";
 import { SpellIndex } from "./spells/index";
@@ -52,29 +57,23 @@ export default class MiniSheetPlugin extends Plugin {
     this.spellIndex = new SpellIndex(this);
     this.spellIndex.init();
 
-    this.registerView(
-      VIEW_TYPE_MINISHEET,
-      (leaf) => new SheetView(leaf, this)
-    );
+    this.registerView(VIEW_TYPE_MINISHEET, (leaf) => new SheetView(leaf, this));
 
     this.registerView(
       VIEW_TYPE_SPELL_DB,
-      (leaf) => new SpellDatabaseView(leaf, this)
+      (leaf) => new SpellDatabaseView(leaf, this),
     );
 
     this.registerView(
       VIEW_TYPE_PARTY_INV,
-      (leaf) => new PartyInventoryView(leaf, this)
+      (leaf) => new PartyInventoryView(leaf, this),
     );
 
-    this.registerView(
-      VIEW_TYPE_CONFIG,
-      (leaf) => new ConfigView(leaf, this)
-    );
+    this.registerView(VIEW_TYPE_CONFIG, (leaf) => new ConfigView(leaf, this));
 
     this.registerView(
       VIEW_TYPE_EQUIP_DB,
-      (leaf) => new EquipmentDatabaseView(leaf, this)
+      (leaf) => new EquipmentDatabaseView(leaf, this),
     );
 
     this.addRibbonIcon("shield", "Open Wayfinder", () => {
@@ -148,7 +147,7 @@ export default class MiniSheetPlugin extends Plugin {
         new NotePickModal(
           this.app,
           "Pick the note holding the party inventory frontmatter",
-          (file) => void this.importInventoryNote(file, "party")
+          (file) => void this.importInventoryNote(file, "party"),
         ).open();
       },
     });
@@ -164,7 +163,7 @@ export default class MiniSheetPlugin extends Plugin {
         new NotePickModal(
           this.app,
           "Pick the note holding the inventory frontmatter",
-          (file) => void this.importInventoryNote(file, "character")
+          (file) => void this.importInventoryNote(file, "character"),
         ).open();
       },
     });
@@ -206,7 +205,10 @@ export default class MiniSheetPlugin extends Plugin {
   async importLegacySheet(sheetFile: TFile): Promise<void> {
     const cache = this.app.metadataCache.getFileCache(sheetFile);
     const sheet = cache?.frontmatter
-      ? (JSON.parse(JSON.stringify(cache.frontmatter)) as Record<string, unknown>)
+      ? (JSON.parse(JSON.stringify(cache.frontmatter)) as Record<
+          string,
+          unknown
+        >)
       : null;
     if (!sheet) {
       new Notice(`No frontmatter found on ${sheetFile.path}`);
@@ -219,19 +221,23 @@ export default class MiniSheetPlugin extends Plugin {
       .find(
         (f) =>
           f.path.startsWith(`${folder}/components/`) &&
-          f.basename.endsWith("MiniSheetConfig")
+          f.basename.endsWith("MiniSheetConfig"),
       );
     const config = configFile
       ? ((JSON.parse(
           JSON.stringify(
-            this.app.metadataCache.getFileCache(configFile)?.frontmatter ?? {}
-          )
+            this.app.metadataCache.getFileCache(configFile)?.frontmatter ?? {},
+          ),
         ) as Record<string, unknown>) ?? {})
       : {};
 
     const name = sheetFile.basename.replace(/\s*Mini Sheet$/i, "");
-    const id = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    const characterType = "masterLevel" in sheet || "masterLevel" in config ? "familiar" : "pc";
+    const id = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+    const characterType =
+      "masterLevel" in sheet || "masterLevel" in config ? "familiar" : "pc";
 
     // The legacy spellbook note lives elsewhere in the vault
     // (z_Components/spellbooks/<Name>SpellBook.md); match by basename.
@@ -241,8 +247,9 @@ export default class MiniSheetPlugin extends Plugin {
     const spellbook = spellbookFile
       ? (JSON.parse(
           JSON.stringify(
-            this.app.metadataCache.getFileCache(spellbookFile)?.frontmatter ?? {}
-          )
+            this.app.metadataCache.getFileCache(spellbookFile)?.frontmatter ??
+              {},
+          ),
         ) as Record<string, unknown>)
       : undefined;
 
@@ -255,15 +262,23 @@ export default class MiniSheetPlugin extends Plugin {
       spellbook,
     });
     if (!configFile) {
-      warnings.unshift(`No companion config note found under ${folder}/components/`);
+      warnings.unshift(
+        `No companion config note found under ${folder}/components/`,
+      );
     }
     if (!spellbookFile && characterType === "pc") {
-      warnings.push(`No ${name}SpellBook note found in the vault; spellbook not imported`);
+      warnings.push(
+        `No ${name}SpellBook note found in the vault; spellbook not imported`,
+      );
     }
     // The legacy inventory UI binds the CONFIG note's frontmatter, so pick
     // inventory up from there when present (empty stays absent — the
     // inventory subtab only renders for characters that have one).
-    if (configFile && Array.isArray(config.inventory) && config.inventory.length > 0) {
+    if (
+      configFile &&
+      Array.isArray(config.inventory) &&
+      config.inventory.length > 0
+    ) {
       const inv = importLegacyInventory(config, { scope: "character" });
       record.inventory = inv.inventory;
       warnings.push(...inv.warnings.map((w) => `inventory: ${w}`));
@@ -299,10 +314,16 @@ export default class MiniSheetPlugin extends Plugin {
 
   /** Import legacy inventory/currency frontmatter into the party pool or
    *  the active character (one-time migration; data lives in data.json). */
-  async importInventoryNote(file: TFile, scope: "party" | "character"): Promise<void> {
+  async importInventoryNote(
+    file: TFile,
+    scope: "party" | "character",
+  ): Promise<void> {
     const cache = this.app.metadataCache.getFileCache(file);
     const raw = cache?.frontmatter
-      ? (JSON.parse(JSON.stringify(cache.frontmatter)) as Record<string, unknown>)
+      ? (JSON.parse(JSON.stringify(cache.frontmatter)) as Record<
+          string,
+          unknown
+        >)
       : null;
     if (!raw) {
       new Notice(`No frontmatter found on ${file.path}`);

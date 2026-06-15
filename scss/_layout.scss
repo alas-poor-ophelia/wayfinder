@@ -70,7 +70,11 @@
   cursor: pointer;
   border: 1px solid var(--background-modifier-border);
   border-radius: 0;
-  background-color: color-mix(in srgb, var(--background-primary) 60%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--background-primary) 60%,
+    transparent
+  );
   box-shadow: none;
   min-height: 32px;
 

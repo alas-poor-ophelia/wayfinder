@@ -18,7 +18,7 @@ export function SpellFilters({
   const store = plugin.store;
   const [classSearch, setClassSearch] = useState("");
   const classes = plugin.spellIndex.allClasses.value.filter(
-    (c) => !classSearch || c.toLowerCase().includes(classSearch.toLowerCase())
+    (c) => !classSearch || c.toLowerCase().includes(classSearch.toLowerCase()),
   );
   const schools = plugin.spellIndex.allSchools.value;
   const sources = plugin.spellIndex.allSources.value;
@@ -41,7 +41,9 @@ export function SpellFilters({
       <div class="ms-spelldb__fgroup">
         <div class="ms-spelldb__flabel">
           Class
-          {db.classes.length > 0 && <span class="badge">{db.classes.length}</span>}
+          {db.classes.length > 0 && (
+            <span class="badge">{db.classes.length}</span>
+          )}
         </div>
         <input
           type="search"
@@ -58,7 +60,11 @@ export function SpellFilters({
                 key={cls}
                 class={`ms-spelldb__classrow${on ? " is-on" : ""}`}
               >
-                <input type="checkbox" checked={on} onChange={() => toggleClass(cls)} />
+                <input
+                  type="checkbox"
+                  checked={on}
+                  onChange={() => toggleClass(cls)}
+                />
                 <span class={`ms-spelldb__check${on ? " is-on" : ""}`}>
                   {on && <UI.check />}
                 </span>
@@ -171,7 +177,9 @@ export function SpellFilters({
           <input
             type="checkbox"
             checked={db.eschewOnly}
-            onChange={() => store.updateSpellDb({ eschewOnly: !db.eschewOnly, page: 0 })}
+            onChange={() =>
+              store.updateSpellDb({ eschewOnly: !db.eschewOnly, page: 0 })
+            }
           />
           <span class={`ms-spelldb__check${db.eschewOnly ? " is-on" : ""}`}>
             {db.eschewOnly && <UI.check />}
@@ -182,7 +190,9 @@ export function SpellFilters({
           <input
             type="checkbox"
             checked={db.knownOnly}
-            onChange={() => store.updateSpellDb({ knownOnly: !db.knownOnly, page: 0 })}
+            onChange={() =>
+              store.updateSpellDb({ knownOnly: !db.knownOnly, page: 0 })
+            }
           />
           <span class={`ms-spelldb__check${db.knownOnly ? " is-on" : ""}`}>
             {db.knownOnly && <UI.check />}

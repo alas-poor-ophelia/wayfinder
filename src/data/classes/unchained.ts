@@ -83,7 +83,8 @@ export const UNCHAINED_CLASSES: ClassData[] = [
         name: "Stunning Fist",
         max: (level) => level,
         footer: "uses/day",
-        describe: "Monk level (+1/day per 4 levels in other classes, added manually)",
+        describe:
+          "Monk level (+1/day per 4 levels in other classes, added manually)",
       },
     ],
     quickActions: [{ id: "flurryOfBlows" }],

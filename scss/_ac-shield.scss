@@ -52,10 +52,18 @@
     }
   }
 
-  .ms-ac__row--touch::before { content: "T:"; }
-  .ms-ac__row--ff::before { content: "FF:"; }
-  .ms-ac__row--cmb::before { content: "CMB:"; }
-  .ms-ac__row--cmd::before { content: "CMD:"; }
+  .ms-ac__row--touch::before {
+    content: "T:";
+  }
+  .ms-ac__row--ff::before {
+    content: "FF:";
+  }
+  .ms-ac__row--cmb::before {
+    content: "CMB:";
+  }
+  .ms-ac__row--cmd::before {
+    content: "CMD:";
+  }
 
   // flat-footed marker (boot SVG from the old sheet), top-left of the shield
   .ms-ac__ff-indicator {

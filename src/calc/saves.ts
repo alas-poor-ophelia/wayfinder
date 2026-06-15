@@ -50,7 +50,7 @@ function baseSave(level: number, isGood: boolean): number {
  *  grace, resistance, or conditions. Used both internally and to feed a
  *  familiar the master's base saves. */
 export function classBaseSaves(
-  classes: { className: string; level: number }[]
+  classes: { className: string; level: number }[],
 ): SaveValues {
   let fort = 0;
   let ref = 0;
@@ -82,7 +82,7 @@ export function calculateSaves(input: SavesInput): SaveValues {
     (c) =>
       c.level &&
       getClassStats(c.className) &&
-      c.className.toLowerCase().includes("paladin")
+      c.className.toLowerCase().includes("paladin"),
   );
 
   // Familiar rule: per save, the better of the familiar's own base and the

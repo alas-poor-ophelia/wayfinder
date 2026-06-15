@@ -8,7 +8,11 @@
  * not available, 0 = printed zero (slot level open, bonus spells apply).
  */
 import { describe, expect, it } from "vitest";
-import { CASTER_CONFIGS, getSpellSlots, SPELL_TABLES } from "../../../src/calc/spells";
+import {
+  CASTER_CONFIGS,
+  getSpellSlots,
+  SPELL_TABLES,
+} from "../../../src/calc/spells";
 import { CLASS_DATA } from "../../../src/data/classes";
 
 const N = null;
@@ -130,11 +134,11 @@ describe("tableKey / caster-config wiring", () => {
       expect(data.casting.tableKey, `${data.key} tableKey`).toBeTruthy();
       expect(
         SPELL_TABLES[data.casting.tableKey!],
-        `${data.key} SPELL_TABLES[${data.casting.tableKey}]`
+        `${data.key} SPELL_TABLES[${data.casting.tableKey}]`,
       ).toBeDefined();
       expect(
         SPELL_TABLES[data.key.toLowerCase()],
-        `${data.key} table by class name`
+        `${data.key} table by class name`,
       ).toBeDefined();
     }
   });

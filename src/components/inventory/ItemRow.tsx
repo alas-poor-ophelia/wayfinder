@@ -27,7 +27,9 @@ function weightDisplay(item: InventoryItem, allItems: InventoryItem[]): string {
   if (isContainer(item)) {
     const contents = contentsWeight(allItems, item.id);
     const self = item.weight || 0;
-    return self > 0 || contents > 0 ? `${self} | ${contents.toFixed(1)} lbs` : "—";
+    return self > 0 || contents > 0
+      ? `${self} | ${contents.toFixed(1)} lbs`
+      : "—";
   }
   const total = (item.weight || 0) * (item.count || 1);
   return total > 0 ? `${+total.toFixed(1)} lbs` : "—";
@@ -68,7 +70,9 @@ export function ItemRow({
         )}
         <span class="ms-inv-row__name">
           {item.name}
-          {item.count > 1 && <span class="ms-inv-row__count">×{item.count}</span>}
+          {item.count > 1 && (
+            <span class="ms-inv-row__count">×{item.count}</span>
+          )}
         </span>
       </div>
       <div class="ms-inv-row__meta">
@@ -81,13 +85,21 @@ export function ItemRow({
               class={`ms-inv-row__equip${item.equipped ? " is-on" : ""}`}
               aria-label={`${item.equipped ? "Unequip" : "Equip"} ${item.name}`}
               aria-pressed={!!item.equipped}
-              title={item.equipped ? "Equipped (bonuses/attacks active)" : "Not equipped"}
+              title={
+                item.equipped
+                  ? "Equipped (bonuses/attacks active)"
+                  : "Not equipped"
+              }
               onClick={onEquip}
             >
               {item.equipped ? "◉" : "○"}
             </button>
           )}
-          <button class="ms-inv-row__edit" aria-label={`Edit ${item.name}`} onClick={onEdit} />
+          <button
+            class="ms-inv-row__edit"
+            aria-label={`Edit ${item.name}`}
+            onClick={onEdit}
+          />
           <button
             class="ms-inv-row__delete"
             aria-label={`Delete ${item.name}`}
@@ -97,7 +109,9 @@ export function ItemRow({
       </div>
       {item.note && <div class="ms-inv-row__note">{item.note}</div>}
       {container && childCount > 0 && !expanded && (
-        <div class="ms-inv-row__contents">Contains {childCount} item{childCount === 1 ? "" : "s"}</div>
+        <div class="ms-inv-row__contents">
+          Contains {childCount} item{childCount === 1 ? "" : "s"}
+        </div>
       )}
       <div class="ms-inv-row__foot">
         <span class="ms-inv-row__weight">{weightDisplay(item, allItems)}</span>

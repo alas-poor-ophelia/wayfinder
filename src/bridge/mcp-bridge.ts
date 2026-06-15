@@ -1,8 +1,5 @@
 import { computeAll } from "../calc";
-import {
-  filterItems,
-  sortItems,
-} from "../components/inventory/InventoryPanel";
+import { filterItems, sortItems } from "../components/inventory/InventoryPanel";
 import {
   filterSpells,
   sortSpells,
@@ -116,7 +113,11 @@ export interface MiniSheetBridge {
   /** Spellbook state for a character (null when none / no spellbook). */
   getSpellbook(id?: string): SpellbookState | null;
   /** Drive a spellbook mutation by name (the spells tab's action set). */
-  spellAction(id: string, action: SpellActionName, payload?: SpellActionPayload): void;
+  spellAction(
+    id: string,
+    action: SpellActionName,
+    payload?: SpellActionPayload,
+  ): void;
   /** Open the main-pane spell database view. */
   openSpellDb(): Promise<void>;
   /** Filter/sort state + result stats from the spell database view. */
@@ -131,7 +132,7 @@ export interface MiniSheetBridge {
   inventoryAction(
     scope: "party" | (string & {}),
     action: InventoryActionName,
-    payload?: InventoryActionPayload
+    payload?: InventoryActionPayload,
   ): void;
   /** Combat tab subtab ("main" | "inventory"). */
   setCombatSub(sub: "main" | "inventory"): void;
@@ -151,7 +152,11 @@ export interface MiniSheetBridge {
   /** Cycle a quick action's stage (off -> 1 -> ... -> off). */
   cycleQuickAction(id: string, actionId: string): void;
   /** Select a quick action variant (null = off). */
-  setQuickActionVariant(id: string, actionId: string, variantId: string | null): void;
+  setQuickActionVariant(
+    id: string,
+    actionId: string,
+    variantId: string | null,
+  ): void;
 }
 
 declare global {
@@ -178,7 +183,9 @@ export function installBridge(plugin: MiniSheetPlugin): void {
     getComputed: (id) => {
       const record = store.getCharacter(id);
       if (!record) return null;
-      const master = record.link ? store.getCharacter(record.link.masterId) : null;
+      const master = record.link
+        ? store.getCharacter(record.link.masterId)
+        : null;
       return computeAll(record, master, {
         elephantInTheRoom: eitrEnabled(store.data.value.settings),
       });
@@ -193,7 +200,9 @@ export function installBridge(plugin: MiniSheetPlugin): void {
     spellAction: (id, action, payload = {}) => {
       const record = store.getCharacter(id);
       if (!record) throw new Error(`No character with id "${id}"`);
-      const master = record.link ? store.getCharacter(record.link.masterId) : null;
+      const master = record.link
+        ? store.getCharacter(record.link.masterId)
+        : null;
       const bonus =
         computeAll(record, master, {
           elephantInTheRoom: eitrEnabled(store.data.value.settings),
@@ -210,7 +219,12 @@ export function installBridge(plugin: MiniSheetPlugin): void {
           setLevelRemaining(store, record, level, payload.value ?? 0);
           break;
         case "setSlaRemaining":
-          setSlaRemaining(store, record, payload.slaIndex ?? 0, payload.value ?? 0);
+          setSlaRemaining(
+            store,
+            record,
+            payload.slaIndex ?? 0,
+            payload.value ?? 0,
+          );
           break;
         case "selectGlobalMetamagic":
           setGlobalMetamagicSelected(store, record, payload.metamagic ?? "");
@@ -241,7 +255,12 @@ export function installBridge(plugin: MiniSheetPlugin): void {
           setCastsRemaining(store, record, level, payload.value ?? 0);
           break;
         case "selectLevelMetamagic":
-          setLevelMetamagicSelected(store, record, level, payload.metamagic ?? "");
+          setLevelMetamagicSelected(
+            store,
+            record,
+            level,
+            payload.metamagic ?? "",
+          );
           break;
         case "addLevelMetamagic": {
           if (payload.metamagic) {
@@ -272,7 +291,9 @@ export function installBridge(plugin: MiniSheetPlugin): void {
       const characters = store.data.value.characters.filter((c) => c.spellbook);
       const target =
         characters.find((c) => c.id === db.targetCharacterId) ??
-        characters.find((c) => c.id === store.data.value.ui.activeCharacterId) ??
+        characters.find(
+          (c) => c.id === store.data.value.ui.activeCharacterId,
+        ) ??
         characters[0] ??
         null;
       const knownIds = new Set<string>();
@@ -351,7 +372,10 @@ export function installBridge(plugin: MiniSheetPlugin): void {
     getPartyInvState: () => {
       const filters = store.partyInv();
       const inventory = store.getPartyInventory();
-      const filtered = sortItems(filterItems(inventory.items, filters), filters);
+      const filtered = sortItems(
+        filterItems(inventory.items, filters),
+        filters,
+      );
       return {
         filters,
         totalItems: inventory.items.length,

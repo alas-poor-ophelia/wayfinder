@@ -49,7 +49,14 @@ describe("computeAll racial integration", () => {
   it("halfling raceKey: Halfling Luck lands on every save", () => {
     const halfling = fixture();
     halfling.raceKey = "halfling";
-    halfling.baseAbilities = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+    halfling.baseAbilities = {
+      str: 10,
+      dex: 10,
+      con: 10,
+      int: 10,
+      wis: 10,
+      cha: 10,
+    };
     const computed = computeAll(halfling);
     // Fort: base 4 (fighter 4 good) + con 0 + luck 1
     expect(computed.saves.fort).toBe(5);

@@ -170,7 +170,7 @@ export function defaultSpellLevelState(): SpellLevelState {
  * stay 0 and slotOverrides carry the manual maxima.
  */
 export function createSlotOnlySpellbook(
-  slots: { level: SpellLevel; current: number; max: number }[]
+  slots: { level: SpellLevel; current: number; max: number }[],
 ): SpellbookState {
   const book = createDefaultSpellbook("", "cha");
   const overrides: Record<string, number> = {};
@@ -185,7 +185,7 @@ export function createSlotOnlySpellbook(
 
 export function createDefaultSpellbook(
   castingClass: string,
-  castingStat: AbilityKey
+  castingStat: AbilityKey,
 ): SpellbookState {
   const levels: Record<string, SpellLevelState> = {};
   const preparations: Record<string, SpellPreparation[]> = {};

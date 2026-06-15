@@ -15,7 +15,9 @@ export function ACShield({ store, character, ac, flatFooted }: ACShieldProps) {
   const showCMBCMD = character.ac.showCMBCMD;
   return (
     <div class="ms-ac">
-      {flatFooted && <div class="ms-ac__ff-indicator" aria-label="Flat-footed" />}
+      {flatFooted && (
+        <div class="ms-ac__ff-indicator" aria-label="Flat-footed" />
+      )}
       <button
         class="ms-ac__shield"
         aria-label="Toggle CMB/CMD display"

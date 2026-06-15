@@ -19,7 +19,7 @@ export function sortRows<T extends { name: string }>(
   rows: T[],
   columns: EquipColumn<T>[],
   sortKey: string,
-  sortDir: "asc" | "desc"
+  sortDir: "asc" | "desc",
 ): T[] {
   const col = columns.find((c) => c.key === sortKey) ?? columns[0];
   const dir = sortDir === "desc" ? -1 : 1;
@@ -66,64 +66,64 @@ export function EquipTable<T extends { id: string; name: string }>({
 
   return (
     <>
-    <table class="ms-equipdb__table">
-      <thead>
-        <tr>
-          {onAdd && <th class="ms-equipdb__add-col" />}
-          {columns.map((col) => {
-            const active = db.sortKey === col.key;
-            return (
-              <th
-                key={col.key}
-                class={
-                  `${col.num ? "ms-equipdb__numcol" : ""}${active ? " is-sort" : ""}`.trim() ||
-                  undefined
-                }
-                onClick={() => setSort(col.key)}
-              >
-                {col.label}
-                {active && (
-                  <span class="ms-equipdb__sortcaret">
-                    {db.sortDir === "asc" ? "▲" : "▼"}
-                  </span>
-                )}
-              </th>
-            );
-          })}
-          {actions && <th />}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((item) => (
-          <tr key={item.id}>
-            {onAdd && (
-              <td class="ms-equipdb__add-col">
-                <button
-                  class="ms-equipdb__add"
-                  aria-label={`Add ${item.name}`}
-                  onClick={() => onAdd(item)}
-                >
-                  <UI.plus />
-                </button>
-              </td>
-            )}
+      <table class="ms-equipdb__table">
+        <thead>
+          <tr>
+            {onAdd && <th class="ms-equipdb__add-col" />}
             {columns.map((col) => {
-              const cls =
-                `${col.num ? "ms-equipdb__numcol" : ""}${col.cls ? " " + col.cls : ""}`.trim();
+              const active = db.sortKey === col.key;
               return (
-                <td key={col.key} class={cls || undefined}>
-                  {col.render ? col.render(item) : col.val(item)}
-                </td>
+                <th
+                  key={col.key}
+                  class={
+                    `${col.num ? "ms-equipdb__numcol" : ""}${active ? " is-sort" : ""}`.trim() ||
+                    undefined
+                  }
+                  onClick={() => setSort(col.key)}
+                >
+                  {col.label}
+                  {active && (
+                    <span class="ms-equipdb__sortcaret">
+                      {db.sortDir === "asc" ? "▲" : "▼"}
+                    </span>
+                  )}
+                </th>
               );
             })}
-            {actions && <td class="ms-equipdb__actions">{actions(item)}</td>}
+            {actions && <th />}
           </tr>
-        ))}
-      </tbody>
-    </table>
-    {rows.length === 0 && (
-      <div class="ms-equipdb__empty ms-equipdb__muted">{emptyText}</div>
-    )}
+        </thead>
+        <tbody>
+          {rows.map((item) => (
+            <tr key={item.id}>
+              {onAdd && (
+                <td class="ms-equipdb__add-col">
+                  <button
+                    class="ms-equipdb__add"
+                    aria-label={`Add ${item.name}`}
+                    onClick={() => onAdd(item)}
+                  >
+                    <UI.plus />
+                  </button>
+                </td>
+              )}
+              {columns.map((col) => {
+                const cls =
+                  `${col.num ? "ms-equipdb__numcol" : ""}${col.cls ? " " + col.cls : ""}`.trim();
+                return (
+                  <td key={col.key} class={cls || undefined}>
+                    {col.render ? col.render(item) : col.val(item)}
+                  </td>
+                );
+              })}
+              {actions && <td class="ms-equipdb__actions">{actions(item)}</td>}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {rows.length === 0 && (
+        <div class="ms-equipdb__empty ms-equipdb__muted">{emptyText}</div>
+      )}
     </>
   );
 }

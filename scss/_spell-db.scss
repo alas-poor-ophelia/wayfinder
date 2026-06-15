@@ -42,7 +42,10 @@
   --sp-inset: var(--background-secondary);
   --sp-input: var(--background-modifier-form-field, var(--background-primary));
   --sp-line: var(--background-modifier-border);
-  --sp-line-strong: var(--background-modifier-border-hover, var(--background-modifier-border));
+  --sp-line-strong: var(
+    --background-modifier-border-hover,
+    var(--background-modifier-border)
+  );
   --sp-text: var(--text-normal);
   --sp-text-dim: var(--text-muted);
   --sp-text-mute: var(--text-faint);

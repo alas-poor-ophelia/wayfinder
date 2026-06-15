@@ -53,7 +53,11 @@ export function SpellbookConfig({
               class="dropdown"
               value={sb.castingClass}
               onChange={(e) =>
-                setCastingClass(store, character, (e.target as HTMLSelectElement).value)
+                setCastingClass(
+                  store,
+                  character,
+                  (e.target as HTMLSelectElement).value,
+                )
               }
             >
               {Object.keys(CASTER_CONFIGS).map((cls) => (
@@ -72,7 +76,7 @@ export function SpellbookConfig({
                 setCastingStat(
                   store,
                   character,
-                  (e.target as HTMLSelectElement).value as AbilityKey
+                  (e.target as HTMLSelectElement).value as AbilityKey,
                 )
               }
             >
@@ -96,7 +100,7 @@ export function SpellbookConfig({
                 setCasterLevelOverride(
                   store,
                   character,
-                  raw === "" ? undefined : Number(raw)
+                  raw === "" ? undefined : Number(raw),
                 );
               }}
             />

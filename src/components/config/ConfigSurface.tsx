@@ -28,7 +28,12 @@ import {
   SkillsSection,
   VitalsSection,
 } from "./sections";
-import { QAAddModal, QAEditor, QAWizard, QuickActionsSection } from "./QuickActionsEditor";
+import {
+  QAAddModal,
+  QAEditor,
+  QAWizard,
+  QuickActionsSection,
+} from "./QuickActionsEditor";
 
 interface ConfigSurfaceProps {
   plugin: MiniSheetPlugin;
@@ -39,14 +44,25 @@ interface ConfigSurfaceProps {
 
 type Category = "character" | "combat" | "skills" | "effects" | "rules";
 
-const CATEGORIES: { id: Category; label: string; icon: string; accent: string }[] = [
+const CATEGORIES: {
+  id: Category;
+  label: string;
+  icon: string;
+  accent: string;
+}[] = [
   { id: "character", label: "Character", icon: "ra-player", accent: "gold" },
   { id: "combat", label: "Combat", icon: "ra-crossed-swords", accent: "red" },
   { id: "skills", label: "Skills", icon: "ra-targeted", accent: "teal" },
-  { id: "effects", label: "Effects", icon: "ra-lightning-bolt", accent: "amber" },
+  {
+    id: "effects",
+    label: "Effects",
+    icon: "ra-lightning-bolt",
+    accent: "amber",
+  },
   { id: "rules", label: "Rules", icon: "ra-aware", accent: "blue" },
 ];
-const accentOf = (id: string) => CATEGORIES.find((c) => c.id === id)?.accent ?? "gold";
+const accentOf = (id: string) =>
+  CATEGORIES.find((c) => c.id === id)?.accent ?? "gold";
 
 const ls = {
   get(key: string, fallback: string): string {
@@ -66,17 +82,30 @@ const ls = {
   },
 };
 
-type Modal = { mode: "edit"; id: string } | { mode: "add" } | { mode: "wizard" } | null;
+type Modal =
+  | { mode: "edit"; id: string }
+  | { mode: "add" }
+  | { mode: "wizard" }
+  | null;
 
-export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfaceProps) {
+export function ConfigSurface({
+  plugin,
+  store,
+  character,
+  onClose,
+}: ConfigSurfaceProps) {
   const [cat, setCat] = useState<Category>(() => {
     const saved = ls.get("cat", "character");
-    return (CATEGORIES.some((c) => c.id === saved) ? saved : "character") as Category;
+    return (
+      CATEGORIES.some((c) => c.id === saved) ? saved : "character"
+    ) as Category;
   });
   const [modal, setModal] = useState<Modal>(null);
   useEffect(() => ls.set("cat", cat), [cat]);
 
-  const onSheetCount = (character.quickActions ?? []).filter((a) => !a.hidden).length;
+  const onSheetCount = (character.quickActions ?? []).filter(
+    (a) => !a.hidden,
+  ).length;
   const subtitle = [
     character.race,
     character.classes.map((c) => `${c.className} ${c.level}`).join(" / "),
@@ -87,7 +116,7 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
 
   const editing =
     modal?.mode === "edit"
-      ? (character.quickActions ?? []).find((a) => a.id === modal.id) ?? null
+      ? ((character.quickActions ?? []).find((a) => a.id === modal.id) ?? null)
       : null;
 
   return (
@@ -98,7 +127,12 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
         </h1>
         <span class="cfg__sub">{subtitle}</span>
         <span class="cfg__top-spacer" />
-        <button class="iconbtn" title="Close" aria-label="Close configuration" onClick={onClose}>
+        <button
+          class="iconbtn"
+          title="Close"
+          aria-label="Close configuration"
+          onClick={onClose}
+        >
           <UI.x />
         </button>
       </div>
@@ -114,7 +148,9 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
                 <Icon id={c.icon} />
               </span>
               <span class="rail__name">{c.label}</span>
-              {c.id === "effects" && <span class="rail__count">{onSheetCount}</span>}
+              {c.id === "effects" && (
+                <span class="rail__count">{onSheetCount}</span>
+              )}
             </button>
           ))}
         </aside>
@@ -138,7 +174,9 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
               <EnergySection store={store} character={character} />
             </>
           )}
-          {cat === "skills" && <SkillsSection store={store} character={character} />}
+          {cat === "skills" && (
+            <SkillsSection store={store} character={character} />
+          )}
           {cat === "effects" && (
             <>
               <QuickActionsSection
@@ -151,13 +189,20 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
               <BuffsSection store={store} character={character} />
             </>
           )}
-          {cat === "rules" && <RulesSection store={store} character={character} plugin={plugin} />}
+          {cat === "rules" && (
+            <RulesSection store={store} character={character} plugin={plugin} />
+          )}
         </div>
       </div>
 
       {editing && (
         <div class="acc-amber">
-          <QAEditor store={store} character={character} def={editing} onClose={() => setModal(null)} />
+          <QAEditor
+            store={store}
+            character={character}
+            def={editing}
+            onClose={() => setModal(null)}
+          />
         </div>
       )}
       {modal?.mode === "add" && (
@@ -172,7 +217,11 @@ export function ConfigSurface({ plugin, store, character, onClose }: ConfigSurfa
       )}
       {modal?.mode === "wizard" && (
         <div class="acc-amber">
-          <QAWizard store={store} character={character} onClose={() => setModal(null)} />
+          <QAWizard
+            store={store}
+            character={character}
+            onClose={() => setModal(null)}
+          />
         </div>
       )}
     </div>

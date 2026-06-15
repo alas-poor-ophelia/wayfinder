@@ -38,15 +38,15 @@
     cursor: pointer;
 
     &.is-conditions {
-      background-color: #CD951D;
+      background-color: #cd951d;
     }
 
     &.is-buffs {
-      background-color: #5A7D9A;
+      background-color: #5a7d9a;
     }
 
     &.is-mixed {
-      background-image: linear-gradient(135deg, #CD951D 50%, #5A7D9A 50%);
+      background-image: linear-gradient(135deg, #cd951d 50%, #5a7d9a 50%);
     }
   }
 
@@ -79,11 +79,11 @@
   }
 
   .ms-cond-notes__group--conditions .ms-cond-notes__group-title {
-    color: #CD951D;
+    color: #cd951d;
   }
 
   .ms-cond-notes__group--buffs .ms-cond-notes__group-title {
-    color: #5A7D9A;
+    color: #5a7d9a;
   }
 
   .ms-cond-notes__item {

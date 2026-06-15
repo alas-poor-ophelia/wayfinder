@@ -52,7 +52,10 @@ export const FEATURED_RACES: RaceData[] = [
     ],
     traits: [
       { name: "Native Outsider", summary: "Outsider with the native subtype." },
-      { name: "Spell-Like Ability", summary: "Daylight 1/day (caster level equals character level)." },
+      {
+        name: "Spell-Like Ability",
+        summary: "Daylight 1/day (caster level equals character level).",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Catfolk
@@ -94,7 +97,11 @@ export const FEATURED_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Cat's Luck", summary: "1/day, roll a Reflex save twice and take the better result (decide before rolling)." },
+      {
+        name: "Cat's Luck",
+        summary:
+          "1/day, roll a Reflex save twice and take the better result (decide before rolling).",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Dhampir
@@ -130,10 +137,24 @@ export const FEATURED_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Light Sensitivity", summary: "Dazzled in bright sunlight or within the radius of a daylight spell." },
-      { name: "Negative Energy Affinity", summary: "Positive energy harms, negative energy heals (as undead)." },
-      { name: "Resist Level Drain", summary: "No penalties from energy drain; negative levels fade after 24 hours without a save." },
-      { name: "Spell-Like Ability", summary: "Detect undead 3/day (caster level equals character level)." },
+      {
+        name: "Light Sensitivity",
+        summary:
+          "Dazzled in bright sunlight or within the radius of a daylight spell.",
+      },
+      {
+        name: "Negative Energy Affinity",
+        summary: "Positive energy harms, negative energy heals (as undead).",
+      },
+      {
+        name: "Resist Level Drain",
+        summary:
+          "No penalties from energy drain; negative levels fade after 24 hours without a save.",
+      },
+      {
+        name: "Spell-Like Ability",
+        summary: "Detect undead 3/day (caster level equals character level).",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Drow
@@ -171,10 +192,25 @@ export const FEATURED_RACES: RaceData[] = [
     ],
     traits: [
       { name: "Drow Immunities", summary: "Immune to magic sleep effects." },
-      { name: "Poison Use", summary: "Never risk accidentally poisoning themselves when applying poison." },
-      { name: "Spell-Like Abilities", summary: "Dancing lights, darkness, and faerie fire each 1/day (caster level equals character level)." },
-      { name: "Light Blindness", summary: "Abrupt exposure to bright light blinds for 1 round, then dazzled while in the area." },
-      { name: "Weapon Familiarity", summary: "Proficient with hand crossbows, rapiers, and short swords." },
+      {
+        name: "Poison Use",
+        summary:
+          "Never risk accidentally poisoning themselves when applying poison.",
+      },
+      {
+        name: "Spell-Like Abilities",
+        summary:
+          "Dancing lights, darkness, and faerie fire each 1/day (caster level equals character level).",
+      },
+      {
+        name: "Light Blindness",
+        summary:
+          "Abrupt exposure to bright light blinds for 1 round, then dazzled while in the area.",
+      },
+      {
+        name: "Weapon Familiarity",
+        summary: "Proficient with hand crossbows, rapiers, and short swords.",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Fetchling
@@ -216,8 +252,16 @@ export const FEATURED_RACES: RaceData[] = [
     ],
     traits: [
       { name: "Native Outsider", summary: "Outsider with the native subtype." },
-      { name: "Shadow Blending", summary: "Attacks against a fetchling in dim light have a 50% miss chance instead of 20%." },
-      { name: "Spell-Like Abilities", summary: "Disguise self 1/day; shadow walk (self only) 1/day at 9th level; plane shift (self only, Shadow/Material) 1/day at 13th level." },
+      {
+        name: "Shadow Blending",
+        summary:
+          "Attacks against a fetchling in dim light have a 50% miss chance instead of 20%.",
+      },
+      {
+        name: "Spell-Like Abilities",
+        summary:
+          "Disguise self 1/day; shadow walk (self only) 1/day at 9th level; plane shift (self only, Shadow/Material) 1/day at 13th level.",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Goblin
@@ -291,8 +335,16 @@ export const FEATURED_RACES: RaceData[] = [
     ],
     traits: [
       { name: "Native Outsider", summary: "Outsider with the native subtype." },
-      { name: "Spell-Like Ability", summary: "Burning hands 1/day (caster level equals character level; DC 11 + Cha modifier)." },
-      { name: "Fire Affinity", summary: "Elemental (fire) bloodline sorcerers treat Cha as 2 higher; Fire-domain casters at +1 caster level for domain powers and spells." },
+      {
+        name: "Spell-Like Ability",
+        summary:
+          "Burning hands 1/day (caster level equals character level; DC 11 + Cha modifier).",
+      },
+      {
+        name: "Fire Affinity",
+        summary:
+          "Elemental (fire) bloodline sorcerers treat Cha as 2 higher; Fire-domain casters at +1 caster level for domain powers and spells.",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Kobold
@@ -335,8 +387,14 @@ export const FEATURED_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Crafty", summary: "Craft (traps) and Stealth are always class skills." },
-      { name: "Light Sensitivity", summary: "Dazzled in areas of bright light." },
+      {
+        name: "Crafty",
+        summary: "Craft (traps) and Stealth are always class skills.",
+      },
+      {
+        name: "Light Sensitivity",
+        summary: "Dazzled in areas of bright light.",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Orc
@@ -352,9 +410,21 @@ export const FEATURED_RACES: RaceData[] = [
     languages: ["Common", "Orc"],
     modifiers: [],
     traits: [
-      { name: "Ferocity", summary: "Remains conscious and can keep fighting below 0 hp; still staggered and losing 1 hp per round." },
-      { name: "Light Sensitivity", summary: "Dazzled in bright sunlight or within the radius of a daylight spell." },
-      { name: "Weapon Familiarity", summary: "Proficient with greataxes and falchions; 'orc' weapons are martial." },
+      {
+        name: "Ferocity",
+        summary:
+          "Remains conscious and can keep fighting below 0 hp; still staggered and losing 1 hp per round.",
+      },
+      {
+        name: "Light Sensitivity",
+        summary:
+          "Dazzled in bright sunlight or within the radius of a daylight spell.",
+      },
+      {
+        name: "Weapon Familiarity",
+        summary:
+          "Proficient with greataxes and falchions; 'orc' weapons are martial.",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Oread
@@ -378,8 +448,16 @@ export const FEATURED_RACES: RaceData[] = [
     ],
     traits: [
       { name: "Native Outsider", summary: "Outsider with the native subtype." },
-      { name: "Spell-Like Ability", summary: "Magic stone 1/day (caster level equals character level; DC 11 + Cha modifier)." },
-      { name: "Earth Affinity", summary: "Elemental (earth) bloodline sorcerers treat Cha as 2 higher; Earth-domain clerics at +1 caster level for domain powers and spells." },
+      {
+        name: "Spell-Like Ability",
+        summary:
+          "Magic stone 1/day (caster level equals character level; DC 11 + Cha modifier).",
+      },
+      {
+        name: "Earth Affinity",
+        summary:
+          "Elemental (earth) bloodline sorcerers treat Cha as 2 higher; Earth-domain clerics at +1 caster level for domain powers and spells.",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Ratfolk
@@ -422,7 +500,11 @@ export const FEATURED_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Swarming", summary: "Two ratfolk can share a square; both attacking the same foe count as flanking it." },
+      {
+        name: "Swarming",
+        summary:
+          "Two ratfolk can share a square; both attacking the same foe count as flanking it.",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Sylph
@@ -446,8 +528,15 @@ export const FEATURED_RACES: RaceData[] = [
     ],
     traits: [
       { name: "Native Outsider", summary: "Outsider with the native subtype." },
-      { name: "Spell-Like Ability", summary: "Feather fall 1/day (caster level equals character level)." },
-      { name: "Air Affinity", summary: "Elemental (air) bloodline sorcerers treat Cha as 2 higher; Air-domain casters at +1 caster level for domain powers and spells." },
+      {
+        name: "Spell-Like Ability",
+        summary: "Feather fall 1/day (caster level equals character level).",
+      },
+      {
+        name: "Air Affinity",
+        summary:
+          "Elemental (air) bloodline sorcerers treat Cha as 2 higher; Air-domain casters at +1 caster level for domain powers and spells.",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Tengu
@@ -482,8 +571,15 @@ export const FEATURED_RACES: RaceData[] = [
       },
     ],
     traits: [
-      { name: "Gifted Linguist", summary: "Learns two languages per rank in Linguistics instead of one." },
-      { name: "Swordtrained", summary: "Proficient with swordlike weapons (bastard sword, dagger, elven curve blade, falchion, greatsword, kukri, longsword, punching dagger, rapier, scimitar, short sword, two-bladed sword)." },
+      {
+        name: "Gifted Linguist",
+        summary: "Learns two languages per rank in Linguistics instead of one.",
+      },
+      {
+        name: "Swordtrained",
+        summary:
+          "Proficient with swordlike weapons (bastard sword, dagger, elven curve blade, falchion, greatsword, kukri, longsword, punching dagger, rapier, scimitar, short sword, two-bladed sword).",
+      },
       { name: "Natural Weapon", summary: "Bite attack dealing 1d3 damage." },
     ],
   },
@@ -532,8 +628,15 @@ export const FEATURED_RACES: RaceData[] = [
     ],
     traits: [
       { name: "Native Outsider", summary: "Outsider with the native subtype." },
-      { name: "Spell-Like Ability", summary: "Darkness 1/day (caster level equals character level)." },
-      { name: "Fiendish Sorcery", summary: "Abyssal or Infernal bloodline sorcerers treat Cha as 2 higher for sorcerer class abilities." },
+      {
+        name: "Spell-Like Ability",
+        summary: "Darkness 1/day (caster level equals character level).",
+      },
+      {
+        name: "Fiendish Sorcery",
+        summary:
+          "Abyssal or Infernal bloodline sorcerers treat Cha as 2 higher for sorcerer class abilities.",
+      },
     ],
   },
   // https://www.aonprd.com/RacesDisplay.aspx?ItemName=Undine
@@ -558,8 +661,15 @@ export const FEATURED_RACES: RaceData[] = [
     traits: [
       { name: "Native Outsider", summary: "Outsider with the native subtype." },
       { name: "Swim", summary: "Swim speed of 30 feet." },
-      { name: "Spell-Like Ability", summary: "Hydraulic push 1/day (caster level equals character level)." },
-      { name: "Water Affinity", summary: "Elemental (water) bloodline sorcerers treat Cha as 2 higher; Water-domain clerics at +1 caster level for domain powers and spells." },
+      {
+        name: "Spell-Like Ability",
+        summary: "Hydraulic push 1/day (caster level equals character level).",
+      },
+      {
+        name: "Water Affinity",
+        summary:
+          "Elemental (water) bloodline sorcerers treat Cha as 2 higher; Water-domain clerics at +1 caster level for domain powers and spells.",
+      },
     ],
   },
 ];

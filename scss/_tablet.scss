@@ -11,33 +11,34 @@
 // `.minisheet-root .ms-pip.is-filled` (0,3,0) so on/off colors still apply.
 
 /* Flat reset for buttons that are pure icons/shapes with no padding */
-.is-tablet button:is(
-  .ms-tab,
-  .ms-swap,
-  .ms-cond-notes__icon,
-  .ms-cond-notes__remove,
-  .ms-ac__shield,
-  .ms-hp__btn,
-  .ms-save__value,
-  .ms-pip,
-  .ms-toggle,
-  .ms-resources__group,
-  .ms-header__gear,
-  .ms-config__close,
-  .ms-config__remove,
-  .ms-spellbtn,
-  .ms-spellbook-callout__title,
-  .ms-metamagic__add,
-  .ms-metamagic__remove,
-  .ms-spellbook-config__gear,
-  .ms-spellbook__db-btn,
-  .ms-inv-row__expand,
-  .ms-inv-row__edit,
-  .ms-inv-row__delete,
-  .ms-adjust__sechead--btn,
-  .ms-adjust__token-x,
-  .ms-adjust__more
-) {
+.is-tablet
+  button:is(
+    .ms-tab,
+    .ms-swap,
+    .ms-cond-notes__icon,
+    .ms-cond-notes__remove,
+    .ms-ac__shield,
+    .ms-hp__btn,
+    .ms-save__value,
+    .ms-pip,
+    .ms-toggle,
+    .ms-resources__group,
+    .ms-header__gear,
+    .ms-config__close,
+    .ms-config__remove,
+    .ms-spellbtn,
+    .ms-spellbook-callout__title,
+    .ms-metamagic__add,
+    .ms-metamagic__remove,
+    .ms-spellbook-config__gear,
+    .ms-spellbook__db-btn,
+    .ms-inv-row__expand,
+    .ms-inv-row__edit,
+    .ms-inv-row__delete,
+    .ms-adjust__sechead--btn,
+    .ms-adjust__token-x,
+    .ms-adjust__more
+  ) {
   padding: 0;
   box-shadow: none;
 }
@@ -45,11 +46,19 @@
 /* Inventory buttons keep their _inventory.scss geometry on tablet; only
    re-assert the longhand background-color Obsidian's mobile build stomps
    (NOT the `background` shorthand — expand/edit/delete draw ::before glyphs). */
-.is-tablet button:is(.ms-inv-row__expand, .ms-inv-row__edit, .ms-inv-row__delete) {
+.is-tablet
+  button:is(.ms-inv-row__expand, .ms-inv-row__edit, .ms-inv-row__delete) {
   background-color: transparent;
 }
 
-.is-tablet button:is(.ms-subtab, .ms-inv-controls__filter, .ms-inv-controls__dir, .ms-inv-controls__clear, .ms-inv-editor__cancel) {
+.is-tablet
+  button:is(
+    .ms-subtab,
+    .ms-inv-controls__filter,
+    .ms-inv-controls__dir,
+    .ms-inv-controls__clear,
+    .ms-inv-editor__cancel
+  ) {
   padding: 0 10px;
   box-shadow: none;
   background-color: var(--background-primary);
@@ -90,12 +99,22 @@
 
 /* Re-assert backgrounds the mobile build may stomp.
    NOT `background: none` on .ms-tab — its icon is a background-image. */
-.is-tablet button:is(.ms-save__value, .ms-header__gear, .ms-config__close, .ms-config__remove) {
+.is-tablet
+  button:is(
+    .ms-save__value,
+    .ms-header__gear,
+    .ms-config__close,
+    .ms-config__remove
+  ) {
   background: none;
 }
 
 .is-tablet button:is(.ms-tab, .ms-resources__group) {
-  background-color: color-mix(in srgb, var(--background-primary) 60%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--background-primary) 60%,
+    transparent
+  );
 }
 
 .is-tablet button:is(.ms-tab, .ms-resources__group):hover {
@@ -162,7 +181,7 @@
 }
 
 .is-tablet button.ms-hp__btn--temp {
-  background-color: #5A7D9A;
+  background-color: #5a7d9a;
 }
 
 .is-tablet button.ms-toggle-song-label {
@@ -286,7 +305,17 @@
   }
 
   /* shape / icon buttons: flat, no padding */
-  button:is(.iconbtn, .qa-cell, .cact, .respool__kind, .tog, .chk, .iconpick__btn, .effect__ftoggle, .squircle),
+  button:is(
+    .iconbtn,
+    .qa-cell,
+    .cact,
+    .respool__kind,
+    .tog,
+    .chk,
+    .iconpick__btn,
+    .effect__ftoggle,
+    .squircle
+  ),
   .icongrid button {
     padding: 0;
   }
@@ -313,7 +342,18 @@
   }
 
   /* re-assert default (transparent) backgrounds the mobile build stomps */
-  button:is(.btn, .iconbtn, .qa-cell, .cact, .rail__item, .respool__kind, .effect__ftoggle, .synccard, .pickitem, .choice__card),
+  button:is(
+    .btn,
+    .iconbtn,
+    .qa-cell,
+    .cact,
+    .rail__item,
+    .respool__kind,
+    .effect__ftoggle,
+    .synccard,
+    .pickitem,
+    .choice__card
+  ),
   .seg button {
     background-color: transparent;
   }

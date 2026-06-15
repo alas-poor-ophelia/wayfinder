@@ -19,9 +19,7 @@ export function Banner({ plugin, store, character }: BannerProps) {
   let src: string | null = null;
   if (character.bannerImage) {
     const file = plugin.app.vault.getFileByPath(character.bannerImage);
-    src = file
-      ? plugin.app.vault.getResourcePath(file)
-      : character.bannerImage; // allow raw URLs
+    src = file ? plugin.app.vault.getResourcePath(file) : character.bannerImage; // allow raw URLs
   }
 
   return (

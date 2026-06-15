@@ -43,7 +43,9 @@ describe("suggestEquipment", () => {
   it("ranks prefix matches above substring matches", () => {
     const hits = suggestEquipment("sword", [], 50);
     // binary view of the rank tiers: starts-with first, everything else after
-    const ranks = hits.map((h) => (h.name.toLowerCase().startsWith("sword") ? 0 : 1));
+    const ranks = hits.map((h) =>
+      h.name.toLowerCase().startsWith("sword") ? 0 : 1,
+    );
     expect(ranks).toContain(0);
     expect(ranks).toContain(1);
     expect(ranks).toEqual([...ranks].sort((a, b) => a - b));
@@ -83,8 +85,13 @@ describe("suggestEquipment", () => {
 
   it("weapon drafts carry stamped attack stats; armor and magic do not", () => {
     const sword = suggestEquipment("longsw")[0];
-    expect(sword.draft.weapon).toMatchObject({ kind: "melee", damageDie: "1d8" });
-    const shirt = suggestEquipment("chain shirt").find((h) => h.name === "Chain shirt");
+    expect(sword.draft.weapon).toMatchObject({
+      kind: "melee",
+      damageDie: "1d8",
+    });
+    const shirt = suggestEquipment("chain shirt").find(
+      (h) => h.name === "Chain shirt",
+    );
     expect(shirt!.draft.weapon).toBeUndefined();
     const ring = suggestEquipment("ring of protection")[0];
     expect(ring.draft.weapon).toBeUndefined();

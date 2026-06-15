@@ -8,7 +8,7 @@ import { useEffect } from "preact/hooks";
 export function useOutsideClose(
   ref: RefObject<HTMLElement>,
   active: boolean,
-  onClose: () => void
+  onClose: () => void,
 ): void {
   useEffect(() => {
     if (!active) return;

@@ -130,7 +130,10 @@ export function inventoryTotals(items: InventoryItem[]): {
 
 /** Summed weight of a container's direct contents (legacy shows
  *  "containerWeight | contentsWeight lbs" — contents are NOT recursive). */
-export function contentsWeight(items: InventoryItem[], containerId: string): number {
+export function contentsWeight(
+  items: InventoryItem[],
+  containerId: string,
+): number {
   let total = 0;
   for (const item of items) {
     if (item.containerId === containerId) {

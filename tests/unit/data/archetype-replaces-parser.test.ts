@@ -18,7 +18,7 @@ describe("parseFeatureRefs: aonprd Paladin corpus", () => {
   it("simple template (Stonelord: Stonestrike)", () => {
     const { replaces, alters } = parseFeatureRefs(
       "Once per day per paladin level, a stonelord can draw upon the power of the living rock. This ability replaces smite evil.",
-      BASE
+      BASE,
     );
     expect(replaces).toEqual([{ feature: "smite-evil", raw: "smite evil" }]);
     expect(alters).toEqual([]);
@@ -27,7 +27,7 @@ describe("parseFeatureRefs: aonprd Paladin corpus", () => {
   it("compound with multi-level mercies (Stonelord: Stoneblood)", () => {
     const { replaces } = parseFeatureRefs(
       "This ability replaces divine health and her mercies gained at 3rd, 9th, and 15th level.",
-      BASE
+      BASE,
     );
     expect(replaces).toEqual([
       { feature: "divine-health", raw: "divine health" },
@@ -44,7 +44,7 @@ describe("parseFeatureRefs: aonprd Paladin corpus", () => {
   it("single level-qualified mercy (Stonelord: Phase Strike)", () => {
     const { replaces } = parseFeatureRefs(
       "This ability replaces her 12th-level mercy.",
-      BASE
+      BASE,
     );
     expect(replaces).toEqual([
       { feature: "mercy", levels: [12], raw: "her 12th-level mercy" },
@@ -54,7 +54,7 @@ describe("parseFeatureRefs: aonprd Paladin corpus", () => {
   it("'the standard paladin's X ability' (Hospitaler)", () => {
     const { replaces } = parseFeatureRefs(
       "This replaces the standard paladin’s channel positive energy ability.",
-      BASE
+      BASE,
     );
     expect(replaces).toEqual([
       {
@@ -67,7 +67,7 @@ describe("parseFeatureRefs: aonprd Paladin corpus", () => {
   it("unmodeled feature stays unmatched (Divine Hunter)", () => {
     const { replaces } = parseFeatureRefs(
       "This ability replaces her Heavy Armor Proficiency.",
-      BASE
+      BASE,
     );
     expect(replaces).toEqual([
       {
@@ -81,7 +81,7 @@ describe("parseFeatureRefs: aonprd Paladin corpus", () => {
   it("mixed alters+replaces plus never-gains prose (Gray Paladin: Weakened Grace)", () => {
     const { replaces, alters } = parseFeatureRefs(
       "A gray paladin’s loosened code weakens her connection to the power that grants her paladin abilities. She gains her first use of smite evil at 2nd level, instead of 1st, though she still gains further uses of smite evil at the rate listed on Table 3–11 of the Core Rulebook . She never gains the aura of good or divine grace class features. Her aura of courage does not make her immune to fear, her aura of resolve does not make her immune to charms, and her aura of righteousness does not make her immune to compulsions. This ability alters smite evil, aura of courage, aura of resolve, and aura of righteousness, and it replaces aura of good and divine grace.",
-      BASE
+      BASE,
     );
     expect(replaces.map((r) => r.feature).sort()).toEqual([
       "aura-of-good",
@@ -99,18 +99,16 @@ describe("parseFeatureRefs: aonprd Paladin corpus", () => {
   it("does-not-gain prose without a template sentence (Chosen One: Bondless)", () => {
     const { replaces, alters } = parseFeatureRefs(
       "A chosen one does not gain the divine bond class feature.",
-      BASE
+      BASE,
     );
-    expect(replaces).toEqual([
-      { feature: "divine-bond", raw: "divine bond" },
-    ]);
+    expect(replaces).toEqual([{ feature: "divine-bond", raw: "divine bond" }]);
     expect(alters).toEqual([]);
   });
 
   it("spellcasting aliases to the synthetic spells feature (Virtuous Bravo: Panache and Deeds)", () => {
     const { replaces } = parseFeatureRefs(
       "At 4th level, a virtuous bravo gains the swashbuckler’s panache class feature along with the following swashbuckler deeds: dodging panache, menacing swordplay, opportune parry and riposte, precise strike, and swashbuckler initiative. The virtuous bravo’s paladin levels stack with any swashbuckler levels when using these deeds. This ability replaces the paladin’s spellcasting.",
-      BASE
+      BASE,
     );
     expect(replaces).toEqual([
       { feature: "spells", raw: "the paladin’s spellcasting" },
@@ -120,7 +118,7 @@ describe("parseFeatureRefs: aonprd Paladin corpus", () => {
   it("level-scoped refs never lose their levels to the whole-feature form (Gray Paladin: Smite Foe)", () => {
     const { replaces, alters } = parseFeatureRefs(
       "At 4th level, a gray paladin can spend two uses of smite evil in order to smite a nongood creature that is not evil and gain her full benefits. This ability replaces channel positive energy and alters smite evil.",
-      BASE
+      BASE,
     );
     expect(replaces).toEqual([
       { feature: "channel-positive-energy", raw: "channel positive energy" },
@@ -133,7 +131,7 @@ describe("parseFeatureRefs: aonprd Monk corpus (class-table rider aliases)", () 
   it("'ki pool' aliases to the core table's ki-pool-magic slug (Martial Artist: Exploit Weakness)", () => {
     const { replaces } = parseFeatureRefs(
       "This ability replaces ki pool.",
-      MONK_BASE
+      MONK_BASE,
     );
     expect(replaces).toEqual([{ feature: "ki-pool-magic", raw: "ki pool" }]);
   });
@@ -141,7 +139,7 @@ describe("parseFeatureRefs: aonprd Monk corpus (class-table rider aliases)", () 
   it("core flurry needs no alias (Master of Many Styles: Fuse Style)", () => {
     const { replaces } = parseFeatureRefs(
       "This ability replaces flurry of blows.",
-      MONK_BASE
+      MONK_BASE,
     );
     expect(replaces).toEqual([
       { feature: "flurry-of-blows", raw: "flurry of blows" },
@@ -151,7 +149,7 @@ describe("parseFeatureRefs: aonprd Monk corpus (class-table rider aliases)", () 
   it("unchained 'flurry of blows' aliases to flurry-of-blows-bonus-attack; ki pool is direct (Sage Counselor: Feinting Flurry)", () => {
     const { replaces, alters } = parseFeatureRefs(
       "This ability alters flurry of blows and ki pool, and it replaces the bonus feat gained at 10th level.",
-      MONK_U_BASE
+      MONK_U_BASE,
     );
     expect(alters).toEqual([
       { feature: "flurry-of-blows-bonus-attack", raw: "flurry of blows" },
@@ -215,7 +213,7 @@ describe("scraped paladin.json integrity", () => {
     for (const a of paladinJson.archetypes) {
       const refs = a.features.reduce(
         (n, f) => n + f.replaces.length + f.alters.length,
-        0
+        0,
       );
       expect(refs, `${a.id} should have refs`).toBeGreaterThan(0);
     }

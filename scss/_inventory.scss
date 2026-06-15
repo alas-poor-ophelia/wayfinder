@@ -117,10 +117,18 @@
     border-radius: 50%;
     border: 1px solid color-mix(in srgb, var(--text-normal) 30%, transparent);
   }
-  .ms-inv-currency__coin--platinum .ms-inv-currency__dot { background: #c9d4dd; }
-  .ms-inv-currency__coin--gold .ms-inv-currency__dot { background: var(--ms-gold); }
-  .ms-inv-currency__coin--silver .ms-inv-currency__dot { background: #9aa2a9; }
-  .ms-inv-currency__coin--copper .ms-inv-currency__dot { background: var(--ms-bronze); }
+  .ms-inv-currency__coin--platinum .ms-inv-currency__dot {
+    background: #c9d4dd;
+  }
+  .ms-inv-currency__coin--gold .ms-inv-currency__dot {
+    background: var(--ms-gold);
+  }
+  .ms-inv-currency__coin--silver .ms-inv-currency__dot {
+    background: #9aa2a9;
+  }
+  .ms-inv-currency__coin--copper .ms-inv-currency__dot {
+    background: var(--ms-bronze);
+  }
 
   .ms-inv-currency__total {
     grid-column: 1 / -1;
@@ -246,7 +254,11 @@
     white-space: nowrap;
 
     &.is-light {
-      background: color-mix(in srgb, var(--ms-gold) 25%, var(--background-secondary));
+      background: color-mix(
+        in srgb,
+        var(--ms-gold) 25%,
+        var(--background-secondary)
+      );
       color: var(--ms-gold);
     }
     &.is-medium {
@@ -254,7 +266,11 @@
       color: #e0b34c;
     }
     &.is-heavy {
-      background: color-mix(in srgb, var(--ms-red) 45%, var(--background-secondary));
+      background: color-mix(
+        in srgb,
+        var(--ms-red) 45%,
+        var(--background-secondary)
+      );
       color: #e08080;
     }
     &.is-over {
@@ -292,7 +308,8 @@
     }
     &.is-nested {
       padding-left: calc(8px + 14px * var(--ms-inv-nest, 1));
-      border-left: 3px solid color-mix(in srgb, var(--ms-bronze) 60%, transparent);
+      border-left: 3px solid
+        color-mix(in srgb, var(--ms-bronze) 60%, transparent);
     }
   }
 
@@ -373,22 +390,46 @@
     white-space: nowrap;
 
     &--martial {
-      background: color-mix(in srgb, var(--ms-red) 30%, var(--background-secondary));
+      background: color-mix(
+        in srgb,
+        var(--ms-red) 30%,
+        var(--background-secondary)
+      );
       border-color: color-mix(in srgb, var(--ms-red) 60%, transparent);
       color: #e08080;
     }
     &--magical {
-      background: color-mix(in srgb, var(--interactive-accent) 25%, var(--background-secondary));
-      border-color: color-mix(in srgb, var(--interactive-accent) 55%, transparent);
-      color: color-mix(in srgb, var(--interactive-accent) 70%, var(--text-normal));
+      background: color-mix(
+        in srgb,
+        var(--interactive-accent) 25%,
+        var(--background-secondary)
+      );
+      border-color: color-mix(
+        in srgb,
+        var(--interactive-accent) 55%,
+        transparent
+      );
+      color: color-mix(
+        in srgb,
+        var(--interactive-accent) 70%,
+        var(--text-normal)
+      );
     }
     &--mundane {
-      background: color-mix(in srgb, var(--ms-bronze) 30%, var(--background-secondary));
+      background: color-mix(
+        in srgb,
+        var(--ms-bronze) 30%,
+        var(--background-secondary)
+      );
       border-color: color-mix(in srgb, var(--ms-bronze) 60%, transparent);
       color: color-mix(in srgb, var(--ms-bronze) 45%, var(--text-normal));
     }
     &--valuable {
-      background: color-mix(in srgb, var(--ms-gold) 25%, var(--background-secondary));
+      background: color-mix(
+        in srgb,
+        var(--ms-gold) 25%,
+        var(--background-secondary)
+      );
       border-color: color-mix(in srgb, var(--ms-gold) 55%, transparent);
       color: var(--ms-gold);
     }
@@ -428,9 +469,15 @@
       color: var(--text-normal);
     }
   }
-  .ms-inv-row__edit::before { content: "✎"; }
-  .ms-inv-row__delete::before { content: "✕"; }
-  .ms-inv-row__delete:hover { color: var(--ms-red); }
+  .ms-inv-row__edit::before {
+    content: "✎";
+  }
+  .ms-inv-row__delete::before {
+    content: "✕";
+  }
+  .ms-inv-row__delete:hover {
+    color: var(--ms-red);
+  }
 
   .ms-inv-row__note {
     margin: 2px 0 0 28px;
@@ -477,7 +524,11 @@
     font-size: 0.9em;
     border: none;
     border-radius: 4px;
-    background-color: color-mix(in srgb, var(--interactive-accent) 70%, var(--background-secondary));
+    background-color: color-mix(
+      in srgb,
+      var(--interactive-accent) 70%,
+      var(--background-secondary)
+    );
     color: var(--text-on-accent);
     box-shadow: none;
     cursor: pointer;
@@ -610,7 +661,11 @@
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.75em;
-    background: color-mix(in srgb, var(--ms-red) 30%, var(--background-secondary));
+    background: color-mix(
+      in srgb,
+      var(--ms-red) 30%,
+      var(--background-secondary)
+    );
     color: #e08080;
   }
 

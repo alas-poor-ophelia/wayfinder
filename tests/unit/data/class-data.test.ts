@@ -5,7 +5,12 @@
  * transcription-error detector for generated entries.
  */
 import { describe, expect, it } from "vitest";
-import { CLASS_DATA, classResources, getClassData, unionClassSkills } from "../../../src/data/classes";
+import {
+  CLASS_DATA,
+  classResources,
+  getClassData,
+  unionClassSkills,
+} from "../../../src/data/classes";
 import { BAB_RATE } from "../../../src/data/types";
 import { CLASS_STATS, totalBab } from "../../../src/calc/class-stats";
 import { calculateSaves } from "../../../src/calc/saves";
@@ -63,7 +68,8 @@ describe("core class spot-checks (PRD-verified)", () => {
   it("rogue: 8 ranks; bard/wizard: all ten Knowledges", () => {
     expect(getClassData("Rogue")!.skillRanksPerLevel).toBe(8);
     const knowledges = (key: string) =>
-      getClassData(key)!.classSkills.filter((s) => s.startsWith("Knowledge")).length;
+      getClassData(key)!.classSkills.filter((s) => s.startsWith("Knowledge"))
+        .length;
     expect(knowledges("Bard")).toBe(10);
     expect(knowledges("Wizard")).toBe(10);
   });
@@ -121,21 +127,53 @@ describe("RAW corrections (PRD-verified)", () => {
   // citation: legacy.aonprd.com class table, L1 saves row (+2 = good, +0 = poor)
   const RAW_FIXES: Record<string, Raw> = {
     // advancedClassGuide/classes/bloodrager.html — d10, full BAB, L1 F+2/R+0/W+0
-    Bloodrager: { hitDie: 10, bab: "full", saves: { fort: true, ref: false, will: false } },
+    Bloodrager: {
+      hitDie: 10,
+      bab: "full",
+      saves: { fort: true, ref: false, will: false },
+    },
     // advancedClassGuide/classes/hunter.html — d8, 3/4 BAB, L1 F+2/R+2/W+0
-    Hunter: { hitDie: 8, bab: "threeQuarters", saves: { fort: true, ref: true, will: false } },
+    Hunter: {
+      hitDie: 8,
+      bab: "threeQuarters",
+      saves: { fort: true, ref: true, will: false },
+    },
     // occultAdventures/occultClasses/kineticist.html — d8, 3/4 BAB, L1 F+2/R+2/W+0
-    Kineticist: { hitDie: 8, bab: "threeQuarters", saves: { fort: true, ref: true, will: false } },
+    Kineticist: {
+      hitDie: 8,
+      bab: "threeQuarters",
+      saves: { fort: true, ref: true, will: false },
+    },
     // occultAdventures/occultClasses/mesmerist.html — d8, 3/4 BAB, L1 F+0/R+2/W+2
-    Mesmerist: { hitDie: 8, bab: "threeQuarters", saves: { fort: false, ref: true, will: true } },
+    Mesmerist: {
+      hitDie: 8,
+      bab: "threeQuarters",
+      saves: { fort: false, ref: true, will: true },
+    },
     // occultAdventures/occultClasses/spiritualist.html — d8, 3/4 BAB, L1 F+2/R+0/W+2
-    Spiritualist: { hitDie: 8, bab: "threeQuarters", saves: { fort: true, ref: false, will: true } },
+    Spiritualist: {
+      hitDie: 8,
+      bab: "threeQuarters",
+      saves: { fort: true, ref: false, will: true },
+    },
     // ultimateIntrigue/vigilante.html — d8, 3/4 BAB, L1 F+0/R+2/W+2
-    Vigilante: { hitDie: 8, bab: "threeQuarters", saves: { fort: false, ref: true, will: true } },
+    Vigilante: {
+      hitDie: 8,
+      bab: "threeQuarters",
+      saves: { fort: false, ref: true, will: true },
+    },
     // ultimateWilderness/classes/shifter.html — d10, FULL BAB, L1 F+2/R+2/W+0
-    Shifter: { hitDie: 10, bab: "full", saves: { fort: true, ref: true, will: false } },
+    Shifter: {
+      hitDie: 10,
+      bab: "full",
+      saves: { fort: true, ref: true, will: false },
+    },
     // advancedClassGuide/classes/swashbuckler.html — d10, FULL BAB, L1 F+0/R+2/W+0
-    Swashbuckler: { hitDie: 10, bab: "full", saves: { fort: false, ref: true, will: false } },
+    Swashbuckler: {
+      hitDie: 10,
+      bab: "full",
+      saves: { fort: false, ref: true, will: false },
+    },
   };
 
   for (const [key, raw] of Object.entries(RAW_FIXES)) {
@@ -159,15 +197,21 @@ describe("RAW corrections (PRD-verified)", () => {
     // Shifter L4: full BAB → +4 (legacy 0.75 gave +3)
     expect(totalBab([{ className: "Shifter", level: 4 }])).toBe(4);
     // Hunter L4: good Ref → 2 + 2 = +4 (legacy poor gave +1)
-    const hunter = calculateSaves({ classes: [{ className: "Hunter", level: 4 }] });
+    const hunter = calculateSaves({
+      classes: [{ className: "Hunter", level: 4 }],
+    });
     expect(hunter.ref).toBe(4);
     // Hunter L4: poor Will → floor(4/3) = +1 (legacy good gave +4)
     expect(hunter.will).toBe(1);
     // Bloodrager L6: poor Will → +2 (legacy good gave +5)
-    const bloodrager = calculateSaves({ classes: [{ className: "Bloodrager", level: 6 }] });
+    const bloodrager = calculateSaves({
+      classes: [{ className: "Bloodrager", level: 6 }],
+    });
     expect(bloodrager.will).toBe(2);
     // Mesmerist L6: good Will → +5, poor Fort → +2
-    const mesmerist = calculateSaves({ classes: [{ className: "Mesmerist", level: 6 }] });
+    const mesmerist = calculateSaves({
+      classes: [{ className: "Mesmerist", level: 6 }],
+    });
     expect(mesmerist.will).toBe(5);
     expect(mesmerist.fort).toBe(2);
   });
@@ -184,7 +228,7 @@ describe("classResources / unionClassSkills", () => {
         { className: "Monk", level: 4 },
         { className: "Barbarian", level: 2 },
       ],
-      mods
+      mods,
     );
     expect(multi.map((p) => p.id).sort()).toEqual([
       "kiPool",

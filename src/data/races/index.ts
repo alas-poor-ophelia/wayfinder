@@ -19,10 +19,14 @@ export {
   TIEFLING_HERITAGES,
 } from "./heritages";
 
-const ALL_RACES: RaceData[] = [...CORE_RACES, ...FEATURED_RACES, ...UNCOMMON_RACES];
+const ALL_RACES: RaceData[] = [
+  ...CORE_RACES,
+  ...FEATURED_RACES,
+  ...UNCOMMON_RACES,
+];
 
 export const RACE_DATA: Record<string, RaceData> = Object.fromEntries(
-  ALL_RACES.map((r) => [r.key, r])
+  ALL_RACES.map((r) => [r.key, r]),
 );
 
 export const RACE_KEYS = Object.keys(RACE_DATA).sort();
@@ -44,7 +48,7 @@ export function findRaceByName(name: string): RaceData | null {
  */
 export function racialAbilityMods(
   race: RaceData,
-  choice?: AbilityKey
+  choice?: AbilityKey,
 ): Partial<AbilityScores> {
   if (race.flexibleAbility) {
     return choice ? { [choice]: 2 } : {};

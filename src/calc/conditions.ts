@@ -122,7 +122,7 @@ type BuffHandler = (
   effects: ConditionEffects,
   notes: string[],
   buffs: string[],
-  bofChoice: string
+  bofChoice: string,
 ) => void;
 
 /** Condition handlers — keyed by exact (lowercase) condition name, as in legacy. */
@@ -133,7 +133,9 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.acAdjust -= 4;
     effects.touchAcAdjust -= 4;
     effects.ffAcAdjust -= 4;
-    notes.push("- Prone: +4 AC vs ranged attacks, -4 vs melee; can't use ranged except crossbows");
+    notes.push(
+      "- Prone: +4 AC vs ranged attacks, -4 vs melee; can't use ranged except crossbows",
+    );
   },
 
   blinded: (effects, notes) => {
@@ -146,7 +148,9 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.perceptionAdjust -= 4;
     effects.miss50 = true;
     effects.movementAdjust = 0.5;
-    notes.push("- Blinded: All sight-based checks auto-fail, 50% miss chance, half speed");
+    notes.push(
+      "- Blinded: All sight-based checks auto-fail, 50% miss chance, half speed",
+    );
   },
 
   dazed: (effects, notes) => {
@@ -161,7 +165,9 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
 
   staggered: (effects, notes) => {
     effects.canFullRound = false;
-    notes.push("- Staggered: Can take only a single move OR standard action each round");
+    notes.push(
+      "- Staggered: Can take only a single move OR standard action each round",
+    );
   },
 
   stunned: (effects, notes) => {
@@ -176,7 +182,9 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.ffAcAdjust -= 2;
     effects.loseDexToAC = true;
     effects.flatFooted = true;
-    notes.push("- Stunned: Drop items, can't act, -2 AC, lose Dex to AC. Attackers get +4 to CMB");
+    notes.push(
+      "- Stunned: Drop items, can't act, -2 AC, lose Dex to AC. Attackers get +4 to CMB",
+    );
   },
 
   shaken: (effects, notes) => {
@@ -187,7 +195,9 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.refAdjust -= 2;
     effects.willAdjust -= 2;
     effects.skillAdjust -= 2;
-    notes.push("- Shaken: -2 penalty on attacks, saves, skills, and ability checks");
+    notes.push(
+      "- Shaken: -2 penalty on attacks, saves, skills, and ability checks",
+    );
   },
 
   paralyzed: (effects, notes) => {
@@ -200,7 +210,9 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.helpless = true;
     effects.strAdjust -= 10;
     effects.dexAdjust -= 10;
-    notes.push("- Paralyzed: Frozen in place, helpless, cannot move, STR & DEX = 0; mental actions only");
+    notes.push(
+      "- Paralyzed: Frozen in place, helpless, cannot move, STR & DEX = 0; mental actions only",
+    );
   },
 
   grappled: (effects, notes) => {
@@ -210,13 +222,17 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.cmb -= 2;
     effects.cmd -= 2;
     effects.movementAdjust = 0;
-    notes.push("- Grappled: -2 attacks, -4 DEX, can't move, no stealth, can't cast with somatic components unless concentration check");
+    notes.push(
+      "- Grappled: -2 attacks, -4 DEX, can't move, no stealth, can't cast with somatic components unless concentration check",
+    );
   },
 
   "flat-footed": (effects, notes) => {
     effects.flatFooted = true;
     effects.loseDexToAC = true;
-    notes.push("- Flat-Footed: Lose DEX bonus to AC, cannot make AoO (unless Combat Reflexes)");
+    notes.push(
+      "- Flat-Footed: Lose DEX bonus to AC, cannot make AoO (unless Combat Reflexes)",
+    );
   },
 
   nauseated: (effects, notes) => {
@@ -225,7 +241,9 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.canFullRound = false;
     effects.canStandard = false;
     effects.canMove = true;
-    notes.push("- Nauseated: Can't attack, cast, concentrate, or do anything requiring attention. Only a single move action per turn");
+    notes.push(
+      "- Nauseated: Can't attack, cast, concentrate, or do anything requiring attention. Only a single move action per turn",
+    );
   },
 
   sickened: (effects, notes) => {
@@ -235,7 +253,9 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.refAdjust -= 2;
     effects.willAdjust -= 2;
     effects.skillAdjust -= 2;
-    notes.push("- Sickened: -2 penalty on attack rolls, weapon damage rolls, saving throws, skill checks, and ability checks");
+    notes.push(
+      "- Sickened: -2 penalty on attack rolls, weapon damage rolls, saving throws, skill checks, and ability checks",
+    );
   },
 
   frightened: (effects, notes) => {
@@ -246,7 +266,9 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.refAdjust -= 2;
     effects.willAdjust -= 2;
     effects.skillAdjust -= 2;
-    notes.push("- Frightened: -2 penalty on attacks, saves, skills, and ability checks; must flee from fear source if possible");
+    notes.push(
+      "- Frightened: -2 penalty on attacks, saves, skills, and ability checks; must flee from fear source if possible",
+    );
   },
 
   panicked: (effects, notes) => {
@@ -257,11 +279,15 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.refAdjust -= 2;
     effects.willAdjust -= 2;
     effects.skillAdjust -= 2;
-    notes.push("- Panicked: -2 penalty on attacks, saves, skills, and ability checks; drop held items, flee randomly from all dangers");
+    notes.push(
+      "- Panicked: -2 penalty on attacks, saves, skills, and ability checks; drop held items, flee randomly from all dangers",
+    );
   },
 
   deafened: (_effects, notes) => {
-    notes.push("- Deafened: -4 initiative checks, auto-fail Listen checks, 20% spell failure for verbal components");
+    notes.push(
+      "- Deafened: -4 initiative checks, auto-fail Listen checks, 20% spell failure for verbal components",
+    );
   },
 
   exhausted: (effects, notes) => {
@@ -269,14 +295,18 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.dexAdjust -= 6;
     effects.movementAdjust = 0.5;
     effects.canFullRound = false;
-    notes.push("- Exhausted: -6 STR and DEX, half speed, can't run or charge; 1 hour rest makes fatigued");
+    notes.push(
+      "- Exhausted: -6 STR and DEX, half speed, can't run or charge; 1 hour rest makes fatigued",
+    );
   },
 
   fatigued: (effects, notes) => {
     effects.strAdjust -= 2;
     effects.dexAdjust -= 2;
     effects.canFullRound = false;
-    notes.push("- Fatigued: -2 STR and DEX, can't run or charge; doing fatiguing activity makes exhausted");
+    notes.push(
+      "- Fatigued: -2 STR and DEX, can't run or charge; doing fatiguing activity makes exhausted",
+    );
   },
 
   entangled: (effects, notes) => {
@@ -285,18 +315,24 @@ const CONDITION_EFFECTS: Record<string, ConditionHandler> = {
     effects.dexAdjust -= 4;
     effects.movementAdjust = 0.5;
     effects.canFullRound = false;
-    notes.push("- Entangled: -2 attack rolls, -4 DEX, half speed, can't run/charge; concentration check DC 15+spell level to cast");
+    notes.push(
+      "- Entangled: -2 attack rolls, -4 DEX, half speed, can't run/charge; concentration check DC 15+spell level to cast",
+    );
   },
 
   helpless: (effects, notes) => {
     effects.helpless = true;
     effects.dexAdjust -= 10;
     effects.loseDexToAC = true;
-    notes.push("- Helpless: DEX = 0, attackers get +4 melee bonus, subject to coup de grace, rogues can sneak attack");
+    notes.push(
+      "- Helpless: DEX = 0, attackers get +4 melee bonus, subject to coup de grace, rogues can sneak attack",
+    );
   },
 
   confused: (_effects, notes) => {
-    notes.push("- Confused: Roll d% each turn: 01-10 attack caster, 11-20 act normal, 21-50 babble, 51-70 flee, 71-100 attack nearest creature");
+    notes.push(
+      "- Confused: Roll d% each turn: 01-10 attack caster, 11-20 act normal, 21-50 babble, 51-70 flee, 71-100 attack nearest creature",
+    );
   },
 };
 
@@ -313,7 +349,9 @@ function processEnlarged(effects: ConditionEffects, notes: string[]): void {
   effects.cmb += 1;
   effects.cmd += 1;
   effects.reachAdjust += 5;
-  notes.push("- Enlarged: +2 STR, -2 DEX, -1 attack/AC, +1 CMB/CMD, reach +5ft, -4 Stealth, larger weapon damage");
+  notes.push(
+    "- Enlarged: +2 STR, -2 DEX, -1 attack/AC, +1 CMB/CMD, reach +5ft, -4 Stealth, larger weapon damage",
+  );
 }
 
 /**
@@ -329,7 +367,7 @@ function processBlessingOfFervor(
   effects: ConditionEffects,
   notes: string[],
   buffs: string[],
-  bofChoice: string
+  bofChoice: string,
 ): void {
   let bofNote =
     "- Blessing of Fervor:\n`INPUT\\[inlineSelect(option(+30ft. Speed), option(Stand as Swift), option(Extra Attack), option(+2 Atk/AC/Reflex), option(Free Metamagic)):bofChoice\\]`";
@@ -351,7 +389,8 @@ function processBlessingOfFervor(
       if (!hasHaste) {
         effects.extraAttacks.push(0);
       }
-      bofNote += "\nCurrent Effect: One extra attack at highest base attack bonus. Does not stack with haste.";
+      bofNote +=
+        "\nCurrent Effect: One extra attack at highest base attack bonus. Does not stack with haste.";
       break;
 
     case "+2 Atk/AC/Reflex":
@@ -360,12 +399,14 @@ function processBlessingOfFervor(
       effects.acAdjust += 2;
       effects.touchAcAdjust += 2;
       effects.refAdjust += 2;
-      bofNote += "Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves";
+      bofNote +=
+        "Current Effect: +2 competence bonus to attack rolls, AC, and Reflex saves";
       break;
 
     case "Free Metamagic":
       // No mechanical effect — affects spellcasting only
-      bofNote += "Current Effect: Apply metamagic (enlarged, extended, silent, or still) to 2nd level or lower spell for free.";
+      bofNote +=
+        "Current Effect: Apply metamagic (enlarged, extended, silent, or still) to 2nd level or lower spell for free.";
       break;
 
     default:
@@ -415,7 +456,7 @@ const BUFF_EFFECTS: Record<string, BuffHandler> = {
 function processNegativeLevels(
   effects: ConditionEffects,
   conditionNotes: string[],
-  negativeLevels: number
+  negativeLevels: number,
 ): void {
   if (negativeLevels <= 0) return;
 
@@ -438,7 +479,7 @@ function processNegativeLevels(
   effects.hpMaxAdjust -= hpPenalty;
 
   conditionNotes.push(
-    `- Negative Levels (${negativeLevels}): -${negativeLevels} penalty on all d20 rolls, -${hpPenalty} HP, and -1 to effective level per negative level`
+    `- Negative Levels (${negativeLevels}): -${negativeLevels} penalty on all d20 rolls, -${hpPenalty} HP, and -1 to effective level per negative level`,
   );
   effects.levelAdjust = negativeLevels;
 }
@@ -447,7 +488,9 @@ function processNegativeLevels(
  * Calculate combined effects of active conditions, buffs, and negative levels.
  * Unrecognized condition/buff names are ignored (exact-match lookup, same as legacy).
  */
-export function calculateConditionEffects(input: ConditionInput): ConditionEffects {
+export function calculateConditionEffects(
+  input: ConditionInput,
+): ConditionEffects {
   const conditions = input.conditions || [];
   const buffs = input.buffs || [];
   const negativeLevels = input.negativeLevels || 0;
@@ -477,10 +520,25 @@ export function calculateConditionEffects(input: ConditionInput): ConditionEffec
 
 /** All selectable condition names (the adjustments tab picker). */
 export const CONDITION_NAMES = [
-  "blinded", "confused", "dazed", "deafened", "entangled", "exhausted",
-  "fatigued", "flat-footed", "frightened", "grappled", "helpless",
-  "nauseated", "panicked", "paralyzed", "prone", "shaken", "sickened",
-  "staggered", "stunned",
+  "blinded",
+  "confused",
+  "dazed",
+  "deafened",
+  "entangled",
+  "exhausted",
+  "fatigued",
+  "flat-footed",
+  "frightened",
+  "grappled",
+  "helpless",
+  "nauseated",
+  "panicked",
+  "paralyzed",
+  "prone",
+  "shaken",
+  "sickened",
+  "staggered",
+  "stunned",
 ];
 
 // (The selectable buff list moved to src/data/buffs.ts — BUFF_DEFS — when

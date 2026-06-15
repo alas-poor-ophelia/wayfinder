@@ -6,7 +6,10 @@
  */
 import { describe, expect, it } from "vitest";
 import { computeAll } from "../../../src/calc";
-import { createDefaultCharacter, type CharacterRecord } from "../../../src/types/character";
+import {
+  createDefaultCharacter,
+  type CharacterRecord,
+} from "../../../src/types/character";
 import type { Modifier } from "../../../src/calc/modifiers";
 
 function fixture(): CharacterRecord {
@@ -19,7 +22,11 @@ function fixture(): CharacterRecord {
 describe("speed derivation", () => {
   it("no raceKey: parses the manual string", () => {
     const c = fixture(); // default speed "30ft"
-    expect(computeAll(c).speed).toMatchObject({ base: 30, total: 30, text: "30FT".toLowerCase() });
+    expect(computeAll(c).speed).toMatchObject({
+      base: 30,
+      total: 30,
+      text: "30FT".toLowerCase(),
+    });
     expect(computeAll(c).speed.text).toBe("30ft");
   });
 
@@ -27,7 +34,11 @@ describe("speed derivation", () => {
     const c = fixture();
     c.raceKey = "dwarf"; // 20 ft
     c.speed = "";
-    expect(computeAll(c).speed).toMatchObject({ base: 20, total: 20, text: "20ft" });
+    expect(computeAll(c).speed).toMatchObject({
+      base: 20,
+      total: 20,
+      text: "20ft",
+    });
   });
 
   it("manual override wins over race speed", () => {
@@ -46,9 +57,18 @@ describe("speed derivation", () => {
   it("unconditional speed modifier adds before the multiplier", () => {
     const c = fixture();
     c.customBuffs = [
-      { id: "boots", name: "Boots", modifiers: [
-        { target: "speed", type: "enhancement", value: 10, source: "Boots" } as Modifier,
-      ] },
+      {
+        id: "boots",
+        name: "Boots",
+        modifiers: [
+          {
+            target: "speed",
+            type: "enhancement",
+            value: 10,
+            source: "Boots",
+          } as Modifier,
+        ],
+      },
     ];
     c.buffs = ["boots"];
     expect(computeAll(c).speed.total).toBe(40);
@@ -60,7 +80,9 @@ describe("speed derivation", () => {
     c.speed = "";
     const computed = computeAll(c);
     expect(computed.speed.total).toBe(30); // not 40
-    expect(computed.speed.notes.some((n) => /Sprinter|speed/i.test(n))).toBe(true);
+    expect(computed.speed.notes.some((n) => /Sprinter|speed/i.test(n))).toBe(
+      true,
+    );
   });
 
   it("freeform override string passes through verbatim", () => {

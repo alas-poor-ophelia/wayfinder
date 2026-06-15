@@ -31,17 +31,18 @@ export class RulesIndex {
     this.plugin.registerEvent(
       this.app.metadataCache.on("changed", (file) => {
         if (this.inFolder(file.path)) void this.rebuild();
-      })
+      }),
     );
     this.plugin.registerEvent(
       this.app.vault.on("rename", (file, oldPath) => {
-        if (this.inFolder(file.path) || this.inFolder(oldPath)) void this.rebuild();
-      })
+        if (this.inFolder(file.path) || this.inFolder(oldPath))
+          void this.rebuild();
+      }),
     );
     this.plugin.registerEvent(
       this.app.vault.on("delete", (file) => {
         if (this.inFolder(file.path)) void this.rebuild();
-      })
+      }),
     );
   }
 

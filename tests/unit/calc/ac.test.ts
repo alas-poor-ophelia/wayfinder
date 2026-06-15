@@ -28,7 +28,7 @@ function adaptLegacyInput(input: Record<string, unknown>): ACInput {
 
 function expectMatch(rawInput: ACInput, expected: ACFixtureOutput) {
   const result = calculateACValues(
-    adaptLegacyInput(rawInput as Record<string, unknown>)
+    adaptLegacyInput(rawInput as Record<string, unknown>),
   );
   expect(result.normalAC).toBe(expected.normalAC);
   expect(result.touchAC).toBe(expected.touchAC);
@@ -41,7 +41,7 @@ describe("calculateACValues (characterization vs old ac-renderer)", () => {
   it("live Adarin baseline", () => {
     expectMatch(
       fixtures.acLive.input as ACInput,
-      fixtures.acLive.output as ACFixtureOutput
+      fixtures.acLive.output as ACFixtureOutput,
     );
   });
 
@@ -55,11 +55,12 @@ describe("calculateACValues (characterization vs old ac-renderer)", () => {
 
   for (const c of fixtures.integration) {
     it(`integration: ${c.name}`, () => {
-      const effects = fixtures.conditionMatrix.find(
-        (m) => m.name === c.name.replace("integration:", "condition:")
-      ) ??
+      const effects =
         fixtures.conditionMatrix.find(
-          (m) => m.name === c.name.replace("integration:", "buff:")
+          (m) => m.name === c.name.replace("integration:", "condition:"),
+        ) ??
+        fixtures.conditionMatrix.find(
+          (m) => m.name === c.name.replace("integration:", "buff:"),
         );
       expect(effects).toBeDefined();
       const input = {
@@ -73,7 +74,7 @@ describe("calculateACValues (characterization vs old ac-renderer)", () => {
   it("hwayoung baseline", () => {
     expectMatch(
       fixtures.hwayoung.input as ACInput,
-      fixtures.hwayoung.ac as ACFixtureOutput
+      fixtures.hwayoung.ac as ACFixtureOutput,
     );
   });
 });

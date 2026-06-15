@@ -1054,7 +1054,8 @@
     gap: 6px;
     margin-top: 6px;
     padding-left: 4px;
-    border-left: 2px solid color-mix(in srgb, var(--ms-gold, #ca9759) 35%, transparent);
+    border-left: 2px solid
+      color-mix(in srgb, var(--ms-gold, #ca9759) 35%, transparent);
   }
   .respool__knob-lbl {
     font-family: var(--ms-font-label, "Taroca", sans-serif);

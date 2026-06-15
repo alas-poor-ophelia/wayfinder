@@ -24,7 +24,7 @@ const fixturesPath = join(
   dirname(fileURLToPath(import.meta.url)),
   "..",
   "fixtures",
-  "captured-fixtures.json"
+  "captured-fixtures.json",
 );
 const fixtures = JSON.parse(readFileSync(fixturesPath, "utf-8")) as {
   conditionMatrix: ConditionMatrixCase[];
@@ -37,9 +37,13 @@ const fixtures = JSON.parse(readFileSync(fixturesPath, "utf-8")) as {
  * remains here — conditions, negative levels, enlarge, Blessing of Fervor —
  * so fixture cases whose buffs go beyond those are excluded (13 of 41).
  */
-const HANDLER_BUFFS = new Set(["enlarged", "enlarge person", "blessing of fervor"]);
+const HANDLER_BUFFS = new Set([
+  "enlarged",
+  "enlarge person",
+  "blessing of fervor",
+]);
 const stable = fixtures.conditionMatrix.filter((c) =>
-  (c.input.buffs ?? []).every((b) => HANDLER_BUFFS.has(b))
+  (c.input.buffs ?? []).every((b) => HANDLER_BUFFS.has(b)),
 );
 
 describe("calculateConditionEffects", () => {
@@ -48,12 +52,9 @@ describe("calculateConditionEffects", () => {
     expect(stable).toHaveLength(28);
   });
 
-  it.each(stable)(
-    "matches legacy output for $name",
-    ({ input, output }) => {
-      expect(calculateConditionEffects(input)).toEqual(output);
-    }
-  );
+  it.each(stable)("matches legacy output for $name", ({ input, output }) => {
+    expect(calculateConditionEffects(input)).toEqual(output);
+  });
 });
 
 describe("createDefaultEffects", () => {

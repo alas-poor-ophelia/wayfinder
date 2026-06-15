@@ -9,7 +9,7 @@ import { useEffect, useRef } from "preact/hooks";
  * Pair with `touch-action: pan-y` so vertical page scroll still passes through.
  */
 export function useDragScroll<T extends HTMLElement = HTMLDivElement>(
-  deps: unknown[] = []
+  deps: unknown[] = [],
 ): RefObject<T> {
   const ref = useRef<T>(null);
   useEffect(() => {

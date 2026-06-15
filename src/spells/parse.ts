@@ -45,14 +45,16 @@ export function getLowestLevel(spellLevelStr: string): number {
 /** Unique levels ascending, joined: "3, 4". */
 export function formatLevelsForDisplay(spellLevelStr: string): string {
   if (!spellLevelStr) return "";
-  const unique = [...new Set(Object.values(parseSpellLevel(spellLevelStr).levels))].sort(
-    (a, b) => a - b
-  );
+  const unique = [
+    ...new Set(Object.values(parseSpellLevel(spellLevelStr).levels)),
+  ].sort((a, b) => a - b);
   return unique.join(", ");
 }
 
 /** "3 (sorcerer/wizard), 4 (magus)" for the level-cell tooltip. */
-export function formatLevelsWithClassesForTooltip(spellLevelStr: string): string {
+export function formatLevelsWithClassesForTooltip(
+  spellLevelStr: string,
+): string {
   if (!spellLevelStr) return "";
   const parsed = parseSpellLevel(spellLevelStr);
   const groups: Record<string, string[]> = {};
@@ -90,7 +92,9 @@ export function getSchoolColors(school: string): { bg: string; text: string } {
     transmutation: { bg: "#32CD32", text: "#000000" },
     universal: { bg: "#708090", text: "#FFFFFF" },
   };
-  return colors[(school || "").toLowerCase()] ?? { bg: "#6B7280", text: "#FFFFFF" };
+  return (
+    colors[(school || "").toLowerCase()] ?? { bg: "#6B7280", text: "#FFFFFF" }
+  );
 }
 
 /**
@@ -138,7 +142,7 @@ export interface SpellDocLike {
 export function transformSpellForSpellbook(
   doc: SpellDocLike,
   selectedLevel: number | null = null,
-  selectedClasses: string[] | null = null
+  selectedClasses: string[] | null = null,
 ): KnownSpell {
   const baseLevel = (
     selectedLevel !== null ? selectedLevel : getLowestLevel(doc.spellLevelRaw)

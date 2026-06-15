@@ -20,7 +20,10 @@ export interface ResourceFormulaContext {
   scores: AbilityScores;
 }
 
-function baseValue(formula: ResourceFormula, ctx: ResourceFormulaContext): number {
+function baseValue(
+  formula: ResourceFormula,
+  ctx: ResourceFormulaContext,
+): number {
   switch (formula.source) {
     case "classLevel": {
       const match = (formula.className ?? "").toLowerCase();
@@ -39,13 +42,14 @@ function baseValue(formula: ResourceFormula, ctx: ResourceFormulaContext): numbe
 
 export function evaluateResourceFormula(
   formula: ResourceFormula,
-  ctx: ResourceFormulaContext
+  ctx: ResourceFormulaContext,
 ): number {
   const multiplier = formula.multiplier ?? 1;
   const divisor = formula.divisor || 1; // 0 would divide by zero; treat as 1
   const flat = formula.flatBonus ?? 0;
   const minimum = formula.minimum ?? 0;
-  const scaled = Math.floor((baseValue(formula, ctx) * multiplier) / divisor) + flat;
+  const scaled =
+    Math.floor((baseValue(formula, ctx) * multiplier) / divisor) + flat;
   return Math.max(minimum, scaled);
 }
 
@@ -56,7 +60,7 @@ export function evaluateResourceFormula(
  */
 export function evaluateFooterFormula(
   f: FooterFormula,
-  ctx: ResourceFormulaContext
+  ctx: ResourceFormulaContext,
 ): string {
   const n = evaluateResourceFormula(f.dice, ctx);
   const base = f.dieSize ? `${n}d${f.dieSize}` : `${n}`;

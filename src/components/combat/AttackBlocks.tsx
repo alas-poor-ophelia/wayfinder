@@ -63,7 +63,9 @@ function AttackBody({ parts, text }: { parts: AttackParts; text: string }) {
   const hasMeta = parts.touch || !!parts.damage || !!parts.crit;
   const notes = text
     .split("\n")
-    .filter((l) => l.trim() !== "" && !/^\*\*(Standard|Full) Attack:\*\*/.test(l));
+    .filter(
+      (l) => l.trim() !== "" && !/^\*\*(Standard|Full) Attack:\*\*/.test(l),
+    );
 
   return (
     <div class="ms-atk-block__body">
@@ -89,12 +91,16 @@ function AttackBody({ parts, text }: { parts: AttackParts; text: string }) {
         </div>
         {hasMeta && (
           <div class="ms-atk-meta">
-            {parts.touch && <span class="ms-atk-chip ms-atk-chip--touch">Touch</span>}
+            {parts.touch && (
+              <span class="ms-atk-chip ms-atk-chip--touch">Touch</span>
+            )}
             {parts.damage && (
               <span class="ms-atk-chip ms-atk-chip--dmg">{parts.damage}</span>
             )}
             {parts.crit && (
-              <span class="ms-atk-chip ms-atk-chip--crit">{prettyCrit(parts.crit)}</span>
+              <span class="ms-atk-chip ms-atk-chip--crit">
+                {prettyCrit(parts.crit)}
+              </span>
             )}
           </div>
         )}
@@ -116,7 +122,12 @@ function AttackBody({ parts, text }: { parts: AttackParts; text: string }) {
  * with a weapon selector, "separate" = one block per weapon. With nothing
  * equipped, the legacy generic blocks render (melee = old Waveblade math).
  */
-export function AttackBlocks({ store, character, attacks, profiles }: AttackBlocksProps) {
+export function AttackBlocks({
+  store,
+  character,
+  attacks,
+  profiles,
+}: AttackBlocksProps) {
   const set = (path: string, value: unknown) =>
     store.setCharacterField(character.id, path, value);
   const prefs = character.attackBlocks ?? { melee: "single", ranged: "single" };
@@ -199,8 +210,9 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
   } else {
     const active = meleeTouch
       ? undefined
-      : profiles.melee.find((p) => p.id === character.toggles.activeMeleeWeaponId) ??
-        profiles.melee[0];
+      : (profiles.melee.find(
+          (p) => p.id === character.toggles.activeMeleeWeaponId,
+        ) ?? profiles.melee[0]);
     meleeBlocks = (
       <details {...foldProps("melee-main")}>
         <summary class="ms-atk-block__title">
@@ -216,7 +228,7 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
                 onChange={(e) =>
                   set(
                     "toggles.activeMeleeWeaponId",
-                    (e.target as HTMLSelectElement).value
+                    (e.target as HTMLSelectElement).value,
                   )
                 }
               >
@@ -243,7 +255,11 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
   // the open <details>.
   const rangedTouch = !!character.toggles.rangedTouch;
   let rangedBlocks;
-  if (!rangedTouch && prefs.ranged === "separate" && profiles.ranged.length > 0) {
+  if (
+    !rangedTouch &&
+    prefs.ranged === "separate" &&
+    profiles.ranged.length > 0
+  ) {
     rangedBlocks = profiles.ranged.map((p) => (
       <details {...foldProps(p.id)}>
         <summary class="ms-atk-block__title">
@@ -258,12 +274,17 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
   } else {
     const activeWeapon = rangedTouch
       ? undefined
-      : profiles.ranged.find((p) => p.id === character.toggles.activeRangedWeaponId) ??
-        profiles.ranged[0];
+      : (profiles.ranged.find(
+          (p) => p.id === character.toggles.activeRangedWeaponId,
+        ) ?? profiles.ranged[0]);
     rangedBlocks = (
       <details {...foldProps("ranged-main")}>
         <summary class="ms-atk-block__title">
-          {rangedTouch ? "Ranged Touch" : activeWeapon ? activeWeapon.name : "Ranged"}
+          {rangedTouch
+            ? "Ranged Touch"
+            : activeWeapon
+              ? activeWeapon.name
+              : "Ranged"}
           {touchIcon("ranged", rangedTouch)}
         </summary>
         <Fold>
@@ -275,12 +296,16 @@ export function AttackBlocks({ store, character, attacks, profiles }: AttackBloc
                 onChange={(e) =>
                   set(
                     "toggles.activeRangedWeaponId",
-                    (e.target as HTMLSelectElement).value
+                    (e.target as HTMLSelectElement).value,
                   )
                 }
               >
                 {profiles.ranged.map((p) => (
-                  <option key={p.id} value={p.id} selected={p.id === activeWeapon.id}>
+                  <option
+                    key={p.id}
+                    value={p.id}
+                    selected={p.id === activeWeapon.id}
+                  >
                     {p.name}
                   </option>
                 ))}

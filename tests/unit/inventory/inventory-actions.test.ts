@@ -46,7 +46,9 @@ describe("inventory totals (legacy math)", () => {
   });
 
   it("treats missing/zero count as 1 (legacy `count || 1`)", () => {
-    const totals = inventoryTotals([item({ id: "a", count: 0, weight: 3, value: 2 })]);
+    const totals = inventoryTotals([
+      item({ id: "a", count: 0, weight: 3, value: 2 }),
+    ]);
     expect(totals.totalWeight).toBe(3);
     expect(totals.totalValue).toBe(2);
   });
@@ -54,7 +56,12 @@ describe("inventory totals (legacy math)", () => {
   it("container contents weight is direct children only", () => {
     const items = [
       item({ id: "pack", type: "Container", weight: 2 }),
-      item({ id: "pouch", type: "Container", weight: 0.5, containerId: "pack" }),
+      item({
+        id: "pouch",
+        type: "Container",
+        weight: 0.5,
+        containerId: "pack",
+      }),
       item({ id: "gem", weight: 0.1, count: 3, containerId: "pouch" }),
       item({ id: "rope", weight: 10, containerId: "pack" }),
     ];
@@ -66,7 +73,7 @@ describe("inventory totals (legacy math)", () => {
 describe("currencyTotalGp (legacy formula)", () => {
   it("pp*10 + gp + sp*0.1 + cp*0.01", () => {
     expect(
-      currencyTotalGp({ platinum: 3, gold: 50, silver: 5, copper: 25 })
+      currencyTotalGp({ platinum: 3, gold: 50, silver: 5, copper: 25 }),
     ).toBeCloseTo(80.75);
   });
 });
@@ -85,7 +92,7 @@ describe("applyAddItem", () => {
         note: "x".repeat(200),
         charges: 10,
       },
-      "item_test00001"
+      "item_test00001",
     );
     expect(next.items).toHaveLength(1);
     const added = next.items[0];
@@ -121,7 +128,7 @@ describe("applyAddItem", () => {
         containerId: null,
         note: null,
         charges: null,
-      })
+      }),
     ).toThrow(/name/i);
     expect(() =>
       applyAddItem(inv(), {
@@ -133,7 +140,7 @@ describe("applyAddItem", () => {
         containerId: "nope",
         note: null,
         charges: null,
-      })
+      }),
     ).toThrow(/container/i);
   });
 });
@@ -142,7 +149,7 @@ describe("applyUpdateItem / cycles", () => {
   const base = inv(
     item({ id: "pack", type: "Container" }),
     item({ id: "pouch", type: "Container", containerId: "pack" }),
-    item({ id: "gem", containerId: "pouch" })
+    item({ id: "gem", containerId: "pouch" }),
   );
 
   it("merges a patch", () => {
@@ -154,12 +161,16 @@ describe("applyUpdateItem / cycles", () => {
   });
 
   it("rejects self-nesting", () => {
-    expect(() => applyUpdateItem(base, "pack", { containerId: "pack" })).toThrow();
+    expect(() =>
+      applyUpdateItem(base, "pack", { containerId: "pack" }),
+    ).toThrow();
   });
 
   it("rejects deep cycles (divergence from legacy, which only blocked self)", () => {
     expect(wouldCycle(base.items, "pack", "pouch")).toBe(true);
-    expect(() => applyUpdateItem(base, "pack", { containerId: "pouch" })).toThrow();
+    expect(() =>
+      applyUpdateItem(base, "pack", { containerId: "pouch" }),
+    ).toThrow();
   });
 
   it("allows legal re-parenting", () => {
@@ -171,7 +182,10 @@ describe("applyUpdateItem / cycles", () => {
 
 describe("applyRemoveItem", () => {
   it("removes a plain item", () => {
-    const next = applyRemoveItem(inv(item({ id: "a" }), item({ id: "b" })), "a");
+    const next = applyRemoveItem(
+      inv(item({ id: "a" }), item({ id: "b" })),
+      "a",
+    );
     expect(next.items.map((i) => i.id)).toEqual(["b"]);
   });
 
@@ -180,9 +194,9 @@ describe("applyRemoveItem", () => {
       inv(
         item({ id: "pack", type: "Container" }),
         item({ id: "rope", containerId: "pack" }),
-        item({ id: "gem", containerId: "pack" })
+        item({ id: "gem", containerId: "pack" }),
       ),
-      "pack"
+      "pack",
     );
     expect(next.items).toHaveLength(2);
     expect(next.items.every((i) => i.containerId === null)).toBe(true);
@@ -207,6 +221,11 @@ describe("applySpendCharge", () => {
 describe("applySetCurrency", () => {
   it("sets only the provided coins, clamped to non-negative integers", () => {
     const next = applySetCurrency(inv(), { gold: 50.9, copper: -3 });
-    expect(next.currency).toEqual({ copper: 0, silver: 0, gold: 50, platinum: 0 });
+    expect(next.currency).toEqual({
+      copper: 0,
+      silver: 0,
+      gold: 50,
+      platinum: 0,
+    });
   });
 });

@@ -24,7 +24,11 @@ import {
 import { computeAll } from "../calc";
 import { evaluateResourceFormula } from "../calc/resources";
 import { resolveArchetypeEffects } from "../data/archetypes";
-import { classQuickActionIds, classResources, unionClassSkills } from "../data/classes";
+import {
+  classQuickActionIds,
+  classResources,
+  unionClassSkills,
+} from "../data/classes";
 import { getCatalogQuickAction } from "../data/quick-actions";
 import { getHeritage, getRaceData } from "../data/races";
 import { migrateData } from "./migrations";
@@ -56,7 +60,8 @@ export class MiniSheetStore {
       this.saveTimer = null;
     }
     this.dirty = false;
-    const loaded = (await this.plugin.loadData()) as Partial<MiniSheetData> | null;
+    const loaded =
+      (await this.plugin.loadData()) as Partial<MiniSheetData> | null;
     // migrate BEFORE the merge below — it stamps the current schemaVersion
     // over the loaded one, so migrateData must read the original
     const raw = loaded ? migrateData(loaded) : null;
@@ -108,7 +113,9 @@ export class MiniSheetStore {
   setTab(tab: TabName | number): void {
     const name = typeof tab === "number" ? TABS[tab] : tab;
     if (!name || !TABS.includes(name)) {
-      throw new Error(`Unknown tab: ${String(tab)} (valid: ${TABS.join(", ")})`);
+      throw new Error(
+        `Unknown tab: ${String(tab)} (valid: ${TABS.join(", ")})`,
+      );
     }
     this.commit({
       ...this.data.value,
@@ -197,10 +204,11 @@ export class MiniSheetStore {
   /** Create a character with defaults, make it active, return it. */
   addCharacter(name: string): CharacterRecord {
     const d = this.data.value;
-    const base = name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "") || "character";
+    const base =
+      name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || "character";
     let id = base;
     let n = 2;
     while (d.characters.some((c) => c.id === id)) id = `${base}-${n++}`;
@@ -237,7 +245,7 @@ export class MiniSheetStore {
         ...d.ui,
         activeCharacterId:
           d.ui.activeCharacterId === id
-            ? characters[0]?.id ?? null
+            ? (characters[0]?.id ?? null)
             : d.ui.activeCharacterId,
       },
     });
@@ -263,19 +271,35 @@ export class MiniSheetStore {
     const prev = record.quickActionState?.[actionId];
     const prevStage = prev?.stage ?? 0;
     const nextStage = prevStage >= def.stages.length ? 0 : prevStage + 1;
-    this.setQuickActionStage(record, def.id, nextStage, prev?.variantId, def.linkedBuff);
+    this.setQuickActionStage(
+      record,
+      def.id,
+      nextStage,
+      prev?.variantId,
+      def.linkedBuff,
+    );
   }
 
   /** Select a quick action variant (null = off). Turning a variant on puts
    *  the action at stage 1; the variant choice persists across off cycles. */
-  setQuickActionVariant(id: string, actionId: string, variantId: string | null): void {
+  setQuickActionVariant(
+    id: string,
+    actionId: string,
+    variantId: string | null,
+  ): void {
     const record = this.getCharacter(id);
     if (!record) throw new Error(`No character with id "${id}"`);
     const def = record.quickActions?.find((a) => a.id === actionId);
     if (!def) throw new Error(`No quick action "${actionId}"`);
     const prev = record.quickActionState?.[actionId];
     if (variantId === null) {
-      this.setQuickActionStage(record, def.id, 0, prev?.variantId, def.linkedBuff);
+      this.setQuickActionStage(
+        record,
+        def.id,
+        0,
+        prev?.variantId,
+        def.linkedBuff,
+      );
     } else {
       this.setQuickActionStage(record, def.id, 1, variantId, def.linkedBuff);
     }
@@ -286,7 +310,7 @@ export class MiniSheetStore {
     actionId: string,
     stage: number,
     variantId: string | undefined,
-    linkedBuff: string | undefined
+    linkedBuff: string | undefined,
   ): void {
     const prevStage = record.quickActionState?.[actionId]?.stage ?? 0;
     const quickActionState = {
@@ -336,12 +360,14 @@ export class MiniSheetStore {
     const current = this.getCharacter(id);
     this.updateCharacter(id, {
       raceKey: race?.key,
-      race: race ? race.name : current?.race ?? "",
+      race: race ? race.name : (current?.race ?? ""),
       raceAbilityChoice: race?.flexibleAbility
         ? current?.raceAbilityChoice
         : undefined,
       raceHeritageKey:
-        race && current?.raceHeritageKey && getHeritage(race.key, current.raceHeritageKey)
+        race &&
+        current?.raceHeritageKey &&
+        getHeritage(race.key, current.raceHeritageKey)
           ? current.raceHeritageKey
           : undefined,
     });
@@ -355,7 +381,9 @@ export class MiniSheetStore {
       heritageKey && current?.raceKey
         ? getHeritage(current.raceKey, heritageKey)
         : null;
-    this.updateCharacter(id, { raceHeritageKey: valid ? valid.key : undefined });
+    this.updateCharacter(id, {
+      raceHeritageKey: valid ? valid.key : undefined,
+    });
   }
 
   /** Flag existing skill entries that are class skills for the character's
@@ -368,7 +396,7 @@ export class MiniSheetStore {
     const isClassSkill = (name: string): boolean =>
       union.has(name) ||
       ["Craft", "Perform", "Profession"].some(
-        (group) => name.startsWith(group) && union.has(`${group} (any)`)
+        (group) => name.startsWith(group) && union.has(`${group} (any)`),
       );
     const skills = Object.fromEntries(
       Object.entries(record.skills).map(([name, entry]) => [
@@ -376,7 +404,7 @@ export class MiniSheetStore {
         isClassSkill(name) && !entry.classSkill
           ? { ...entry, classSkill: true }
           : entry,
-      ])
+      ]),
     );
     this.updateCharacter(id, { skills });
   }
@@ -418,15 +446,13 @@ export class MiniSheetStore {
     const fx = resolveArchetypeEffects(record.classes);
     if (fx.any) {
       const grantedIds = new Set(suggested.map((p) => p.id));
-      const suppressed = new Set(
-        fx.suppressedResources.flatMap((s) => [...s])
-      );
+      const suppressed = new Set(fx.suppressedResources.flatMap((s) => [...s]));
       resources = resources.filter(
         (pool) =>
           !suppressed.has(pool.id) ||
           grantedIds.has(pool.id) ||
           pool.formula !== undefined ||
-          pool.kind === "item"
+          pool.kind === "item",
       );
     }
     // User formulas apply ONLY to non-class pools — a class/archetype pool's
@@ -458,7 +484,7 @@ export class MiniSheetStore {
     const granted = new Set(classQuickActionIds(record.classes));
     if (fx.any) {
       const suppressed = new Set(
-        fx.suppressedQuickActions.flatMap((s) => [...s])
+        fx.suppressedQuickActions.flatMap((s) => [...s]),
       );
       existing = existing.filter((a) => {
         if (suppressed.has(a.id) && !granted.has(a.id)) {
@@ -474,7 +500,10 @@ export class MiniSheetStore {
     for (const actionId of granted) {
       if (present.has(actionId)) continue;
       // the crane FD variant stands in for plain fighting defensively
-      if (actionId === "fightingDefensively" && present.has("fightingDefensivelyCrane")) {
+      if (
+        actionId === "fightingDefensively" &&
+        present.has("fightingDefensivelyCrane")
+      ) {
         continue;
       }
       const def = getCatalogQuickAction(actionId);

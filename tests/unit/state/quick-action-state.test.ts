@@ -33,14 +33,19 @@ describe("cycleQuickAction", () => {
   it("single-stage: off -> 1 -> off", () => {
     const store = withCharacter();
     store.cycleQuickAction("hero", "powerAttack");
-    expect(store.getCharacter("hero")!.quickActionState!.powerAttack.stage).toBe(1);
+    expect(
+      store.getCharacter("hero")!.quickActionState!.powerAttack.stage,
+    ).toBe(1);
     store.cycleQuickAction("hero", "powerAttack");
-    expect(store.getCharacter("hero")!.quickActionState!.powerAttack.stage).toBe(0);
+    expect(
+      store.getCharacter("hero")!.quickActionState!.powerAttack.stage,
+    ).toBe(0);
   });
 
   it("two-stage: off -> 1 -> 2 -> off (legacy cycleThree)", () => {
     const store = withCharacter();
-    const stages = () => store.getCharacter("hero")!.quickActionState!.smiteEvil.stage;
+    const stages = () =>
+      store.getCharacter("hero")!.quickActionState!.smiteEvil.stage;
     store.cycleQuickAction("hero", "smiteEvil");
     expect(stages()).toBe(1);
     store.cycleQuickAction("hero", "smiteEvil");
@@ -51,7 +56,9 @@ describe("cycleQuickAction", () => {
 
   it("throws on unknown action id", () => {
     const store = withCharacter();
-    expect(() => store.cycleQuickAction("hero", "nope")).toThrow(/quick action/);
+    expect(() => store.cycleQuickAction("hero", "nope")).toThrow(
+      /quick action/,
+    );
   });
 });
 
@@ -91,12 +98,16 @@ describe("linkedBuff edges", () => {
     const store = withCharacter([linked]);
     store.setCharacterField("hero", "buffs", ["bless"]);
     store.cycleQuickAction("hero", "blessedStrike");
-    expect(store.getCharacter("hero")!.buffs.filter((b) => b === "bless")).toHaveLength(1);
+    expect(
+      store.getCharacter("hero")!.buffs.filter((b) => b === "bless"),
+    ).toHaveLength(1);
   });
 });
 
 describe("migrateData v5 -> v6", () => {
-  function v5Record(toggles: Partial<CharacterRecord["toggles"]>): CharacterRecord {
+  function v5Record(
+    toggles: Partial<CharacterRecord["toggles"]>,
+  ): CharacterRecord {
     const c = createDefaultCharacter("a", "A");
     // pre-v6 records have no quickActions fields
     delete c.quickActions;
@@ -109,7 +120,13 @@ describe("migrateData v5 -> v6", () => {
     const out = migrateData({
       schemaVersion: 5,
       characters: [
-        v5Record({ powerAttack: true, smiteEvilOutsider: true, smiteEvil: true, weaponSong: "Keen", rangedAttackStyle: "Shuriken" }),
+        v5Record({
+          powerAttack: true,
+          smiteEvilOutsider: true,
+          smiteEvil: true,
+          weaponSong: "Keen",
+          rangedAttackStyle: "Shuriken",
+        }),
       ],
     });
     const c = out.characters![0];
@@ -130,7 +147,9 @@ describe("migrateData v5 -> v6", () => {
     c.quickActionState = { powerAttack: { stage: 1 } };
     const out = migrateData({ schemaVersion: 5, characters: [c] });
     expect(out.characters![0].quickActions).toHaveLength(1);
-    expect(out.characters![0].quickActionState).toEqual({ powerAttack: { stage: 1 } });
+    expect(out.characters![0].quickActionState).toEqual({
+      powerAttack: { stage: 1 },
+    });
   });
 
   it("craneStyle swaps the crane action in", () => {
@@ -139,8 +158,12 @@ describe("migrateData v5 -> v6", () => {
       characters: [v5Record({ fightingDefensively: true, craneStyle: true })],
     });
     const c = out.characters![0];
-    expect(c.quickActions!.some((d) => d.id === "fightingDefensivelyCrane")).toBe(true);
-    expect(c.quickActions!.some((d) => d.id === "fightingDefensively")).toBe(false);
+    expect(
+      c.quickActions!.some((d) => d.id === "fightingDefensivelyCrane"),
+    ).toBe(true);
+    expect(c.quickActions!.some((d) => d.id === "fightingDefensively")).toBe(
+      false,
+    );
     expect(c.quickActionState!.fightingDefensivelyCrane).toEqual({ stage: 1 });
   });
 });
@@ -159,18 +182,33 @@ describe("migrateData v6 -> v7 (song Enhancement RAW repair)", () => {
     song.variants = song.variants!.map((v) =>
       v.id === "enhancement"
         ? { ...v, effects: enhancementEffects as typeof v.effects }
-        : v
+        : v,
     );
     return c;
   }
 
   it("repairs the exact v6-shipped shape to enhancement-typed attack modifiers", () => {
-    const out = migrateData({ schemaVersion: 6, characters: [v6Record(V6_SHAPE)] });
-    const song = out.characters![0].quickActions!.find((d) => d.id === "weaponSong")!;
+    const out = migrateData({
+      schemaVersion: 6,
+      characters: [v6Record(V6_SHAPE)],
+    });
+    const song = out.characters![0].quickActions!.find(
+      (d) => d.id === "weaponSong",
+    )!;
     const enh = song.variants!.find((v) => v.id === "enhancement")!;
     expect(enh.effects).toEqual([
-      { kind: "modifier", target: "attack.melee", type: "enhancement", value: 1 },
-      { kind: "modifier", target: "attack.ranged", type: "enhancement", value: 1 },
+      {
+        kind: "modifier",
+        target: "attack.melee",
+        type: "enhancement",
+        value: 1,
+      },
+      {
+        kind: "modifier",
+        target: "attack.ranged",
+        type: "enhancement",
+        value: 1,
+      },
     ]);
   });
 
@@ -178,34 +216,56 @@ describe("migrateData v6 -> v7 (song Enhancement RAW repair)", () => {
     const edited = [
       { kind: "modifier", target: "attack.melee", type: "untyped", value: 2 },
     ];
-    const out = migrateData({ schemaVersion: 6, characters: [v6Record(edited)] });
-    const song = out.characters![0].quickActions!.find((d) => d.id === "weaponSong")!;
-    expect(song.variants!.find((v) => v.id === "enhancement")!.effects).toEqual(edited);
+    const out = migrateData({
+      schemaVersion: 6,
+      characters: [v6Record(edited)],
+    });
+    const song = out.characters![0].quickActions!.find(
+      (d) => d.id === "weaponSong",
+    )!;
+    expect(song.variants!.find((v) => v.id === "enhancement")!.effects).toEqual(
+      edited,
+    );
   });
 
   it("is idempotent on already-repaired data", () => {
-    const once = migrateData({ schemaVersion: 6, characters: [v6Record(V6_SHAPE)] });
-    const twice = migrateData({ schemaVersion: 6, characters: once.characters! });
+    const once = migrateData({
+      schemaVersion: 6,
+      characters: [v6Record(V6_SHAPE)],
+    });
+    const twice = migrateData({
+      schemaVersion: 6,
+      characters: once.characters!,
+    });
     expect(twice.characters).toEqual(once.characters);
   });
 });
 
 describe("syncClassQuickActions (insert-only)", () => {
-  function storeWith(classes: { className: string; level: number }[], prune?: string[]) {
+  function storeWith(
+    classes: { className: string; level: number }[],
+    prune?: string[],
+  ) {
     const store = makeStore();
     const c = createDefaultCharacter("hero", "Hero");
     c.classes = classes;
-    if (prune) c.quickActions = c.quickActions!.filter((a) => !prune.includes(a.id));
+    if (prune)
+      c.quickActions = c.quickActions!.filter((a) => !prune.includes(a.id));
     store.upsertCharacter(c);
     return store;
   }
 
   it("re-adds a class-granted action the character is missing", () => {
-    const store = storeWith([{ className: "Monk (Unchained)", level: 5 }], ["flurryOfBlows"]);
+    const store = storeWith(
+      [{ className: "Monk (Unchained)", level: 5 }],
+      ["flurryOfBlows"],
+    );
     const { added } = store.syncClassQuickActions("hero");
     expect(added).toEqual(["Flurry of Blows"]);
     expect(
-      store.getCharacter("hero")!.quickActions!.some((a) => a.id === "flurryOfBlows")
+      store
+        .getCharacter("hero")!
+        .quickActions!.some((a) => a.id === "flurryOfBlows"),
     ).toBe(true);
   });
 
@@ -216,7 +276,7 @@ describe("syncClassQuickActions (insert-only)", () => {
     store.setCharacterField(
       "hero",
       "quickActions",
-      acts.map((a) => (a.id === "smiteEvil" ? { ...a, name: "Smite!" } : a))
+      acts.map((a) => (a.id === "smiteEvil" ? { ...a, name: "Smite!" } : a)),
     );
     const { added } = store.syncClassQuickActions("hero");
     expect(added).toEqual([]);
@@ -228,30 +288,52 @@ describe("syncClassQuickActions (insert-only)", () => {
   });
 
   it("respects minLevel gates (bard VP needs level 2)", () => {
-    const store = storeWith([{ className: "Bard", level: 1 }], ["versatilePerformance"]);
+    const store = storeWith(
+      [{ className: "Bard", level: 1 }],
+      ["versatilePerformance"],
+    );
     expect(store.syncClassQuickActions("hero").added).toEqual([]);
-    store.setCharacterField("hero", "classes", [{ className: "Bard", level: 2 }]);
-    expect(store.syncClassQuickActions("hero").added).toEqual(["Versatile Performance"]);
+    store.setCharacterField("hero", "classes", [
+      { className: "Bard", level: 2 },
+    ]);
+    expect(store.syncClassQuickActions("hero").added).toEqual([
+      "Versatile Performance",
+    ]);
   });
 
   it("swashbuckler grants precise strike at 3", () => {
-    const store = storeWith([{ className: "Swashbuckler", level: 3 }], ["preciseStrike"]);
-    expect(store.syncClassQuickActions("hero").added).toEqual(["Precise Strike"]);
+    const store = storeWith(
+      [{ className: "Swashbuckler", level: 3 }],
+      ["preciseStrike"],
+    );
+    expect(store.syncClassQuickActions("hero").added).toEqual([
+      "Precise Strike",
+    ]);
   });
 
   it("the crane FD variant satisfies a fightingDefensively grant", () => {
     // hypothetical: no class currently grants FD, so exercise the guard
     // directly through the dedup path — crane present, plain absent
-    const store = storeWith([{ className: "Monk", level: 4 }], ["fightingDefensively"]);
+    const store = storeWith(
+      [{ className: "Monk", level: 4 }],
+      ["fightingDefensively"],
+    );
     const acts = store.getCharacter("hero")!.quickActions!;
     store.setCharacterField("hero", "quickActions", [
       ...acts,
-      { id: "fightingDefensivelyCrane", name: "FD (Crane)", icon: "ra-acid", stages: [{ effects: [] }] },
+      {
+        id: "fightingDefensivelyCrane",
+        name: "FD (Crane)",
+        icon: "ra-acid",
+        stages: [{ effects: [] }],
+      },
     ]);
     const { added } = store.syncClassQuickActions("hero");
     expect(added).toEqual([]); // monk grants only flurry, already present
     expect(
-      store.getCharacter("hero")!.quickActions!.some((a) => a.id === "fightingDefensively")
+      store
+        .getCharacter("hero")!
+        .quickActions!.some((a) => a.id === "fightingDefensively"),
     ).toBe(false);
   });
 });

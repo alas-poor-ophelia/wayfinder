@@ -37,7 +37,7 @@ export function SpellLevelSection({
   const globalMetamagics = sb.globalMetamagic.active;
   const adjustment = totalMetamagicAdjustment(globalMetamagics);
   const relevantSpells = sb.spells.filter(
-    (spell) => spell.known && spell.baseLevel + adjustment === level
+    (spell) => spell.known && spell.baseLevel + adjustment === level,
   );
   if (relevantSpells.length === 0) return null;
 
@@ -59,7 +59,8 @@ export function SpellLevelSection({
                 name: "Per Day",
                 current: levelComputed.remaining,
                 max: levelComputed.maxSlots,
-                set: (value) => setLevelRemaining(store, character, level, value),
+                set: (value) =>
+                  setLevelRemaining(store, character, level, value),
               }}
             />
           </div>

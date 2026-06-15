@@ -18,7 +18,11 @@ import type {
   SkillEntry,
 } from "../types/character";
 import { seedQuickActionsFromToggles } from "../data/quick-actions";
-import { ABILITY_KEYS, createDefaultCharacter, defaultToggles } from "../types/character";
+import {
+  ABILITY_KEYS,
+  createDefaultCharacter,
+  defaultToggles,
+} from "../types/character";
 import type { InventoryItem, InventoryState } from "../types/inventory";
 import {
   NOTE_MAX_LENGTH,
@@ -70,7 +74,12 @@ function str(value: unknown, fallback = ""): string {
 }
 
 /** Old select values occasionally hold the whole option list ("A|B|C"). */
-function selectValue(value: unknown, fallback: string, warnings: string[], field: string): string {
+function selectValue(
+  value: unknown,
+  fallback: string,
+  warnings: string[],
+  field: string,
+): string {
   const s = str(value, fallback);
   if (s.includes("|")) {
     const first = s.split("|")[0];
@@ -82,7 +91,7 @@ function selectValue(value: unknown, fallback: string, warnings: string[], field
 
 function importSkills(
   raw: unknown,
-  warnings: string[]
+  warnings: string[],
 ): Record<string, SkillEntry> {
   const out: Record<string, SkillEntry> = {};
   if (!raw || typeof raw !== "object") {
@@ -115,7 +124,10 @@ interface PoolSpec {
   maxKeys: string[];
   /** item-granted pools render on the Items tab (schema v4 pool.kind) */
   kind?: "item";
-  footer?: (sheet: Record<string, unknown>, config: Record<string, unknown>) => string | undefined;
+  footer?: (
+    sheet: Record<string, unknown>,
+    config: Record<string, unknown>,
+  ) => string | undefined;
 }
 
 const POOL_SPECS: PoolSpec[] = [
@@ -181,15 +193,18 @@ function dual(
   field: string,
   sheet: Record<string, unknown>,
   config: Record<string, unknown>,
-  warnings: string[]
+  warnings: string[],
 ): number | undefined {
-  const inConfig = field in config && config[field] !== "" && config[field] != null;
+  const inConfig =
+    field in config && config[field] !== "" && config[field] != null;
   const inSheet = field in sheet && sheet[field] !== "" && sheet[field] != null;
   if (!inConfig && !inSheet) return undefined;
   const cv = inConfig ? num(config[field]) : undefined;
   const sv = inSheet ? num(sheet[field]) : undefined;
   if (cv !== undefined && sv !== undefined && cv !== sv) {
-    warnings.push(`${field}: config note says ${cv}, sheet note says ${sv}; used ${cv}`);
+    warnings.push(
+      `${field}: config note says ${cv}, sheet note says ${sv}; used ${cv}`,
+    );
   }
   return cv ?? sv;
 }
@@ -206,9 +221,14 @@ function importKnownSpells(raw: unknown, warnings: string[]): KnownSpell[] {
   }
   const out: KnownSpell[] = [];
   for (const entry of raw as Record<string, unknown>[]) {
-    if (!entry || typeof entry !== "object" || entry.id === undefined || !entry.name) {
+    if (
+      !entry ||
+      typeof entry !== "object" ||
+      entry.id === undefined ||
+      !entry.name
+    ) {
       warnings.push(
-        `spellbook: spell entry without id/name skipped (${JSON.stringify(entry).slice(0, 60)})`
+        `spellbook: spell entry without id/name skipped (${JSON.stringify(entry).slice(0, 60)})`,
       );
       continue;
     }
@@ -222,11 +242,13 @@ function importKnownSpells(raw: unknown, warnings: string[]): KnownSpell[] {
       components: str(entry.components),
       saveType: str(entry.saveType),
       // legacy mixes booleans and strings like "yes (harmless)" — keep raw
-      sr: typeof entry.sr === "boolean" || typeof entry.sr === "string"
-        ? entry.sr
-        : false,
+      sr:
+        typeof entry.sr === "boolean" || typeof entry.sr === "string"
+          ? entry.sr
+          : false,
     };
-    if (typeof entry.originalId === "string") spell.originalId = entry.originalId;
+    if (typeof entry.originalId === "string")
+      spell.originalId = entry.originalId;
     if (typeof entry.duration === "string") spell.duration = entry.duration;
     if (typeof entry.school === "string") spell.school = entry.school;
     if (typeof entry.source === "string") spell.source = entry.source;
@@ -239,13 +261,15 @@ function importKnownSpells(raw: unknown, warnings: string[]): KnownSpell[] {
 function importPreparations(
   raw: unknown,
   level: SpellLevel,
-  warnings: string[]
+  warnings: string[],
 ): SpellPreparation[] {
   if (!Array.isArray(raw)) return [];
   const out: SpellPreparation[] = [];
   for (const entry of raw as Record<string, unknown>[]) {
     if (!entry || typeof entry !== "object" || entry.spellId === undefined) {
-      warnings.push(`spellbook: malformed preparation at level ${level} skipped`);
+      warnings.push(
+        `spellbook: malformed preparation at level ${level} skipped`,
+      );
       continue;
     }
     out.push({
@@ -272,7 +296,7 @@ function importPreparations(
 export function importSpellbook(
   raw: Record<string, unknown>,
   record: CharacterRecord,
-  warnings: string[]
+  warnings: string[],
 ): SpellbookState {
   const castingClass = str(raw.castingClass);
   if (!castingClass) {
@@ -283,7 +307,7 @@ export function importSpellbook(
   let castingStat = str(raw.castingStat).toLowerCase();
   if (!ABILITY_KEYS.includes(castingStat as AbilityKey)) {
     warnings.push(
-      `spellbook: castingStat "${castingStat}" unrecognized; defaulted to int`
+      `spellbook: castingStat "${castingStat}" unrecognized; defaulted to int`,
     );
     castingStat = "int";
   }
@@ -292,7 +316,11 @@ export function importSpellbook(
 
   // casterLevel: stored as an override only when it disagrees with the
   // matching class entry (the class level is the derived default)
-  if (raw.casterLevel !== undefined && raw.casterLevel !== "" && raw.casterLevel !== null) {
+  if (
+    raw.casterLevel !== undefined &&
+    raw.casterLevel !== "" &&
+    raw.casterLevel !== null
+  ) {
     const storedCL = num(raw.casterLevel);
     const classCL = record.classes
       .filter((c) => c.className.toLowerCase().includes(klass))
@@ -300,20 +328,24 @@ export function importSpellbook(
     if (classCL !== storedCL) {
       sb.casterLevelOverride = storedCL;
       warnings.push(
-        `spellbook: casterLevel ${storedCL} disagrees with ${klass} class level ${classCL}; kept as override`
+        `spellbook: casterLevel ${storedCL} disagrees with ${klass} class level ${classCL}; kept as override`,
       );
     }
   }
 
   // castingStatBonus is derived from abilities now (reacts to damage/buffs);
   // the legacy stored value is only checked for drift
-  if (raw.castingStatBonus !== undefined && raw.castingStatBonus !== "" && raw.castingStatBonus !== null) {
+  if (
+    raw.castingStatBonus !== undefined &&
+    raw.castingStatBonus !== "" &&
+    raw.castingStatBonus !== null
+  ) {
     const stored = num(raw.castingStatBonus);
     const base = record.baseAbilities[castingStat as AbilityKey];
     const derived = Math.floor((base - 10) / 2);
     if (stored !== derived) {
       warnings.push(
-        `spellbook: stored castingStatBonus ${stored} differs from derived ${castingStat} mod ${derived}; the derived value wins`
+        `spellbook: stored castingStatBonus ${stored} differs from derived ${castingStat} mod ${derived}; the derived value wins`,
       );
     }
   }
@@ -336,7 +368,9 @@ export function importSpellbook(
         remaining:
           typeof e.totalRemaining === "number" ? e.totalRemaining : null,
         castsRemaining:
-          typeof e.totalCastsRemaining === "number" ? e.totalCastsRemaining : null,
+          typeof e.totalCastsRemaining === "number"
+            ? e.totalCastsRemaining
+            : null,
         selectedMetamagic: str(e.selectedMetamagic),
         activeMetamagics: Array.isArray(e.activeMetamagics)
           ? e.activeMetamagics.map(String)
@@ -353,7 +387,8 @@ export function importSpellbook(
   // file actually mentions so the existing UI state stays reachable.
   const featMentions = new Set<string>();
   for (const levelState of Object.values(sb.levels)) {
-    if (levelState.selectedMetamagic) featMentions.add(levelState.selectedMetamagic);
+    if (levelState.selectedMetamagic)
+      featMentions.add(levelState.selectedMetamagic);
     for (const m of levelState.activeMetamagics) featMentions.add(m);
   }
   if (sls) {
@@ -368,7 +403,7 @@ export function importSpellbook(
   sb.metamagicFeats = [...featMentions];
   if (sb.metamagicFeats.length > 0) {
     warnings.push(
-      `spellbook: metamagic feats derived from the metamagics the legacy file mentions (${sb.metamagicFeats.length}); adjust in the spellbook config`
+      `spellbook: metamagic feats derived from the metamagics the legacy file mentions (${sb.metamagicFeats.length}); adjust in the spellbook config`,
     );
   }
 
@@ -380,7 +415,7 @@ export function importSpellbook(
   sb.globalMetamagic.selected = nestedSelected || rootSelected;
   if (nestedSelected && rootSelected && nestedSelected !== rootSelected) {
     warnings.push(
-      `spellbook: root selectedMetamagic ("${rootSelected}") differs from the UI-bound spellLevelSettings.selectedGlobalMetamagic ("${nestedSelected}"); the UI binding wins`
+      `spellbook: root selectedMetamagic ("${rootSelected}") differs from the UI-bound spellLevelSettings.selectedGlobalMetamagic ("${nestedSelected}"); the UI binding wins`,
     );
   }
 
@@ -394,13 +429,17 @@ export function importSpellbook(
       sb.preparations[getSpellLevelKey(level)] = importPreparations(
         preps[getSpellLevelKey(level)],
         level,
-        warnings
+        warnings,
       );
     }
     if (Array.isArray(preps.sla)) {
       const slas: SlaEntry[] = [];
       for (const entry of preps.sla as Record<string, unknown>[]) {
-        if (!entry || typeof entry !== "object" || entry.spellId === undefined) {
+        if (
+          !entry ||
+          typeof entry !== "object" ||
+          entry.spellId === undefined
+        ) {
           warnings.push("spellbook: malformed SLA entry skipped");
           continue;
         }
@@ -408,14 +447,14 @@ export function importSpellbook(
         const linked = sb.spells.find((s) => s.id === spellId);
         if (!linked) {
           warnings.push(
-            `spellbook: SLA references spell id ${spellId} not in spells[]`
+            `spellbook: SLA references spell id ${spellId} not in spells[]`,
           );
         } else if (
           typeof entry.spellName === "string" &&
           entry.spellName !== linked.name
         ) {
           warnings.push(
-            `spellbook: SLA name "${entry.spellName}" drifted from spell ${spellId} ("${linked.name}"); the spells[] name wins`
+            `spellbook: SLA name "${entry.spellName}" drifted from spell ${spellId} ("${linked.name}"); the spells[] name wins`,
           );
         }
         slas.push({
@@ -431,7 +470,7 @@ export function importSpellbook(
   // --- collapse state (legacy calloutStates, mixed key forms kept as-is) ---
   if (raw.calloutStates && typeof raw.calloutStates === "object") {
     for (const [key, value] of Object.entries(
-      raw.calloutStates as Record<string, unknown>
+      raw.calloutStates as Record<string, unknown>,
     )) {
       sb.sectionCollapsed[key] = value === true || value === "true";
     }
@@ -467,7 +506,9 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   // Both notes carry level keys and historically disagree; the config note
   // matches the character's XP, so it wins (warned).
   const classes: ClassEntry[] = [];
-  const classNames = Array.isArray(config.classes) ? (config.classes as string[]) : [];
+  const classNames = Array.isArray(config.classes)
+    ? (config.classes as string[])
+    : [];
   for (const className of classNames) {
     const key = `${safeName(className)}Level`;
     const level = dual(key, sheet, config, warnings);
@@ -478,12 +519,12 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     const paren = /\(([^)]+)\)/.exec(className);
     const archetype = paren
       ? listArchetypes(className).find(
-          (a) => a.name.toLowerCase() === paren[1].trim().toLowerCase()
+          (a) => a.name.toLowerCase() === paren[1].trim().toLowerCase(),
         )
       : undefined;
     if (archetype) {
       warnings.push(
-        `Class "${className}": recognized archetype "${archetype.name}"`
+        `Class "${className}": recognized archetype "${archetype.name}"`,
       );
     }
     classes.push({
@@ -503,7 +544,7 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     entry.archetypeKeys = ["scaled-fist"];
     warnings.push(
       `Class "${entry.className}": inferred the Scaled Fist archetype ` +
-        `(the old sheet hardcoded its CHA-to-AC bonus for all monks)`
+        `(the old sheet hardcoded its CHA-to-AC bonus for all monks)`,
     );
   }
   record.classes = classes;
@@ -511,7 +552,9 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     const bab = dual("bab", sheet, config, warnings);
     if (bab !== undefined) {
       record.babOverride = bab;
-      warnings.push(`No classes; babOverride set to ${bab} (master-synced value)`);
+      warnings.push(
+        `No classes; babOverride set to ${bab} (master-synced value)`,
+      );
     }
   }
 
@@ -533,7 +576,9 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
 
   // --- energy resistance ---
   if (sheet.energyRes && typeof sheet.energyRes === "object") {
-    for (const [kind, value] of Object.entries(sheet.energyRes as Record<string, unknown>)) {
+    for (const [kind, value] of Object.entries(
+      sheet.energyRes as Record<string, unknown>,
+    )) {
       record.energyRes[kind] = num(value);
     }
   }
@@ -565,7 +610,12 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   const seeded = seedQuickActionsFromToggles(importedToggles);
   record.quickActions = seeded.quickActions;
   record.quickActionState = seeded.quickActionState;
-  const importedStyle = selectValue(sheet.rangedAttackStyle, "Longbow", warnings, "rangedAttackStyle");
+  const importedStyle = selectValue(
+    sheet.rangedAttackStyle,
+    "Longbow",
+    warnings,
+    "rangedAttackStyle",
+  );
   record.toggles = {
     ...defaultToggles(),
     rangedAttackStyle: importedStyle,
@@ -592,14 +642,21 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     init: num(sheet.initAdjust),
     skill: num(sheet.skillAdjust),
     ability: {
-      str: num(sheet.strAdjust), dex: num(sheet.dexAdjust), con: num(sheet.conAdjust),
-      int: num(sheet.intAdjust), wis: num(sheet.wisAdjust), cha: num(sheet.chaAdjust),
+      str: num(sheet.strAdjust),
+      dex: num(sheet.dexAdjust),
+      con: num(sheet.conAdjust),
+      int: num(sheet.intAdjust),
+      wis: num(sheet.wisAdjust),
+      cha: num(sheet.chaAdjust),
     },
     drain: {
-      str: num(sheet.strDrain), dex: num(sheet.dexDrain), con: num(sheet.conDrain),
+      str: num(sheet.strDrain),
+      dex: num(sheet.dexDrain),
+      con: num(sheet.conDrain),
     },
     damage: {
-      str: num(sheet.strDamage), dex: num(sheet.dexDamage),
+      str: num(sheet.strDamage),
+      dex: num(sheet.dexDamage),
     },
     negativeLevels: num(sheet.negativeLevels),
   };
@@ -614,7 +671,9 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   }
 
   // --- conditions / buffs ---
-  record.conditions = Array.isArray(sheet.conditions) ? (sheet.conditions as string[]) : [];
+  record.conditions = Array.isArray(sheet.conditions)
+    ? (sheet.conditions as string[])
+    : [];
   record.buffs = Array.isArray(sheet.buffs) ? (sheet.buffs as string[]) : [];
   record.bofChoice = str(sheet.bofChoice);
 
@@ -629,12 +688,20 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   const panacheCurrent = dual("panacheCurrent", sheet, config, warnings);
   const panachePoints = dual("panachePoints", sheet, config, warnings);
   const panacheMax = dual("panacheMax", sheet, config, warnings);
-  if (panacheCurrent !== undefined && panachePoints !== undefined && panacheCurrent !== panachePoints) {
+  if (
+    panacheCurrent !== undefined &&
+    panachePoints !== undefined &&
+    panacheCurrent !== panachePoints
+  ) {
     warnings.push(
-      `panacheCurrent (${panacheCurrent}) and panachePoints (${panachePoints}) disagree; used ${panacheCurrent}`
+      `panacheCurrent (${panacheCurrent}) and panachePoints (${panachePoints}) disagree; used ${panacheCurrent}`,
     );
   }
-  if (panacheMax !== undefined || panacheCurrent !== undefined || panachePoints !== undefined) {
+  if (
+    panacheMax !== undefined ||
+    panacheCurrent !== undefined ||
+    panachePoints !== undefined
+  ) {
     resources.push({
       id: "panache",
       name: "Panache",
@@ -647,16 +714,16 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
     // (its AC renderer hardcoded the Nimble bonus for every paladin), so
     // infer it here to keep imported math equal to the live capture.
     const hasSwashbuckler = record.classes.some((c) =>
-      c.className.toLowerCase().includes("swashbuckler")
+      c.className.toLowerCase().includes("swashbuckler"),
     );
     const paladinEntry = record.classes.find((c) =>
-      c.className.toLowerCase().includes("paladin")
+      c.className.toLowerCase().includes("paladin"),
     );
     if (!hasSwashbuckler && paladinEntry && !paladinEntry.archetypeKeys) {
       paladinEntry.archetypeKeys = ["virtuous-bravo"];
       warnings.push(
         `Panache pool on a paladin: inferred the Virtuous Bravo archetype ` +
-          `(the old sheet hardcoded its AC bonus for all paladins)`
+          `(the old sheet hardcoded its AC bonus for all paladins)`,
       );
     }
   }
@@ -688,13 +755,13 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
   // instead of granting the inspired-rage ragingSong pool she traded away.
   if (resources.some((r) => r.id === "weaponSongRounds")) {
     const skaldEntry = record.classes.find((c) =>
-      c.className.toLowerCase().includes("skald")
+      c.className.toLowerCase().includes("skald"),
     );
     if (skaldEntry && !skaldEntry.archetypeKeys) {
       skaldEntry.archetypeKeys = ["spell-warrior"];
       warnings.push(
         `Weapon Song pool on a skald: inferred the Spell Warrior archetype ` +
-          `(weapon song is that archetype's raging song)`
+          `(weapon song is that archetype's raging song)`,
       );
     }
   }
@@ -717,7 +784,7 @@ export function importLegacy(input: LegacyImportInput): LegacyImportResult {
       const current = num(value);
       slots.push({ level: lvl, current, max: Math.max(current, 1) });
       warnings.push(
-        `Spell slot max for level ${lvl} is not stored in frontmatter; defaulted to ${Math.max(current, 1)} — adjust in config`
+        `Spell slot max for level ${lvl} is not stored in frontmatter; defaulted to ${Math.max(current, 1)} — adjust in config`,
       );
     }
     if (slots.length > 0) {
@@ -757,7 +824,7 @@ export interface InventoryImportResult {
  */
 export function importLegacyInventory(
   raw: Record<string, unknown>,
-  opts: { scope: "character" | "party" }
+  opts: { scope: "character" | "party" },
 ): InventoryImportResult {
   const warnings: string[] = [];
   const inventory = createDefaultInventory();
@@ -803,16 +870,25 @@ export function importLegacyInventory(
       warnings.push(`"${name}": unknown type "${rawType}"; imported as Other`);
       type = "Other";
     }
-    let note = typeof it.note === "string" && it.note.trim() ? it.note.trim() : null;
+    let note =
+      typeof it.note === "string" && it.note.trim() ? it.note.trim() : null;
     if (note && note.length > NOTE_MAX_LENGTH) {
       note = note.slice(0, NOTE_MAX_LENGTH);
-      warnings.push(`"${name}": note truncated to ${NOTE_MAX_LENGTH} characters`);
+      warnings.push(
+        `"${name}": note truncated to ${NOTE_MAX_LENGTH} characters`,
+      );
     }
     let charges: number | null = null;
     if (type === "Wand") {
       charges = Math.min(Math.max(0, num(it.charges)), WAND_MAX_CHARGES);
-    } else if (it.charges !== null && it.charges !== undefined && num(it.charges) > 0) {
-      warnings.push(`"${name}": charges on a non-wand (${String(it.charges)}); dropped`);
+    } else if (
+      it.charges !== null &&
+      it.charges !== undefined &&
+      num(it.charges) > 0
+    ) {
+      warnings.push(
+        `"${name}": charges on a non-wand (${String(it.charges)}); dropped`,
+      );
     }
     items.push({
       id,
@@ -821,11 +897,19 @@ export function importLegacyInventory(
       count: Math.max(1, Math.floor(num(it.count) || 1)),
       weight: Math.max(0, num(it.weight)),
       value: Math.max(0, num(it.value)),
-      containerId: typeof it.containerId === "string" && it.containerId ? it.containerId : null,
+      containerId:
+        typeof it.containerId === "string" && it.containerId
+          ? it.containerId
+          : null,
       note,
       charges,
       ...(opts.scope === "party"
-        ? { owner: typeof it.owner === "string" && it.owner.trim() ? it.owner.trim() : null }
+        ? {
+            owner:
+              typeof it.owner === "string" && it.owner.trim()
+                ? it.owner.trim()
+                : null,
+          }
         : {}),
     });
   }
@@ -835,7 +919,7 @@ export function importLegacyInventory(
   for (const item of items) {
     if (item.containerId && !ids.has(item.containerId)) {
       warnings.push(
-        `"${item.name}": container "${item.containerId}" not in import; moved to top level`
+        `"${item.name}": container "${item.containerId}" not in import; moved to top level`,
       );
       item.containerId = null;
     }
@@ -844,7 +928,7 @@ export function importLegacyInventory(
   if (items.length === 0) {
     warnings.unshift(
       "0 items found on this note — verify it is the note the legacy inventory UI binds " +
-        "(the dev vault's AdarinMiniSheetConfig.md is empty; live data may sit on a different note)"
+        "(the dev vault's AdarinMiniSheetConfig.md is empty; live data may sit on a different note)",
     );
   }
 

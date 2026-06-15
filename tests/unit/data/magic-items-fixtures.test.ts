@@ -56,7 +56,12 @@ describe("magic item catalog characterization", () => {
     const amulet = find("amulet-of-natural-armor-1");
     expect(amulet.priceGp).toBe(2000);
     expect(amulet.modifiers).toEqual([
-      { target: "ac.natural", type: "enhancement", value: 1, source: amulet.name },
+      {
+        target: "ac.natural",
+        type: "enhancement",
+        value: 1,
+        source: amulet.name,
+      },
     ]);
   });
 
@@ -64,7 +69,12 @@ describe("magic item catalog characterization", () => {
     const headband = find("headband-of-vast-intelligence-2");
     expect(headband.priceGp).toBe(4000);
     expect(headband.modifiers).toEqual([
-      { target: "ability.int", type: "enhancement", value: 2, source: headband.name },
+      {
+        target: "ability.int",
+        type: "enhancement",
+        value: 2,
+        source: headband.name,
+      },
     ]);
   });
 
@@ -86,7 +96,7 @@ describe("magic item catalog characterization", () => {
     // (the heuristic set is deliberately conservative)
     console.log(
       `magic items: ${items.length} total, ${statted} auto-statted, ` +
-        `${Math.round(reviewRate * 100)}% needsReview`
+        `${Math.round(reviewRate * 100)}% needsReview`,
     );
   });
 });

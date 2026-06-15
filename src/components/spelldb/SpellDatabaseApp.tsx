@@ -1,7 +1,13 @@
 import { Notice } from "obsidian";
 import type MiniSheetPlugin from "../../main";
-import { addKnownSpell, addSpellToLoadout } from "../../state/spellbook-actions";
-import { isEschewMaterialsCompatible, transformSpellForSpellbook } from "../../spells/parse";
+import {
+  addKnownSpell,
+  addSpellToLoadout,
+} from "../../state/spellbook-actions";
+import {
+  isEschewMaterialsCompatible,
+  transformSpellForSpellbook,
+} from "../../spells/parse";
 import type { SpellDoc } from "../../spells/index";
 import type { CharacterRecord } from "../../types/character";
 import type { SpellDbState } from "../../types/data-file";
@@ -15,7 +21,11 @@ import { SpellTable } from "./SpellTable";
 
 export const PAGE_SIZE = 50;
 
-const TABS: Array<{ key: SpellDbState["section"]; label: string; icon: string }> = [
+const TABS: Array<{
+  key: SpellDbState["section"];
+  label: string;
+  icon: string;
+}> = [
   { key: "database", label: "Database", icon: "ra-book" },
   { key: "loadouts", label: "Loadouts", icon: "ra-scroll-unfurled" },
   { key: "metamagic", label: "Metamagic", icon: "ra-fairy-wand" },
@@ -24,7 +34,7 @@ const TABS: Array<{ key: SpellDbState["section"]; label: string; icon: string }>
 /** Resolve the target character (DB add destination + loadout owner). */
 function resolveTarget(
   store: MiniSheetPlugin["store"],
-  db: SpellDbState
+  db: SpellDbState,
 ): CharacterRecord | null {
   const characters = store.data.value.characters.filter((c) => c.spellbook);
   return (
@@ -35,20 +45,24 @@ function resolveTarget(
   );
 }
 
-function matchesClassLevel(doc: SpellDoc, classes: string[], levels: number[]): boolean {
+function matchesClassLevel(
+  doc: SpellDoc,
+  classes: string[],
+  levels: number[],
+): boolean {
   if (classes.length === 0 && levels.length === 0) return true;
   // pair semantics: some (class, level) entry satisfies both active filters
   return Object.entries(doc.parsed.levels).some(
     ([cls, lvl]) =>
       (classes.length === 0 || classes.includes(cls)) &&
-      (levels.length === 0 || levels.includes(lvl))
+      (levels.length === 0 || levels.includes(lvl)),
   );
 }
 
 export function filterSpells(
   docs: SpellDoc[],
   db: SpellDbState,
-  knownIds: Set<string>
+  knownIds: Set<string>,
 ): SpellDoc[] {
   const search = db.search.toLowerCase();
   return docs.filter((doc) => {
@@ -62,9 +76,11 @@ export function filterSpells(
     ) {
       return false;
     }
-    if (db.sr === "yes" && !doc.sr.toLowerCase().startsWith("yes")) return false;
+    if (db.sr === "yes" && !doc.sr.toLowerCase().startsWith("yes"))
+      return false;
     if (db.sr === "no" && doc.sr.toLowerCase().startsWith("yes")) return false;
-    if (db.eschewOnly && !isEschewMaterialsCompatible(doc.components)) return false;
+    if (db.eschewOnly && !isEschewMaterialsCompatible(doc.components))
+      return false;
     if (db.knownOnly && !knownIds.has(doc.id)) return false;
     return true;
   });
@@ -156,7 +172,7 @@ function DatabaseSection({
     const byId = new Map(target.spellbook.spells.map((s) => [s.id, s]));
     for (const entry of activeLoadout.spells) {
       const ks = byId.get(entry.spellId);
-      knownIds.add(ks ? ks.originalId ?? ks.id : entry.spellId);
+      knownIds.add(ks ? (ks.originalId ?? ks.id) : entry.spellId);
     }
   } else if (target?.spellbook) {
     for (const s of target.spellbook.spells) {
@@ -195,7 +211,10 @@ function DatabaseSection({
     if (raw.startsWith("load:")) {
       store.updateSpellDb({ addLoadoutId: raw.slice(5) });
     } else if (raw.startsWith("char:")) {
-      store.updateSpellDb({ targetCharacterId: raw.slice(5), addLoadoutId: null });
+      store.updateSpellDb({
+        targetCharacterId: raw.slice(5),
+        addLoadoutId: null,
+      });
     }
   };
 
@@ -254,7 +273,9 @@ function DatabaseSection({
             <select
               class="ms-spelldb__sel"
               value={targetValue}
-              onChange={(e) => onTargetChange((e.target as HTMLSelectElement).value)}
+              onChange={(e) =>
+                onTargetChange((e.target as HTMLSelectElement).value)
+              }
             >
               <optgroup label="Spellbook">
                 {characters.map((c) => (
@@ -334,9 +355,15 @@ export function SpellDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
         }}
       />
       {db.section === "database" && (
-        <DatabaseSection plugin={plugin} target={target} activeLoadout={activeLoadout} />
+        <DatabaseSection
+          plugin={plugin}
+          target={target}
+          activeLoadout={activeLoadout}
+        />
       )}
-      {db.section === "loadouts" && <SpellLoadouts plugin={plugin} character={target} />}
+      {db.section === "loadouts" && (
+        <SpellLoadouts plugin={plugin} character={target} />
+      )}
       {db.section === "metamagic" && (
         <SpellMetamagic plugin={plugin} character={target} />
       )}

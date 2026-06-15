@@ -132,7 +132,11 @@ export function Sel({
       onChange={(e) => onChange((e.target as HTMLSelectElement).value)}
     >
       {options.map((o) => (
-        <option key={optValue(o)} value={optValue(o)} selected={optValue(o) === value}>
+        <option
+          key={optValue(o)}
+          value={optValue(o)}
+          selected={optValue(o) === value}
+        >
           {optLabel(o)}
         </option>
       ))}

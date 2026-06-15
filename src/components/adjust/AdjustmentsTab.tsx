@@ -24,7 +24,11 @@ interface ActiveEntry {
   remove: () => void;
 }
 
-export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabProps) {
+export function AdjustmentsTab({
+  store,
+  character,
+  computed,
+}: AdjustmentsTabProps) {
   const set = (path: string, value: unknown) =>
     store.setCharacterField(character.id, path, value);
 
@@ -32,12 +36,18 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
     const list = character[field];
     set(
       field,
-      list.includes(name) ? list.filter((x) => x !== name) : [...list, name]
+      list.includes(name) ? list.filter((x) => x !== name) : [...list, name],
     );
   };
 
   const rest = () => {
-    set("hp.current", Math.min(computed.hpMaxEffective, character.hp.current + computed.totalLevel));
+    set(
+      "hp.current",
+      Math.min(
+        computed.hpMaxEffective,
+        character.hp.current + computed.totalLevel,
+      ),
+    );
     // panache refills with the rest of the pools (a resources[] entry since v4)
     character.resources.forEach((pool, idx) => {
       set(`resources.${idx}.current`, pool.max);
@@ -65,9 +75,15 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
   const isPc = character.characterType === "pc";
   const customBuffs = character.customBuffs ?? [];
 
-  const activeConditions = CONDITION_NAMES.filter((c) => character.conditions.includes(c));
-  const activeRegistryBuffs = BUFF_DEFS.filter((d) => character.buffs.includes(d.key));
-  const activeCustomBuffs = customBuffs.filter((b) => character.buffs.includes(b.id));
+  const activeConditions = CONDITION_NAMES.filter((c) =>
+    character.conditions.includes(c),
+  );
+  const activeRegistryBuffs = BUFF_DEFS.filter((d) =>
+    character.buffs.includes(d.key),
+  );
+  const activeCustomBuffs = customBuffs.filter((b) =>
+    character.buffs.includes(b.id),
+  );
   const buffActiveCount = activeRegistryBuffs.length + activeCustomBuffs.length;
 
   // Now Active tray: conditions (neg) then buffs (pos), in registry order.
@@ -97,7 +113,11 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
 
   const adj = character.adjustments;
 
-  const numInput = (value: number, onChange: (v: number) => void, min?: number) => (
+  const numInput = (
+    value: number,
+    onChange: (v: number) => void,
+    min?: number,
+  ) => (
     <input
       class="ms-adjust__input"
       type="number"
@@ -121,7 +141,13 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
             Rest
             <span class="ms-adjust__rest-sub">HP · POOLS</span>
           </button>
-          {isPc && <XpTracker store={store} character={character} computed={computed} />}
+          {isPc && (
+            <XpTracker
+              store={store}
+              character={character}
+              computed={computed}
+            />
+          )}
         </div>
       </div>
 
@@ -141,7 +167,9 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
         >
           <AdjIcon name="bolt" size={13} />
           Now Active
-          {active.length > 0 && <span class="ms-adjust__pill">{active.length}</span>}
+          {active.length > 0 && (
+            <span class="ms-adjust__pill">{active.length}</span>
+          )}
           <span class="ms-adjust__active-chev">
             <AdjIcon name="chev" size={14} />
           </span>
@@ -168,7 +196,11 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
                       <div class="ms-adjust__token-name">{d.label}</div>
                       {d.eff && <div class="ms-adjust__token-eff">{d.eff}</div>}
                     </div>
-                    <button class="ms-adjust__token-x" title="Remove" onClick={d.remove}>
+                    <button
+                      class="ms-adjust__token-x"
+                      title="Remove"
+                      onClick={d.remove}
+                    >
                       ×
                     </button>
                   </div>
@@ -260,10 +292,17 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
 
           <label class="ms-adjust__negrow">
             <span class="ms-adjust__field-label">Negative levels</span>
-            {numInput(adj.negativeLevels, (v) => set("adjustments.negativeLevels", Math.max(0, v)), 0)}
+            {numInput(
+              adj.negativeLevels,
+              (v) => set("adjustments.negativeLevels", Math.max(0, v)),
+              0,
+            )}
           </label>
 
-          <button class="ms-adjust__more" onClick={() => setShowStats((s) => !s)}>
+          <button
+            class="ms-adjust__more"
+            onClick={() => setShowStats((s) => !s)}
+          >
             <AdjIcon name={showStats ? "chev" : "plus"} size={12} />
             {showStats ? "Hide ability scores" : "Adjust ability scores"}
           </button>
@@ -276,10 +315,18 @@ export function AdjustmentsTab({ store, character, computed }: AdjustmentsTabPro
               <span class="ms-adjust__statgrid-h">Damage</span>
               {ABILITY_KEYS.map((key) => (
                 <Fragment key={key}>
-                  <span class="ms-adjust__statgrid-ab">{key.toUpperCase()}</span>
-                  {numInput(adj.ability[key] ?? 0, (v) => set(`adjustments.ability.${key}`, v))}
-                  {numInput(adj.drain[key] ?? 0, (v) => set(`adjustments.drain.${key}`, v))}
-                  {numInput(adj.damage[key] ?? 0, (v) => set(`adjustments.damage.${key}`, v))}
+                  <span class="ms-adjust__statgrid-ab">
+                    {key.toUpperCase()}
+                  </span>
+                  {numInput(adj.ability[key] ?? 0, (v) =>
+                    set(`adjustments.ability.${key}`, v),
+                  )}
+                  {numInput(adj.drain[key] ?? 0, (v) =>
+                    set(`adjustments.drain.${key}`, v),
+                  )}
+                  {numInput(adj.damage[key] ?? 0, (v) =>
+                    set(`adjustments.damage.${key}`, v),
+                  )}
                 </Fragment>
               ))}
             </div>

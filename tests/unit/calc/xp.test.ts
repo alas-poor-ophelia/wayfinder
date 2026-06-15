@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { XP_BREAKPOINTS, computeXp, getLevelFromXP } from "../../../src/calc/xp";
+import {
+  XP_BREAKPOINTS,
+  computeXp,
+  getLevelFromXP,
+} from "../../../src/calc/xp";
 
 // Characterization vs the legacy XpTracker.jsx table (PF1e Medium track).
 // Tests written from the legacy source quote BEFORE the module (H-547).

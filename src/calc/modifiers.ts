@@ -135,7 +135,7 @@ function resolveSet(relevant: Modifier[]): ResolvedModifiers {
 
 export function resolveModifiers(
   mods: Modifier[],
-  target: string
+  target: string,
 ): ResolvedModifiers {
   return resolveSet(modifiersFor(mods, target));
 }
@@ -172,7 +172,7 @@ export interface ResolvedAcModifiers {
  */
 export function resolveAcModifiers(mods: Modifier[]): ResolvedAcModifiers {
   const acMods = mods.filter(
-    (m) => m.target === "ac.all" || m.target === "ac.natural"
+    (m) => m.target === "ac.all" || m.target === "ac.natural",
   );
   const { applied, suppressed, conditional } = resolveSet(acMods);
   let naturalLike = 0;
@@ -187,7 +187,14 @@ export function resolveAcModifiers(mods: Modifier[]): ResolvedAcModifiers {
       deflectionLike += m.value;
     }
   }
-  return { naturalLike, dodge, deflectionLike, applied, suppressed, conditional };
+  return {
+    naturalLike,
+    dodge,
+    deflectionLike,
+    applied,
+    suppressed,
+    conditional,
+  };
 }
 
 /**

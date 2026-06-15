@@ -48,7 +48,10 @@ export function InventoryControls({
           aria-label="Filters"
           onClick={() => onFilters({ controlsOpen: !filters.controlsOpen })}
         >
-          Filter{activeCount > 0 && <span class="ms-inv-controls__badge">{activeCount}</span>}
+          Filter
+          {activeCount > 0 && (
+            <span class="ms-inv-controls__badge">{activeCount}</span>
+          )}
         </button>
         <button class="ms-inv-controls__add" onClick={onAdd}>
           + Add
@@ -66,7 +69,9 @@ export function InventoryControls({
             >
               <option value="">All types</option>
               {ITEM_TYPES.map((t) => (
-                <option key={t} value={t}>{t}</option>
+                <option key={t} value={t}>
+                  {t}
+                </option>
               ))}
             </select>
           </label>
@@ -83,7 +88,9 @@ export function InventoryControls({
               >
                 <option value="">All containers</option>
                 {containers.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
             </label>
@@ -99,7 +106,9 @@ export function InventoryControls({
               >
                 <option value="">Anyone</option>
                 {owners.map((o) => (
-                  <option key={o} value={o}>{o}</option>
+                  <option key={o} value={o}>
+                    {o}
+                  </option>
                 ))}
               </select>
             </label>
@@ -116,7 +125,9 @@ export function InventoryControls({
               }
             >
               {SORT_KEYS.map((k) => (
-                <option key={k} value={k}>{k[0].toUpperCase() + k.slice(1)}</option>
+                <option key={k} value={k}>
+                  {k[0].toUpperCase() + k.slice(1)}
+                </option>
               ))}
             </select>
           </label>
@@ -132,7 +143,12 @@ export function InventoryControls({
             <button
               class="ms-inv-controls__clear"
               onClick={() =>
-                onFilters({ search: "", type: "", containerFilter: "", owner: "" })
+                onFilters({
+                  search: "",
+                  type: "",
+                  containerFilter: "",
+                  owner: "",
+                })
               }
             >
               Clear

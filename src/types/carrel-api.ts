@@ -12,7 +12,7 @@ export interface CarrelApi {
   readonly apiVersion: number;
   mountReferences(
     el: HTMLElement,
-    opts: { characterId: string; mode: "sidebar" }
+    opts: { characterId: string; mode: "sidebar" },
   ): CarrelReferenceHandle;
   getNookForCharacter(characterId: string): string | null;
   linkCharacterNook(characterId: string): string;

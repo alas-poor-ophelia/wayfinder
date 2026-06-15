@@ -10,9 +10,21 @@ describe("carryingCapacity (PF1e core table — new math, not legacy)", () => {
     expect(carryingCapacity(1)).toEqual({ light: 3, medium: 6, heavy: 10 });
     expect(carryingCapacity(7)).toEqual({ light: 23, medium: 46, heavy: 70 });
     expect(carryingCapacity(10)).toEqual({ light: 33, medium: 66, heavy: 100 });
-    expect(carryingCapacity(18)).toEqual({ light: 100, medium: 200, heavy: 300 });
-    expect(carryingCapacity(28)).toEqual({ light: 400, medium: 800, heavy: 1200 });
-    expect(carryingCapacity(29)).toEqual({ light: 466, medium: 933, heavy: 1400 });
+    expect(carryingCapacity(18)).toEqual({
+      light: 100,
+      medium: 200,
+      heavy: 300,
+    });
+    expect(carryingCapacity(28)).toEqual({
+      light: 400,
+      medium: 800,
+      heavy: 1200,
+    });
+    expect(carryingCapacity(29)).toEqual({
+      light: 466,
+      medium: 933,
+      heavy: 1400,
+    });
   });
 
   it("applies the ×4-per-10-STR rule above 29", () => {

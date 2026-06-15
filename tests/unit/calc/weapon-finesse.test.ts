@@ -16,7 +16,10 @@ import { calculateAttackStrings } from "../../../src/calc/attacks";
 import { computeAll } from "../../../src/calc";
 import { customDraft, weaponStatsFor } from "../../../src/state/equip-drafts";
 import { createDefaultCharacter } from "../../../src/types/character";
-import { createDefaultInventory, type InventoryItem } from "../../../src/types/inventory";
+import {
+  createDefaultInventory,
+  type InventoryItem,
+} from "../../../src/types/inventory";
 import type { BaseWeaponDef } from "../../../src/types/equipment";
 import type { CustomItemDef } from "../../../src/types/custom-items";
 
@@ -26,48 +29,92 @@ const FINESSE_WEAPON = {
   critMult: "2",
   finesse: true,
 } as const;
-const PLAIN_WEAPON = { damageDie: "1d8", critRange: "19-20", critMult: "2" } as const;
+const PLAIN_WEAPON = {
+  damageDie: "1d8",
+  critRange: "19-20",
+  critMult: "2",
+} as const;
 
 // str +2, dex +5: finesse turns +2 into +5 on whichever line it reaches.
 function melee(patch: Record<string, unknown>): string {
-  return calculateAttackStrings({ bab: 0, strMod: 2, dexMod: 5, ...patch }).melee;
+  return calculateAttackStrings({ bab: 0, strMod: 2, dexMod: 5, ...patch })
+    .melee;
 }
 const atkBonus = (s: string): number =>
   Number(s.match(/Standard Attack:\*\* \+(-?\d+)/)![1]);
-const dmgBonus = (s: string): number => Number(s.match(/\(1d\d+\+(-?\d+)\)/)![1]);
+const dmgBonus = (s: string): number =>
+  Number(s.match(/\(1d\d+\+(-?\d+)\)/)![1]);
 
 describe("weaponStatsFor finesse stamping", () => {
   const base: BaseWeaponDef = {
-    id: "longsword", name: "Longsword", costGp: 15, dmgS: "1d6", dmgM: "1d8",
-    critRange: "19-20", critMult: "2", rangeFt: null, weightLbs: 4, dmgType: "S",
-    special: [], proficiency: "martial", category: "one-handed", source: "Core",
+    id: "longsword",
+    name: "Longsword",
+    costGp: 15,
+    dmgS: "1d6",
+    dmgM: "1d8",
+    critRange: "19-20",
+    critMult: "2",
+    rangeFt: null,
+    weightLbs: 4,
+    dmgType: "S",
+    special: [],
+    proficiency: "martial",
+    category: "one-handed",
+    source: "Core",
   };
 
   it("light weapons stamp finesse", () => {
     expect(weaponStatsFor({ ...base, category: "light" })?.finesse).toBe(true);
   });
   it("named finesse weapons (rapier) stamp finesse despite one-handed", () => {
-    expect(weaponStatsFor({ ...base, id: "rapier", category: "one-handed" })?.finesse).toBe(true);
+    expect(
+      weaponStatsFor({ ...base, id: "rapier", category: "one-handed" })
+        ?.finesse,
+    ).toBe(true);
   });
   it("a plain one-handed/two-handed weapon does not stamp finesse", () => {
     expect(weaponStatsFor(base)?.finesse).toBeUndefined();
-    expect(weaponStatsFor({ ...base, category: "two-handed" })?.finesse).toBeUndefined();
+    expect(
+      weaponStatsFor({ ...base, category: "two-handed" })?.finesse,
+    ).toBeUndefined();
   });
   it("ranged finesse weapons never stamp finesse (melee-only)", () => {
-    expect(weaponStatsFor({ ...base, id: "rapier", category: "ranged" })?.finesse).toBeUndefined();
+    expect(
+      weaponStatsFor({ ...base, id: "rapier", category: "ranged" })?.finesse,
+    ).toBeUndefined();
   });
 });
 
 describe("customDraft Agile stamping", () => {
   const base: BaseWeaponDef = {
-    id: "rapier", name: "Rapier", costGp: 20, dmgS: "1d4", dmgM: "1d6",
-    critRange: "18-20", critMult: "2", rangeFt: null, weightLbs: 2, dmgType: "P",
-    special: [], proficiency: "martial", category: "one-handed", source: "Core",
+    id: "rapier",
+    name: "Rapier",
+    costGp: 20,
+    dmgS: "1d4",
+    dmgM: "1d6",
+    critRange: "18-20",
+    critMult: "2",
+    rangeFt: null,
+    weightLbs: 2,
+    dmgType: "P",
+    special: [],
+    proficiency: "martial",
+    category: "one-handed",
+    source: "Core",
   };
   const forged = (abilityIds: string[]): CustomItemDef => ({
-    id: "ci_a", name: "+1 Agile Rapier", kind: "weapon", baseId: "rapier",
-    enhancement: 1, abilityIds, priceGp: 8000, weightLbs: 2, modifiers: [],
-    note: "", createdAt: "", modifiedAt: "",
+    id: "ci_a",
+    name: "+1 Agile Rapier",
+    kind: "weapon",
+    baseId: "rapier",
+    enhancement: 1,
+    abilityIds,
+    priceGp: 8000,
+    weightLbs: 2,
+    modifiers: [],
+    note: "",
+    createdAt: "",
+    modifiedAt: "",
   });
 
   it("stamps agile when the forge applied the agile ability", () => {
@@ -76,7 +123,9 @@ describe("customDraft Agile stamping", () => {
     expect(w?.finesse).toBe(true); // rapier is finesse
   });
   it("does not stamp agile otherwise", () => {
-    expect(customDraft(forged(["flaming"]), base).weapon?.agile).toBeUndefined();
+    expect(
+      customDraft(forged(["flaming"]), base).weapon?.agile,
+    ).toBeUndefined();
   });
 });
 
@@ -143,8 +192,11 @@ describe("melee attack/damage stat selection", () => {
 
   it("finesse is only ever an upgrade — Str wins when Str >= Dex", () => {
     const s = calculateAttackStrings({
-      bab: 0, strMod: 5, dexMod: 2,
-      meleeWeapon: FINESSE_WEAPON, elephantInTheRoom: true,
+      bab: 0,
+      strMod: 5,
+      dexMod: 2,
+      meleeWeapon: FINESSE_WEAPON,
+      elephantInTheRoom: true,
     }).melee;
     expect(atkBonus(s)).toBe(5); // str, not dex
   });
@@ -158,10 +210,14 @@ describe("CMB ability under the EitR toggle", () => {
     return c;
   }
   it("EitR on → Dex (bab 4 + dex 3)", () => {
-    expect(computeAll(fighter(), null, { elephantInTheRoom: true }).ac.cmb).toBe(7);
+    expect(
+      computeAll(fighter(), null, { elephantInTheRoom: true }).ac.cmb,
+    ).toBe(7);
   });
   it("EitR off → Str (bab 4 + str 0)", () => {
-    expect(computeAll(fighter(), null, { elephantInTheRoom: false }).ac.cmb).toBe(4);
+    expect(
+      computeAll(fighter(), null, { elephantInTheRoom: false }).ac.cmb,
+    ).toBe(4);
   });
   it("default (no options) keeps the legacy Dex quirk", () => {
     expect(computeAll(fighter()).ac.cmb).toBe(7);
@@ -172,15 +228,25 @@ describe("Virtuous Bravo grants Weapon Finesse to its profiles", () => {
   function bravo(): InventoryItem[] {
     return [
       {
-        id: "item_rap", name: "Rapier", type: "Weapon", count: 1, weight: 2,
-        value: 20, containerId: null, note: null, charges: null, equipped: true,
+        id: "item_rap",
+        name: "Rapier",
+        type: "Weapon",
+        count: 1,
+        weight: 2,
+        value: 20,
+        containerId: null,
+        note: null,
+        charges: null,
+        equipped: true,
         weapon: { kind: "melee", ...FINESSE_WEAPON },
       },
     ];
   }
   function char(archetypeKeys: string[]) {
     const c = createDefaultCharacter("b", "Bravo");
-    c.classes = [{ className: "Paladin (Virtuous Bravo)", level: 5, archetypeKeys }];
+    c.classes = [
+      { className: "Paladin (Virtuous Bravo)", level: 5, archetypeKeys },
+    ];
     c.baseAbilities = { str: 12, dex: 18, con: 14, int: 10, wis: 8, cha: 16 };
     c.inventory = createDefaultInventory();
     c.inventory.items.push(...bravo());
@@ -188,9 +254,13 @@ describe("Virtuous Bravo grants Weapon Finesse to its profiles", () => {
   }
   const profileAtk = (archetypeKeys: string[]): number => {
     // EitR off isolates the archetype grant from the houserule.
-    const out = computeAll(char(archetypeKeys), null, { elephantInTheRoom: false });
+    const out = computeAll(char(archetypeKeys), null, {
+      elephantInTheRoom: false,
+    });
     return Number(
-      out.attackProfiles.melee[0].text.match(/Standard Attack:\*\* \+(-?\d+)/)![1]
+      out.attackProfiles.melee[0].text.match(
+        /Standard Attack:\*\* \+(-?\d+)/,
+      )![1],
     );
   };
   it("the class grant swaps the rapier profile from Str to Dex (delta = dex - str)", () => {

@@ -58,7 +58,9 @@ describe("heritage shape", () => {
         expect(m.type).toBe("racial");
         expect(m.value).toBe(2);
         if (m.target.startsWith("skill.") && !m.condition) {
-          expect(STANDARD_SKILLS[m.target.slice("skill.".length)]).toBeDefined();
+          expect(
+            STANDARD_SKILLS[m.target.slice("skill.".length)],
+          ).toBeDefined();
         }
       }
     });
@@ -74,7 +76,9 @@ describe("applyHeritage", () => {
     expect(sources).not.toContain("Tiefling: Skilled");
     expect(sources).toContain("Tiefling (Pitborn): Skilled");
     // resistances (not replaced) survive
-    expect(eff.modifiers.some((m) => m.source === "Tiefling: Fiendish Resistance")).toBe(true);
+    expect(
+      eff.modifiers.some((m) => m.source === "Tiefling: Fiendish Resistance"),
+    ).toBe(true);
     // SLA trait swapped
     const sla = eff.traits.find((t) => t.name === "Spell-Like Ability");
     expect(sla!.summary).toContain("Shatter");

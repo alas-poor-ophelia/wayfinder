@@ -27,7 +27,7 @@ const ALL_CLASS_DATA: ClassData[] = [
 ];
 
 export const CLASS_DATA: Record<string, ClassData> = Object.fromEntries(
-  ALL_CLASS_DATA.map((c) => [c.key, c])
+  ALL_CLASS_DATA.map((c) => [c.key, c]),
 );
 
 export const CLASS_DATA_NAMES = Object.keys(CLASS_DATA).sort();
@@ -68,7 +68,7 @@ export interface SuggestedPool {
  */
 export function classResources(
   classes: ClassEntry[],
-  mods: AbilityScores
+  mods: AbilityScores,
 ): SuggestedPool[] {
   const fx = resolveArchetypeEffects(classes);
   const pools: SuggestedPool[] = [];

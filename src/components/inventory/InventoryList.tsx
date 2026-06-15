@@ -40,7 +40,9 @@ export function InventoryList({
           onUse={() => spendCharge(store, scope, row.item.id)}
           onToggle={() => onToggle(row.item.id)}
           onEquip={() =>
-            updateItem(store, scope, row.item.id, { equipped: !row.item.equipped })
+            updateItem(store, scope, row.item.id, {
+              equipped: !row.item.equipped,
+            })
           }
         />
       ))}

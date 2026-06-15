@@ -22,7 +22,14 @@ export interface AbilityScores {
 
 export type AbilityKey = keyof AbilityScores;
 
-export const ABILITY_KEYS: AbilityKey[] = ["str", "dex", "con", "int", "wis", "cha"];
+export const ABILITY_KEYS: AbilityKey[] = [
+  "str",
+  "dex",
+  "con",
+  "int",
+  "wis",
+  "cha",
+];
 
 export interface ClassEntry {
   className: string; // key into CLASS_STATS
@@ -344,7 +351,10 @@ export function defaultToggles(): CombatToggles {
   };
 }
 
-export function createDefaultCharacter(id: string, name: string): CharacterRecord {
+export function createDefaultCharacter(
+  id: string,
+  name: string,
+): CharacterRecord {
   return {
     id,
     name,

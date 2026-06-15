@@ -11,7 +11,11 @@ import {
 } from "../../state/inventory-actions";
 import type { MiniSheetStore } from "../../state/store";
 import type { CustomItemDef } from "../../types/custom-items";
-import type { InventoryItem, InventoryState, ItemType } from "../../types/inventory";
+import type {
+  InventoryItem,
+  InventoryState,
+  ItemType,
+} from "../../types/inventory";
 import {
   ITEM_TYPES,
   NOTE_MAX_LENGTH,
@@ -64,7 +68,7 @@ export function ItemEditor({
   onClose: () => void;
 }) {
   const [draft, setDraft] = useState<Draft>(() =>
-    item ? { ...item } : emptyDraft()
+    item ? { ...item } : emptyDraft(),
   );
   const [error, setError] = useState("");
   const [suggestOpen, setSuggestOpen] = useState(false);
@@ -87,7 +91,7 @@ export function ItemEditor({
   // container choices exclude the item itself and anything inside it
   const containers = inventory.items.filter(
     (c) =>
-      isContainer(c) && (!item || !wouldCycle(inventory.items, item.id, c.id))
+      isContainer(c) && (!item || !wouldCycle(inventory.items, item.id, c.id)),
   );
 
   const save = () => {
@@ -133,11 +137,16 @@ export function ItemEditor({
                   <span class="ms-inv-editor__suggest-name">
                     {s.name}
                     {s.needsReview && (
-                      <span title="Bonuses not auto-detected — set them below after picking"> ⚠</span>
+                      <span title="Bonuses not auto-detected — set them below after picking">
+                        {" "}
+                        ⚠
+                      </span>
                     )}
                   </span>
                   <span class="ms-inv-editor__suggest-kind">{s.kind}</span>
-                  <span class="ms-inv-editor__suggest-price">{formatGp(s.priceGp)}</span>
+                  <span class="ms-inv-editor__suggest-price">
+                    {formatGp(s.priceGp)}
+                  </span>
                 </button>
               ))}
             </div>
@@ -153,7 +162,9 @@ export function ItemEditor({
           }
         >
           {ITEM_TYPES.map((t) => (
-            <option key={t} value={t}>{t}</option>
+            <option key={t} value={t}>
+              {t}
+            </option>
           ))}
         </select>
       </label>
@@ -165,7 +176,9 @@ export function ItemEditor({
             min={1}
             value={draft.count}
             onChange={(e) =>
-              patch({ count: Number((e.target as HTMLInputElement).value) || 1 })
+              patch({
+                count: Number((e.target as HTMLInputElement).value) || 1,
+              })
             }
           />
         </label>
@@ -177,7 +190,9 @@ export function ItemEditor({
             step={0.1}
             value={draft.weight}
             onChange={(e) =>
-              patch({ weight: Number((e.target as HTMLInputElement).value) || 0 })
+              patch({
+                weight: Number((e.target as HTMLInputElement).value) || 0,
+              })
             }
           />
         </label>
@@ -189,7 +204,9 @@ export function ItemEditor({
             step={0.01}
             value={draft.value}
             onChange={(e) =>
-              patch({ value: Number((e.target as HTMLInputElement).value) || 0 })
+              patch({
+                value: Number((e.target as HTMLInputElement).value) || 0,
+              })
             }
           />
         </label>
@@ -203,7 +220,9 @@ export function ItemEditor({
             max={WAND_MAX_CHARGES}
             value={draft.charges ?? WAND_MAX_CHARGES}
             onChange={(e) =>
-              patch({ charges: Number((e.target as HTMLInputElement).value) || 0 })
+              patch({
+                charges: Number((e.target as HTMLInputElement).value) || 0,
+              })
             }
           />
         </label>
@@ -221,7 +240,9 @@ export function ItemEditor({
           >
             <option value="">None (top level)</option>
             {containers.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
             ))}
           </select>
         </label>
@@ -257,7 +278,9 @@ export function ItemEditor({
         </label>
       )}
       <details class="ms-inv-editor__bonuses" open={!!draft.modifiers?.length}>
-        <summary>Bonuses {draft.modifiers?.length ? `(${draft.modifiers.length})` : ""}</summary>
+        <summary>
+          Bonuses {draft.modifiers?.length ? `(${draft.modifiers.length})` : ""}
+        </summary>
         <ModifierEditor
           modifiers={draft.modifiers ?? []}
           source={draft.name || "Item"}
@@ -294,7 +317,10 @@ export function ItemEditor({
   );
 
   return variant === "party" ? (
-    <div class="ms-inv-editor__overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div
+      class="ms-inv-editor__overlay"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
       {body}
     </div>
   ) : (

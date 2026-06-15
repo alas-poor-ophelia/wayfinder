@@ -24,7 +24,9 @@ export function InventorySubtab({
   character: CharacterRecord;
   computed: ComputedCharacter;
 }) {
-  const [filters, setFilters] = useState<PartyInvState>({ ...DEFAULT_PARTY_INV });
+  const [filters, setFilters] = useState<PartyInvState>({
+    ...DEFAULT_PARTY_INV,
+  });
   return (
     <InventoryPanel
       store={store}

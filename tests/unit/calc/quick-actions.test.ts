@@ -44,7 +44,7 @@ describe("evaluateQAValue", () => {
     // forced a separate formula shape.
     const v = evaluateQAValue(
       { source: "bab", divisor: 4, multiplier: 2, flatBonus: 2 },
-      ctx({ bab: 6 })
+      ctx({ bab: 6 }),
     );
     expect(v).toBe(4);
   });
@@ -53,7 +53,7 @@ describe("evaluateQAValue", () => {
     // legacy: -1 - floor(5/4) = -2
     const v = evaluateQAValue(
       { source: "bab", divisor: 4, multiplier: -1, flatBonus: -1 },
-      ctx({ bab: 5 })
+      ctx({ bab: 5 }),
     );
     expect(v).toBe(-2);
   });
@@ -66,7 +66,9 @@ describe("evaluateQAValue", () => {
         { className: "Monk", level: 3 },
       ],
     });
-    expect(evaluateQAValue({ source: "classLevel", className: "paladin" }, c)).toBe(7);
+    expect(
+      evaluateQAValue({ source: "classLevel", className: "paladin" }, c),
+    ).toBe(7);
   });
 
   it("abilityMod and abilityScore read the right tables", () => {
@@ -74,14 +76,27 @@ describe("evaluateQAValue", () => {
       mods: { str: 2, dex: 0, con: 0, int: 0, wis: 0, cha: 5 },
       scores: { str: 14, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
     });
-    expect(evaluateQAValue({ source: "abilityMod", ability: "cha" }, c)).toBe(5);
-    expect(evaluateQAValue({ source: "abilityScore", ability: "cha" }, c)).toBe(20);
+    expect(evaluateQAValue({ source: "abilityMod", ability: "cha" }, c)).toBe(
+      5,
+    );
+    expect(evaluateQAValue({ source: "abilityScore", ability: "cha" }, c)).toBe(
+      20,
+    );
   });
 
   it("flurry count formula: 2 below monk 11, 3 at 11", () => {
-    const f = { source: "classLevel", className: "monk", divisor: 11, flatBonus: 2 } as const;
-    expect(evaluateQAValue(f, ctx({ classes: [{ className: "Monk", level: 10 }] }))).toBe(2);
-    expect(evaluateQAValue(f, ctx({ classes: [{ className: "Monk", level: 11 }] }))).toBe(3);
+    const f = {
+      source: "classLevel",
+      className: "monk",
+      divisor: 11,
+      flatBonus: 2,
+    } as const;
+    expect(
+      evaluateQAValue(f, ctx({ classes: [{ className: "Monk", level: 10 }] })),
+    ).toBe(2);
+    expect(
+      evaluateQAValue(f, ctx({ classes: [{ className: "Monk", level: 11 }] })),
+    ).toBe(3);
   });
 });
 
@@ -102,17 +117,26 @@ describe("activeEffects", () => {
   });
 
   it("selects the right stage and clamps stale out-of-range stages", () => {
-    expect(activeEffects(twoStage, { stage: 2 })[0]).toMatchObject({ text: "two" });
-    expect(activeEffects(twoStage, { stage: 9 })[0]).toMatchObject({ text: "two" });
+    expect(activeEffects(twoStage, { stage: 2 })[0]).toMatchObject({
+      text: "two",
+    });
+    expect(activeEffects(twoStage, { stage: 9 })[0]).toMatchObject({
+      text: "two",
+    });
   });
 
   it("merges stage + variant effects", () => {
     const def: QuickActionDef = {
       ...twoStage,
-      variants: [{ id: "v", name: "V", effects: [{ kind: "note", text: "variant" }] }],
+      variants: [
+        { id: "v", name: "V", effects: [{ kind: "note", text: "variant" }] },
+      ],
     };
     const fx = activeEffects(def, { stage: 1, variantId: "v" });
-    expect(fx.map((e) => (e as { text: string }).text)).toEqual(["one", "variant"]);
+    expect(fx.map((e) => (e as { text: string }).text)).toEqual([
+      "one",
+      "variant",
+    ]);
   });
 });
 
@@ -127,10 +151,24 @@ describe("resolveQuickActions", () => {
   });
 
   it("power attack emits formula-evaluated attack.all/damage.all untyped modifiers stamped with the action name", () => {
-    const r = resolveQuickActions(acts, { powerAttack: { stage: 1 } }, ctx({ bab: 8 }));
+    const r = resolveQuickActions(
+      acts,
+      { powerAttack: { stage: 1 } },
+      ctx({ bab: 8 }),
+    );
     expect(r.modifiers).toEqual([
-      { target: "attack.all", type: "untyped", value: -3, source: "Power Attack" },
-      { target: "damage.all", type: "untyped", value: 6, source: "Power Attack" },
+      {
+        target: "attack.all",
+        type: "untyped",
+        value: -3,
+        source: "Power Attack",
+      },
+      {
+        target: "damage.all",
+        type: "untyped",
+        value: 6,
+        source: "Power Attack",
+      },
     ]);
   });
 
@@ -143,7 +181,11 @@ describe("resolveQuickActions", () => {
       mods: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 5 },
     });
     const s1 = resolveQuickActions(acts, { smiteEvil: { stage: 1 } }, c);
-    expect(s1.smiteOverride).toEqual({ atkBonus: 5, dmgBonus: 5, description: "" });
+    expect(s1.smiteOverride).toEqual({
+      atkBonus: 5,
+      dmgBonus: 5,
+      description: "",
+    });
 
     const s2 = resolveQuickActions(acts, { smiteEvil: { stage: 2 } }, c);
     expect(s2.smiteOverride).toEqual({
@@ -159,7 +201,8 @@ describe("resolveQuickActions", () => {
       resources: [{ id: "panache", current: 0 }],
     });
     expect(
-      resolveQuickActions(acts, { preciseStrike: { stage: 1 } }, c0).preciseStrikeOverride
+      resolveQuickActions(acts, { preciseStrike: { stage: 1 } }, c0)
+        .preciseStrikeOverride,
     ).toBeNull();
 
     const c3 = ctx({
@@ -167,62 +210,92 @@ describe("resolveQuickActions", () => {
       resources: [{ id: "panache", current: 3 }],
     });
     expect(
-      resolveQuickActions(acts, { preciseStrike: { stage: 1 } }, c3).preciseStrikeOverride
+      resolveQuickActions(acts, { preciseStrike: { stage: 1 } }, c3)
+        .preciseStrikeOverride,
     ).toBe(6);
     expect(
-      resolveQuickActions(acts, { preciseStrike: { stage: 2 } }, c3).preciseStrikeOverride
+      resolveQuickActions(acts, { preciseStrike: { stage: 2 } }, c3)
+        .preciseStrikeOverride,
     ).toBe(12);
   });
 
   it("flurry: replacement count 2 (monk 10) / 3 (monk 11); suppressed without monk levels", () => {
-    const m10 = ctx({ classes: [{ className: "Monk (Unchained)", level: 10 }] });
-    expect(resolveQuickActions(acts, { flurryOfBlows: { stage: 1 } }, m10).flurry).toEqual({
+    const m10 = ctx({
+      classes: [{ className: "Monk (Unchained)", level: 10 }],
+    });
+    expect(
+      resolveQuickActions(acts, { flurryOfBlows: { stage: 1 } }, m10).flurry,
+    ).toEqual({
       active: true,
       attacks: 2,
     });
-    const m11 = ctx({ classes: [{ className: "Monk (Unchained)", level: 11 }] });
-    expect(resolveQuickActions(acts, { flurryOfBlows: { stage: 1 } }, m11).flurry).toEqual({
+    const m11 = ctx({
+      classes: [{ className: "Monk (Unchained)", level: 11 }],
+    });
+    expect(
+      resolveQuickActions(acts, { flurryOfBlows: { stage: 1 } }, m11).flurry,
+    ).toEqual({
       active: true,
       attacks: 3,
     });
-    expect(resolveQuickActions(acts, { flurryOfBlows: { stage: 1 } }, ctx()).flurry).toBeNull();
+    expect(
+      resolveQuickActions(acts, { flurryOfBlows: { stage: 1 } }, ctx()).flurry,
+    ).toBeNull();
   });
 
   it("weapon song variants: enhancement is ENHANCEMENT-typed attack modifiers (RAW FIX — no damage rows: the enhancement input feeds damage downstream); flaming is melee+ranged dice; keen flags; defending is acChannels + attack note", () => {
     const enh = resolveQuickActions(
       acts,
       { weaponSong: { stage: 1, variantId: "enhancement" } },
-      ctx()
+      ctx(),
     );
     expect(enh.modifiers).toEqual([
-      { target: "attack.melee", type: "enhancement", value: 1, source: "Weapon Song" },
-      { target: "attack.ranged", type: "enhancement", value: 1, source: "Weapon Song" },
+      {
+        target: "attack.melee",
+        type: "enhancement",
+        value: 1,
+        source: "Weapon Song",
+      },
+      {
+        target: "attack.ranged",
+        type: "enhancement",
+        value: 1,
+        source: "Weapon Song",
+      },
     ]);
 
     const flame = resolveQuickActions(
       acts,
       { weaponSong: { stage: 1, variantId: "flaming" } },
-      ctx()
+      ctx(),
     );
-    expect(flame.extraDamageDice).toEqual({ melee: "+1d6 fire", ranged: "+1d6 fire", unarmed: "" });
+    expect(flame.extraDamageDice).toEqual({
+      melee: "+1d6 fire",
+      ranged: "+1d6 fire",
+      unarmed: "",
+    });
 
     const keen = resolveQuickActions(
       acts,
       { weaponSong: { stage: 1, variantId: "keen" } },
-      ctx()
+      ctx(),
     );
     expect(keen.keen).toEqual({ melee: true, ranged: true, unarmed: false });
 
     const def = resolveQuickActions(
       acts,
       { weaponSong: { stage: 1, variantId: "defending" } },
-      ctx()
+      ctx(),
     );
     expect(def.acChannels).toEqual({ normal: 1, touch: 1, ff: 1 });
     expect(def.attackNoteLines).toHaveLength(1);
     expect(def.attackNoteLines[0]).toMatch(/^\*\*Defending:\*\*/);
 
-    const songOnNoVariant = resolveQuickActions(acts, { weaponSong: { stage: 1 } }, ctx());
+    const songOnNoVariant = resolveQuickActions(
+      acts,
+      { weaponSong: { stage: 1 } },
+      ctx(),
+    );
     expect(songOnNoVariant.modifiers).toEqual([]);
   });
 
@@ -241,7 +314,7 @@ describe("resolveQuickActions", () => {
     const r = resolveQuickActions(
       acts,
       { agileWeapon: { stage: 1 }, versatilePerformance: { stage: 1 } },
-      ctx()
+      ctx(),
     );
     expect(r.agileWeapon).toBe(true);
     expect(r.versatilePerformance).toBe(true);
@@ -250,7 +323,11 @@ describe("resolveQuickActions", () => {
   it("hidden defs with active state still apply (agile weapon seeding contract)", () => {
     const hiddenDef = acts.find((a) => a.id === "agileWeapon")!;
     expect(hiddenDef.hidden).toBe(true);
-    const r = resolveQuickActions([hiddenDef], { agileWeapon: { stage: 1 } }, ctx());
+    const r = resolveQuickActions(
+      [hiddenDef],
+      { agileWeapon: { stage: 1 } },
+      ctx(),
+    );
     expect(r.agileWeapon).toBe(true);
   });
 
@@ -262,7 +339,13 @@ describe("resolveQuickActions", () => {
       stages: [
         {
           effects: [
-            { kind: "modifier", target: "save.all", type: "morale", value: 1, condition: "vs fear" },
+            {
+              kind: "modifier",
+              target: "save.all",
+              type: "morale",
+              value: 1,
+              condition: "vs fear",
+            },
           ],
         },
       ],
@@ -280,7 +363,8 @@ describe("default catalog integrity", () => {
         if (s.icon) expect(ICONS[s.icon], `stage icon ${s.icon}`).toBeDefined();
       }
       for (const v of def.variants ?? []) {
-        if (v.icon) expect(ICONS[v.icon], `variant icon ${v.icon}`).toBeDefined();
+        if (v.icon)
+          expect(ICONS[v.icon], `variant icon ${v.icon}`).toBeDefined();
       }
     }
   });
@@ -308,7 +392,7 @@ describe("seedQuickActionsFromToggles", () => {
   it("all-off toggles seed the default catalog with empty state", () => {
     const seeded = seedQuickActionsFromToggles(defaultToggles());
     expect(seeded.quickActions.map((d) => d.id)).toEqual(
-      DEFAULT_QUICK_ACTIONS.map((d) => d.id)
+      DEFAULT_QUICK_ACTIONS.map((d) => d.id),
     );
     expect(seeded.quickActionState).toEqual({});
   });
@@ -339,13 +423,20 @@ describe("seedQuickActionsFromToggles", () => {
     const ids = seeded.quickActions.map((d) => d.id);
     expect(ids).toContain("fightingDefensivelyCrane");
     expect(ids).not.toContain("fightingDefensively");
-    expect(seeded.quickActionState.fightingDefensivelyCrane).toEqual({ stage: 1 });
+    expect(seeded.quickActionState.fightingDefensivelyCrane).toEqual({
+      stage: 1,
+    });
   });
 
   it("agile/VP unhide and activate when their toggles were set", () => {
-    const seeded = seedQuickActionsFromToggles({ ...defaultToggles(), agileWeapon: true });
+    const seeded = seedQuickActionsFromToggles({
+      ...defaultToggles(),
+      agileWeapon: true,
+    });
     const agile = seeded.quickActions.find((d) => d.id === "agileWeapon")!;
-    const vp = seeded.quickActions.find((d) => d.id === "versatilePerformance")!;
+    const vp = seeded.quickActions.find(
+      (d) => d.id === "versatilePerformance",
+    )!;
     expect(agile.hidden).toBe(false);
     expect(vp.hidden).toBe(true);
     expect(seeded.quickActionState.agileWeapon).toEqual({ stage: 1 });

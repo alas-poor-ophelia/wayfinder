@@ -15,14 +15,20 @@ export interface ConditionMeta {
 
 /** Display label + short effect per selectable condition (CONDITION_NAMES order). */
 export const CONDITION_META: Record<string, ConditionMeta> = {
-  blinded: { label: "Blinded", eff: "−2 AC, lose Dex to AC, 50% miss, half speed" },
+  blinded: {
+    label: "Blinded",
+    eff: "−2 AC, lose Dex to AC, 50% miss, half speed",
+  },
   confused: { label: "Confused", eff: "Acts randomly each round" },
   dazed: { label: "Dazed", eff: "Can take no actions" },
   deafened: { label: "Deafened", eff: "−4 initiative, 20% spell failure" },
   entangled: { label: "Entangled", eff: "−2 attack, −4 Dex, half speed" },
   exhausted: { label: "Exhausted", eff: "−6 Str & Dex, half speed" },
   fatigued: { label: "Fatigued", eff: "−2 Str & Dex, can’t run or charge" },
-  "flat-footed": { label: "Flat-Footed", eff: "Lose Dex to AC, no attacks of opportunity" },
+  "flat-footed": {
+    label: "Flat-Footed",
+    eff: "Lose Dex to AC, no attacks of opportunity",
+  },
   frightened: { label: "Frightened", eff: "−2 attack/saves/skills, must flee" },
   grappled: { label: "Grappled", eff: "−4 Dex, −2 attack, cannot move" },
   helpless: { label: "Helpless", eff: "Dex 0; melee foes auto-hit & may crit" },
@@ -32,7 +38,10 @@ export const CONDITION_META: Record<string, ConditionMeta> = {
   prone: { label: "Prone", eff: "−4 melee attack, +4 AC vs ranged" },
   shaken: { label: "Shaken", eff: "−2 attack, saves & skill checks" },
   sickened: { label: "Sickened", eff: "−2 attack, damage, saves & skills" },
-  staggered: { label: "Staggered", eff: "Only one action (move or standard) per turn" },
+  staggered: {
+    label: "Staggered",
+    eff: "Only one action (move or standard) per turn",
+  },
   stunned: { label: "Stunned", eff: "Drops items, −2 AC, lose Dex to AC" },
 };
 

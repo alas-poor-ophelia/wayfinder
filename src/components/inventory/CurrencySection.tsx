@@ -1,4 +1,7 @@
-import { setCurrency, type InventoryScope } from "../../state/inventory-actions";
+import {
+  setCurrency,
+  type InventoryScope,
+} from "../../state/inventory-actions";
 import type { MiniSheetStore } from "../../state/store";
 import type { CurrencyState } from "../../types/inventory";
 import { currencyTotalGp } from "../../types/inventory";
@@ -36,7 +39,10 @@ export function CurrencySection({
       {open && (
         <div class="ms-inv-currency">
           {COINS.map(({ key, label }) => (
-            <label key={key} class={`ms-inv-currency__coin ms-inv-currency__coin--${key}`}>
+            <label
+              key={key}
+              class={`ms-inv-currency__coin ms-inv-currency__coin--${key}`}
+            >
               <span class="ms-inv-currency__dot" />
               <span class="ms-inv-currency__label">{label}</span>
               <input

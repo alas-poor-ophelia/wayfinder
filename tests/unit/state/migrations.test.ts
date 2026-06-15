@@ -5,7 +5,10 @@
  */
 import { describe, expect, it } from "vitest";
 import { migrateData } from "../../../src/state/migrations";
-import { createDefaultCharacter, type CharacterRecord } from "../../../src/types/character";
+import {
+  createDefaultCharacter,
+  type CharacterRecord,
+} from "../../../src/types/character";
 import type { MiniSheetData } from "../../../src/types/data-file";
 import { createDefaultSpellbook } from "../../../src/types/spellbook";
 
@@ -34,7 +37,12 @@ describe("migrateData v3 -> v4", () => {
     const adarin = out.characters![0];
     expect(adarin.panache).toBeUndefined();
     const pool = adarin.resources[0];
-    expect(pool).toMatchObject({ id: "panache", name: "Panache", current: 4, max: 6 });
+    expect(pool).toMatchObject({
+      id: "panache",
+      name: "Panache",
+      current: 4,
+      max: 6,
+    });
     // Adarin has panache without the class — stored max must survive as-is
     expect(pool.formula).toBeUndefined();
   });
@@ -56,12 +64,16 @@ describe("migrateData v3 -> v4", () => {
     familiar.panache = { current: 0, max: 0 };
     const out = migrateData(v3Data([familiar]));
     expect(out.characters![0].panache).toBeUndefined();
-    expect(out.characters![0].resources.some((r) => r.id === "panache")).toBe(false);
+    expect(out.characters![0].resources.some((r) => r.id === "panache")).toBe(
+      false,
+    );
   });
 
   it("stamps kind: item on the legacy hardcoded item pools only", () => {
     const out = migrateData(v3Data([v3Adarin()]));
-    const byId = Object.fromEntries(out.characters![0].resources.map((r) => [r.id, r]));
+    const byId = Object.fromEntries(
+      out.characters![0].resources.map((r) => [r.id, r]),
+    );
     expect(byId.plumeOfPanache.kind).toBe("item");
     expect(byId.quickrunners.kind).toBe("item");
     expect(byId.layOnHands.kind).toBeUndefined();
@@ -154,7 +166,9 @@ describe("migrateData v8 -> v9 (Scaled Fist stamped onto legacy monks)", () => {
       { className: "Monk (Unchained)", level: 0 },
     ];
     const out = migrateData(v8Data([c]));
-    expect(out.characters![0].classes[0].archetypeKeys).toEqual(["kata-master"]);
+    expect(out.characters![0].classes[0].archetypeKeys).toEqual([
+      "kata-master",
+    ]);
     expect(out.characters![0].classes[1].archetypeKeys).toBeUndefined();
   });
 
@@ -202,9 +216,7 @@ describe("migrateData v9 -> v10 (Spell Warrior stamped onto weapon-song skalds)"
 
   it("user-curated skald selections are never overwritten", () => {
     const c = createDefaultCharacter("x", "X");
-    c.classes = [
-      { className: "Skald", level: 3, archetypeKeys: ["elegist"] },
-    ];
+    c.classes = [{ className: "Skald", level: 3, archetypeKeys: ["elegist"] }];
     c.resources = [
       { id: "weaponSongRounds", name: "Weapon Song", current: 13, max: 13 },
     ];
@@ -214,7 +226,8 @@ describe("migrateData v9 -> v10 (Spell Warrior stamped onto weapon-song skalds)"
 });
 
 describe("migrateData v10 -> v11 (speed/size derive-with-override)", () => {
-  const v10 = (c: CharacterRecord) => migrateData({ schemaVersion: 10, characters: [c] }).characters![0];
+  const v10 = (c: CharacterRecord) =>
+    migrateData({ schemaVersion: 10, characters: [c] }).characters![0];
 
   it("no raceKey: default 30ft / sizeMod 0 record is untouched (H-594)", () => {
     const c = createDefaultCharacter("x", "X"); // speed "30ft", sizeMod 0, no raceKey
@@ -257,7 +270,8 @@ describe("migrateData v10 -> v11 (speed/size derive-with-override)", () => {
     c.speed = "20ft";
     c.ac.sizeMod = 0;
     const once = v10(c);
-    const twice = migrateData({ schemaVersion: 11, characters: [once] }).characters![0];
+    const twice = migrateData({ schemaVersion: 11, characters: [once] })
+      .characters![0];
     expect(twice).toEqual(once);
   });
 });

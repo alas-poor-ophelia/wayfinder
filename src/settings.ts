@@ -18,7 +18,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
       .setName("Rules folder")
       .setDesc(
         "Vault folder containing rules notes (one note per ability/feat/trait). " +
-          "The Rules tab indexes and searches this folder."
+          "The Rules tab indexes and searches this folder.",
       )
       .addText((text) =>
         text
@@ -26,14 +26,14 @@ export class MiniSheetSettingTab extends PluginSettingTab {
           .setValue(this.plugin.store.data.value.settings.rulesFolder)
           .onChange((value) => {
             this.plugin.store.updateSettings({ rulesFolder: value });
-          })
+          }),
       );
 
     new Setting(containerEl)
       .setName("Spells folder")
       .setDesc(
         "Vault folder containing spell notes (one note per spell). " +
-          "Spell name links on the spells tab resolve into this folder."
+          "Spell name links on the spells tab resolve into this folder.",
       )
       .addText((text) =>
         text
@@ -44,14 +44,14 @@ export class MiniSheetSettingTab extends PluginSettingTab {
             // the index only watches vault events; a folder change must
             // trigger its own rebuild
             this.plugin.spellIndex.rebuild();
-          })
+          }),
       );
 
     new Setting(containerEl)
       .setName("Custom items file")
       .setDesc(
         "JSON file holding forged custom magic items, tracked by file name " +
-          "anywhere in the vault. Created at the vault root on first save."
+          "anywhere in the vault. Created at the vault root on first save.",
       )
       .addText((text) =>
         text
@@ -61,7 +61,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
             this.plugin.store.updateSettings({ customItemsFileName: value });
             // re-locate + reload against the newly named file
             void this.plugin.customItems.load();
-          })
+          }),
       );
 
     new Setting(containerEl)
@@ -70,13 +70,13 @@ export class MiniSheetSettingTab extends PluginSettingTab {
         "Apply the Elephant in the Room feat-tax houserules vault-wide: " +
           "finesse weapons grant Dexterity to attack, damage, and CMB with " +
           "no feat. Off reverts to RAW (Strength-based CMB, Weapon Finesse " +
-          "only via its toggle / a class grant). Defaults on."
+          "only via its toggle / a class grant). Defaults on.",
       )
       .addToggle((toggle) =>
         toggle
           .setValue(
-            this.plugin.store.data.value.settings.houseRules?.elephantInTheRoom ??
-              true
+            this.plugin.store.data.value.settings.houseRules
+              ?.elephantInTheRoom ?? true,
           )
           .onChange((value) => {
             this.plugin.store.updateSettings({
@@ -85,7 +85,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
                 elephantInTheRoom: value,
               },
             });
-          })
+          }),
       );
 
     // Shown only when the Carrel plugin is installed: route the References tab
@@ -96,14 +96,17 @@ export class MiniSheetSettingTab extends PluginSettingTab {
         .setDesc(
           "Render the References tab with the Carrel plugin's board — typed " +
             "cards, pins, and category filters, themed to the character sheet. " +
-            "Off uses the built-in barebones list."
+            "Off uses the built-in barebones list.",
         )
         .addToggle((toggle) =>
           toggle
-            .setValue(this.plugin.store.data.value.settings.useCarrelReferences ?? false)
+            .setValue(
+              this.plugin.store.data.value.settings.useCarrelReferences ??
+                false,
+            )
             .onChange((value) => {
               this.plugin.store.updateSettings({ useCarrelReferences: value });
-            })
+            }),
         );
     }
   }
