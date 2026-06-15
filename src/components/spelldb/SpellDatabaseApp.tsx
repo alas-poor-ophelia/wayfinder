@@ -343,7 +343,9 @@ export function SpellDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
   const target = resolveTarget(store, db);
   const loadouts = target?.spellbook?.loadouts ?? [];
   const activeLoadout =
-    (db.addLoadoutId && loadouts.find((l) => l.id === db.addLoadoutId)) || null;
+    (db.addLoadoutId
+      ? loadouts.find((l) => l.id === db.addLoadoutId)
+      : undefined) ?? null;
   const knownMetamagic = target?.spellbook?.metamagicFeats?.length ?? 0;
 
   return (

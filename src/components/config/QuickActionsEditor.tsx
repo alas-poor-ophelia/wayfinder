@@ -627,12 +627,10 @@ export function QuickActionsSection({
   ];
   // Default to the first on-sheet action so the strip is never empty on a
   // touch device (where hover never fires).
-  const focused =
-    (focusId &&
-      [...shown, ...bench.map((b) => b.def)].find((d) => d.id === focusId)) ||
-    shown[0] ||
-    bench[0]?.def ||
-    null;
+  const focusMatch = focusId
+    ? [...shown, ...bench.map((b) => b.def)].find((d) => d.id === focusId)
+    : undefined;
+  const focused = focusMatch ?? shown[0] ?? bench[0]?.def ?? null;
 
   const zoneOf = (x: number, y: number): "sheet" | "bench" | null => {
     const inR = (ref: typeof sheetRef) => {
@@ -809,6 +807,7 @@ export function QuickActionsSection({
               <span class="qa-detail__tag">
                 {focused.stages.length} stages:{" "}
                 {focused.stages
+                  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty stage name falls back to the positional label
                   .map((s, i) => s.name || `Stage ${i + 1}`)
                   .join(" → ")}
               </span>

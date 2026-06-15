@@ -107,6 +107,7 @@ export function ForgePanel({
   };
 
   const fileBlocked = customItems.status.value === "error";
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty override should fall through to the result name
   const displayName = nameOverride.trim() || result?.name || "—";
 
   // ---- ability search + cost-level filter + grouping ----

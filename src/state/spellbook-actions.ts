@@ -316,9 +316,7 @@ export function castPrepared(
     const key = getSpellLevelKey(displayLevel);
     const stored = sb.levels[key]?.castsRemaining;
     const current =
-      stored === null || stored === undefined
-        ? maxCastsFor(character, displayLevel, castingStatBonus)
-        : stored;
+      stored ?? maxCastsFor(character, displayLevel, castingStatBonus);
     store.setCharacterField(
       character.id,
       `spellbook.levels.${key}.castsRemaining`,

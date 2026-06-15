@@ -406,6 +406,7 @@ export function parseNote(
 
   const fmIcon =
     typeof frontmatter.icon === "string" ? frontmatter.icon : undefined;
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty-string icon should fall through to the next source
   const icon = fmIcon || attr(refAttrs, "icon") || CONTENT_TYPES[type].glyph;
 
   const fmSummary =

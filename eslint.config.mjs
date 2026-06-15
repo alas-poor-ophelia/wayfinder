@@ -77,7 +77,11 @@ export default defineConfig([
         },
       ],
       "@typescript-eslint/no-floating-promises": "error",
-      "@typescript-eslint/no-non-null-assertion": "warn",
+      // Non-null assertions here are deliberate invariants (post-guard,
+      // known-present registry/map lookups, regex-after-test). They are also
+      // the pragmatic bridge for noUncheckedIndexedAccess (e.g. `mods[k]!`),
+      // which the rule would otherwise fight.
+      "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-misused-promises": [
         "warn",
         { checksVoidReturn: { attributes: false } },
@@ -96,6 +100,17 @@ export default defineConfig([
       "no-console": "warn",
       eqeqeq: ["error", "always", { null: "ignore" }],
       "prefer-const": "error",
+    },
+  },
+
+  // Calc math core: `x || 0` / `x || false` / `x || ""` is the established
+  // idiom (provably equivalent to `??` for those falsy fallbacks), and a few
+  // are intentional `||` guards (e.g. `divisor || 1` avoids divide-by-zero).
+  // Enforcing nullish-coalescing here would be churn at best, bugs at worst.
+  {
+    files: ["src/calc/**/*.ts"],
+    rules: {
+      "@typescript-eslint/prefer-nullish-coalescing": "off",
     },
   },
 

@@ -144,9 +144,8 @@ export function transformSpellForSpellbook(
   selectedLevel: number | null = null,
   selectedClasses: string[] | null = null,
 ): KnownSpell {
-  const baseLevel = (
-    selectedLevel !== null ? selectedLevel : getLowestLevel(doc.spellLevelRaw)
-  ) as SpellLevel;
+  const baseLevel = (selectedLevel ??
+    getLowestLevel(doc.spellLevelRaw)) as SpellLevel;
   const uniqueId =
     selectedLevel !== null && selectedClasses
       ? `${doc.id}_L${selectedLevel}_${selectedClasses.join("_").replace(/[^a-zA-Z0-9]/g, "")}`

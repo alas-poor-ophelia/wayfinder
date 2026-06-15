@@ -66,6 +66,7 @@ export async function importRuleFromUrl(
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty category should fall through to the next source
   const category = (opts.category || note.category || "Reference").trim();
   const fm = [
     "---",

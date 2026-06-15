@@ -137,7 +137,7 @@ export function extractNote(
   if (!container) return null;
 
   const h1 =
-    container.querySelector("h1.title") || container.querySelector("h1");
+    container.querySelector("h1.title") ?? container.querySelector("h1");
   const title = (h1?.text ?? "").trim() || fallbackTitle;
 
   // breadcrumb: the leading <a> links before the title; first = top category
