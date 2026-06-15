@@ -135,12 +135,11 @@ export class ImportRuleModal extends Modal {
     this.titleEl.setText("Import rule from AoN");
     const { contentEl } = this;
 
-    const hint = contentEl.createEl("p", {
+    contentEl.createEl("p", {
+      cls: "ms-modal-hint",
       // eslint-disable-next-line obsidianmd/ui/sentence-case -- contains proper nouns (Archives of Nethys) and "URL"
       text: "Paste an Archives of Nethys rule URL (or a rule name). The page is fetched, converted to a typed note in your rules folder, and linked to the active character.",
     });
-    hint.style.cssText =
-      "font-size:13px;color:var(--text-muted);margin:0 0 8px;";
 
     new Setting(contentEl).setName("URL or rule name").addText((t) => {
       t.setPlaceholder(
@@ -150,7 +149,7 @@ export class ImportRuleModal extends Modal {
         this.url = v;
         this.resetOverwrite();
       });
-      t.inputEl.style.width = "100%";
+      t.inputEl.addClass("ms-modal-input--full");
       t.inputEl.addEventListener("keydown", (e) => {
         if (e.key === "Enter") void this.run();
       });
@@ -166,9 +165,7 @@ export class ImportRuleModal extends Modal {
         t.onChange((v) => (this.category = v));
       });
 
-    this.statusEl = contentEl.createEl("p");
-    this.statusEl.style.cssText =
-      "font-size:13px;min-height:1.2em;margin:4px 0 0;";
+    this.statusEl = contentEl.createEl("p", { cls: "ms-modal-status" });
 
     new Setting(contentEl).addButton((b) => {
       this.importBtn = b;

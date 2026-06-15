@@ -53,10 +53,8 @@ class LevelPickModal extends Modal {
     )) {
       const btn = this.contentEl.createEl("button", {
         text: `Level ${level} (${classes.join("/")})`,
-        cls: "mod-cta",
+        cls: "mod-cta ms-modal-block-btn",
       });
-      btn.style.display = "block";
-      btn.style.margin = "6px 0";
       btn.addEventListener("click", () => {
         this.close();
         this.onPick(Number(level), classes);

@@ -1,0 +1,33 @@
+// Utility classes for the plugin's modal dialogs. Scoped under Obsidian's
+// `.modal` container (modals render outside the .minisheet-* roots) and use
+// native theme variables, replacing imperative element.style assignments.
+
+.modal {
+  .ms-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .ms-modal-block-btn {
+    display: block;
+    margin: 6px 0;
+  }
+
+  .ms-modal-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 0 8px;
+  }
+
+  .ms-modal-input--full {
+    width: 100%;
+  }
+
+  .ms-modal-status {
+    font-size: 13px;
+    min-height: 1.2em;
+    margin: 4px 0 0;
+  }
+}

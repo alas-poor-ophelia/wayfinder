@@ -63,11 +63,7 @@ class ConfirmModal extends Modal {
   onOpen(): void {
     this.titleEl.setText(this.titleText);
     this.contentEl.createEl("p", { text: this.body });
-    const row = this.contentEl.createDiv();
-    row.style.display = "flex";
-    row.style.justifyContent = "flex-end";
-    row.style.gap = "8px";
-    row.style.marginTop = "14px";
+    const row = this.contentEl.createDiv({ cls: "ms-modal-actions" });
     const cancel = row.createEl("button", { text: "Cancel" });
     cancel.addEventListener("click", () => this.close());
     const ok = row.createEl("button", { text: "Apply", cls: "mod-cta" });
