@@ -1,0 +1,65 @@
+// Barebones References tab (the fallback when Carrel is not used) + the host
+// element Carrel's embed mounts into. Scoped under .minisheet-root.
+
+.minisheet-root {
+  // ---- Carrel embed host: let the embedded board fill the tab ----
+  .ms-carrel-embed { height: 100%; display: flex; min-height: 0; }
+
+  // ---- barebones flat list ----
+  .ms-bref { padding: 9px 5px 32px; }
+
+  .ms-bref__search {
+    display: flex; align-items: center; gap: 7px;
+    background: #0e0e0fcc; border: 1px solid #313234; border-radius: 8px;
+    padding: 0 9px; height: 36px; margin-bottom: 10px;
+  }
+  .ms-bref__search:focus-within { border-color: var(--ms-gold); }
+  .ms-bref__search svg { color: #5f6063; flex: 0 0 auto; }
+  .ms-bref__input {
+    flex: 1; min-width: 0; background: none; border: none; outline: none;
+    color: #dcdde0; font-family: var(--ms-font-body, "Crimson Text", Georgia, serif); font-size: 16px;
+  }
+  .ms-bref__input::placeholder { color: #5f6063; }
+  .ms-bref__clear {
+    background: none; border: none; color: #5f6063; cursor: pointer; font-size: 13px;
+    padding: 2px 4px; border-radius: 4px; height: auto;
+  }
+  .ms-bref__clear:hover { color: #dcdde0; background: #ffffff10; }
+
+  .ms-bref__cat {
+    display: flex; align-items: center; gap: 8px; margin: 14px 2px 4px;
+    font-family: var(--ms-font-label, "Taroca", sans-serif); font-size: 14px;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--ms-gold);
+  }
+  .ms-bref__cat::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, color-mix(in srgb, var(--ms-gold) 60%, transparent), transparent); }
+  .ms-bref__count { font-size: 11px; color: #5f6063; letter-spacing: 0; }
+
+  .ms-bref__item { border-bottom: 1px solid #ffffff0d; }
+  .ms-bref__head {
+    width: 100%; display: flex; align-items: center; gap: 8px; text-align: left;
+    background: none; border: none; cursor: pointer; color: #ece9e2;
+    font-family: var(--ms-font-display, "Norwester", sans-serif); font-size: 15px; letter-spacing: 0.01em;
+    padding: 9px 4px; height: auto;
+  }
+  .ms-bref__head:hover { color: #fff; }
+  .ms-bref__chev { color: var(--ms-gold); flex: 0 0 auto; transition: transform 0.18s ease; }
+  .ms-bref__item.is-open .ms-bref__chev { transform: rotate(90deg); }
+  .ms-bref__title { min-width: 0; overflow-wrap: anywhere; }
+
+  .ms-bref__body {
+    padding: 2px 6px 12px 24px;
+    font-family: var(--ms-font-body, "Crimson Text", Georgia, serif); font-size: 15px; line-height: 1.5; color: #d8d5cd;
+    p { margin: 0 0 0.5em; }
+    strong { color: var(--ms-gold); }
+    a { color: var(--ms-gold); }
+    table { border-collapse: collapse; font-size: 13.5px; }
+    th, td { border: 1px solid #ffffff14; padding: 4px 7px; text-align: left; }
+    ul, ol { margin: 0.2em 0; padding-left: 1.3em; }
+  }
+
+  // ---- tablet: Obsidian pins button geometry; re-assert ----
+  &.is-tablet .ms-bref__head,
+  .is-tablet & .ms-bref__head { height: auto; padding: 11px 4px; background: none; box-shadow: none; }
+  &.is-tablet .ms-bref__clear,
+  .is-tablet & .ms-bref__clear { height: auto; padding: 3px; box-shadow: none; }
+}

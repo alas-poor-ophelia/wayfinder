@@ -1,5 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type MiniSheetPlugin from "./main";
+import { isCarrelInstalled } from "./util/carrel";
 
 export class MiniSheetSettingTab extends PluginSettingTab {
   private plugin: MiniSheetPlugin;
@@ -86,5 +87,24 @@ export class MiniSheetSettingTab extends PluginSettingTab {
             });
           })
       );
+
+    // Shown only when the Carrel plugin is installed: route the References tab
+    // through Carrel's board (themed to the sheet) instead of the barebones list.
+    if (isCarrelInstalled(this.app)) {
+      new Setting(containerEl)
+        .setName("Use Carrel for References")
+        .setDesc(
+          "Render the References tab with the Carrel plugin's board — typed " +
+            "cards, pins, and category filters, themed to the character sheet. " +
+            "Off uses the built-in barebones list."
+        )
+        .addToggle((toggle) =>
+          toggle
+            .setValue(this.plugin.store.data.value.settings.useCarrelReferences ?? false)
+            .onChange((value) => {
+              this.plugin.store.updateSettings({ useCarrelReferences: value });
+            })
+        );
+    }
   }
 }

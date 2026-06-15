@@ -3,10 +3,12 @@ import { TABS, TAB_LABELS } from "../constants";
 import { eitrEnabled } from "../types/data-file";
 import type MiniSheetPlugin from "../main";
 import type { MiniSheetStore } from "../state/store";
+import { getCarrelApi } from "../util/carrel";
 import { Banner } from "./combat/Banner";
 import { CombatTab } from "./combat/CombatTab";
 import { AdjustmentsTab } from "./adjust/AdjustmentsTab";
-import { RulesTab } from "./rules/RulesTab";
+import { BarebonesReferences } from "./rules/BarebonesReferences";
+import { CarrelEmbed } from "./rules/CarrelEmbed";
 import { SkillsTab } from "./skills/SkillsTab";
 import { SpellsTab } from "./spells/SpellsTab";
 
@@ -40,6 +42,10 @@ export function App({ plugin, store }: AppProps) {
     elephantInTheRoom: eitrEnabled(store.data.value.settings),
   });
 
+  // References tab: use Carrel's board when the user opted in AND Carrel is
+  // installed; otherwise fall back to the barebones flat list.
+  const carrelApi = data.settings.useCarrelReferences ? getCarrelApi(plugin.app) : null;
+
   return (
     <div class="ms-sheet ms-sheet--with-banner">
       <Banner plugin={plugin} store={store} character={character} />
@@ -71,7 +77,11 @@ export function App({ plugin, store }: AppProps) {
         ) : active === "adjustments" ? (
           <AdjustmentsTab store={store} character={character} computed={computed} />
         ) : active === "rules" ? (
-          <RulesTab plugin={plugin} store={store} character={character} />
+          carrelApi ? (
+            <CarrelEmbed api={carrelApi} characterId={character.id} />
+          ) : (
+            <BarebonesReferences plugin={plugin} character={character} />
+          )
         ) : (
           <SpellsTab
             plugin={plugin}

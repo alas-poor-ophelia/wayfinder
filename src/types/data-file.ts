@@ -134,6 +134,9 @@ export interface MiniSheetSettings {
   /** table houserules toggled vault-wide. Read with a default (see
    *  eitrEnabled() in src/calc) so absence means the established default. */
   houseRules?: HouseRules;
+  /** Use the Carrel plugin's references board for the References tab instead of
+   *  the built-in barebones list. Only honored when Carrel is installed. */
+  useCarrelReferences?: boolean;
 }
 
 /** Vault-wide houserule switches. Currently the only entry is the
