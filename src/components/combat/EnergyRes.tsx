@@ -1,7 +1,7 @@
-import type { CharacterRecord } from "../../types/character";
-
-export function EnergyRes({ character }: { character: CharacterRecord }) {
-  const entries = Object.entries(character.energyRes).filter(([, v]) => v > 0);
+/** Combat-tab energy-resistance chips. Reads the COMPUTED map (manual values
+ *  merged with racial/gear energyRes.* modifiers), not the raw stored field. */
+export function EnergyRes({ energyRes }: { energyRes: Record<string, number> }) {
+  const entries = Object.entries(energyRes).filter(([, v]) => v > 0);
   if (entries.length === 0) return null;
   return (
     <div class="ms-energy">

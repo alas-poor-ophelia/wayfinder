@@ -82,7 +82,7 @@ export function CombatTab({
         />
       </div>
       <div class="ms-combat__energy">
-        <EnergyRes character={character} />
+        <EnergyRes energyRes={computed.energyRes} />
       </div>
       <InitSpeed computed={computed} />
       <div class="ms-combat__saves">

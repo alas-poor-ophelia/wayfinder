@@ -96,6 +96,11 @@ export interface ComputedCharacter {
   saves: SaveValues;
   skills: SkillRow[];
   initiative: number;
+  /** Per-energy-type resistance for the combat tab: the max of the manually
+   *  entered character.energyRes and any racial/gear energyRes.* modifiers.
+   *  PF energy resistance does not stack, so the highest source wins (not a
+   *  sum). Only positive values are kept. */
+  energyRes: Record<string, number>;
   /** hp.max plus condition adjustments (negative levels etc.) */
   hpMaxEffective: number;
   /** speed multiplier from conditions (1 = normal) */
@@ -753,6 +758,24 @@ export function computeAll(
     }
   }
 
+  // Energy resistance: merge the manually-entered values with any racial/gear
+  // energyRes.* modifiers by MAX (PF energy resistance never stacks). Kinds
+  // come from both the stored map and the modifier targets present.
+  const energyRes: Record<string, number> = {};
+  const energyKinds = new Set<string>(Object.keys(character.energyRes));
+  for (const m of combined) {
+    if (m.target.startsWith("energyRes.")) {
+      energyKinds.add(m.target.slice("energyRes.".length));
+    }
+  }
+  for (const kind of energyKinds) {
+    const fromMods = combined.length
+      ? resolveModifiers(combined, `energyRes.${kind}`).total
+      : 0;
+    const value = Math.max(character.energyRes[kind] ?? 0, fromMods);
+    if (value > 0) energyRes[kind] = value;
+  }
+
   return {
     mods,
     scores,
@@ -769,6 +792,7 @@ export function computeAll(
     saves,
     skills,
     initiative,
+    energyRes,
     hpMaxEffective:
       (character.link?.hpMaxFromMaster && master
         ? Math.floor(master.hp.max / 2)
