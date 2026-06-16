@@ -39,10 +39,7 @@ function expectMatch(rawInput: ACInput, expected: ACFixtureOutput) {
 
 describe("calculateACValues (characterization vs old ac-renderer)", () => {
   it("live Adarin baseline", () => {
-    expectMatch(
-      fixtures.acLive.input,
-      fixtures.acLive.output,
-    );
+    expectMatch(fixtures.acLive.input, fixtures.acLive.output);
   });
 
   const base = fixtures.attackMatrixBase as Record<string, unknown>;
@@ -72,9 +69,6 @@ describe("calculateACValues (characterization vs old ac-renderer)", () => {
   }
 
   it("hwayoung baseline", () => {
-    expectMatch(
-      fixtures.hwayoung.input,
-      fixtures.hwayoung.ac,
-    );
+    expectMatch(fixtures.hwayoung.input, fixtures.hwayoung.ac);
   });
 });

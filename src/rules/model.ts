@@ -44,7 +44,12 @@ export type RuleBlock =
       rows: string[][];
     }
   | { t: "flow"; nodes: FlowNode[] }
-  | { t: "dice"; expr: string; mod?: number | undefined; label?: string | undefined }
+  | {
+      t: "dice";
+      expr: string;
+      mod?: number | undefined;
+      label?: string | undefined;
+    }
   | { t: "checklist"; items: { text: string }[] }
   | { t: "steps"; items: { text: string }[] }
   | { t: "bullets"; items: { term?: string | undefined; text: string }[] }

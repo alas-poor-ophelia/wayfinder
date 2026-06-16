@@ -306,7 +306,11 @@ function parseBlocks(text: string): RuleBlock[] {
     // a `<!-- block: flow -->` tag applied to an indented list (not a fence)
     if (pending?.type === "flow") {
       const group: string[] = [];
-      while (i < lines.length && lines[i]!.trim() && !BLOCK_RE.test(lines[i]!)) {
+      while (
+        i < lines.length &&
+        lines[i]!.trim() &&
+        !BLOCK_RE.test(lines[i]!)
+      ) {
         group.push(lines[i]!);
         i++;
       }

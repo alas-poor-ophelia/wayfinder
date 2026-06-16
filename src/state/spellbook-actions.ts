@@ -503,11 +503,7 @@ export function resetSpellbook(
     const max = maxSlotsFor(character, level, castingStatBonus);
     next.levels[key].remaining = max > 0 ? max : null;
     if (paradigm === "hybrid") {
-      const maxCasts = maxCastsFor(
-        character,
-        level,
-        castingStatBonus,
-      );
+      const maxCasts = maxCastsFor(character, level, castingStatBonus);
       next.levels[key].castsRemaining = maxCasts > 0 ? maxCasts : null;
     }
     if (flags.resetMetamagics) {

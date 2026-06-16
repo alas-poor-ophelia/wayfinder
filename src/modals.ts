@@ -1,12 +1,10 @@
-import type {
-  App,
-  TFile} from "obsidian";
+import type { App, TFile } from "obsidian";
 import {
   type ButtonComponent,
   FuzzySuggestModal,
   Modal,
   Notice,
-  Setting
+  Setting,
 } from "obsidian";
 import type MiniSheetPlugin from "./main";
 import { importRuleFromUrl } from "./rules/import-rule";
