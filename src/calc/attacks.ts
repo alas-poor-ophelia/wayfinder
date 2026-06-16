@@ -527,7 +527,6 @@ function createWeaponAttack(params: WeaponAttackParams): WeaponAttack {
     params.weaponSongValues.dmgBonus +
     params.conditionDamageBonus;
 
-  // Create damage string
   let damageString: string;
   if (params.damageDie === "") {
     // For rays, show only bonus damage if any exists.
@@ -550,7 +549,6 @@ function createWeaponAttack(params: WeaponAttackParams): WeaponAttack {
     damageString = `${params.damageDie}+${damageBonus}${params.smiteEvilValues.description}${params.weaponSongValues.dmgExtra ? " " + params.weaponSongValues.dmgExtra : ""}`;
   }
 
-  // Calculate crit range with keen effects
   let critInfo: string;
   if (params.weaponSongValues.isCrit) {
     // Keen doubles the threat range
@@ -645,7 +643,6 @@ export function calculateAttackStrings(input: AttackInput): AttackStrings {
 
   const sizeAdjust = conditionEffects.sizeAdjust || 0;
 
-  // Calculate common values
   const {
     notes: weaponSongNotes,
     melee: rawMeleeSong,
