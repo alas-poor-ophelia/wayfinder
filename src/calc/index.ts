@@ -80,6 +80,9 @@ export interface ComputedCharacter {
   resourceMaxes: Record<string, number>;
   /** id -> human-readable formula for class-derived pools (read-only display) */
   resourceFormulas: Record<string, string>;
+  /** build-stat counts that aren't daily pools (e.g. arcanistExploits =
+   *  exploits known, net of archetype removals). Empty for most characters. */
+  featureCounts: Record<string, number>;
   /** id -> live composed footer string for pools with a footerFormula */
   resourceFooters: Record<string, string>;
   bab: number;
@@ -145,6 +148,11 @@ export function computeAll(
   options?: ComputeOptions,
 ): ComputedCharacter {
   const eitr = options?.elephantInTheRoom ?? true;
+  // Archetype gates + contributions: divine grace timing/removal, traded-away
+  // spellcasting, the Virtuous Bravo AC bonus, and static typed modifiers
+  // (e.g. Crossblooded's -2 Will). Resolved up front so addedModifiers can
+  // join the base modifier set below. No archetypes selected → all inert.
+  const archEffects = resolveArchetypeEffects(character.classes);
   const effects = calculateConditionEffects({
     conditions: character.conditions,
     buffs: character.buffs,
@@ -266,6 +274,7 @@ export function computeAll(
     ...configMods,
     ...buffMods,
     ...companionMods,
+    ...archEffects.addedModifiers,
   ];
 
   // ability.* modifiers (belts, headbands...) resolve through the engine
@@ -308,11 +317,6 @@ export function computeAll(
   const paladinLevel = classLevel(character, "paladin");
   const monkLevel = classLevel(character, "monk");
   const skaldLevel = classLevel(character, "skald");
-
-  // Archetype gates: divine grace timing/removal, traded-away spellcasting,
-  // and the Virtuous Bravo AC bonus (which used to be granted to every
-  // paladin unconditionally). No archetypes selected → all gates inert.
-  const archEffects = resolveArchetypeEffects(character.classes);
 
   // Quick Actions resolve against PRE-action mods (race/gear/config/buffs
   // applied) — no legacy toggle ever modified an ability score, so legacy
@@ -610,12 +614,27 @@ export function computeAll(
     [...archEffects.removedSpellcastingClassKeys].some((classKey) =>
       castingClassMatches(character.spellbook!.castingClass, classKey),
     );
+  // Eldritch Font (and future spellcasting-reshape archetypes): only when the
+  // adjust's class matches this spellbook's casting class.
+  const spellAdjust =
+    archEffects.spellcastingAdjust &&
+    character.spellbook &&
+    castingClassMatches(
+      character.spellbook.castingClass,
+      archEffects.spellcastingAdjust.classKey,
+    )
+      ? {
+          preparedPerLevel: archEffects.spellcastingAdjust.preparedPerLevel,
+          castsPerLevel: archEffects.spellcastingAdjust.castsPerLevel,
+        }
+      : undefined;
   const spellbook =
     character.spellbook && !spellcastingRemoved
       ? computeSpellbook({
           spellbook: character.spellbook,
           classes: character.classes,
           mods,
+          ...(spellAdjust ? { adjust: spellAdjust } : {}),
         })
       : undefined;
 
@@ -693,6 +712,21 @@ export function computeAll(
   // Derive class/archetype pool maxima from current level + effective mods,
   // so they auto-track level-ups and ability changes (no manual sync needed).
   // classResources already applies archetype suppression/adds and minLevel.
+  // Build-stat counts (not daily pools). Arcanist exploits: gained at odd
+  // levels 1,3,5..19 → ceil(level/2) known, minus the slots archetypes strip
+  // (the graph enumerates the removed levels through featureCountRemovals).
+  const arcanistLevel = classLevel(character, "arcanist");
+  const featureCounts: Record<string, number> = {};
+  if (arcanistLevel > 0) {
+    const removed = (
+      archEffects.featureCountRemovals.arcanistExploits ?? []
+    ).filter((lv) => lv <= arcanistLevel).length;
+    featureCounts.arcanistExploits = Math.max(
+      0,
+      Math.ceil(arcanistLevel / 2) - removed,
+    );
+  }
+
   const resourceMaxes: Record<string, number> = {};
   const resourceFormulas: Record<string, string> = {};
   const classPoolIds = new Set<string>();
@@ -725,6 +759,7 @@ export function computeAll(
     resourceMaxes,
     resourceFormulas,
     resourceFooters,
+    featureCounts,
     bab,
     totalLevel: totalLevel(character.classes),
     conditionEffects: effects,

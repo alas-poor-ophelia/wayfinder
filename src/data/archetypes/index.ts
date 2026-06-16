@@ -17,21 +17,31 @@
 import type { ClassEntry } from "../../types/character";
 import type { ArchetypeDef, ClassArchetypeFile } from "../../types/archetypes";
 import type { ArchetypeMechanics, ClassResourceDef } from "../types";
+import type { Modifier } from "../../calc/modifiers";
 import { CLASS_FEATURE_MECH } from "./feature-map";
 import { PALADIN_ARCHETYPE_MECHANICS } from "./mechanics/paladin";
 import { MONK_ARCHETYPE_MECHANICS } from "./mechanics/monk";
 import { MONK_UNCHAINED_ARCHETYPE_MECHANICS } from "./mechanics/monk-unchained";
 import { SKALD_ARCHETYPE_MECHANICS } from "./mechanics/skald";
+import { SWASHBUCKLER_ARCHETYPE_MECHANICS } from "./mechanics/swashbuckler";
+import { SORCERER_ARCHETYPE_MECHANICS } from "./mechanics/sorcerer";
+import { ARCANIST_ARCHETYPE_MECHANICS } from "./mechanics/arcanist";
 import paladinJson from "./paladin.json";
 import monkJson from "./monk.json";
 import monkUnchainedJson from "./monk-unchained.json";
 import skaldJson from "./skald.json";
+import swashbucklerJson from "./swashbuckler.json";
+import sorcererJson from "./sorcerer.json";
+import arcanistJson from "./arcanist.json";
 
 const FILES: ClassArchetypeFile[] = [
   paladinJson as unknown as ClassArchetypeFile,
   monkJson as unknown as ClassArchetypeFile,
   monkUnchainedJson as unknown as ClassArchetypeFile,
   skaldJson as unknown as ClassArchetypeFile,
+  swashbucklerJson as unknown as ClassArchetypeFile,
+  sorcererJson as unknown as ClassArchetypeFile,
+  arcanistJson as unknown as ClassArchetypeFile,
 ];
 
 const BY_CLASS = new Map<string, Map<string, ArchetypeDef>>(
@@ -64,6 +74,9 @@ const ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
   ...MONK_ARCHETYPE_MECHANICS,
   ...MONK_UNCHAINED_ARCHETYPE_MECHANICS,
   ...SKALD_ARCHETYPE_MECHANICS,
+  ...SWASHBUCKLER_ARCHETYPE_MECHANICS,
+  ...SORCERER_ARCHETYPE_MECHANICS,
+  ...ARCANIST_ARCHETYPE_MECHANICS,
 };
 
 export function listArchetypes(className: string): ArchetypeDef[] {
@@ -106,6 +119,20 @@ export interface ArchetypeEffects {
   suppressedQuickActions: Array<Set<string>>;
   addedResources: AddedResource[];
   addedQuickActions: { id: string; minLevel?: number; level: number }[];
+  /** static typed modifiers archetypes contribute (e.g. Crossblooded -2 Will);
+   *  computeAll folds these into the modifier stacking pass */
+  addedModifiers: Modifier[];
+  /** build-stat count id -> the class levels at which an archetype strips a
+   *  slot (e.g. arcanistExploits -> [1,3,7]). computeAll subtracts the slots
+   *  at or below the class level from the base count. */
+  featureCountRemovals: Record<string, number[]>;
+  /** per-spell-level spellcasting reshape (Eldritch Font), keyed to a casting
+   *  class; computeAll passes it to computeSpellbook when the class matches */
+  spellcastingAdjust?: {
+    classKey: string;
+    preparedPerLevel: number;
+    castsPerLevel: number;
+  };
   /**
    * Paladin class level at which divine grace (CHA to saves) comes online.
    * 0 = unmodified, Infinity = removed by an archetype.
@@ -133,6 +160,8 @@ export function resolveArchetypeEffects(
     suppressedQuickActions: classes.map(() => new Set<string>()),
     addedResources: [],
     addedQuickActions: [],
+    addedModifiers: [],
+    featureCountRemovals: {},
     divineGraceMinLevel: 0,
     removedSpellcastingClassKeys: new Set<string>(),
     grantsBravoAC: false,
@@ -155,10 +184,23 @@ export function resolveArchetypeEffects(
       if (def) {
         for (const feature of def.features) {
           for (const ref of feature.replaces) {
-            if (ref.unmatched || (ref.levels && ref.levels.length > 0))
-              continue;
             const mech = featureMech[ref.feature];
             if (!mech) continue;
+            // count features (arcanist exploits): the level-scoped refs
+            // enumerate the slots this archetype strips; a count feature never
+            // suppresses a pool, so handle it before the level-scoped skip.
+            if (mech.count) {
+              if (ref.levels && ref.levels.length > 0) {
+                const removed = effects.featureCountRemovals[mech.count] ?? [];
+                removed.push(...ref.levels);
+                effects.featureCountRemovals[mech.count] = removed;
+              }
+              continue;
+            }
+            // suppression: alters-refs, level-scoped refs ("her 12th-level
+            // mercy"), and unmatched refs never suppress.
+            if (ref.unmatched || (ref.levels && ref.levels.length > 0))
+              continue;
             if (mech.resource)
               effects.suppressedResources[i]!.add(mech.resource);
             if (mech.quickAction)
@@ -197,6 +239,12 @@ export function resolveArchetypeEffects(
       }
       for (const qa of mechanics.addsQuickActions ?? []) {
         effects.addedQuickActions.push({ ...qa, level: entry.level });
+      }
+      for (const m of mechanics.addsModifiers ?? []) {
+        effects.addedModifiers.push(m);
+      }
+      if (mechanics.spellcastingAdjust) {
+        effects.spellcastingAdjust = mechanics.spellcastingAdjust;
       }
       if (mechanics.removesSpellcasting) {
         effects.removedSpellcastingClassKeys.add(entry.className);

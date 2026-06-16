@@ -104,6 +104,21 @@ export interface ArchetypeMechanics {
   addsResources?: ClassResourceDef[];
   removesQuickActions?: string[];
   addsQuickActions?: { id: string; minLevel?: number }[];
+  /** static typed modifiers the archetype contributes (e.g. Crossblooded's
+   *  -2 Will penalty). These ride the same stacking engine as racial/gear
+   *  modifiers — computeAll folds them into the resolved totals, so they
+   *  benefit from same-type suppression and the situational-rider report. */
+  addsModifiers?: Modifier[];
+  /** per-spell-level spellcasting reshape (Eldritch Font: +1 cast/day and -1
+   *  prepared for each castable level). Applied in computeSpellbook only when
+   *  the spellbook's casting class matches classKey. preparedPerLevel is the
+   *  delta to preparation slots (negative = fewer); castsPerLevel adjusts the
+   *  arcanist casts/day pool. */
+  spellcastingAdjust?: {
+    classKey: string;
+    preparedPerLevel: number;
+    castsPerLevel: number;
+  };
   classSkills?: { add?: string[]; remove?: string[] };
   /** archetype trades spellcasting away entirely */
   removesSpellcasting?: boolean;

@@ -20,7 +20,12 @@ export function SpellSlotsTab({
   computed?: SpellbookComputed;
 }) {
   const slots = computed
-    ? SPELL_LEVELS.filter((level) => computed.levels[level]!.maxSlots > 0)
+    ? SPELL_LEVELS.filter((level) => {
+        const l = computed.levels[level]!;
+        // keep a level visible when prepared drops to 0 but casts/day remain
+        // (Eldritch Font's -1 prepared can zero the top castable level)
+        return l.maxSlots > 0 || (l.arcanistCasts ?? 0) > 0;
+      })
     : [];
 
   if (slots.length === 0) {

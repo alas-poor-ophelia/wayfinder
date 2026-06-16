@@ -240,6 +240,155 @@ describe("skald archetypes", () => {
   });
 });
 
+describe("swashbuckler archetypes", () => {
+  const swash = (level: number, ...archetypeKeys: string[]) => ({
+    className: "Swashbuckler",
+    level,
+    ...(archetypeKeys.length ? { archetypeKeys } : {}),
+  });
+
+  it("inspired-blade: panache re-keyed to Cha+Int, grants Weapon Finesse", () => {
+    const fx = resolveArchetypeEffects([swash(5, "inspired-blade")]);
+    expect(fx.grantsWeaponFinesse).toBe(true);
+    // alters-ref never auto-suppresses; mechanics removes + re-adds the pool
+    expect(fx.suppressedResources[0].has("panache")).toBe(true);
+    const panache = fx.addedResources.find((r) => r.def.id === "panache");
+    expect(panache!.def.max(5, { ...ZERO, cha: 3, int: 2 })).toBe(5);
+    // each term has its own minimum of 1
+    expect(panache!.def.max(5, { ...ZERO, cha: -1, int: -1 })).toBe(2);
+  });
+
+  it("azatariel: charmed life suppressed via graph, mercy pool added at 4th", () => {
+    const fx = resolveArchetypeEffects([swash(8, "azatariel")]);
+    expect(fx.suppressedResources[0].has("charmedLife")).toBe(true);
+    const mercy = fx.addedResources.find(
+      (r) => r.def.id === "affectionOfElysium",
+    );
+    expect(mercy!.def.minLevel).toBe(4);
+    expect(mercy!.def.max(8, { ...ZERO, cha: 3 })).toBe(7);
+  });
+
+  it("daring-infiltrator: class-skill swap, charmed life suppressed via graph", () => {
+    const fx = resolveArchetypeEffects([swash(6, "daring-infiltrator")]);
+    expect(fx.suppressedResources[0].has("charmedLife")).toBe(true);
+    expect([...fx.classSkillAdds].sort()).toEqual(["Disguise", "Stealth"]);
+    expect([...fx.classSkillRemoves].sort()).toEqual([
+      "Diplomacy",
+      "Perform (any)",
+      "Profession (any)",
+    ]);
+  });
+
+  it("picaroon: grants Weapon Finesse, panache alter leaves the pool intact", () => {
+    const fx = resolveArchetypeEffects([swash(3, "picaroon")]);
+    expect(fx.grantsWeaponFinesse).toBe(true);
+    expect(fx.suppressedResources[0].has("panache")).toBe(false);
+    expect(fx.addedResources).toHaveLength(0);
+  });
+
+  it("noble-fencer (partial): charmed life auto-suppressed, nothing added", () => {
+    const fx = resolveArchetypeEffects([swash(7, "noble-fencer")]);
+    expect(fx.suppressedResources[0].has("charmedLife")).toBe(true);
+    expect(fx.addedResources).toHaveLength(0);
+  });
+});
+
+describe("sorcerer archetypes", () => {
+  const sorc = (level: number, ...archetypeKeys: string[]) => ({
+    className: "Sorcerer",
+    level,
+    ...(archetypeKeys.length ? { archetypeKeys } : {}),
+  });
+
+  it("seeker: adds Disable Device as a class skill", () => {
+    const fx = resolveArchetypeEffects([sorc(3, "seeker")]);
+    expect([...fx.classSkillAdds]).toEqual(["Disable Device"]);
+  });
+
+  it("sorcerer-of-sleep: pesh touch pool (3 + Cha)/day", () => {
+    const fx = resolveArchetypeEffects([sorc(5, "sorcerer-of-sleep")]);
+    const pesh = fx.addedResources.find((r) => r.def.id === "peshTouch");
+    expect(pesh!.def.max(5, { ...ZERO, cha: 4 })).toBe(7);
+  });
+
+  it("tattooed-sorcerer: spell-tattoo pool scales 1/2/3 from 7th/11th/15th", () => {
+    const fx = resolveArchetypeEffects([sorc(11, "tattooed-sorcerer")]);
+    const tat = fx.addedResources.find((r) => r.def.id === "createSpellTattoo");
+    expect(tat!.def.minLevel).toBe(7);
+    expect(tat!.def.max(7, ZERO)).toBe(1);
+    expect(tat!.def.max(11, ZERO)).toBe(2);
+    expect(tat!.def.max(15, ZERO)).toBe(3);
+  });
+
+  it("razmiran-priest: class-skill swap (religion/perform for appraise/fly)", () => {
+    const fx = resolveArchetypeEffects([sorc(9, "razmiran-priest")]);
+    expect([...fx.classSkillAdds].sort()).toEqual([
+      "Knowledge (religion)",
+      "Perform (any)",
+    ]);
+    expect([...fx.classSkillRemoves].sort()).toEqual(["Appraise", "Fly"]);
+  });
+
+  it("crossblooded: -2 Will penalty added as a typed modifier", () => {
+    const fx = resolveArchetypeEffects([sorc(7, "crossblooded")]);
+    expect(fx.addedModifiers).toContainEqual({
+      target: "save.will",
+      type: "untyped",
+      value: -2,
+      source: "Crossblooded",
+    });
+  });
+});
+
+describe("arcanist archetypes", () => {
+  const arc = (level: number, ...archetypeKeys: string[]) => ({
+    className: "Arcanist",
+    level,
+    ...(archetypeKeys.length ? { archetypeKeys } : {}),
+  });
+
+  it("occultist: planar contact pool + the stripped exploit slots [1,7]", () => {
+    const fx = resolveArchetypeEffects([arc(7, "occultist")]);
+    const pc = fx.addedResources.find((r) => r.def.id === "planarContact");
+    expect(pc!.def.minLevel).toBe(7);
+    expect(pc!.def.max(7, ZERO)).toBe(1);
+    // level-scoped exploit refs enumerate the removed slots (graph-driven)
+    expect([...fx.featureCountRemovals.arcanistExploits!].sort()).toEqual([
+      1, 7,
+    ]);
+  });
+
+  it("graph-driven exploit removals: school-savant, blood-arcanist, eldritch-font", () => {
+    expect(
+      resolveArchetypeEffects([arc(7, "school-savant")]).featureCountRemovals
+        .arcanistExploits,
+    ).toEqual([1, 3, 7]);
+    expect(
+      resolveArchetypeEffects([arc(15, "blood-arcanist")]).featureCountRemovals
+        .arcanistExploits,
+    ).toEqual([1, 3, 9, 15]);
+    expect(
+      resolveArchetypeEffects([arc(13, "eldritch-font")]).featureCountRemovals
+        .arcanistExploits,
+    ).toEqual([3, 7, 13]);
+  });
+
+  it("eldritch-font: spellcasting reshape (+1 cast/-1 prepared per level)", () => {
+    const fx = resolveArchetypeEffects([arc(7, "eldritch-font")]);
+    expect(fx.spellcastingAdjust).toEqual({
+      classKey: "Arcanist",
+      preparedPerLevel: -1,
+      castsPerLevel: 1,
+    });
+  });
+
+  it("blood-arcanist (partial): bloodline/exploit swap adds no pools or modifiers", () => {
+    const fx = resolveArchetypeEffects([arc(9, "blood-arcanist")]);
+    expect(fx.addedResources).toHaveLength(0);
+    expect(fx.addedModifiers).toHaveLength(0);
+  });
+});
+
 describe("catalog surface", () => {
   it("lists 47 Paladin archetypes, none for unknown classes", () => {
     expect(listArchetypes("Paladin")).toHaveLength(47);
@@ -253,6 +402,26 @@ describe("catalog surface", () => {
 
   it("lists 26 Skald archetypes", () => {
     expect(listArchetypes("Skald")).toHaveLength(26);
+  });
+
+  it("lists the newly-scraped catalogs", () => {
+    expect(listArchetypes("Swashbuckler")).toHaveLength(20);
+    expect(listArchetypes("Sorcerer")).toHaveLength(13);
+    expect(listArchetypes("Arcanist")).toHaveLength(15);
+  });
+
+  it("new curated picks report as full mechanics, swaps as partial", () => {
+    for (const [id, cls] of [
+      ["inspired-blade", "Swashbuckler"],
+      ["azatariel", "Swashbuckler"],
+      ["crossblooded", "Sorcerer"],
+      ["sorcerer-of-sleep", "Sorcerer"],
+      ["occultist", "Arcanist"],
+    ] as const) {
+      expect(isPartialMechanics(id, cls), `${id} should be full`).toBe(false);
+    }
+    expect(isPartialMechanics("noble-fencer", "Swashbuckler")).toBe(true);
+    expect(isPartialMechanics("blood-arcanist", "Arcanist")).toBe(true);
   });
 
   it("partial-mechanics flag: curated five are full, others partial", () => {

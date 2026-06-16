@@ -8,6 +8,35 @@
     column-gap: 12px;
   }
 
+  // Read-only class build-stat counts (arcanist exploits known, etc.) — a
+  // centered chip row, styled to read like InitSpeed's label/value pairs.
+  .ms-class-counts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 16px;
+    margin: 2px 0 4px;
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
+    font-size: 0.8em;
+  }
+
+  .ms-class-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ms-class-count__label {
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .ms-class-count__value {
+    color: var(--ms-gold);
+    font-weight: bold;
+  }
+
   // anchor for the absolutely-pinned condition/buff icons
   .ms-combat {
     position: relative;

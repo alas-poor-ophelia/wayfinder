@@ -852,6 +852,10 @@ export interface SpellbookComputeInput {
   spellbook: SpellbookState;
   classes: ClassEntry[];
   mods: AbilityScores;
+  /** archetype spellcasting reshape (Eldritch Font) — applied only to the
+   *  arcanist casts/prepared columns, and only on levels the class can
+   *  already cast (base prep > 0), so it can't open an unreachable level. */
+  adjust?: { preparedPerLevel: number; castsPerLevel: number };
 }
 
 /** Does a class name match a spellbook's casting class? The ONE lenient
@@ -921,6 +925,16 @@ export function computeSpellbook(
           level,
           castingStatBonus,
         );
+        // Eldritch Font: +1 cast/day, -1 prepared per CASTABLE level. Guard on
+        // base preparations > 0 so the bonus never opens an unreachable level
+        // (per RAW: a level reduced to 0 prepared still keeps its slots).
+        if (input.adjust && maxSlots > 0) {
+          maxSlots = Math.max(0, maxSlots + input.adjust.preparedPerLevel);
+          arcanistCasts = Math.max(
+            0,
+            (arcanistCasts ?? 0) + input.adjust.castsPerLevel,
+          );
+        }
       } else {
         maxSlots =
           getSpellSlots(

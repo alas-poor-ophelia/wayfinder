@@ -8,6 +8,19 @@ import { computeAll } from "../../../src/calc";
 import { createDefaultCharacter } from "../../../src/types/character";
 import { createDefaultSpellbook } from "../../../src/types/spellbook";
 
+function arcanist(level: number, ...archetypeKeys: string[]) {
+  const c = createDefaultCharacter("a", "A");
+  c.classes = [
+    {
+      className: "Arcanist",
+      level,
+      ...(archetypeKeys.length ? { archetypeKeys } : {}),
+    },
+  ];
+  c.baseAbilities = { str: 10, dex: 12, con: 14, int: 18, wis: 10, cha: 10 };
+  return c;
+}
+
 function paladin(level: number, ...archetypeKeys: string[]) {
   const c = createDefaultCharacter("p", "P");
   c.classes = [
@@ -106,6 +119,70 @@ describe("scaled fist AC relocation", () => {
     c.baseAbilities = { ...c.baseAbilities, wis: 8 };
     // 10 base + 2 dex + max(0, -1) + no scaling below 4th
     expect(computeAll(c).ac.normalAC).toBe(12);
+  });
+});
+
+describe("arcanist exploits-known count", () => {
+  it("plain arcanist: exploits gained at odd levels (ceil(level/2))", () => {
+    expect(computeAll(arcanist(1)).featureCounts.arcanistExploits).toBe(1);
+    expect(computeAll(arcanist(7)).featureCounts.arcanistExploits).toBe(4);
+    expect(computeAll(arcanist(20)).featureCounts.arcanistExploits).toBe(10);
+  });
+
+  it("archetypes strip the slots ≤ current level from the count", () => {
+    // L7 base = 4. occultist removes [1,7]→2 left; school-savant [1,3,7]→1;
+    // blood-arcanist [1,3] of [1,3,9,15] (9/15 > 7)→2; eldritch-font [3,7]→2.
+    expect(
+      computeAll(arcanist(7, "occultist")).featureCounts.arcanistExploits,
+    ).toBe(2);
+    expect(
+      computeAll(arcanist(7, "school-savant")).featureCounts.arcanistExploits,
+    ).toBe(1);
+    expect(
+      computeAll(arcanist(7, "blood-arcanist")).featureCounts.arcanistExploits,
+    ).toBe(2);
+    expect(
+      computeAll(arcanist(7, "eldritch-font")).featureCounts.arcanistExploits,
+    ).toBe(2);
+  });
+
+  it("non-arcanists have an empty featureCounts map", () => {
+    expect(computeAll(paladin(7)).featureCounts).toEqual({});
+  });
+});
+
+describe("eldritch font spellcasting reshape", () => {
+  it("+1 cast/day and -1 prepared on each castable level, untouched elsewhere", () => {
+    const plain = arcanist(7);
+    plain.spellbook = createDefaultSpellbook("arcanist", "int");
+    const ef = arcanist(7, "eldritch-font");
+    ef.spellbook = createDefaultSpellbook("arcanist", "int");
+    const p = computeAll(plain).spellbook!;
+    const e = computeAll(ef).spellbook!;
+
+    // level 1 is castable at arcanist 7 → reshaped
+    expect(p.levels[1]!.maxSlots).toBeGreaterThan(0);
+    expect(e.levels[1]!.maxSlots).toBe(p.levels[1]!.maxSlots - 1);
+    expect(e.levels[1]!.arcanistCasts).toBe((p.levels[1]!.arcanistCasts ?? 0) + 1);
+
+    // a level the arcanist can't cast at 7 (6th) stays untouched (no opening)
+    expect(p.levels[6]!.maxSlots).toBe(0);
+    expect(e.levels[6]!.maxSlots).toBe(0);
+    expect(e.levels[6]!.arcanistCasts ?? 0).toBe(p.levels[6]!.arcanistCasts ?? 0);
+  });
+
+  it("adjust only fires for the matching casting class", () => {
+    // an eldritch-font arcanist multiclassed with a cleric spellbook: the
+    // cleric book is untouched (classKey gate)
+    const c = arcanist(7, "eldritch-font");
+    c.classes.push({ className: "Cleric", level: 5 });
+    c.spellbook = createDefaultSpellbook("cleric", "wis");
+    const plain = arcanist(7);
+    plain.classes.push({ className: "Cleric", level: 5 });
+    plain.spellbook = createDefaultSpellbook("cleric", "wis");
+    expect(computeAll(c).spellbook!.levels[1]!.maxSlots).toBe(
+      computeAll(plain).spellbook!.levels[1]!.maxSlots,
+    );
   });
 });
 

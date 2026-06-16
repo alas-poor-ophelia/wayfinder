@@ -5,6 +5,7 @@ import type { CharacterRecord } from "../../types/character";
 import { InventorySubtab } from "../inventory/InventorySubtab";
 import { ACShield } from "./ACShield";
 import { AttackBlocks } from "./AttackBlocks";
+import { ClassCounts } from "./ClassCounts";
 import { QuickActions } from "./QuickActions";
 import { ConditionNotes } from "./ConditionNotes";
 import { EnergyRes } from "./EnergyRes";
@@ -117,6 +118,7 @@ export function CombatTab({
         resourceMaxes={computed.resourceMaxes}
         resourceFooters={computed.resourceFooters}
       />
+      <ClassCounts featureCounts={computed.featureCounts} />
       <AttackBlocks
         store={store}
         character={character}

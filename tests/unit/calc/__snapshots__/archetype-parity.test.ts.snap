@@ -91,6 +91,7 @@ exports[`archetype parity guard: no-archetype output is frozen > Fighter 4 1`] =
     "wisAdjust": 0,
     "wisSkillAdjust": 0,
   },
+  "featureCounts": {},
   "hpMaxEffective": 0,
   "initiative": 2,
   "mods": {
@@ -220,6 +221,7 @@ exports[`archetype parity guard: no-archetype output is frozen > Monk (Unchained
     "wisAdjust": 0,
     "wisSkillAdjust": 0,
   },
+  "featureCounts": {},
   "hpMaxEffective": 0,
   "initiative": 3,
   "mods": {
@@ -355,6 +357,7 @@ exports[`archetype parity guard: no-archetype output is frozen > Paladin 4 / Fig
     "wisAdjust": 0,
     "wisSkillAdjust": 0,
   },
+  "featureCounts": {},
   "hpMaxEffective": 0,
   "initiative": 1,
   "mods": {
@@ -490,6 +493,7 @@ exports[`archetype parity guard: no-archetype output is frozen > Paladin 7 (cast
     "wisAdjust": 0,
     "wisSkillAdjust": 0,
   },
+  "featureCounts": {},
   "hpMaxEffective": 0,
   "initiative": 1,
   "mods": {

@@ -14,6 +14,11 @@ export interface FeatureMech {
   resource?: string;
   quickAction?: string;
   gate?: "divineGrace" | "spellcasting";
+  /** a build-stat COUNT this feature feeds (e.g. "arcanistExploits"), not a
+   *  daily pool. Level-scoped replaces-refs to such a feature ("the exploit
+   *  gained at 1st, 3rd, and 7th") enumerate the removed slots, reducing the
+   *  computed count — see resolveArchetypeEffects / computeAll's featureCounts. */
+  count?: string;
 }
 
 export const CLASS_FEATURE_MECH: Record<string, Record<string, FeatureMech>> = {
@@ -45,5 +50,32 @@ export const CLASS_FEATURE_MECH: Record<string, Record<string, FeatureMech>> = {
     // spell-kenning / inspired rage / rage powers: not modeled — refs to
     // them are deliberate no-ops (inspired rage is a song TYPE inside the
     // raging-song pool, not the pool itself).
+  },
+  Swashbuckler: {
+    // panache is only ever ALTERED by archetypes (regain conditions), never
+    // replaced — the entry is here for completeness/symmetry. charmed-life is
+    // genuinely traded away by several archetypes (Daring Infiltrator's
+    // Quick-Tongued, Azatariel's Elysian Conviction, Noble Fencer's
+    // Aristocratic Discipline) and auto-suppresses through this map.
+    panache: { resource: "panache" },
+    "charmed-life": { resource: "charmedLife" },
+    // deeds / nimble / swashbuckler finesse / weapon training: not modeled as
+    // pools — precise strike is a deed (granted as the preciseStrike QA at
+    // minLevel 3), not a base-table feature, so its refs stay unmatched.
+  },
+  Sorcerer: {
+    spells: { gate: "spellcasting" },
+    // bloodline powers / arcana / bonus spells / Eschew Materials: not modeled
+    // (the sheet doesn't track bloodline selection), so refs to them are
+    // deliberate no-ops. Archetypes still ADD pools/skills via mechanics.
+  },
+  Arcanist: {
+    "arcane-reservoir": { resource: "arcaneReservoir" },
+    spells: { gate: "spellcasting" },
+    // arcanist exploits are a known-COUNT, not a daily pool: level-scoped refs
+    // ("the exploit gained at 1st, 3rd, 7th") enumerate the slots an archetype
+    // strips, reducing the computed arcanistExploits count. consume-spells /
+    // magical-supremacy remain unmodeled no-ops.
+    "arcanist-exploit": { count: "arcanistExploits" },
   },
 };
