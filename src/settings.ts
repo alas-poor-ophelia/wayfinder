@@ -1,4 +1,4 @@
-import type { App} from "obsidian";
+import type { App } from "obsidian";
 import { PluginSettingTab, Setting } from "obsidian";
 import type MiniSheetPlugin from "./main";
 import { isCarrelInstalled } from "./util/carrel";

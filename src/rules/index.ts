@@ -1,5 +1,5 @@
 import { signal, type Signal } from "@preact/signals";
-import type { TFile} from "obsidian";
+import type { TFile } from "obsidian";
 import { type App } from "obsidian";
 import type MiniSheetPlugin from "../main";
 import { parseNote } from "./parse";
