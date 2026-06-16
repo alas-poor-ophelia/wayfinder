@@ -127,3 +127,19 @@ export function hpBreakdown(character: CharacterRecord): string {
   );
   return `${lines.join("\n")}\n────────────\nAverage max HP:  ${total}`;
 }
+
+/** Numeric form of {@link hpBreakdown}'s total — the PF average max HP from
+ *  stored hit dice + levels + base CON. Powers the "use average" affordance. */
+export function hpAverage(character: CharacterRecord): number {
+  let total = 0;
+  character.classes.forEach((c, i) => {
+    const die = getClassStats(c.className)?.hitDie ?? "d8";
+    const dieMax = parseInt(die.slice(1), 10) || 8;
+    const avg = dieMax / 2 + 1;
+    const level = c.level || 0;
+    if (level > 0) total += i === 0 ? dieMax + (level - 1) * avg : level * avg;
+  });
+  const conMod = Math.floor((character.baseAbilities.con - 10) / 2);
+  total += conMod * totalLevel(character.classes);
+  return total;
+}

@@ -30,9 +30,10 @@ export function ClassesSection({ store, character }: SectionProps) {
       "classes",
       classes.map((c, i) => (i === idx ? { ...c, ...patch } : c)),
     );
-    // a class swap can add OR remove the only caster — provision/prune the book
-    if (patch.className !== undefined)
-      store.reconcileSpellbookForClasses(character.id);
+    // a class swap or archetype toggle restructures the build — re-apply class
+    // defaults (spellbook, skills, pools, actions). Level-only edits don't.
+    if ("className" in patch || "archetypeKeys" in patch)
+      store.applyClassDefaults(character.id);
   };
 
   return (
@@ -136,7 +137,8 @@ export function ClassesSection({ store, character }: SectionProps) {
               ...classes,
               { className: CLASS_NAMES[0], level: 1 },
             ]);
-            store.reconcileSpellbookForClasses(character.id);
+            // no auto-apply on the bare add — the row is still the unconfigured
+            // default; defaults land when the class is picked from the dropdown
           }}
         >
           <UI.plus /> Add class

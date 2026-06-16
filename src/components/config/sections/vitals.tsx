@@ -1,11 +1,26 @@
 import { type AbilityKey } from "../../../types/character";
 import { Icon } from "../../common/Icon";
 import { InfoTip, Num, StatGrid } from "../primitives";
-import { ABIL, hpBreakdown, type SectionProps, setter } from "./shared";
+import {
+  ABIL,
+  hpAverage,
+  hpBreakdown,
+  type SectionProps,
+  setter,
+} from "./shared";
 
 /** Base Abilities (75%) + Hit Points (25%) on one row. */
 export function VitalsSection({ store, character }: SectionProps) {
   const set = setter(store, character);
+  const avg = hpAverage(character);
+  // write the PF average to max; carry current along when it's at full (or 0),
+  // otherwise just clamp it under the new max
+  const applyAverage = () => {
+    const atFull =
+      character.hp.current === 0 || character.hp.current === character.hp.max;
+    set("hp.max", avg);
+    set("hp.current", atFull ? avg : Math.min(character.hp.current, avg));
+  };
   return (
     <section class="sec">
       <div class="vitals">
@@ -47,6 +62,15 @@ export function VitalsSection({ store, character }: SectionProps) {
               />
             </label>
           </div>
+          {character.classes.length > 0 && avg > 0 && (
+            <button
+              class="btn btn--ghost btn--sm vitals__hpavg"
+              onClick={applyAverage}
+              title="Set max HP to the Pathfinder average for these classes"
+            >
+              Use average ({avg})
+            </button>
+          )}
         </div>
       </div>
     </section>

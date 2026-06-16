@@ -395,6 +395,16 @@ export class MiniSheetStore {
   setRace(id: string, raceKey: string | null): void {
     const race = raceKey ? getRaceData(raceKey) : null;
     const current = this.getCharacter(id);
+    // Adopt the race's speed when the field is still the untouched default
+    // ("30ft" from createDefaultCharacter): switch to derive-mode ("") so a
+    // slow race (Dwarf 20ft) shows correctly. A custom speed is left alone.
+    // Clearing the race off a derived speed restores the manual default.
+    let speed = current?.speed;
+    if (race && race.speed != null) {
+      if (current?.speed === "30ft") speed = "";
+    } else if (current?.speed === "") {
+      speed = "30ft";
+    }
     this.updateCharacter(id, {
       raceKey: race?.key,
       race: race ? race.name : (current?.race ?? ""),
@@ -407,6 +417,7 @@ export class MiniSheetStore {
         getHeritage(race.key, current.raceHeritageKey)
           ? current.raceHeritageKey
           : undefined,
+      speed,
     });
   }
 
@@ -463,10 +474,42 @@ export class MiniSheetStore {
       this.ensureSpellbookForClasses(id);
       return;
     }
-    if (casterClassEntry(record.classes)) return;
-    if (isPristineSpellbook(record.spellbook)) {
-      this.updateCharacter(id, { spellbook: undefined });
+    const entry = casterClassEntry(record.classes);
+    if (!entry) {
+      // last caster class gone: drop the book only if untouched
+      if (isPristineSpellbook(record.spellbook)) {
+        this.updateCharacter(id, { spellbook: undefined });
+      }
+      return;
     }
+    // still a caster, but the book may be keyed to a class we just swapped
+    // away from — re-point a pristine book so its slots/CL follow the new class
+    if (isPristineSpellbook(record.spellbook)) {
+      const { casting } = getClassData(entry.className)!;
+      const castingClass =
+        casting!.tableKey ?? normalizeClassName(entry.className);
+      if (record.spellbook.castingClass !== castingClass) {
+        this.updateCharacter(id, {
+          spellbook: createDefaultSpellbook(castingClass, casting!.ability),
+        });
+      }
+    }
+  }
+
+  /**
+   * Apply every class-derived default at once: provision/prune the spellbook,
+   * flag class skills (seeding the standard list when empty), and sync class
+   * resource pools + quick actions. Fired automatically when the class list
+   * changes structurally (class added / class swapped / archetype toggled) so
+   * the happy path needs no button hunt; the manual cards stay for explicit
+   * re-sync. Each step keeps its insert/flag-only contract, so deliberately
+   * removed defaults return — exactly as tapping a card would.
+   */
+  applyClassDefaults(id: string): void {
+    this.reconcileSpellbookForClasses(id);
+    this.applyClassSkills(id);
+    this.syncClassResources(id);
+    this.syncClassQuickActions(id);
   }
 
   /** Flag existing skill entries that are class skills for the character's
