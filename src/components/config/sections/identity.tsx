@@ -108,18 +108,26 @@ export function IdentitySection({ store, character }: SectionProps) {
         <RaceDetail race={race} heritage={heritage} />
       )}
       {baseRace?.flexibleAbility && (
-        <Row label="+2 ability">
-          <Sel
-            value={character.raceAbilityChoice ?? "—"}
-            options={["—", ...ABILITY_KEYS]}
-            onChange={(v) =>
-              set(
-                "raceAbilityChoice",
-                ABILITY_KEYS.includes(v as AbilityKey) ? v : undefined,
-              )
-            }
-          />
-        </Row>
+        <>
+          <Row label="+2 ability">
+            <Sel
+              value={character.raceAbilityChoice ?? "—"}
+              options={["—", ...ABILITY_KEYS]}
+              onChange={(v) =>
+                set(
+                  "raceAbilityChoice",
+                  ABILITY_KEYS.includes(v as AbilityKey) ? v : undefined,
+                )
+              }
+            />
+          </Row>
+          {!character.raceAbilityChoice && (
+            <p class="cfg-warn">
+              Pick a +2 ability — this race's flexible bonus isn't applied
+              until you choose one.
+            </p>
+          )}
+        </>
       )}
       <Row label="Type">
         <Seg
@@ -129,7 +137,12 @@ export function IdentitySection({ store, character }: SectionProps) {
             { value: "familiar", label: "Familiar" },
             { value: "companion", label: "Companion" },
           ]}
-          onChange={(v) => set("characterType", v)}
+          onChange={(v) =>
+            store.setCharacterType(
+              character.id,
+              v as CharacterRecord["characterType"],
+            )
+          }
         />
       </Row>
       {character.characterType !== "pc" && (

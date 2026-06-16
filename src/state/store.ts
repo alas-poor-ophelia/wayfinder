@@ -434,6 +434,41 @@ export class MiniSheetStore {
     });
   }
 
+  /** Set the character type, seeding/pruning the derived sub-objects so a
+   *  flip mirrors the New-sheet creator: → familiar/companion keeps an
+   *  existing master else defaults to the first OTHER PC (re-point via the
+   *  Master picker), companion gets a level; → pc drops the now-meaningless
+   *  master link + companion level. */
+  setCharacterType(id: string, type: CharacterRecord["characterType"]): void {
+    const current = this.getCharacter(id);
+    if (!current) throw new Error(`No character with id "${id}"`);
+    if (type === "pc") {
+      this.updateCharacter(id, {
+        characterType: "pc",
+        link: undefined,
+        companionLevel: undefined,
+      });
+      return;
+    }
+    const masterId =
+      current.link?.masterId ??
+      this.data.value.characters.find(
+        (c) => c.id !== id && c.characterType === "pc",
+      )?.id;
+    this.updateCharacter(id, {
+      characterType: type,
+      link: masterId
+        ? {
+            masterId,
+            hpMaxFromMaster: current.link?.hpMaxFromMaster ?? false,
+            babFromMaster: current.link?.babFromMaster ?? false,
+          }
+        : undefined,
+      companionLevel:
+        type === "companion" ? (current.companionLevel ?? 1) : undefined,
+    });
+  }
+
   /**
    * Auto-create a spellbook for the first caster class that has one, if the
    * character has none yet. Idempotent: never overwrites an existing book and

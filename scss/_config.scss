@@ -359,6 +359,18 @@
     margin: 8px 0 0;
   }
 
+  /* a soft caution nudge — e.g. an unmade flexible-ability choice */
+  .cfg-warn {
+    font-size: 12.5px;
+    line-height: 1.4;
+    margin: 2px 0 6px;
+    padding: 6px 10px;
+    border-left: 2px solid var(--ms-red);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--ms-red) 12%, transparent);
+    color: var(--text-normal);
+  }
+
   /* race detail (ability/size/speed/senses + heritage SLA/source), inline
      under the Heritage picker — or under Race data for races with no heritage */
   .race-detail {
