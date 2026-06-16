@@ -129,7 +129,7 @@ Alongside player characters, Wayfinder tracks familiars and animal companions as
 
 ### References
 
-Link rules notes from your vault to the relevant places on a sheet and read them without leaving the sidebar. References can be searched, pinned to a favorites rail, and ticked off where a note contains a checklist. If you also use the companion **Carrel** plugin, the References tab becomes a themed board of typed cards; without it, you get a built-in list view.
+Link rules notes from your vault to the relevant places on a sheet and read them without leaving the sidebar. References can be searched, pinned to a favorites rail, and ticked off where a note contains a checklist. If you also use the companion **[Carrel](https://github.com/alas-poor-ophelia/carrel)** plugin, the References tab becomes a themed board of typed cards; without it, you get a built-in list view.
 
 ![The References tab showing a search box, category filters, and a set of typed rule cards drawn from linked vault notes.](readme-images/screenshot-references.png)
 
@@ -154,7 +154,7 @@ Character data is held in the plugin's own `data.json`; forged custom items are 
 ## Requirements
 
 - Obsidian on desktop or mobile. The sheet is built for a narrow sidebar and tuned for iPad-sized touch targets.
-- No other plugin is required. **Style Settings** (for theming) and **Carrel** (for the richer References board) are optional.
+- No other plugin is required. **[Style Settings](https://github.com/mgmeyers/obsidian-style-settings)** (for theming) and **[Carrel](https://github.com/alas-poor-ophelia/carrel)** (for the richer References board) are optional.
 
 ## Known limitations
 
