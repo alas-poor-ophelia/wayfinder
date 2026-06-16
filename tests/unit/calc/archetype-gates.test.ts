@@ -161,14 +161,14 @@ describe("eldritch font spellcasting reshape", () => {
     const e = computeAll(ef).spellbook!;
 
     // level 1 is castable at arcanist 7 → reshaped
-    expect(p.levels[1]!.maxSlots).toBeGreaterThan(0);
-    expect(e.levels[1]!.maxSlots).toBe(p.levels[1]!.maxSlots - 1);
-    expect(e.levels[1]!.arcanistCasts).toBe((p.levels[1]!.arcanistCasts ?? 0) + 1);
+    expect(p.levels[1].maxSlots).toBeGreaterThan(0);
+    expect(e.levels[1].maxSlots).toBe(p.levels[1].maxSlots - 1);
+    expect(e.levels[1].arcanistCasts).toBe((p.levels[1].arcanistCasts ?? 0) + 1);
 
     // a level the arcanist can't cast at 7 (6th) stays untouched (no opening)
-    expect(p.levels[6]!.maxSlots).toBe(0);
-    expect(e.levels[6]!.maxSlots).toBe(0);
-    expect(e.levels[6]!.arcanistCasts ?? 0).toBe(p.levels[6]!.arcanistCasts ?? 0);
+    expect(p.levels[6].maxSlots).toBe(0);
+    expect(e.levels[6].maxSlots).toBe(0);
+    expect(e.levels[6].arcanistCasts ?? 0).toBe(p.levels[6].arcanistCasts ?? 0);
   });
 
   it("adjust only fires for the matching casting class", () => {
@@ -180,8 +180,8 @@ describe("eldritch font spellcasting reshape", () => {
     const plain = arcanist(7);
     plain.classes.push({ className: "Cleric", level: 5 });
     plain.spellbook = createDefaultSpellbook("cleric", "wis");
-    expect(computeAll(c).spellbook!.levels[1]!.maxSlots).toBe(
-      computeAll(plain).spellbook!.levels[1]!.maxSlots,
+    expect(computeAll(c).spellbook!.levels[1].maxSlots).toBe(
+      computeAll(plain).spellbook!.levels[1].maxSlots,
     );
   });
 });

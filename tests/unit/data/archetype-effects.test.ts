@@ -353,7 +353,7 @@ describe("arcanist archetypes", () => {
     expect(pc!.def.minLevel).toBe(7);
     expect(pc!.def.max(7, ZERO)).toBe(1);
     // level-scoped exploit refs enumerate the removed slots (graph-driven)
-    expect([...fx.featureCountRemovals.arcanistExploits!].sort()).toEqual([
+    expect([...fx.featureCountRemovals.arcanistExploits].sort()).toEqual([
       1, 7,
     ]);
   });

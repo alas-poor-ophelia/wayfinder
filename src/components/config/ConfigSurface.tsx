@@ -106,7 +106,28 @@ export function ConfigSurface({
     <div class="cfg">
       <div class="cfg__top">
         <h1 class="cfg__title">
-          Configure <b>{character.name}</b>
+          Configure{" "}
+          {store.data.value.characters.length > 1 ? (
+            <span class="cfg__switch">
+              <select
+                value={character.id}
+                aria-label="Switch character"
+                onChange={(e) =>
+                  store.setActiveCharacter(
+                    (e.target as HTMLSelectElement).value,
+                  )
+                }
+              >
+                {store.data.value.characters.map((c) => (
+                  <option key={c.id} value={c.id} selected={c.id === character.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </span>
+          ) : (
+            <b>{character.name}</b>
+          )}
         </h1>
         <span class="cfg__sub">{subtitle}</span>
         <span class="cfg__top-spacer" />

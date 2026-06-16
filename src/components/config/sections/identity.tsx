@@ -55,6 +55,18 @@ export function IdentitySection({ store, character }: SectionProps) {
 
   return (
     <Sec icon="ra-player" title="Identity">
+      {store.data.value.characters.length > 1 && (
+        <Row label="Active sheet" sub="switch character">
+          <Sel
+            value={character.id}
+            options={store.data.value.characters.map((c) => ({
+              value: c.id,
+              label: c.name,
+            }))}
+            onChange={(v) => store.setActiveCharacter(v)}
+          />
+        </Row>
+      )}
       <Row label="Name">
         <Txt value={character.name} onChange={(v) => set("name", v)} />
       </Row>

@@ -13,6 +13,7 @@ import {
 } from "./constants";
 import { importLegacy, importLegacyInventory } from "./import/legacy-import";
 import {
+  CharacterPickModal,
   ImportRuleModal,
   ImportSummaryModal,
   NotePickModal,
@@ -85,7 +86,23 @@ export default class MiniSheetPlugin extends Plugin {
     this.addCommand({
       id: "open-sheet",
       name: "Open sheet",
-      callback: () => void this.activateView(),
+      callback: () => void this.openSheet(),
+    });
+
+    this.addCommand({
+      id: "switch-character",
+      name: "Switch character",
+      callback: () => {
+        const roster = this.store.data.value.characters;
+        if (roster.length === 0) {
+          new Notice("No characters yet — create one first.");
+          return;
+        }
+        new CharacterPickModal(this.app, roster, (c) => {
+          this.store.setActiveCharacter(c.id);
+          void this.activateView();
+        }).open();
+      },
     });
 
     this.addCommand({
@@ -349,6 +366,22 @@ export default class MiniSheetPlugin extends Plugin {
     }
     await this.store.flush();
     new ImportSummaryModal(this.app, { name, warnings }).open();
+  }
+
+  /** Open the sheet. When no character is active, offer a picker (2+) or
+   *  silently select the sole character (1) before revealing the view. */
+  async openSheet(): Promise<void> {
+    const roster = this.store.data.value.characters;
+    if (!this.store.getCharacter() && roster.length > 1) {
+      new CharacterPickModal(this.app, roster, (c) => {
+        this.store.setActiveCharacter(c.id);
+        void this.activateView();
+      }).open();
+      return;
+    }
+    const only = this.store.getCharacter() ? null : roster[0];
+    if (only) this.store.setActiveCharacter(only.id);
+    await this.activateView();
   }
 
   async activateView(): Promise<void> {

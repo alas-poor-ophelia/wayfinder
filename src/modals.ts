@@ -8,6 +8,39 @@ import {
 } from "obsidian";
 import type MiniSheetPlugin from "./main";
 import { importRuleFromUrl } from "./rules/import-rule";
+import type { CharacterRecord } from "./types/character";
+
+/** Pick one of the stored characters (used to switch the active sheet). */
+export class CharacterPickModal extends FuzzySuggestModal<CharacterRecord> {
+  private characters: CharacterRecord[];
+  private onChoose: (character: CharacterRecord) => void;
+
+  constructor(
+    app: App,
+    characters: CharacterRecord[],
+    onChoose: (character: CharacterRecord) => void,
+  ) {
+    super(app);
+    this.characters = characters;
+    this.onChoose = onChoose;
+    this.setPlaceholder("Choose a character…");
+  }
+
+  getItems(): CharacterRecord[] {
+    return this.characters;
+  }
+
+  getItemText(character: CharacterRecord): string {
+    const cls = character.classes
+      .map((c) => `${c.className} ${c.level}`)
+      .join(" / ");
+    return cls ? `${character.name} — ${cls}` : character.name;
+  }
+
+  onChooseItem(character: CharacterRecord): void {
+    this.onChoose(character);
+  }
+}
 
 /** Pick a markdown note (used to choose the legacy sheet to import). */
 export class NotePickModal extends FuzzySuggestModal<TFile> {
