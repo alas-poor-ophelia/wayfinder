@@ -67,7 +67,7 @@ The Combat tab is the at-a-glance view you keep open during play:
 
 ### Quick actions and resource pools
 
-Situational toggles — Power Attack, Fighting Defensively, Smite Evil, Charge, and so on — sit in a grid on the Combat tab. Tapping one applies its modifiers to the relevant numbers and cycles through any stages it has. You choose which actions appear on the sheet and which stay on the bench, and you can build your own from a small set of effect types (modifiers, AC changes, extra damage dice, notes).
+Situational toggles — Power Attack, Fighting Defensively, Smite Evil, Charge, and so on — sit in a grid on the Combat tab. Tapping one applies its modifiers to the relevant numbers and cycles through any stages it has. A new character starts with the actions any character can take — Charge, Fighting Defensively, and the like — while class-specific ones wait on the bench; you choose which appear on the sheet, and you can build your own from a small set of effect types (modifiers, AC changes, extra damage dice, notes).
 
 Resource pools track expendable resources such as Lay on Hands, Ki, Panache, or Channel Energy. A pool's maximum can be a fixed number, derived automatically from a class, or computed from a formula (for example, half your paladin level plus your Charisma modifier).
 

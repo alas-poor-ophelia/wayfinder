@@ -1,7 +1,7 @@
 {
 	"id": "wayfinder",
 	"name": "Wayfinder",
-	"version": "0.8.0",
+	"version": "0.9.0",
 	"minAppVersion": "1.4.11",
 	"description": "A Pathfinder 1e toolkit for Obsidian — character sheets, spellbook, equipment, and references, optimized for iPad.",
 	"author": "alas, poor ophelia",

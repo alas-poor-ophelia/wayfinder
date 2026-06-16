@@ -38,11 +38,22 @@ jobs:
       - name: Build (production)
         run: bun run build:prod
 
+      - name: Build release notes from changelog
+        run: |
+          NOTES="$(awk -v tag="$GITHUB_REF_NAME" '$1 == "##" && $2 == tag {grab=1; next} $1 == "##" {grab=0} grab' CHANGELOG.md)"
+          if [ -z "$(printf '%s' "$NOTES" | tr -d '[:space:]')" ]; then
+            NOTES="Wayfinder $GITHUB_REF_NAME."
+          fi
+          {
+            printf '%s\n\n' "$NOTES"
+            printf 'Install the three attached files into `<vault>/.obsidian/plugins/wayfinder/`, or add the repo via BRAT.\n'
+          } > RELEASE_NOTES.md
+
       - name: Create GitHub release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${GITHUB_REF_NAME}" \
             --title "${GITHUB_REF_NAME}" \
-            --notes "Wayfinder ${GITHUB_REF_NAME}. Install the three attached files into \`<vault>/.obsidian/plugins/wayfinder/\`, or add the repo via BRAT." \
+            --notes-file RELEASE_NOTES.md \
             main.js styles.css manifest.json
