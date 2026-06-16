@@ -389,6 +389,150 @@ describe("arcanist archetypes", () => {
   });
 });
 
+describe("cleric archetypes", () => {
+  const cleric = (level: number, ...archetypeKeys: string[]) => ({
+    className: "Cleric",
+    level,
+    ...(archetypeKeys.length ? { archetypeKeys } : {}),
+  });
+
+  it("blossoming-light: channel-energy count override via remove + re-add same id", () => {
+    const fx = resolveArchetypeEffects([cleric(7, "blossoming-light")]);
+    // alters (not replaces) channel energy, so the graph leaves the base pool
+    // — mechanics removes it and re-adds the boosted count under the same id
+    expect(fx.suppressedResources[0].has("channelEnergy")).toBe(true);
+    const ce = fx.addedResources.find((r) => r.def.id === "channelEnergy");
+    // 5 + Cha 5 + floor(7/2)=3 → 13
+    expect(ce!.def.max(7, { ...ZERO, cha: 5 })).toBe(13);
+    expect(ce!.def.max(1, ZERO)).toBe(5); // floor(1/2)=0
+  });
+
+  it("forgemaster: channel energy auto-suppressed via graph, runeforger added (3 + Int)", () => {
+    const fx = resolveArchetypeEffects([cleric(8, "forgemaster")]);
+    expect(fx.suppressedResources[0].has("channelEnergy")).toBe(true);
+    const rune = fx.addedResources.find((r) => r.def.id === "runeforger");
+    expect(rune!.def.max(8, { ...ZERO, int: 3 })).toBe(6);
+  });
+
+  it("foundation-of-faith: bare 'does not gain channel energy' suppressed by mechanics, nothing added", () => {
+    const fx = resolveArchetypeEffects([cleric(8, "foundation-of-faith")]);
+    expect(fx.suppressedResources[0].has("channelEnergy")).toBe(true);
+    expect(fx.addedResources).toHaveLength(0);
+  });
+
+  it("sacred-attendant: nurture-grace added (3 + Wis); Channel Beauty alters, so the pool survives", () => {
+    const fx = resolveArchetypeEffects([cleric(5, "sacred-attendant")]);
+    expect(fx.suppressedResources[0].has("channelEnergy")).toBe(false);
+    const ng = fx.addedResources.find((r) => r.def.id === "nurtureGrace");
+    expect(ng!.def.max(5, { ...ZERO, wis: 4 })).toBe(7);
+  });
+
+  it("cardinal: adds four political class skills", () => {
+    const fx = resolveArchetypeEffects([cleric(5, "cardinal")]);
+    expect([...fx.classSkillAdds].sort()).toEqual([
+      "Bluff",
+      "Intimidate",
+      "Knowledge (geography)",
+      "Knowledge (local)",
+    ]);
+  });
+
+  it("triadic-priest: bonded-unity pool (3 + Wis) from 8th", () => {
+    const fx = resolveArchetypeEffects([cleric(8, "triadic-priest")]);
+    const bu = fx.addedResources.find((r) => r.def.id === "bondedUnity");
+    expect(bu!.def.minLevel).toBe(8);
+    expect(bu!.def.max(8, { ...ZERO, wis: 4 })).toBe(7);
+  });
+
+  it("elder-mythos-cultist: maddening-gaze scales 1/day at 5th, +1 per 3 levels; tier-increase refs never suppress", () => {
+    const fx = resolveArchetypeEffects([cleric(11, "elder-mythos-cultist")]);
+    // replaces only the channel-energy tier INCREASES (level-scoped) — base survives
+    expect(fx.suppressedResources[0].has("channelEnergy")).toBe(false);
+    const mg = fx.addedResources.find((r) => r.def.id === "maddeningGaze");
+    expect(mg!.def.minLevel).toBe(5);
+    expect(mg!.def.max(5, ZERO)).toBe(1);
+    expect(mg!.def.max(11, ZERO)).toBe(3); // 1 + floor(6/3)
+  });
+
+  it("hidden-priest: unseen-devotion scales 1/day at 8th, +1 per 4 levels", () => {
+    const fx = resolveArchetypeEffects([cleric(12, "hidden-priest")]);
+    const ud = fx.addedResources.find((r) => r.def.id === "unseenDevotion");
+    expect(ud!.def.minLevel).toBe(8);
+    expect(ud!.def.max(8, ZERO)).toBe(1);
+    expect(ud!.def.max(12, ZERO)).toBe(2);
+  });
+
+  it("scroll-scholar: flash-of-insight 1/2/3 from 10th/15th/20th", () => {
+    const fx = resolveArchetypeEffects([cleric(20, "scroll-scholar")]);
+    const fi = fx.addedResources.find((r) => r.def.id === "flashOfInsight");
+    expect(fi!.def.minLevel).toBe(10);
+    expect(fi!.def.max(10, ZERO)).toBe(1);
+    expect(fi!.def.max(15, ZERO)).toBe(2);
+    expect(fi!.def.max(20, ZERO)).toBe(3);
+  });
+});
+
+describe("oracle archetypes", () => {
+  const oracle = (level: number, ...archetypeKeys: string[]) => ({
+    className: "Oracle",
+    level,
+    ...(archetypeKeys.length ? { archetypeKeys } : {}),
+  });
+
+  it("shigenjo: ki pool (1/3 level + Cha) from 7th, plus Survival-for-Diplomacy skill swap", () => {
+    const fx = resolveArchetypeEffects([oracle(9, "shigenjo")]);
+    const ki = fx.addedResources.find((r) => r.def.id === "kiPool");
+    expect(ki!.def.minLevel).toBe(7);
+    expect(ki!.def.max(9, { ...ZERO, cha: 5 })).toBe(8); // floor(9/3)=3 + 5
+    expect([...fx.classSkillAdds]).toEqual(["Survival"]);
+    expect([...fx.classSkillRemoves]).toEqual(["Diplomacy"]);
+  });
+
+  it("warsighted: martial-flexibility pool (3 + 1/2 level)", () => {
+    const fx = resolveArchetypeEffects([oracle(10, "warsighted")]);
+    const mf = fx.addedResources.find((r) => r.def.id === "martialFlexibility");
+    expect(mf!.def.max(10, ZERO)).toBe(8); // 3 + floor(10/2)
+    expect(mf!.def.max(1, ZERO)).toBe(3);
+  });
+
+  it("pei-zin-practitioner: healer's way pool (1 + Cha)", () => {
+    const fx = resolveArchetypeEffects([oracle(5, "pei-zin-practitioner")]);
+    const hw = fx.addedResources.find((r) => r.def.id === "healersWay");
+    expect(hw!.def.max(5, { ...ZERO, cha: 5 })).toBe(6);
+  });
+
+  it("purifier: sacred-scourge pool (1 + Cha) from 5th", () => {
+    const fx = resolveArchetypeEffects([oracle(6, "purifier")]);
+    const ss = fx.addedResources.find((r) => r.def.id === "sacredScourge");
+    expect(ss!.def.minLevel).toBe(5);
+    expect(ss!.def.max(6, { ...ZERO, cha: 5 })).toBe(6);
+  });
+
+  it("ocean-s-echo: inspiring-song rounds/day (level + Cha, min 1) plus four class skills", () => {
+    const fx = resolveArchetypeEffects([oracle(8, "ocean-s-echo")]);
+    const song = fx.addedResources.find((r) => r.def.id === "inspiringSong");
+    expect(song!.def.footer).toBe("rounds/day");
+    expect(song!.def.max(8, { ...ZERO, cha: 5 })).toBe(13);
+    expect(song!.def.max(1, { ...ZERO, cha: -5 })).toBe(1); // minimum 1
+    expect([...fx.classSkillAdds].sort()).toEqual([
+      "Bluff",
+      "Intimidate",
+      "Knowledge (nature)",
+      "Perform (any)",
+    ]);
+  });
+
+  it("stargazer: three concrete class skills, no pools", () => {
+    const fx = resolveArchetypeEffects([oracle(3, "stargazer")]);
+    expect(fx.addedResources).toHaveLength(0);
+    expect([...fx.classSkillAdds].sort()).toEqual([
+      "Knowledge (nature)",
+      "Perception",
+      "Survival",
+    ]);
+  });
+});
+
 describe("catalog surface", () => {
   it("lists 47 Paladin archetypes, none for unknown classes", () => {
     expect(listArchetypes("Paladin")).toHaveLength(47);
@@ -408,6 +552,25 @@ describe("catalog surface", () => {
     expect(listArchetypes("Swashbuckler")).toHaveLength(20);
     expect(listArchetypes("Sorcerer")).toHaveLength(13);
     expect(listArchetypes("Arcanist")).toHaveLength(15);
+  });
+
+  it("lists the Cleric and Oracle catalogs", () => {
+    expect(listArchetypes("Cleric")).toHaveLength(35);
+    expect(listArchetypes("Oracle")).toHaveLength(26);
+  });
+
+  it("Cleric/Oracle curated picks are full mechanics, swaps are partial", () => {
+    for (const [id, cls] of [
+      ["forgemaster", "Cleric"],
+      ["blossoming-light", "Cleric"],
+      ["shigenjo", "Oracle"],
+      ["purifier", "Oracle"],
+    ] as const) {
+      expect(isPartialMechanics(id, cls), `${id} should be full`).toBe(false);
+    }
+    // revelation/mystery swaps with no hand-authored mechanics stay partial
+    expect(isPartialMechanics("crusader", "Cleric")).toBe(true);
+    expect(isPartialMechanics("hermit", "Oracle")).toBe(true);
   });
 
   it("new curated picks report as full mechanics, swaps as partial", () => {
