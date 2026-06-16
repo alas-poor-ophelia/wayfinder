@@ -4,6 +4,8 @@ import { TABS, type TabName } from "../constants";
 import {
   createDefaultCharacter,
   type CharacterRecord,
+  type ClassEntry,
+  type SkillEntry,
 } from "../types/character";
 import type { QuickActionDef } from "../types/quick-actions";
 import {
@@ -23,17 +25,52 @@ import {
 } from "../types/inventory";
 import { computeAll } from "../calc";
 import { evaluateResourceFormula } from "../calc/resources";
+import { STANDARD_SKILLS } from "../calc/skills";
+import { normalizeClassName } from "../calc/spells";
 import { resolveArchetypeEffects } from "../data/archetypes";
 import {
   classQuickActionIds,
   classResources,
+  getClassData,
   unionClassSkills,
 } from "../data/classes";
 import { getCatalogQuickAction } from "../data/quick-actions";
 import { getHeritage, getRaceData } from "../data/races";
+import { createDefaultSpellbook } from "../types/spellbook";
+import type { SpellbookState } from "../types/spellbook";
 import { migrateData } from "./migrations";
 
 const SAVE_DEBOUNCE_MS = 500;
+
+/** First class entry that drives a spellbook: has a `casting` block and is
+ *  not stripped of spellcasting by a selected archetype. null = no caster. */
+function casterClassEntry(classes: ClassEntry[]): ClassEntry | null {
+  const fx = resolveArchetypeEffects(classes);
+  return (
+    classes.find((entry) => {
+      const data = getClassData(entry.className);
+      if (!data?.casting) return false;
+      return !(fx.any && fx.removedSpellcastingClassKeys.has(entry.className));
+    }) ?? null
+  );
+}
+
+/** A spellbook the user has never put content into — safe to discard when its
+ *  driving caster class is removed. Slot-remaining tracking is ignored; only
+ *  authored content (spells, SLAs, loadouts, overrides, preparations,
+ *  metamagic) counts. */
+function isPristineSpellbook(sb: SpellbookState): boolean {
+  return (
+    sb.spells.length === 0 &&
+    sb.slas.length === 0 &&
+    (sb.loadouts?.length ?? 0) === 0 &&
+    sb.casterLevelOverride === undefined &&
+    (sb.metamagicFeats?.length ?? 0) === 0 &&
+    sb.globalMetamagic.active.length === 0 &&
+    Object.keys(sb.slotOverrides ?? {}).length === 0 &&
+    Object.values(sb.preparations).every((preps) => preps.length === 0)
+  );
+}
 
 /**
  * Single source of truth for all plugin state, backed by data.json.
@@ -386,12 +423,67 @@ export class MiniSheetStore {
     });
   }
 
+  /**
+   * Auto-create a spellbook for the first caster class that has one, if the
+   * character has none yet. Idempotent: never overwrites an existing book and
+   * never deletes one when a caster class is removed (no data loss). The
+   * casting class/stat default from the class data's `casting` block —
+   * `tableKey` when a slot table is modeled, else the normalized class name
+   * (caster-level tracking + known-spell management still work; manual slot
+   * overrides cover the rest). Archetypes that trade spellcasting away
+   * (removesSpellcasting) are skipped. The user can re-point class/stat via
+   * the spellbook gear flyout. Returns true when a book was created.
+   */
+  ensureSpellbookForClasses(id: string): boolean {
+    const record = this.getCharacter(id);
+    if (!record || record.spellbook) return false;
+    const entry = casterClassEntry(record.classes);
+    if (!entry) return false;
+    const { casting } = getClassData(entry.className)!;
+    const castingClass =
+      casting!.tableKey ?? normalizeClassName(entry.className);
+    this.updateCharacter(id, {
+      spellbook: createDefaultSpellbook(castingClass, casting!.ability),
+    });
+    return true;
+  }
+
+  /**
+   * Keep the spellbook in step with the class list after a class edit:
+   * provision a book when a caster class appears without one, and drop a
+   * still-pristine auto-created book when the last caster class is removed
+   * (so the default-Alchemist-on-Add row doesn't strand an empty Spells tab).
+   * Pristine = no user content (spells/SLAs/loadouts/overrides/preparations/
+   * metamagic), so an imported or edited book is never discarded.
+   */
+  reconcileSpellbookForClasses(id: string): void {
+    const record = this.getCharacter(id);
+    if (!record) return;
+    if (!record.spellbook) {
+      this.ensureSpellbookForClasses(id);
+      return;
+    }
+    if (casterClassEntry(record.classes)) return;
+    if (isPristineSpellbook(record.spellbook)) {
+      this.updateCharacter(id, { spellbook: undefined });
+    }
+  }
+
   /** Flag existing skill entries that are class skills for the character's
    *  classes. Only flags — never unflags (traits/feats can grant class
-   *  skills we don't know about) and never creates skill rows. */
+   *  skills we don't know about). Seeds the standard PF1e skill list first
+   *  when the character has no skills yet, so the button always does the
+   *  obvious thing (it used to silently no-op until the Skills tab was
+   *  initialized). */
   applyClassSkills(id: string): void {
     const record = this.getCharacter(id);
     if (!record) throw new Error(`No character with id "${id}"`);
+    const seeded: Record<string, SkillEntry> = { ...record.skills };
+    if (Object.keys(seeded).length === 0) {
+      for (const [name, ability] of Object.entries(STANDARD_SKILLS)) {
+        seeded[name] = { ability, ranks: 0, misc: 0, classSkill: false };
+      }
+    }
     const union = unionClassSkills(record.classes);
     const isClassSkill = (name: string): boolean =>
       union.has(name) ||
@@ -399,7 +491,7 @@ export class MiniSheetStore {
         (group) => name.startsWith(group) && union.has(`${group} (any)`),
       );
     const skills = Object.fromEntries(
-      Object.entries(record.skills).map(([name, entry]) => [
+      Object.entries(seeded).map(([name, entry]) => [
         name,
         isClassSkill(name) && !entry.classSkill
           ? { ...entry, classSkill: true }

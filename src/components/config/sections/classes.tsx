@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 import {
   CLASS_NAMES,
   getClassStats,
@@ -15,12 +15,25 @@ import { type SectionProps, setter } from "./shared";
 export function ClassesSection({ store, character }: SectionProps) {
   const set = setter(store, character);
   const [archOpen, setArchOpen] = useState<number | null>(null);
+  // transient "applied ✓" flash on the fire-once sync cards
+  const [flashed, setFlashed] = useState<string | null>(null);
+  const flashTimer = useRef<number | null>(null);
+  const runSync = (key: string, fn: () => void) => {
+    fn();
+    setFlashed(key);
+    if (flashTimer.current !== null) window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setFlashed(null), 1300);
+  };
   const classes = character.classes;
-  const update = (idx: number, patch: Partial<ClassEntry>) =>
+  const update = (idx: number, patch: Partial<ClassEntry>) => {
     set(
       "classes",
       classes.map((c, i) => (i === idx ? { ...c, ...patch } : c)),
     );
+    // a class swap can add OR remove the only caster — provision/prune the book
+    if (patch.className !== undefined)
+      store.reconcileSpellbookForClasses(character.id);
+  };
 
   return (
     <Sec
@@ -50,12 +63,13 @@ export function ClassesSection({ store, character }: SectionProps) {
               <button
                 class="iconbtn"
                 aria-label={`Remove ${entry.className}`}
-                onClick={() =>
+                onClick={() => {
                   set(
                     "classes",
                     classes.filter((_, i) => i !== idx),
-                  )
-                }
+                  );
+                  store.reconcileSpellbookForClasses(character.id);
+                }}
               >
                 <UI.x />
               </button>
@@ -117,12 +131,13 @@ export function ClassesSection({ store, character }: SectionProps) {
       <div style={{ display: "flex", gap: 8, margin: "8px 0 4px" }}>
         <button
           class="btn btn--ghost btn--sm"
-          onClick={() =>
+          onClick={() => {
             set("classes", [
               ...classes,
               { className: CLASS_NAMES[0], level: 1 },
-            ])
-          }
+            ]);
+            store.reconcileSpellbookForClasses(character.id);
+          }}
         >
           <UI.plus /> Add class
         </button>
@@ -133,17 +148,23 @@ export function ClassesSection({ store, character }: SectionProps) {
       </div>
       <div class="synccards">
         <button
-          class="synccard"
-          onClick={() => store.applyClassSkills(character.id)}
+          class={`synccard${flashed === "skills" ? " is-done" : ""}`}
+          onClick={() =>
+            runSync("skills", () => store.applyClassSkills(character.id))
+          }
         >
           <div class="synccard__t">
             <Icon id="ra-targeted" /> Class skills
           </div>
-          <div class="synccard__d">Flag class skills on your skill rows.</div>
+          <div class="synccard__d">
+            Add PF1e skills if needed, then flag class skills.
+          </div>
         </button>
         <button
-          class="synccard"
-          onClick={() => store.syncClassResources(character.id)}
+          class={`synccard${flashed === "resources" ? " is-done" : ""}`}
+          onClick={() =>
+            runSync("resources", () => store.syncClassResources(character.id))
+          }
         >
           <div class="synccard__t">
             <Icon id="ra-round-bottom-flask" /> Resource pools
@@ -151,8 +172,10 @@ export function ClassesSection({ store, character }: SectionProps) {
           <div class="synccard__d">Add class pools like Lay on Hands.</div>
         </button>
         <button
-          class="synccard"
-          onClick={() => store.syncClassQuickActions(character.id)}
+          class={`synccard${flashed === "qa" ? " is-done" : ""}`}
+          onClick={() =>
+            runSync("qa", () => store.syncClassQuickActions(character.id))
+          }
         >
           <div class="synccard__t">
             <Icon id="ra-lightning-bolt" /> Quick actions

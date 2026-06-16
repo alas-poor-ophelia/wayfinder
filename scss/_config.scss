@@ -616,6 +616,10 @@
   .btn--ghost:hover {
     color: var(--text);
   }
+  .btn--ghost:active {
+    color: var(--text);
+    transform: translateY(1px);
+  }
 
   .iconbtn {
     width: 28px;
@@ -826,6 +830,24 @@
   .synccard:hover {
     border-color: var(--accent-line);
     background: var(--bg-soft);
+  }
+  /* immediate press feedback (these are fire-once actions) */
+  .synccard:active {
+    transform: translateY(1px);
+    border-color: var(--accent-line);
+    background: var(--bg-soft);
+  }
+  /* transient "applied" confirmation, toggled for ~1.3s by the component */
+  .synccard.is-done {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .synccard.is-done .synccard__t::after {
+    content: "✓ added";
+    font-family: var(--ms-font-label, "Taroca", sans-serif);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--accent);
   }
   .synccard__t {
     font-family: var(--ms-font-display, "Norwester", sans-serif);
