@@ -84,7 +84,12 @@ export const CLERIC_ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
     key: "cardinal",
     classKey: "Cleric",
     classSkills: {
-      add: ["Bluff", "Intimidate", "Knowledge (geography)", "Knowledge (local)"],
+      add: [
+        "Bluff",
+        "Intimidate",
+        "Knowledge (geography)",
+        "Knowledge (local)",
+      ],
     },
   },
 

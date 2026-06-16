@@ -40,7 +40,9 @@ describe("addCharacter quick-action seed", () => {
 
   it("never seeds class-specific legacy actions onto a new sheet", () => {
     const store = makeStore();
-    const ids = new Set(store.addCharacter("Hero").quickActions!.map((q) => q.id));
+    const ids = new Set(
+      store.addCharacter("Hero").quickActions!.map((q) => q.id),
+    );
     expect(ids.has("smiteEvil")).toBe(false);
     expect(ids.has("flurryOfBlows")).toBe(false);
     expect(ids.has("weaponSong")).toBe(false);

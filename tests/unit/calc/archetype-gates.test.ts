@@ -163,7 +163,9 @@ describe("eldritch font spellcasting reshape", () => {
     // level 1 is castable at arcanist 7 → reshaped
     expect(p.levels[1].maxSlots).toBeGreaterThan(0);
     expect(e.levels[1].maxSlots).toBe(p.levels[1].maxSlots - 1);
-    expect(e.levels[1].arcanistCasts).toBe((p.levels[1].arcanistCasts ?? 0) + 1);
+    expect(e.levels[1].arcanistCasts).toBe(
+      (p.levels[1].arcanistCasts ?? 0) + 1,
+    );
 
     // a level the arcanist can't cast at 7 (6th) stays untouched (no opening)
     expect(p.levels[6].maxSlots).toBe(0);

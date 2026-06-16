@@ -144,7 +144,12 @@ describe("activeEffects", () => {
 describe("newCharacterQuickActions", () => {
   it("seeds only the truly-default actions plus Power Attack when EitR is on", () => {
     const ids = newCharacterQuickActions(true).map((d) => d.id);
-    expect(ids).toEqual(["powerAttack", "fightingDefensively", "charge", "flank"]);
+    expect(ids).toEqual([
+      "powerAttack",
+      "fightingDefensively",
+      "charge",
+      "flank",
+    ]);
   });
 
   it("omits Power Attack when EitR is off", () => {

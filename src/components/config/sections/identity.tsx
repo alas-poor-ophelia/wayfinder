@@ -123,8 +123,8 @@ export function IdentitySection({ store, character }: SectionProps) {
           </Row>
           {!character.raceAbilityChoice && (
             <p class="cfg-warn">
-              Pick a +2 ability — this race's flexible bonus isn't applied
-              until you choose one.
+              Pick a +2 ability — this race's flexible bonus isn't applied until
+              you choose one.
             </p>
           )}
         </>

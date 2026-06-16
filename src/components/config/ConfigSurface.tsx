@@ -119,7 +119,11 @@ export function ConfigSurface({
                 }
               >
                 {store.data.value.characters.map((c) => (
-                  <option key={c.id} value={c.id} selected={c.id === character.id}>
+                  <option
+                    key={c.id}
+                    value={c.id}
+                    selected={c.id === character.id}
+                  >
                     {c.name}
                   </option>
                 ))}

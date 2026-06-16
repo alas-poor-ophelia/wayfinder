@@ -35,10 +35,26 @@ Active plan: `C:\Users\whipl\.claude\plans\swirling-pondering-feather.md`.
 bun run build        # sass + esbuild -> main.js/styles.css
 bun run deploy       # build + copy main.js/styles.css/manifest.json to the vault
 bun run typecheck    # tsc --noEmit
+bun run lint         # eslint .  (CI does NOT lint — run this every commit)
 bun run test:unit    # vitest (tests/unit)
+bun run check        # typecheck + lint + test:unit  (the full local gate)
 ```
 
 Deploy target: `MiniSheet Dev/.obsidian/plugins/wayfinder/`.
+
+### Commit & release gates
+
+Nothing in CI lints — `.github/workflows/release.yml` only builds on a pushed
+tag, so these gates are local discipline (a git pre-commit hook is a TODO, not
+yet wired):
+
+- **Every commit:** run `bun run lint` at minimum; prefer `bun run check`
+  (typecheck + lint + tests). Don't commit with lint errors.
+- **Before a release:** `bun run check`, then `bun run build:prod` — the
+  pre-flight already called for in `RELEASE.md`.
+
+`bun run format:check` / `format` are cross-platform via `endOfLine: "auto"`;
+formatting is not part of `check` and stays advisory.
 
 ### Development cycle (MANDATORY)
 
