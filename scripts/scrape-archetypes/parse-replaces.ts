@@ -57,18 +57,29 @@ const TAIL_NOISE_RE =
   /\s+(?:ability|abilities|class features?|features?|gained|at|levels?)\s*$/;
 
 /** Aliases for features the class table doesn't print verbatim. Applied
- * only when the aliased slug exists in the base feature table. */
-const FEATURE_ALIASES: Record<string, string> = {
+ * only when the aliased slug exists in the base feature table. A value may be
+ * a list of candidates tried in order — the first that exists in THIS class's
+ * base table wins, so one global key serves classes that print the same
+ * feature under different slugs (Paladin "Channel positive energy" vs Cleric's
+ * dice-tiered "Channel energy 1d6"; no class's table has both). */
+const FEATURE_ALIASES: Record<string, string | string[]> = {
   spellcasting: "spells",
   "spell-casting": "spells",
   "divine-spellcasting": "spells",
   spell: "spells",
-  "channel-energy": "channel-positive-energy",
+  "channel-energy": ["channel-positive-energy", "channel-energy-1d6"],
   // The class tables bake column riders into these slugs: core Monk prints
   // "Ki pool (magic)", unchained Monk "Flurry of blows (bonus attack)".
   "ki-pool": "ki-pool-magic",
   "flurry-of-blows": "flurry-of-blows-bonus-attack",
 };
+
+/** Alias candidates for a slug, normalized to a list (empty if no alias). */
+function aliasList(slug: string): string[] {
+  const a = FEATURE_ALIASES[slug];
+  if (a === undefined) return [];
+  return Array.isArray(a) ? a : [a];
+}
 
 const ORDINAL_RE = /(\d+)(?:st|nd|rd|th)/g;
 const ITEM_MARK = "\u0001";
@@ -148,9 +159,9 @@ function resolveItem(
   let slug = slugify(item);
   if (!baseSlugs.has(slug)) {
     for (const candidate of [
-      FEATURE_ALIASES[slug],
+      ...aliasList(slug),
       singularize(slug),
-      FEATURE_ALIASES[singularize(slug)],
+      ...aliasList(singularize(slug)),
     ]) {
       if (candidate && baseSlugs.has(candidate)) {
         slug = candidate;

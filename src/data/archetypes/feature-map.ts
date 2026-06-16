@@ -69,6 +69,23 @@ export const CLASS_FEATURE_MECH: Record<string, Record<string, FeatureMech>> = {
     // (the sheet doesn't track bloodline selection), so refs to them are
     // deliberate no-ops. Archetypes still ADD pools/skills via mechanics.
   },
+  Cleric: {
+    // The class table tiers the slug by dice (channel-energy-1d6 … 10d6); the
+    // sheet tracks ONE channelEnergy pool, so the scraper's channel-energy
+    // alias resolves generic "channel energy" refs to the 1st-level tier. A
+    // tier-specific ref ("the increase to channel energy gained at 3rd level")
+    // carries a level qualifier and never suppresses — the pool survives.
+    "channel-energy-1d6": { resource: "channelEnergy" },
+    spells: { gate: "spellcasting" },
+    // domains / orisons / aura: not modeled as pools — refs are no-ops.
+  },
+  Oracle: {
+    // Oracle tracks no daily pools (mysteries/revelations/curse aren't modeled
+    // as selectable pools) — its only modeled feature is spontaneous casting.
+    // Archetype refs to "mystery bonus spells", revelations, and the curse are
+    // deliberate no-ops; revelation replaces are all level-scoped regardless.
+    spells: { gate: "spellcasting" },
+  },
   Arcanist: {
     "arcane-reservoir": { resource: "arcaneReservoir" },
     spells: { gate: "spellcasting" },

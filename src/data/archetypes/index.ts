@@ -26,6 +26,8 @@ import { SKALD_ARCHETYPE_MECHANICS } from "./mechanics/skald";
 import { SWASHBUCKLER_ARCHETYPE_MECHANICS } from "./mechanics/swashbuckler";
 import { SORCERER_ARCHETYPE_MECHANICS } from "./mechanics/sorcerer";
 import { ARCANIST_ARCHETYPE_MECHANICS } from "./mechanics/arcanist";
+import { CLERIC_ARCHETYPE_MECHANICS } from "./mechanics/cleric";
+import { ORACLE_ARCHETYPE_MECHANICS } from "./mechanics/oracle";
 import paladinJson from "./paladin.json";
 import monkJson from "./monk.json";
 import monkUnchainedJson from "./monk-unchained.json";
@@ -33,6 +35,8 @@ import skaldJson from "./skald.json";
 import swashbucklerJson from "./swashbuckler.json";
 import sorcererJson from "./sorcerer.json";
 import arcanistJson from "./arcanist.json";
+import clericJson from "./cleric.json";
+import oracleJson from "./oracle.json";
 
 const FILES: ClassArchetypeFile[] = [
   paladinJson as unknown as ClassArchetypeFile,
@@ -42,6 +46,8 @@ const FILES: ClassArchetypeFile[] = [
   swashbucklerJson as unknown as ClassArchetypeFile,
   sorcererJson as unknown as ClassArchetypeFile,
   arcanistJson as unknown as ClassArchetypeFile,
+  clericJson as unknown as ClassArchetypeFile,
+  oracleJson as unknown as ClassArchetypeFile,
 ];
 
 const BY_CLASS = new Map<string, Map<string, ArchetypeDef>>(
@@ -77,6 +83,8 @@ const ARCHETYPE_MECHANICS: Record<string, ArchetypeMechanics> = {
   ...SWASHBUCKLER_ARCHETYPE_MECHANICS,
   ...SORCERER_ARCHETYPE_MECHANICS,
   ...ARCANIST_ARCHETYPE_MECHANICS,
+  ...CLERIC_ARCHETYPE_MECHANICS,
+  ...ORACLE_ARCHETYPE_MECHANICS,
 };
 
 export function listArchetypes(className: string): ArchetypeDef[] {
