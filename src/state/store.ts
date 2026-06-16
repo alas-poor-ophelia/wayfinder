@@ -34,7 +34,10 @@ import {
   getClassData,
   unionClassSkills,
 } from "../data/classes";
-import { getCatalogQuickAction } from "../data/quick-actions";
+import {
+  getCatalogQuickAction,
+  newCharacterQuickActions,
+} from "../data/quick-actions";
 import { getHeritage, getRaceData } from "../data/races";
 import { createDefaultSpellbook } from "../types/spellbook";
 import type { SpellbookState } from "../types/spellbook";
@@ -250,6 +253,9 @@ export class MiniSheetStore {
     let n = 2;
     while (d.characters.some((c) => c.id === id)) id = `${base}-${n++}`;
     const record = createDefaultCharacter(id, name);
+    // Seed only the truly-default actions (the full factory seed is a legacy
+    // grab-bag of class-specific actions); Power Attack rides on EitR.
+    record.quickActions = newCharacterQuickActions(eitrEnabled(d.settings));
     this.commit({
       ...d,
       characters: [...d.characters, record],

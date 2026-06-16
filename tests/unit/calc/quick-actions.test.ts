@@ -15,6 +15,7 @@ import {
   DEFAULT_QUICK_ACTIONS,
   FIGHTING_DEFENSIVELY_CRANE,
   defaultQuickActions,
+  newCharacterQuickActions,
   seedQuickActionsFromToggles,
 } from "../../../src/data/quick-actions";
 import { ICONS } from "../../../src/data/icons/registry";
@@ -137,6 +138,41 @@ describe("activeEffects", () => {
       "one",
       "variant",
     ]);
+  });
+});
+
+describe("newCharacterQuickActions", () => {
+  it("seeds only the truly-default actions plus Power Attack when EitR is on", () => {
+    const ids = newCharacterQuickActions(true).map((d) => d.id);
+    expect(ids).toEqual(["powerAttack", "fightingDefensively", "charge", "flank"]);
+  });
+
+  it("omits Power Attack when EitR is off", () => {
+    const ids = newCharacterQuickActions(false).map((d) => d.id);
+    expect(ids).toEqual(["fightingDefensively", "charge", "flank"]);
+  });
+
+  it("never seeds class-specific or hidden legacy actions", () => {
+    const seeded = new Set(newCharacterQuickActions(true).map((d) => d.id));
+    for (const id of [
+      "smiteEvil",
+      "flurryOfBlows",
+      "weaponSong",
+      "preciseStrike",
+      "weaponFinesse",
+      "agileWeapon",
+      "versatilePerformance",
+    ]) {
+      expect(seeded.has(id), `${id} should not be seeded`).toBe(false);
+    }
+  });
+
+  it("returns fresh clones (no shared catalog references)", () => {
+    const a = newCharacterQuickActions(true);
+    const b = newCharacterQuickActions(true);
+    expect(a[0]).not.toBe(b[0]);
+    const catalog = DEFAULT_QUICK_ACTIONS.find((d) => d.id === "charge");
+    expect(a.find((d) => d.id === "charge")).not.toBe(catalog);
   });
 });
 

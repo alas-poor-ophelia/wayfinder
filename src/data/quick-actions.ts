@@ -383,6 +383,25 @@ export function defaultQuickActions(): QuickActionDef[] {
   return structuredClone(DEFAULT_QUICK_ACTIONS);
 }
 
+/** Universally-available actions (no class, feat, or pool needed). */
+const NEW_CHARACTER_DEFAULT_IDS = ["charge", "fightingDefensively", "flank"];
+
+/**
+ * Quick actions seeded onto a brand-new character. Only the truly-default
+ * actions any character can take, plus Power Attack when Elephant in the Room
+ * is enabled (the houserule grants it to everyone). Every other catalog action
+ * stays available to add manually from the Character config row — it's just no
+ * longer auto-populated onto the sheet the way the legacy seed did (which dealt
+ * out class-specific actions like Smite Evil or Flurry to characters who could
+ * never use them). The full-catalog `defaultQuickActions()` is intentionally
+ * left for the v6 migration / legacy importer, which map toggles onto it.
+ */
+export function newCharacterQuickActions(eitr: boolean): QuickActionDef[] {
+  const ids = new Set(NEW_CHARACTER_DEFAULT_IDS);
+  if (eitr) ids.add("powerAttack");
+  return structuredClone(DEFAULT_QUICK_ACTIONS.filter((d) => ids.has(d.id)));
+}
+
 /** Catalog lookup (defaults + the crane variant) — fresh clone per call. */
 export function getCatalogQuickAction(id: string): QuickActionDef | null {
   const def = [...DEFAULT_QUICK_ACTIONS, FIGHTING_DEFENSIVELY_CRANE].find(
