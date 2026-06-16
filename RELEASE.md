@@ -23,8 +23,8 @@ name equals the `manifest.json` version builds and publishes a GitHub Release wi
    (`README.md`, `readme-images/`, `LICENSE`, `.github/workflows/`, `RELEASE.md`),
    are uncommitted. Review and commit them.
 2. **Land on `main`.** Merge `quality/pre-release-forge` → `main` (tag from `main`).
-3. **Confirm versions agree.** `manifest.json` `version` (currently `0.1.0`),
-   `versions.json` (`"0.1.0": "1.4.11"`), and `package.json` `version` should match.
+3. **Confirm versions agree.** `manifest.json` `version` (currently `0.8.0`),
+   `versions.json` (`"0.8.0": "1.4.11"`), and `package.json` `version` should match.
 4. **Create the GitHub repo** `alas-poor-ophelia/wayfinder`, then:
    ```
    git remote add origin https://github.com/alas-poor-ophelia/wayfinder.git
@@ -32,8 +32,8 @@ name equals the `manifest.json` version builds and publishes a GitHub Release wi
    ```
 5. **Tag and push** — the tag MUST equal the manifest version, no `v` prefix:
    ```
-   git tag 0.1.0
-   git push origin 0.1.0
+   git tag 0.8.0
+   git push origin 0.8.0
    ```
 6. **Watch the Action.** It guards `tag == manifest.version`, builds, and creates
    the release. Confirm the three assets are attached and the release is **not**
