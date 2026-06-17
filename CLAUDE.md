@@ -45,11 +45,13 @@ Deploy target: `MiniSheet Dev/.obsidian/plugins/wayfinder/`.
 ### Commit & release gates
 
 Nothing in CI lints — `.github/workflows/release.yml` only builds on a pushed
-tag, so these gates are local discipline (a git pre-commit hook is a TODO, not
-yet wired):
+tag, so these gates are local discipline:
 
-- **Every commit:** run `bun run lint` at minimum; prefer `bun run check`
-  (typecheck + lint + tests). Don't commit with lint errors.
+- **Every commit:** the `.githooks/pre-commit` hook runs `bun run lint` and
+  blocks the commit on failure. It auto-installs via the `prepare` script
+  (`bun install` points `core.hooksPath` at `.githooks/`). Bypass a known-good
+  commit with `git commit --no-verify`. For a fuller pass run `bun run check`
+  (typecheck + lint + tests) yourself.
 - **Before a release:** `bun run check`, then `bun run build:prod` — the
   pre-flight already called for in `RELEASE.md`.
 

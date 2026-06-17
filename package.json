@@ -4,6 +4,7 @@
   "description": "Pathfinder 1e character sheet plugin for Obsidian",
   "type": "module",
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
     "build:css": "sass scss/main.scss styles.css --no-source-map --no-charset",
     "build:css:watch": "sass scss/main.scss styles.css --no-source-map --no-charset --watch",
     "build": "bun run build:css && bun esbuild.config.mjs",

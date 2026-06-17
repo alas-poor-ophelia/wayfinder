@@ -1,0 +1,13 @@
+#!/bin/sh
+# Pre-commit gate: ESLint must pass before a commit lands. CI does not lint, so
+# this is the only automatic guard. Auto-installed by the package.json "prepare"
+# script, which points core.hooksPath at this directory on `bun install`.
+#
+# Bypass a known-good commit with:  git commit --no-verify
+echo "pre-commit: running ESLint (bun run lint)..."
+if ! bun run lint; then
+  echo ""
+  echo "x  ESLint failed - commit aborted. Fix the errors above,"
+  echo "   or bypass intentionally with: git commit --no-verify"
+  exit 1
+fi
