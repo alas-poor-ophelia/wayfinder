@@ -55,8 +55,10 @@ tag, so these gates are local discipline:
 - **Before a release:** `bun run check`, then `bun run build:prod` — the
   pre-flight already called for in `RELEASE.md`.
 
-`bun run format:check` / `format` are cross-platform via `endOfLine: "auto"`;
-formatting is not part of `check` and stays advisory.
+`bun run check` includes `format:check` (cross-platform via `endOfLine:
+"auto"`); run `bun run format` to auto-fix. The pre-commit hook runs only
+`lint` for speed, so formatting is enforced at `check` / release time, not on
+every commit.
 
 ### Development cycle (MANDATORY)
 

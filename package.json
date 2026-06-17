@@ -19,7 +19,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"tests/**/*.ts\" \"scss/**/*.scss\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"tests/**/*.ts\" \"scss/**/*.scss\"",
-    "check": "bun run typecheck && bun run lint && bun run test:unit",
+    "check": "bun run typecheck && bun run lint && bun run format:check && bun run test:unit",
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
   "devDependencies": {
