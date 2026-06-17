@@ -3,6 +3,20 @@
 Notable changes to Wayfinder. Each version's number matches its `manifest.json`
 entry and its release tag (no `v` prefix).
 
+## 0.9.1 — 2026-06-16
+
+### Changed
+
+- Now requires Obsidian 1.8.7 or newer — matching the APIs the plugin already
+  uses (the previous minimum was declared too low).
+- Minor wording tweaks to a few settings labels, the ribbon tooltip, and the
+  rule-import dialog to follow Obsidian's community-plugin style guidelines.
+
+### Fixed
+
+- Release assets now carry GitHub artifact attestations, so their build
+  provenance can be cryptographically verified.
+
 ## 0.9.0 — 2026-06-16
 
 ### Added
