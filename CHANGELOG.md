@@ -3,6 +3,13 @@
 Notable changes to Wayfinder. Each version's number matches its `manifest.json`
 entry and its release tag (no `v` prefix).
 
+## 0.9.2 — 2026-06-16
+
+### Changed
+
+- Updated build-time dependencies (vite, rollup) to clear security advisories.
+  No user-facing changes — these tools are not bundled into the plugin.
+
 ## 0.9.1 — 2026-06-16
 
 ### Changed
