@@ -24,8 +24,7 @@ export function CarrelEmbed({
       handle.current?.unmount();
       handle.current = null;
     };
-    // mount once; character changes handled by the effect below
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount once; characterId changes are handled by the effect below
   }, []);
 
   useEffect(() => {

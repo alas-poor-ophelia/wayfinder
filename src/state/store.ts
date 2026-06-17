@@ -83,7 +83,7 @@ function isPristineSpellbook(sb: SpellbookState): boolean {
 export class MiniSheetStore {
   readonly data: Signal<MiniSheetData>;
   private plugin: Plugin;
-  private saveTimer: ReturnType<typeof setTimeout> | null = null;
+  private saveTimer: number | null = null;
   private dirty = false;
 
   constructor(plugin: Plugin) {
@@ -96,7 +96,7 @@ export class MiniSheetStore {
     // newer truth, so drop any pending local debounce instead of letting
     // it fire and clobber what we're about to adopt
     if (this.saveTimer) {
-      clearTimeout(this.saveTimer);
+      window.clearTimeout(this.saveTimer);
       this.saveTimer = null;
     }
     this.dirty = false;
@@ -135,14 +135,17 @@ export class MiniSheetStore {
   private commit(next: MiniSheetData): void {
     this.data.value = next;
     this.dirty = true;
-    if (this.saveTimer) clearTimeout(this.saveTimer);
-    this.saveTimer = setTimeout(() => void this.flush(), SAVE_DEBOUNCE_MS);
+    if (this.saveTimer) window.clearTimeout(this.saveTimer);
+    this.saveTimer = window.setTimeout(
+      () => void this.flush(),
+      SAVE_DEBOUNCE_MS,
+    );
   }
 
   /** Write pending changes to data.json immediately. */
   async flush(): Promise<void> {
     if (this.saveTimer) {
-      clearTimeout(this.saveTimer);
+      window.clearTimeout(this.saveTimer);
       this.saveTimer = null;
     }
     if (!this.dirty) return;

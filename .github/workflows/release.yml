@@ -9,6 +9,9 @@ on:
 
 permissions:
   contents: write
+  # Required for actions/attest-build-provenance to mint artifact attestations.
+  id-token: write
+  attestations: write
 
 jobs:
   release:
@@ -37,6 +40,15 @@ jobs:
 
       - name: Build (production)
         run: bun run build:prod
+
+      # Cryptographically attest that these assets were built from this repo by
+      # this workflow, so users can verify provenance with `gh attestation verify`.
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            main.js
+            styles.css
 
       - name: Build release notes from changelog
         run: |

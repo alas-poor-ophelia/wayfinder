@@ -30,7 +30,7 @@ export class CustomItemsStore {
   readonly status: Signal<CustomItemsStatus> = signal("missing");
   private plugin: MiniSheetPlugin;
   private file: TFile | null = null;
-  private saveTimer: ReturnType<typeof setTimeout> | null = null;
+  private saveTimer: number | null = null;
   private dirty = false;
   private lastSavedContent = "";
 
@@ -105,7 +105,7 @@ export class CustomItemsStore {
    *  stale debounce can't clobber the newer external truth. */
   async load(): Promise<void> {
     if (this.saveTimer) {
-      clearTimeout(this.saveTimer);
+      window.clearTimeout(this.saveTimer);
       this.saveTimer = null;
     }
     this.dirty = false;
@@ -140,7 +140,7 @@ export class CustomItemsStore {
     if (text === this.lastSavedContent) return; // echo of our own write
     // external truth wins: drop the pending local save before adopting
     if (this.saveTimer) {
-      clearTimeout(this.saveTimer);
+      window.clearTimeout(this.saveTimer);
       this.saveTimer = null;
     }
     this.dirty = false;
@@ -157,8 +157,11 @@ export class CustomItemsStore {
     }
     this.items.value = next;
     this.dirty = true;
-    if (this.saveTimer) clearTimeout(this.saveTimer);
-    this.saveTimer = setTimeout(() => void this.flush(), SAVE_DEBOUNCE_MS);
+    if (this.saveTimer) window.clearTimeout(this.saveTimer);
+    this.saveTimer = window.setTimeout(
+      () => void this.flush(),
+      SAVE_DEBOUNCE_MS,
+    );
   }
 
   upsertItem(item: CustomItemDef): void {
@@ -177,7 +180,7 @@ export class CustomItemsStore {
    *  when none exists yet (vaults that never forge stay clean). */
   async flush(): Promise<void> {
     if (this.saveTimer) {
-      clearTimeout(this.saveTimer);
+      window.clearTimeout(this.saveTimer);
       this.saveTimer = null;
     }
     if (!this.dirty || this.status.value === "error") return;

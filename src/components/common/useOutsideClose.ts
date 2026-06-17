@@ -21,7 +21,8 @@ export function useOutsideClose(
         onCloseRef.current();
       }
     };
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
+    const doc = activeDocument;
+    doc.addEventListener("pointerdown", onPointerDown);
+    return () => doc.removeEventListener("pointerdown", onPointerDown);
   }, [active, ref]);
 }

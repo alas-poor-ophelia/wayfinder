@@ -94,7 +94,7 @@ describe("magic item catalog characterization", () => {
     const reviewRate = 1 - statted / items.length;
     // plan target: needsReview tail under ~40%; log instead of hard-fail
     // (the heuristic set is deliberately conservative)
-    console.log(
+    console.debug(
       `magic items: ${items.length} total, ${statted} auto-statted, ` +
         `${Math.round(reviewRate * 100)}% needsReview`,
     );

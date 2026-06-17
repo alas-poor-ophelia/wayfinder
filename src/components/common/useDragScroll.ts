@@ -73,7 +73,10 @@ export function useDragScroll<T extends HTMLElement = HTMLDivElement>(
         el.removeEventListener("click", swallow, true);
       };
       el.addEventListener("click", swallow, true);
-      setTimeout(() => el.removeEventListener("click", swallow, true), 60);
+      window.setTimeout(
+        () => el.removeEventListener("click", swallow, true),
+        60,
+      );
     };
 
     el.addEventListener("wheel", onWheel, { passive: false });
@@ -88,7 +91,7 @@ export function useDragScroll<T extends HTMLElement = HTMLDivElement>(
       el.removeEventListener("pointerup", onUp);
       el.removeEventListener("pointercancel", onUp);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- listeners depend only on the caller-supplied `deps` array, which is the intended dependency set
   }, deps);
   return ref;
 }

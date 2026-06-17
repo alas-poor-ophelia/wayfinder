@@ -50,7 +50,7 @@ export class SpellIndex {
 
   private app: App;
   private plugin: MiniSheetPlugin;
-  private rebuildTimer: ReturnType<typeof setTimeout> | null = null;
+  private rebuildTimer: number | null = null;
 
   constructor(plugin: MiniSheetPlugin) {
     this.plugin = plugin;
@@ -111,8 +111,8 @@ export class SpellIndex {
 
   /** Bulk syncs fire one metadata event per file — coalesce. */
   private scheduleRebuild(): void {
-    if (this.rebuildTimer) clearTimeout(this.rebuildTimer);
-    this.rebuildTimer = setTimeout(() => this.rebuild(), 200);
+    if (this.rebuildTimer) window.clearTimeout(this.rebuildTimer);
+    this.rebuildTimer = window.setTimeout(() => this.rebuild(), 200);
   }
 
   rebuild(): void {

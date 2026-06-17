@@ -38,8 +38,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
       )
       .addText((text) =>
         text
-          // eslint-disable-next-line obsidianmd/ui/sentence-case -- example vault path, not prose
-          .setPlaceholder("MiniSheet/z_Components/database/spells")
+          .setPlaceholder("Folder for spell notes")
           .setValue(this.plugin.store.data.value.settings.spellsFolder)
           .onChange((value) => {
             this.plugin.store.updateSettings({ spellsFolder: value });
@@ -57,7 +56,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
       )
       .addText((text) =>
         text
-          // eslint-disable-next-line obsidianmd/ui/sentence-case -- example file name, not prose
+
           .setPlaceholder("minisheet-items.json")
           .setValue(this.plugin.store.data.value.settings.customItemsFileName)
           .onChange((value) => {
@@ -68,8 +67,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      // eslint-disable-next-line obsidianmd/ui/sentence-case -- "Elephant in the Room" is the proper name of the feat-tax ruleset
-      .setName("Elephant in the Room")
+      .setName("Elephant in the room")
       .setDesc(
         "Apply the Elephant in the Room feat-tax houserules vault-wide: " +
           "finesse weapons grant Dexterity to attack, damage, and CMB with " +
@@ -96,8 +94,7 @@ export class MiniSheetSettingTab extends PluginSettingTab {
     // through Carrel's board (themed to the sheet) instead of the barebones list.
     if (isCarrelInstalled(this.app)) {
       new Setting(containerEl)
-        // eslint-disable-next-line obsidianmd/ui/sentence-case -- "Carrel" is a proper noun (the partner plugin)
-        .setName("Use Carrel for References")
+        .setName("Carrel for references")
         .setDesc(
           "Render the References tab with the Carrel plugin's board — typed " +
             "cards, pins, and category filters, themed to the character sheet. " +

@@ -31,7 +31,12 @@ export default defineConfig([
       "**/*.js",
       "**/*.jsx",
       "**/*.cjs",
+      "**/*.mjs",
       "*.config.ts",
+      // obsidianmd@0.3.0's recommended config applies its type-checked plugin
+      // rules globally (no `files` filter), so non-source JSON/config files it
+      // can't type-check crash the run. These aren't plugin runtime code.
+      "package.json",
       "tests/unit/fixtures/**",
       "src/data/icons/registry.ts",
     ],
@@ -146,6 +151,9 @@ export default defineConfig([
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/unbound-method": "off",
+      // The test bootstrap aliases the Node global to `window`; popout-window
+      // runtime rules don't apply to code that never ships in the plugin.
+      "obsidianmd/no-global-this": "off",
     },
   },
 

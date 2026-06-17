@@ -162,20 +162,16 @@ export class ImportRuleModal extends Modal {
   }
 
   onOpen(): void {
-    // eslint-disable-next-line obsidianmd/ui/sentence-case -- "AoN" is an acronym (Archives of Nethys)
-    this.titleEl.setText("Import rule from AoN");
+    this.titleEl.setText("Import rule");
     const { contentEl } = this;
 
     contentEl.createEl("p", {
       cls: "ms-modal-hint",
-      // eslint-disable-next-line obsidianmd/ui/sentence-case -- contains proper nouns (Archives of Nethys) and "URL"
-      text: "Paste an Archives of Nethys rule URL (or a rule name). The page is fetched, converted to a typed note in your rules folder, and linked to the active character.",
+      text: "Paste a rule URL from aonprd.com (or a rule name). The page is fetched, converted to a typed note in your rules folder, and linked to the active character.",
     });
 
     new Setting(contentEl).setName("URL or rule name").addText((t) => {
-      t.setPlaceholder(
-        "https://www.aonprd.com/Rules.aspx?Name=Trip&Category=Combat",
-      );
+      t.setPlaceholder("Paste a URL or rule name");
       t.onChange((v) => {
         this.url = v;
         this.resetOverwrite();
@@ -189,10 +185,9 @@ export class ImportRuleModal extends Modal {
 
     new Setting(contentEl)
       .setName("Category")
-      // eslint-disable-next-line obsidianmd/ui/sentence-case -- "AoN" is an acronym (Archives of Nethys)
-      .setDesc("Optional — overrides the AoN breadcrumb category.")
+      .setDesc("Optional — overrides the page's breadcrumb category.")
       .addText((t) => {
-        t.setPlaceholder("(from page)");
+        t.setPlaceholder("(From page)");
         t.onChange((v) => (this.category = v));
       });
 
