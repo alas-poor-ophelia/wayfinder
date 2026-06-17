@@ -6,9 +6,14 @@ spell/rules note pack). Internal doc — not shipped to users.
 ## 0. Pre-flight (green as of this prep)
 
 ```
-bun run check        # typecheck + lint + unit tests  -> 844 tests passing
-bun run build:prod   # emits main.js (~3.6 MB) + styles.css (~320 KB)
+bun run preflight    # check + bun audit + build:prod  (the one-shot release gate)
 ```
+
+`bun run preflight` runs, in order: `bun run check` (typecheck + lint + format +
+unit tests), then `bun audit` (fails on ANY dependency advisory — the store's
+Dependencies check flags these, so catch them here), then `bun run build:prod`
+(emits `main.js` + `styles.css`). The release workflow also runs `bun audit`, so
+a vulnerable lockfile can't be published even if pre-flight is skipped.
 
 Plugin bundle is ~3.9 MB total — under Obsidian's 5 MB limit. The spell prose
 notes (~16 MB) are deliberately **not** bundled; they ship as wayfinder-rules.

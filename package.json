@@ -20,6 +20,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"tests/**/*.ts\" \"scss/**/*.scss\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"tests/**/*.ts\" \"scss/**/*.scss\"",
     "check": "bun run typecheck && bun run lint && bun run format:check && bun run test:unit",
+    "audit": "bun audit",
+    "preflight": "bun run check && bun run audit && bun run build:prod",
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
   "devDependencies": {
