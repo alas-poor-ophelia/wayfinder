@@ -14,8 +14,6 @@ Your character data is stored by the plugin itself, not in note frontmatter, so 
 
 ### From Obsidian (recommended)
 
-> Wayfinder is not yet in the Community Plugins directory. Once it is listed, these are the steps; until then, use BRAT below.
-
 1. Open **Settings → Community plugins** and turn off Restricted Mode if it is on.
 2. Click **Browse**, search for **Wayfinder**, and select **Install**.
 3. Click **Enable**.
@@ -23,7 +21,7 @@ Your character data is stored by the plugin itself, not in note frontmatter, so 
 
 ### From BRAT (beta releases)
 
-[BRAT](https://github.com/TfTHacker/obsidian42-brat) (the Beta Reviewers Auto-update Tool) installs and updates plugins that aren't in the directory yet — the way to get Wayfinder today.
+[BRAT](https://github.com/TfTHacker/obsidian42-brat) (the Beta Reviewers Auto-update Tool) installs and updates pre-release builds before they reach the Community Plugins directory — handy for trying new features early.
 
 1. Install **BRAT** from the Community Plugins browser and enable it.
 2. Open the command palette and run **BRAT: Add a beta plugin for testing**.
