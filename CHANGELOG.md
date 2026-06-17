@@ -3,6 +3,14 @@
 Notable changes to Wayfinder. Each version's number matches its `manifest.json`
 entry and its release tag (no `v` prefix).
 
+## 0.9.3 — 2026-06-16
+
+### Changed
+
+- Updated the remaining build-time dependencies (esbuild, postcss) to clear
+  security advisories; the dependency tree now audits clean. No user-facing
+  changes — these tools are not bundled into the plugin.
+
 ## 0.9.2 — 2026-06-16
 
 ### Changed
