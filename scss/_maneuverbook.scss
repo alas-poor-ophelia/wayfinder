@@ -8,6 +8,12 @@
     font-size: 0.85em;
   }
 
+  .ms-mnv__toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 6px;
+  }
+
   .ms-maneuvers--empty {
     padding: 16px 12px;
   }
@@ -118,5 +124,85 @@
   .ms-mnv__row.is-expended .ms-mnv__expend {
     border-color: color-mix(in srgb, var(--ms-red, #8b0000) 60%, transparent);
     color: var(--ms-red, #8b0000);
+  }
+
+  // loadouts (named readied sets)
+  .ms-mnv__loadouts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .ms-mnv__loadout {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid color-mix(in srgb, var(--ms-gold, #ca9759) 45%, transparent);
+    border-radius: 4px;
+    overflow: hidden;
+
+    &.is-active {
+      background: color-mix(in srgb, var(--ms-gold, #ca9759) 18%, transparent);
+    }
+  }
+
+  .ms-mnv__loadout-apply {
+    background: transparent;
+    border: 0;
+    height: auto;
+    padding: 2px 6px;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.85em;
+  }
+
+  .ms-mnv__loadout-del {
+    background: transparent;
+    border: 0;
+    height: auto;
+    padding: 2px 5px;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .ms-mnv__loadout-save {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+
+    .inp {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+
+  // boost "in effect" toggle on a readied row
+  .ms-mnv__boost {
+    flex: 0 0 auto;
+    min-width: 40px;
+    height: auto;
+    padding: 2px 6px;
+    font-size: 0.78em;
+    border-radius: 4px;
+    border: 1px solid color-mix(in srgb, var(--ms-gold, #ca9759) 50%, transparent);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+
+    &.is-on {
+      border-color: color-mix(in srgb, var(--ms-gold, #ca9759) 80%, transparent);
+      background: color-mix(in srgb, var(--ms-gold, #ca9759) 18%, transparent);
+      color: var(--ms-gold, #ca9759);
+    }
+  }
+
+  .ms-mnv__effects {
+    margin-top: 6px;
+  }
+
+  .ms-mnv__effect-note {
+    font-size: 0.85em;
+    padding: 1px 0;
+    color: color-mix(in srgb, var(--ms-gold, #ca9759) 85%, var(--text-normal));
   }
 }

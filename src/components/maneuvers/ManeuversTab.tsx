@@ -11,16 +11,23 @@ import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
 import type { KnownManeuver, ManeuverType } from "../../types/maneuverbook";
+import { useState } from "preact/hooks";
 import {
+  applyManeuverLoadout,
+  deleteManeuverLoadout,
   recoverAll,
   setActiveStance,
+  snapshotReadiedAsLoadout,
+  toggleActiveBoost,
   toggleExpended,
   toggleReadied,
 } from "../../state/maneuver-actions";
+import { maneuverEffect } from "../../data/maneuver-effects";
 
 const READIED_TYPES: ManeuverType[] = ["Strike", "Boost", "Counter"];
 
 export function ManeuversTab({
+  plugin,
   store,
   character,
   computed,
@@ -30,6 +37,9 @@ export function ManeuversTab({
   character: CharacterRecord;
   computed: ComputedCharacter;
 }) {
+  // hooks must precede the initiator gate below
+  const [loadoutName, setLoadoutName] = useState("");
+
   const book = character.maneuverbook;
   const m = computed.maneuvers;
   if (!book || !m) {
@@ -50,12 +60,30 @@ export function ManeuversTab({
   const stances = book.maneuvers.filter((mn) => mn.type === "Stance");
   const roster = book.maneuvers.filter((mn) => mn.type !== "Stance");
 
+  // notes for whatever active stance/boosts have a registered numeric effect
+  const activeEffectNotes = [
+    ...(book.activeStanceId ? [book.activeStanceId] : []),
+    ...(book.activeBoosts ?? []),
+  ]
+    .map((id) => maneuverEffect(id)?.note)
+    .filter((n): n is string => !!n);
+
   const stat = book.initiatingStat.toUpperCase();
   const stress = (n: number, cap: number) =>
     n > cap ? " is-over" : ""; // over-limit hint
 
+  const openDatabase = () => {
+    store.updateManeuverDb({ targetCharacterId: character.id });
+    void plugin.activateManeuverDbView();
+  };
+
   return (
     <div class="ms-maneuvers">
+      <div class="ms-mnv__toolbar">
+        <button class="btn btn--ghost btn--sm" onClick={openDatabase}>
+          Maneuver database
+        </button>
+      </div>
       <header class="ms-mnv__head">
         <div class="ms-mnv__class">{m.className}</div>
         <div class="ms-mnv__stats">
@@ -106,6 +134,58 @@ export function ManeuversTab({
       </section>
 
       <section class="ms-mnv__section">
+        <h6 class="ms-mnv__h">Loadouts</h6>
+        {!!(book.loadouts ?? []).length && (
+          <div class="ms-mnv__loadouts">
+            {(book.loadouts ?? []).map((lo) => (
+              <span
+                key={lo.id}
+                class={`ms-mnv__loadout${
+                  book.appliedLoadoutId === lo.id ? " is-active" : ""
+                }`}
+              >
+                <button
+                  class="ms-mnv__loadout-apply"
+                  title={`Apply ${lo.name}`}
+                  onClick={() => applyManeuverLoadout(store, character, lo.id)}
+                >
+                  {lo.name}
+                </button>
+                <button
+                  class="ms-mnv__loadout-del"
+                  aria-label={`Delete ${lo.name}`}
+                  onClick={() => deleteManeuverLoadout(store, character, lo.id)}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+        <div class="ms-mnv__loadout-save">
+          <input
+            class="inp"
+            type="text"
+            placeholder="Name this readied set…"
+            value={loadoutName}
+            onInput={(e) =>
+              setLoadoutName((e.target as HTMLInputElement).value)
+            }
+          />
+          <button
+            class="btn btn--ghost btn--sm"
+            disabled={!m.counts.readied && !book.activeStanceId}
+            onClick={() => {
+              snapshotReadiedAsLoadout(store, character, loadoutName);
+              setLoadoutName("");
+            }}
+          >
+            Save current
+          </button>
+        </div>
+      </section>
+
+      <section class="ms-mnv__section">
         <h6 class="ms-mnv__h">Active stance</h6>
         <select
           class="inp"
@@ -125,6 +205,15 @@ export function ManeuversTab({
             </option>
           ))}
         </select>
+        {!!activeEffectNotes.length && (
+          <div class="ms-mnv__effects">
+            {activeEffectNotes.map((n, i) => (
+              <div key={i} class="ms-mnv__effect-note">
+                {n}
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {READIED_TYPES.map((type) => {
@@ -137,6 +226,8 @@ export function ManeuversTab({
             </h6>
             {ofType.map((mn) => {
               const spent = book.expended.includes(mn.id);
+              const hasEffect = mn.type === "Boost" && !!maneuverEffect(mn.id);
+              const boostOn = (book.activeBoosts ?? []).includes(mn.id);
               return (
                 <div
                   key={mn.id}
@@ -151,7 +242,17 @@ export function ManeuversTab({
                   </button>
                   <span class="ms-mnv__name">{mn.name}</span>
                   <span class="ms-mnv__tier">T{mn.level}</span>
-                  <span class="ms-mnv__action">{mn.action}</span>
+                  {hasEffect ? (
+                    <button
+                      class={`ms-mnv__boost${boostOn ? " is-on" : ""}`}
+                      title="Toggle this boost's effect on the sheet"
+                      onClick={() => toggleActiveBoost(store, character, mn.id)}
+                    >
+                      {boostOn ? "on" : "off"}
+                    </button>
+                  ) : (
+                    <span class="ms-mnv__action">{mn.action}</span>
+                  )}
                 </div>
               );
             })}

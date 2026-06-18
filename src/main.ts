@@ -7,6 +7,7 @@ import {
   PLUGIN_ID,
   VIEW_TYPE_CONFIG,
   VIEW_TYPE_EQUIP_DB,
+  VIEW_TYPE_MANEUVER_DB,
   VIEW_TYPE_MINISHEET,
   VIEW_TYPE_PARTY_INV,
   VIEW_TYPE_SPELL_DB,
@@ -30,6 +31,7 @@ import { EquipmentDatabaseView } from "./views/EquipmentDatabaseView";
 import { PartyInventoryView } from "./views/PartyInventoryView";
 import { SheetView } from "./views/SheetView";
 import { SpellDatabaseView } from "./views/SpellDatabaseView";
+import { ManeuverDatabaseView } from "./views/ManeuverDatabaseView";
 
 export default class MiniSheetPlugin extends Plugin {
   store!: MiniSheetStore;
@@ -73,6 +75,11 @@ export default class MiniSheetPlugin extends Plugin {
     this.registerView(
       VIEW_TYPE_SPELL_DB,
       (leaf) => new SpellDatabaseView(leaf, this),
+    );
+
+    this.registerView(
+      VIEW_TYPE_MANEUVER_DB,
+      (leaf) => new ManeuverDatabaseView(leaf, this),
     );
 
     this.registerView(
@@ -137,6 +144,12 @@ export default class MiniSheetPlugin extends Plugin {
       id: "open-spell-database",
       name: "Open spell database",
       callback: () => void this.activateSpellDbView(),
+    });
+
+    this.addCommand({
+      id: "open-maneuver-database",
+      name: "Open maneuver database",
+      callback: () => void this.activateManeuverDbView(),
     });
 
     this.addCommand({
@@ -415,6 +428,18 @@ export default class MiniSheetPlugin extends Plugin {
     if (!leaf) {
       leaf = workspace.getLeaf("tab");
       await leaf.setViewState({ type: VIEW_TYPE_SPELL_DB, active: true });
+    }
+    await workspace.revealLeaf(leaf);
+  }
+
+  /** Open (or reveal) the maneuver database in the main pane. */
+  async activateManeuverDbView(): Promise<void> {
+    const { workspace } = this.app;
+    let leaf: WorkspaceLeaf | null =
+      workspace.getLeavesOfType(VIEW_TYPE_MANEUVER_DB)[0] ?? null;
+    if (!leaf) {
+      leaf = workspace.getLeaf("tab");
+      await leaf.setViewState({ type: VIEW_TYPE_MANEUVER_DB, active: true });
     }
     await workspace.revealLeaf(leaf);
   }

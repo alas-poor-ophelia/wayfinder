@@ -15,6 +15,8 @@ export interface UiState {
   partyInv?: PartyInvState;
   /** main-pane equipment database view state (persists like spellDb) */
   equipDb?: EquipDbState;
+  /** main-pane Path of War maneuver database view state (persists like spellDb) */
+  maneuverDb?: ManeuverDbState;
 }
 
 export interface PartyInvState {
@@ -122,6 +124,36 @@ export const DEFAULT_EQUIP_DB: EquipDbState = {
   page: 0,
   targetCharacterId: null,
   filtersOpen: false,
+};
+
+/** Main-pane maneuver database view state — the Path of War analogue of
+ *  SpellDbState (no schools/components/SR; disciplines + types + tiers). */
+export interface ManeuverDbState {
+  search: string;
+  disciplines: string[];
+  /** ManeuverType[] as strings: Strike / Boost / Counter / Stance */
+  types: string[];
+  /** maneuver tiers 1–9 */
+  tiers: number[];
+  knownOnly: boolean;
+  sortKey: string;
+  sortDir: "asc" | "desc";
+  page: number;
+  targetCharacterId: string | null;
+  filtersOpen: boolean;
+}
+
+export const DEFAULT_MANEUVER_DB: ManeuverDbState = {
+  search: "",
+  disciplines: [],
+  types: [],
+  tiers: [],
+  knownOnly: false,
+  sortKey: "name",
+  sortDir: "asc",
+  page: 0,
+  targetCharacterId: null,
+  filtersOpen: true,
 };
 
 export interface MiniSheetSettings {

@@ -12,11 +12,13 @@ import {
   characterStorageMode,
   DEFAULT_DATA,
   DEFAULT_EQUIP_DB,
+  DEFAULT_MANEUVER_DB,
   DEFAULT_PARTY_INV,
   DEFAULT_SPELL_DB,
   eitrEnabled,
   type CharacterStorageMode,
   type EquipDbState,
+  type ManeuverDbState,
   type MiniSheetData,
   type PartyInvState,
   type SpellDbState,
@@ -416,6 +418,20 @@ export class MiniSheetStore {
       ui: {
         ...this.data.value.ui,
         equipDb: { ...this.equipDb(), ...patch },
+      },
+    });
+  }
+
+  maneuverDb(): ManeuverDbState {
+    return { ...DEFAULT_MANEUVER_DB, ...this.data.value.ui.maneuverDb };
+  }
+
+  updateManeuverDb(patch: Partial<ManeuverDbState>): void {
+    this.commit({
+      ...this.data.value,
+      ui: {
+        ...this.data.value.ui,
+        maneuverDb: { ...this.maneuverDb(), ...patch },
       },
     });
   }

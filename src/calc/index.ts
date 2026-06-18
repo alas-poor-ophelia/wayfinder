@@ -47,6 +47,7 @@ import { resolveArchetypeEffects } from "../data/archetypes";
 import { classResources } from "../data/classes";
 import { evaluateFooterFormula, evaluateResourceFormula } from "./resources";
 import { getBuffDef } from "../data/buffs";
+import { maneuverEffect } from "../data/maneuver-effects";
 import {
   applyHeritage,
   getHeritage,
@@ -241,6 +242,29 @@ export function computeAll(
       .join("\n");
   }
 
+  // Path of War: the active stance and any active boosts contribute their
+  // registered modifiers through the same typed-stacking pipeline as buffs.
+  const maneuverMods: Modifier[] = [];
+  const maneuverNoteLines: string[] = [];
+  const mb = character.maneuverbook;
+  if (mb) {
+    const activeIds = [
+      ...(mb.activeStanceId ? [mb.activeStanceId] : []),
+      ...(mb.activeBoosts ?? []),
+    ];
+    for (const id of activeIds) {
+      const eff = maneuverEffect(id);
+      if (!eff) continue;
+      maneuverMods.push(...eff.modifiers);
+      if (eff.note) maneuverNoteLines.push(`- ${eff.note}`);
+    }
+  }
+  if (maneuverNoteLines.length) {
+    effects.buffNotes = [effects.buffNotes, ...maneuverNoteLines]
+      .filter(Boolean)
+      .join("\n");
+  }
+
   // Animal companion: the Base Statistics table contributes a natural-armor
   // bonus and a Str/Dex increase on top of the user-entered base animal.
   // (BAB and base saves are applied separately below.) The table only fires
@@ -282,6 +306,7 @@ export function computeAll(
     ...gearMods,
     ...configMods,
     ...buffMods,
+    ...maneuverMods,
     ...companionMods,
     ...archEffects.addedModifiers,
   ];

@@ -1,0 +1,25 @@
+// Maneuver database — overrides on top of the reused spell-db chrome
+// (root .minisheet-spelldb-root). The spell DB's .ms-spelldb__chips is a
+// digit-only 5-col grid with zero-horizontal-padding chips; the maneuver
+// filters use WORD labels ("Counter", "Strike"), so their chip rows flex to
+// fit the content instead of overflowing a fixed grid cell.
+
+.minisheet-spelldb-root {
+  .ms-spelldb__chips--wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    .ms-spelldb__chip {
+      width: auto;
+      padding: 7px 10px; // horizontal padding the digit grid omits
+    }
+  }
+}
+
+// Tablet re-zeroes horizontal chip padding (button.ms-spelldb__chip { padding:
+// 7px 0 }); re-assert the word-chip padding at higher specificity so "Counter"
+// keeps its bounds on touch layouts too.
+.is-tablet .minisheet-spelldb-root .ms-spelldb__chips--wrap button.ms-spelldb__chip {
+  padding: 7px 10px;
+}

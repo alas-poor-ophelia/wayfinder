@@ -85,6 +85,9 @@ export interface ManeuverBookState {
   readied: string[];
   /** ids of readied maneuvers currently expended (spent until recovered) */
   expended: string[];
+  /** ids of Boost maneuvers currently "in effect" this round (their registered
+   *  modifiers apply while active). Absent on older books — read `?? []`. */
+  activeBoosts?: string[];
   /** the one stance currently active (a `maneuvers` id with type Stance) */
   activeStanceId?: string;
   /** persisted collapse state of the tab's sections */
@@ -105,6 +108,7 @@ export function createDefaultManeuverBook(
     maneuvers: [],
     readied: [],
     expended: [],
+    activeBoosts: [],
     sectionCollapsed: {},
     loadouts: [],
   };
