@@ -3,6 +3,31 @@
 Notable changes to Wayfinder. Each version's number matches its `manifest.json`
 entry and its release tag (no `v` prefix).
 
+## 1.0.0 — 2026-06-18
+
+### Added
+
+- **Path of War** — the third-party martial maneuver system, opt-in. Turn it on
+  in Settings → Wayfinder → Path of War to get a Maneuvers tab, a maneuver
+  database with loadouts, and stances and boosts wired into the sheet math. Off
+  by default, and toggling it off only hides the surfaces — your maneuver data
+  is kept.
+- **Racial spell-like abilities** now appear on the sheet automatically. Picking
+  a race or heritage that grants an at-will or per-day SLA (tieflings, aasimars,
+  drow, dhampirs, and more) seeds it into the Spell-Like Abilities section —
+  even for characters with no spellbook.
+- **Quick-access buttons** on the configuration screen's sidebar open the spell,
+  equipment, and maneuver databases and the party inventory in one tap.
+- **Character storage options** — keep character data in the plugin, in a single
+  vault file, or one file per character (smaller per-edit diffs, fewer Obsidian
+  Sync conflicts), with an optional separate backup file. Settings → Wayfinder →
+  Character storage.
+
+### Changed
+
+- Section 15 of the bundled Open Game Content notice now credits Path of War
+  © 2014, Dreamscarred Press.
+
 ## 0.9.3 — 2026-06-16
 
 ### Changed

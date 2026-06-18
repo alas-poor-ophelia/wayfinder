@@ -1,8 +1,9 @@
 # Open Game Content Notice
 
 The static game data bundled in `src/data/` (class statistics, race
-statistics, resource-pool formulas, and the equipment catalog in
-`src/data/equipment/`) is **Open Game Content** as defined by the Open
+statistics, resource-pool formulas, the equipment catalog in
+`src/data/equipment/`, and the Path of War maneuver mechanics in
+`src/data/maneuvers/`) is **Open Game Content** as defined by the Open
 Game License 1.0a (see `OGL-1.0a.txt` in this directory), used in
 accordance with Section 15 of that license.
 
@@ -12,9 +13,16 @@ this Open Game Content under the same license. Only Open Game Content
 (item names, statistics, and mechanical descriptions) is reproduced;
 Product Identity is excluded.
 
-This plugin is not published, endorsed, or specifically approved by Paizo.
-The "Pathfinder" name is a trademark of Paizo Inc. and is used here only
-descriptively.
+The Path of War maneuver mechanics (the per-class maneuver progression in
+`src/data/maneuvers/` and the stance/boost effect values in
+`src/data/maneuver-effects.ts`) are Open Game Content from **Path of War**
+© 2014, Dreamscarred Press, compiled via <https://www.d20pfsrd.com>. Only
+the mechanical Open Game Content is reproduced; Product Identity is
+excluded.
+
+This plugin is not published, endorsed, or specifically approved by Paizo
+or Dreamscarred Press. The "Pathfinder" name is a trademark of Paizo Inc.
+and is used here only descriptively.
 
 ## Section 15 — Copyright Notices
 
@@ -37,6 +45,7 @@ descriptively.
 - Pathfinder Roleplaying Game Occult Adventures © 2015, Paizo Inc.
 - Pathfinder Roleplaying Game Ultimate Wilderness © 2017, Paizo Inc.
 - Pathfinder Roleplaying Game Ultimate Intrigue © 2016, Paizo Inc.
+- Path of War © 2014, Dreamscarred Press.
 
 Product Identity (character names, deities, setting lore, artwork) is not
 reproduced in this repository.

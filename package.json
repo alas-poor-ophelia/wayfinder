@@ -1,6 +1,6 @@
 {
   "name": "minisheet",
-  "version": "0.9.3",
+  "version": "1.0.0",
   "description": "Pathfinder 1e character sheet plugin for Obsidian",
   "type": "module",
   "scripts": {
