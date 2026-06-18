@@ -10,6 +10,7 @@ import { defaultQuickActions } from "../data/quick-actions";
 import type { InventoryState } from "./inventory";
 import type { QuickActionDef, QuickActionStateMap } from "./quick-actions";
 import type { SpellbookState } from "./spellbook";
+import type { ManeuverBookState } from "./maneuverbook";
 
 export interface AbilityScores {
   str: number;
@@ -325,6 +326,9 @@ export interface CharacterRecord {
   checklistState?: Record<string, boolean>;
   /** absent = non-caster (Hwayoung keeps her static SLA content) */
   spellbook?: SpellbookState;
+  /** absent = not a Path of War initiator (schema v15). Same optional/
+   *  absent-default pattern as spellbook — never seeded by default. */
+  maneuverbook?: ManeuverBookState;
   /** absent = no inventory subtab (Hwayoung). NOT in createDefaultCharacter:
    *  the schema-forward merge in store.load() would inject it everywhere. */
   inventory?: InventoryState;

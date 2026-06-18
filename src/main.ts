@@ -22,6 +22,7 @@ import {
 import { RulesIndex } from "./rules/index";
 import { MiniSheetSettingTab } from "./settings";
 import { SpellIndex } from "./spells/index";
+import { ManeuverIndex } from "./maneuvers/index";
 import { CustomItemsStore } from "./state/custom-items";
 import { MiniSheetStore } from "./state/store";
 import { ConfigView } from "./views/ConfigView";
@@ -34,6 +35,7 @@ export default class MiniSheetPlugin extends Plugin {
   store!: MiniSheetStore;
   rulesIndex!: RulesIndex;
   spellIndex!: SpellIndex;
+  maneuverIndex!: ManeuverIndex;
   customItems!: CustomItemsStore;
   /** Reference tab: a path the tab should expand on its next render (set by
    *  the rule importer so a freshly-imported note opens itself). */
@@ -62,6 +64,9 @@ export default class MiniSheetPlugin extends Plugin {
 
     this.spellIndex = new SpellIndex(this);
     this.spellIndex.init();
+
+    this.maneuverIndex = new ManeuverIndex(this);
+    this.maneuverIndex.init();
 
     this.registerView(VIEW_TYPE_MINISHEET, (leaf) => new SheetView(leaf, this));
 

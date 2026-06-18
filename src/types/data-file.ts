@@ -128,6 +128,9 @@ export interface MiniSheetSettings {
   rulesFolder: string;
   /** vault folder holding the spell notes (one markdown note per spell) */
   spellsFolder: string;
+  /** vault folder holding the Path of War maneuver notes (one note per
+   *  maneuver), downloadable from the wayfinder-rules repo like the spells */
+  maneuversFolder: string;
   /** custom-items JSON file, tracked by NAME anywhere in the vault
    *  (created at the vault root on first save) */
   customItemsFileName: string;
@@ -241,10 +244,15 @@ export const DEFAULT_DATA: MiniSheetData = {
   // Spell Database's Loadouts tab (schema-forward, like v8/v12/v13 — optional
   // with read-time `?? []`; legacy loadouts lived in vault YAML, nothing to
   // import). No migration code.
-  schemaVersion: 14,
+  // v15: CharacterRecord gains optional maneuverbook (Path of War) and
+  // MiniSheetSettings gains maneuversFolder (schema-forward, like v8/v13/v14 —
+  // optional/defaulted; the merge in store.load() fills the folder default).
+  // No migration code.
+  schemaVersion: 15,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",
+    maneuversFolder: "MiniSheet/z_Components/database/maneuvers",
     customItemsFileName: DEFAULT_CUSTOM_ITEMS_FILENAME,
     houseRules: { elephantInTheRoom: true },
   },

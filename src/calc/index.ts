@@ -56,6 +56,7 @@ import {
 import { companionRow } from "../data/companion";
 import type { RaceData } from "../data/types";
 import { resolveQuickActions } from "./quick-actions";
+import { computeManeuvers, type ManeuverComputed } from "./maneuvers";
 
 /** One equipped weapon's rendered attack text for a combat-tab block. */
 export interface AttackProfileText {
@@ -83,6 +84,9 @@ export interface ComputedCharacter {
   /** build-stat counts that aren't daily pools (e.g. arcanistExploits =
    *  exploits known, net of archetype removals). Empty for most characters. */
   featureCounts: Record<string, number>;
+  /** Path of War maneuver block: Initiator Level, max tier, known/readied/
+   *  stances-known limits, recovery count. null for non-initiators. */
+  maneuvers: ManeuverComputed | null;
   /** id -> live composed footer string for pools with a footerFormula */
   resourceFooters: Record<string, string>;
   bab: number;
@@ -368,6 +372,7 @@ export function computeAll(
   const abilityInput = abilityInputFor(combined);
   const mods = abilityMods(abilityInput);
   const scores = effectiveScores(abilityInput);
+  const maneuvers = computeManeuvers(character, mods);
 
   // One stacking pass over every AC-targeted modifier, partitioned into
   // the legacy input buckets (naturalAC: excluded from touch; deflectionAC:
@@ -783,6 +788,7 @@ export function computeAll(
     resourceFormulas,
     resourceFooters,
     featureCounts,
+    maneuvers,
     bab,
     totalLevel: totalLevel(character.classes),
     conditionEffects: effects,
