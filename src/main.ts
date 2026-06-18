@@ -24,6 +24,7 @@ import { RulesIndex } from "./rules/index";
 import { MiniSheetSettingTab } from "./settings";
 import { SpellIndex } from "./spells/index";
 import { ManeuverIndex } from "./maneuvers/index";
+import { pathOfWarEnabled } from "./types/data-file";
 import { CustomItemsStore } from "./state/custom-items";
 import { ensureRacialSpellbook, racialBooksEqual } from "./state/racial-slas";
 import { MiniSheetStore } from "./state/store";
@@ -169,7 +170,13 @@ export default class MiniSheetPlugin extends Plugin {
     this.addCommand({
       id: "open-maneuver-database",
       name: "Open maneuver database",
-      callback: () => void this.activateManeuverDbView(),
+      callback: () => {
+        if (!pathOfWarEnabled(this.store.data.value.settings)) {
+          new Notice("Path of War is disabled in Wayfinder settings.");
+          return;
+        }
+        void this.activateManeuverDbView();
+      },
     });
 
     this.addCommand({

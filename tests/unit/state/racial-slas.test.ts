@@ -38,9 +38,9 @@ function resolverFor(...names: string[]): SpellResolver {
 
 describe("computeRacialSpellbook", () => {
   it("returns no book when there are no SLAs", () => {
-    expect(computeRacialSpellbook(undefined, resolverFor(), undefined).book).toBe(
-      undefined,
-    );
+    expect(
+      computeRacialSpellbook(undefined, resolverFor(), undefined).book,
+    ).toBe(undefined);
     expect(computeRacialSpellbook([], resolverFor(), undefined).book).toBe(
       undefined,
     );

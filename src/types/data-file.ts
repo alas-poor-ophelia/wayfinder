@@ -172,6 +172,11 @@ export interface MiniSheetSettings {
   /** Use the Carrel plugin's references board for the References tab instead of
    *  the built-in barebones list. Only honored when Carrel is installed. */
   useCarrelReferences?: boolean;
+  /** Enable Path of War (3pp) — the Maneuvers tab, the maneuver database, and
+   *  the combat-config maneuvers section. Off by default (absent = off); read
+   *  with pathOfWarEnabled(). The underlying maneuverbook data is never
+   *  touched, so toggling off only hides the surfaces and on restores them. */
+  pathOfWar?: boolean;
   /** Where character data is persisted. Absent = "plugin" (the default and
    *  pre-feature behaviour: characters live in the plugin's data.json).
    *  - "vault-single": all characters in ONE vault JSON file.
@@ -229,6 +234,14 @@ export function eitrEnabled(
   settings: Pick<MiniSheetSettings, "houseRules">,
 ): boolean {
   return settings.houseRules?.elephantInTheRoom ?? true;
+}
+
+/** Read the Path of War toggle with its default (OFF). Absence means the
+ *  feature is hidden — it is opt-in 3pp content. */
+export function pathOfWarEnabled(
+  settings: Pick<MiniSheetSettings, "pathOfWar">,
+): boolean {
+  return settings.pathOfWar ?? false;
 }
 
 /** Root shape of the plugin's data.json. */

@@ -197,6 +197,22 @@ export class MiniSheetSettingTab extends PluginSettingTab {
           }),
       );
 
+    new Setting(containerEl)
+      .setName("Path of War")
+      .setDesc(
+        "Enable Path of War (3rd-party) martial maneuvers: the Maneuvers " +
+          "tab, the maneuver database, and the combat-config maneuvers " +
+          "section. Off by default; turning it off only hides these surfaces " +
+          "and leaves any maneuver data intact.",
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.store.data.value.settings.pathOfWar ?? false)
+          .onChange((value) => {
+            this.plugin.store.updateSettings({ pathOfWar: value });
+          }),
+      );
+
     // Shown only when the Carrel plugin is installed: route the References tab
     // through Carrel's board (themed to the sheet) instead of the barebones list.
     if (isCarrelInstalled(this.app)) {

@@ -13,6 +13,7 @@ import { totalLevel } from "../../calc/class-stats";
 import type MiniSheetPlugin from "../../main";
 import type { MiniSheetStore } from "../../state/store";
 import type { CharacterRecord } from "../../types/character";
+import { pathOfWarEnabled } from "../../types/data-file";
 import { Icon } from "../common/Icon";
 import { UI } from "./glyphs";
 import {
@@ -74,6 +75,8 @@ const PANES: {
   label: string;
   icon: string;
   open: (plugin: MiniSheetPlugin) => void;
+  /** hide unless Path of War is enabled */
+  requiresPow?: boolean;
 }[] = [
   {
     label: "Spell DB",
@@ -94,6 +97,7 @@ const PANES: {
     label: "Maneuver DB",
     icon: "ra-spinning-sword",
     open: (p) => void p.activateManeuverDbView(),
+    requiresPow: true,
   },
 ];
 
@@ -119,6 +123,7 @@ export function ConfigSurface({
   const [modal, setModal] = useState<Modal>(null);
   useEffect(() => plugin.app.saveLocalStorage("msr_cat", cat), [plugin, cat]);
 
+  const powEnabled = pathOfWarEnabled(store.data.value.settings);
   const onSheetCount = (character.quickActions ?? []).filter(
     (a) => !a.hidden,
   ).length;
@@ -195,7 +200,7 @@ export function ConfigSurface({
             </button>
           ))}
           <div class="rail__divider" />
-          {PANES.map((p) => (
+          {PANES.filter((p) => !p.requiresPow || powEnabled).map((p) => (
             <button
               key={p.label}
               class="rail__item rail__item--pane"
@@ -230,7 +235,9 @@ export function ConfigSurface({
               <AttackBlocksSection store={store} character={character} />
               <DefenseSection store={store} character={character} />
               <EnergySection store={store} character={character} />
-              <ManeuversSection store={store} character={character} />
+              {powEnabled && (
+                <ManeuversSection store={store} character={character} />
+              )}
             </>
           )}
           {cat === "skills" && (

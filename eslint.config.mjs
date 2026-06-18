@@ -105,6 +105,14 @@ export default defineConfig([
       "no-console": "warn",
       eqeqeq: ["error", "always", { null: "ignore" }],
       "prefer-const": "error",
+
+      // "War" (from the 3pp product name "Path of War") and "Wayfinder" (the
+      // plugin brand) are proper nouns; allow them capitalized mid-sentence in
+      // UI copy instead of lowercasing the names. Brands keep their defaults.
+      "obsidianmd/ui/sentence-case": [
+        "error",
+        { ignoreWords: ["War", "Wayfinder"] },
+      ],
     },
   },
 

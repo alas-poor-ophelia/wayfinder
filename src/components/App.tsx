@@ -1,6 +1,6 @@
 import { computeAll } from "../calc";
 import { TABS, TAB_LABELS } from "../constants";
-import { eitrEnabled } from "../types/data-file";
+import { eitrEnabled, pathOfWarEnabled } from "../types/data-file";
 import type MiniSheetPlugin from "../main";
 import type { MiniSheetStore } from "../state/store";
 import { getCarrelApi } from "../util/carrel";
@@ -20,7 +20,13 @@ interface AppProps {
 
 export function App({ plugin, store }: AppProps) {
   const data = store.data.value;
-  const active = data.ui.selectedTab;
+  const pow = pathOfWarEnabled(data.settings);
+  // Coerce a stranded Maneuvers selection to Combat when Path of War is off,
+  // so a stored selectedTab can't render a tab with no matching tab button.
+  const active =
+    data.ui.selectedTab === "maneuvers" && !pow
+      ? "combat"
+      : data.ui.selectedTab;
   const character = store.getCharacter();
   const charactersReady = store.charactersReady.value;
 
@@ -66,8 +72,8 @@ export function App({ plugin, store }: AppProps) {
       <nav class="ms-tab-bar">
         {TABS.filter(
           // Maneuvers is a Path of War (opt-in) tab — hidden unless the
-          // character is an initiator, like the Spells tab gates its content.
-          (tab) => tab !== "maneuvers" || !!character.maneuverbook,
+          // feature is enabled AND the character is an initiator.
+          (tab) => tab !== "maneuvers" || (pow && !!character.maneuverbook),
         ).map((tab) => (
           <button
             key={tab}
