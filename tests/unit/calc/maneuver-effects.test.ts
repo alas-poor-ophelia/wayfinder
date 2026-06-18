@@ -55,8 +55,8 @@ describe("active maneuver effects in computeAll", () => {
         activeStanceId: "mithral-current:flowing-water-stance", // +4 dodge AC
       },
     };
-    expect(computeAll(withStance).ac.normalAC - computeAll(base).ac.normalAC).toBe(
-      4,
-    );
+    expect(
+      computeAll(withStance).ac.normalAC - computeAll(base).ac.normalAC,
+    ).toBe(4);
   });
 });

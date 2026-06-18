@@ -13,7 +13,10 @@ import type { CharacterRecord } from "../../types/character";
 import type { ManeuverDbState } from "../../types/data-file";
 import type { ManeuverDoc } from "../../maneuvers/index";
 import type { ManeuverType } from "../../types/maneuverbook";
-import { addManeuverToRoster, removeManeuver } from "../../state/maneuver-actions";
+import {
+  addManeuverToRoster,
+  removeManeuver,
+} from "../../state/maneuver-actions";
 import { UI } from "../config/glyphs";
 
 const PAGE_SIZE = 50;
@@ -101,7 +104,9 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
 
   const setSort = (key: string) =>
     db.sortKey === key
-      ? store.updateManeuverDb({ sortDir: db.sortDir === "asc" ? "desc" : "asc" })
+      ? store.updateManeuverDb({
+          sortDir: db.sortDir === "asc" ? "desc" : "asc",
+        })
       : store.updateManeuverDb({ sortKey: key, sortDir: "asc" });
 
   const openNote = (path: string) =>
@@ -136,7 +141,9 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
         <button
           class={`ms-spelldb__btn${db.filtersOpen ? " is-on" : ""}`}
           aria-expanded={db.filtersOpen}
-          onClick={() => store.updateManeuverDb({ filtersOpen: !db.filtersOpen })}
+          onClick={() =>
+            store.updateManeuverDb({ filtersOpen: !db.filtersOpen })
+          }
         >
           <UI.sliders />
           Filters
@@ -184,8 +191,8 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
       {characters.length === 0 && (
         <div class="ms-spelldb__empty">
           No Path of War initiators yet — browse below, but to <b>add</b>{" "}
-          maneuvers first open <b>Configure → Combat → Path of War</b> and pick a
-          class (Warlord, Warder, or Stalker). The Maneuvers tab and the add
+          maneuvers first open <b>Configure → Combat → Path of War</b> and pick
+          a class (Warlord, Warder, or Stalker). The Maneuvers tab and the add
           buttons here then target that character.
         </div>
       )}
@@ -204,7 +211,10 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
                 {disciplines.map((d) => {
                   const on = db.disciplines.includes(d);
                   return (
-                    <label key={d} class={`ms-spelldb__classrow${on ? " is-on" : ""}`}>
+                    <label
+                      key={d}
+                      class={`ms-spelldb__classrow${on ? " is-on" : ""}`}
+                    >
                       <input
                         type="checkbox"
                         checked={on}
@@ -276,10 +286,15 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
                   type="checkbox"
                   checked={db.knownOnly}
                   onChange={() =>
-                    store.updateManeuverDb({ knownOnly: !db.knownOnly, page: 0 })
+                    store.updateManeuverDb({
+                      knownOnly: !db.knownOnly,
+                      page: 0,
+                    })
                   }
                 />
-                <span class={`ms-spelldb__check${db.knownOnly ? " is-on" : ""}`}>
+                <span
+                  class={`ms-spelldb__check${db.knownOnly ? " is-on" : ""}`}
+                >
                   {db.knownOnly && <UI.check />}
                 </span>
                 In current target only
@@ -321,7 +336,9 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
                             <button
                               class="ms-spelldb__remove"
                               aria-label={`Remove ${d.name}`}
-                              onClick={() => removeManeuver(store, target, d.id)}
+                              onClick={() =>
+                                removeManeuver(store, target, d.id)
+                              }
                             >
                               <UI.x />
                             </button>
@@ -329,7 +346,9 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
                             <button
                               class="ms-spelldb__add"
                               aria-label={`Add ${d.name}`}
-                              onClick={() => addManeuverToRoster(store, target, d)}
+                              onClick={() =>
+                                addManeuverToRoster(store, target, d)
+                              }
                             >
                               <UI.plus />
                             </button>

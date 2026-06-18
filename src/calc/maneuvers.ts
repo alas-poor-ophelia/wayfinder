@@ -69,8 +69,7 @@ export function computeManeuvers(
 
   const countByType = (t: ManeuverType) =>
     book.maneuvers.filter((m) => m.type === t).length;
-  const knownCount =
-    book.maneuvers.length - countByType("Stance"); // stances counted separately
+  const knownCount = book.maneuvers.length - countByType("Stance"); // stances counted separately
 
   return {
     initiatingClass: initiatingKey,

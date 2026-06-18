@@ -102,7 +102,8 @@ export function removeManeuver(
     readied: book.readied.filter((r) => r !== id),
     expended: book.expended.filter((e) => e !== id),
     activeBoosts: (book.activeBoosts ?? []).filter((b) => b !== id),
-    activeStanceId: book.activeStanceId === id ? undefined : book.activeStanceId,
+    activeStanceId:
+      book.activeStanceId === id ? undefined : book.activeStanceId,
   });
 }
 

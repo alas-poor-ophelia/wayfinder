@@ -115,7 +115,8 @@
     padding: 2px 6px;
     font-size: 0.78em;
     border-radius: 4px;
-    border: 1px solid color-mix(in srgb, var(--ms-gold, #ca9759) 50%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--ms-gold, #ca9759) 50%, transparent);
     background: transparent;
     color: var(--ms-gold, #ca9759);
     cursor: pointer;
@@ -137,7 +138,8 @@
   .ms-mnv__loadout {
     display: inline-flex;
     align-items: center;
-    border: 1px solid color-mix(in srgb, var(--ms-gold, #ca9759) 45%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--ms-gold, #ca9759) 45%, transparent);
     border-radius: 4px;
     overflow: hidden;
 
@@ -184,13 +186,18 @@
     padding: 2px 6px;
     font-size: 0.78em;
     border-radius: 4px;
-    border: 1px solid color-mix(in srgb, var(--ms-gold, #ca9759) 50%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--ms-gold, #ca9759) 50%, transparent);
     background: transparent;
     color: var(--text-muted);
     cursor: pointer;
 
     &.is-on {
-      border-color: color-mix(in srgb, var(--ms-gold, #ca9759) 80%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--ms-gold, #ca9759) 80%,
+        transparent
+      );
       background: color-mix(in srgb, var(--ms-gold, #ca9759) 18%, transparent);
       color: var(--ms-gold, #ca9759);
     }

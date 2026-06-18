@@ -69,8 +69,7 @@ export function ManeuversTab({
     .filter((n): n is string => !!n);
 
   const stat = book.initiatingStat.toUpperCase();
-  const stress = (n: number, cap: number) =>
-    n > cap ? " is-over" : ""; // over-limit hint
+  const stress = (n: number, cap: number) => (n > cap ? " is-over" : ""); // over-limit hint
 
   const openDatabase = () => {
     store.updateManeuverDb({ targetCharacterId: character.id });
@@ -97,7 +96,9 @@ export function ManeuversTab({
           </span>
         </div>
         <div class="ms-mnv__counts">
-          <span class={`ms-mnv__count${stress(m.counts.known, m.limits.known)}`}>
+          <span
+            class={`ms-mnv__count${stress(m.counts.known, m.limits.known)}`}
+          >
             Known {m.counts.known}/{m.limits.known}
           </span>
           <span

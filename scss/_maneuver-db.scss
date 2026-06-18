@@ -20,6 +20,9 @@
 // Tablet re-zeroes horizontal chip padding (button.ms-spelldb__chip { padding:
 // 7px 0 }); re-assert the word-chip padding at higher specificity so "Counter"
 // keeps its bounds on touch layouts too.
-.is-tablet .minisheet-spelldb-root .ms-spelldb__chips--wrap button.ms-spelldb__chip {
+.is-tablet
+  .minisheet-spelldb-root
+  .ms-spelldb__chips--wrap
+  button.ms-spelldb__chip {
   padding: 7px 10px;
 }

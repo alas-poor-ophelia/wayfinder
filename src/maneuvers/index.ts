@@ -72,7 +72,8 @@ export class ManeuverIndex {
     this.app = plugin.app;
     this.allDisciplines = computed(() => {
       const set = new Set<string>();
-      for (const doc of this.docs.value) if (doc.discipline) set.add(doc.discipline);
+      for (const doc of this.docs.value)
+        if (doc.discipline) set.add(doc.discipline);
       return [...set].sort();
     });
     this.allSources = computed(() => {

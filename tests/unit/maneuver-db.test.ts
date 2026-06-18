@@ -61,9 +61,9 @@ describe("filterManeuvers", () => {
     expect(
       filterManeuvers(DOCS, db({ disciplines: ["Iron Tortoise"] }), empty),
     ).toHaveLength(1);
-    expect(filterManeuvers(DOCS, db({ types: ["Stance"] }), empty)).toHaveLength(
-      1,
-    );
+    expect(
+      filterManeuvers(DOCS, db({ types: ["Stance"] }), empty),
+    ).toHaveLength(1);
     expect(filterManeuvers(DOCS, db({ tiers: [1] }), empty)).toHaveLength(3);
   });
 
