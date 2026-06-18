@@ -10,6 +10,7 @@ export const TABS = [
   "combat",
   "skills",
   "spells",
+  "maneuvers",
   "rules",
   "adjustments",
 ] as const;
@@ -19,6 +20,7 @@ export const TAB_LABELS: Record<TabName, string> = {
   combat: "Combat",
   skills: "Skills",
   spells: "Spells",
+  maneuvers: "Maneuvers",
   rules: "Rules",
   adjustments: "Adjust",
 };

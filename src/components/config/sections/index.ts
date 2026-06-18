@@ -7,6 +7,7 @@ export { BuffsSection } from "./buffs";
 export { ClassesSection } from "./classes";
 export { AttackBlocksSection, DefenseSection, EnergySection } from "./combat";
 export { CharacterActionsSection, IdentitySection } from "./identity";
+export { ManeuversSection } from "./maneuvers";
 export { ResourcesSection } from "./resources";
 export { RulesSection } from "./rules";
 export { SkillsSection } from "./skills";

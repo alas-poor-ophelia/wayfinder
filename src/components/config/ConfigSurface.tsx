@@ -23,6 +23,7 @@ import {
   DefenseSection,
   EnergySection,
   IdentitySection,
+  ManeuversSection,
   ResourcesSection,
   RulesSection,
   SkillsSection,
@@ -180,6 +181,7 @@ export function ConfigSurface({
               <AttackBlocksSection store={store} character={character} />
               <DefenseSection store={store} character={character} />
               <EnergySection store={store} character={character} />
+              <ManeuversSection store={store} character={character} />
             </>
           )}
           {cat === "skills" && (

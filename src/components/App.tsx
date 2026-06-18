@@ -11,6 +11,7 @@ import { BarebonesReferences } from "./rules/BarebonesReferences";
 import { CarrelEmbed } from "./rules/CarrelEmbed";
 import { SkillsTab } from "./skills/SkillsTab";
 import { SpellsTab } from "./spells/SpellsTab";
+import { ManeuversTab } from "./maneuvers/ManeuversTab";
 
 interface AppProps {
   plugin: MiniSheetPlugin;
@@ -63,7 +64,11 @@ export function App({ plugin, store }: AppProps) {
     <div class="ms-sheet ms-sheet--with-banner">
       <Banner plugin={plugin} store={store} character={character} />
       <nav class="ms-tab-bar">
-        {TABS.map((tab) => (
+        {TABS.filter(
+          // Maneuvers is a Path of War (opt-in) tab — hidden unless the
+          // character is an initiator, like the Spells tab gates its content.
+          (tab) => tab !== "maneuvers" || !!character.maneuverbook,
+        ).map((tab) => (
           <button
             key={tab}
             class={`ms-tab ms-tab--${tab}${tab === active ? " is-active" : ""}`}
@@ -89,6 +94,13 @@ export function App({ plugin, store }: AppProps) {
           <SkillsTab computed={computed} />
         ) : active === "adjustments" ? (
           <AdjustmentsTab
+            store={store}
+            character={character}
+            computed={computed}
+          />
+        ) : active === "maneuvers" ? (
+          <ManeuversTab
+            plugin={plugin}
             store={store}
             character={character}
             computed={computed}

@@ -19,6 +19,7 @@
   .ms-tab--combat,
   .ms-tab--skills,
   .ms-tab--spells,
+  .ms-tab--maneuvers,
   .ms-tab--rules,
   .ms-tab--adjustments,
   .ms-tab--config {
@@ -53,6 +54,11 @@
 
   .ms-tab--spells::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='height: 512px; width: 512px;'%3E%3Cpath d='M0 0h512v512H0z' fill='none' fill-opacity='1'%3E%3C/path%3E%3Cg class='' transform='translate(0,0)' style=''%3E%3Cpath d='M256 16c-52.5 252.632-210 277.845 0 454.688C466 293.845 308.5 268.63 256 16zM124.75 167.407C98.5 243.197 46 294.117 46 369.907S151 496 229.75 496c-157.5-126.317-105-202.278-105-328.593zm262.5 0c0 126.317 52.5 202.278-105 328.593C361 496 466 445.696 466 369.907c0-75.79-52.5-126.71-78.75-202.5z' fill='%238d0000' stroke='%236e6e6e' stroke-width='5' fill-opacity='1'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Path of War maneuvers — a point-up sword (same crimson/steel treatment). */
+  .ms-tab--maneuvers::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cg fill='%238d0000' stroke='%236e6e6e' stroke-width='12'%3E%3Cpath d='M256 24 L300 120 L300 300 L212 300 L212 120 Z'%3E%3C/path%3E%3Crect x='150' y='300' width='212' height='34'%3E%3C/rect%3E%3Crect x='236' y='334' width='40' height='120'%3E%3C/rect%3E%3Ccircle cx='256' cy='474' r='24'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
   }
 
   .ms-tab--rules::before {
