@@ -668,6 +668,13 @@ export class MiniSheetStore {
     });
   }
 
+  /** Replace (or clear) the innate racial spellbook. Wholly managed by the
+   *  racial-SLA seeder (an effect in main.ts) — never hand-edited. Passing
+   *  undefined clears it (the key drops on serialize). */
+  setRacialSpellbook(id: string, book: SpellbookState | undefined): void {
+    this.updateCharacter(id, { racialSpellbook: book });
+  }
+
   /** Set (or clear) the variant heritage. Validated against the current
    *  raceKey — an unknown or foreign key clears instead of persisting. */
   setRaceHeritage(id: string, heritageKey: string | null): void {

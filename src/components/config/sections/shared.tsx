@@ -90,6 +90,14 @@ export function RaceDetail({
   if (heritage) {
     rows.push(["Spell-like", heritage.sla]);
     rows.push(["Source", heritage.source]);
+  } else {
+    // Base-race SLA note: shows the full trait text, including conditional
+    // ("with Cha 11+") and level-gated ("at 9th level") SLAs that are NOT
+    // auto-seeded onto the sheet. Unconditional ones also appear here as the
+    // record of what the innate book grants. Matches "Spell-Like Abilit(y/ies)"
+    // and the "<Race> Magic" traits.
+    const slaTrait = race.traits.find((t) => /spell-like|magic$/i.test(t.name));
+    if (slaTrait) rows.push(["Spell-like", slaTrait.summary]);
   }
   return (
     <div class="race-detail">

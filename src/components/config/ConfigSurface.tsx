@@ -65,6 +65,38 @@ const CATEGORIES: {
 const accentOf = (id: string) =>
   CATEGORIES.find((c) => c.id === id)?.accent ?? "gold";
 
+/**
+ * Quick-access buttons for the supplementary panes. Unlike the rail
+ * categories (which swap the detail panel), these open a separate workspace
+ * tab via the plugin's activateXxxView() openers and leave config behind.
+ */
+const PANES: {
+  label: string;
+  icon: string;
+  open: (plugin: MiniSheetPlugin) => void;
+}[] = [
+  {
+    label: "Spell DB",
+    icon: "ra-book",
+    open: (p) => void p.activateSpellDbView(),
+  },
+  {
+    label: "Equipment DB",
+    icon: "ra-vest",
+    open: (p) => void p.activateEquipDbView(),
+  },
+  {
+    label: "Party Inventory",
+    icon: "ra-ammo-bag",
+    open: (p) => void p.activatePartyInvView(),
+  },
+  {
+    label: "Maneuver DB",
+    icon: "ra-spinning-sword",
+    open: (p) => void p.activateManeuverDbView(),
+  },
+];
+
 type Modal =
   | { mode: "edit"; id: string }
   | { mode: "add" }
@@ -160,6 +192,23 @@ export function ConfigSurface({
               {c.id === "effects" && (
                 <span class="rail__count">{onSheetCount}</span>
               )}
+            </button>
+          ))}
+          <div class="rail__divider" />
+          {PANES.map((p) => (
+            <button
+              key={p.label}
+              class="rail__item rail__item--pane"
+              title={`Open ${p.label}`}
+              onClick={() => p.open(plugin)}
+            >
+              <span class="rail__ic">
+                <Icon id={p.icon} />
+              </span>
+              <span class="rail__name">{p.label}</span>
+              <span class="rail__open">
+                <UI.openExt />
+              </span>
             </button>
           ))}
         </aside>

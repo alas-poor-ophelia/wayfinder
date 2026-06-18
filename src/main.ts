@@ -1,6 +1,6 @@
 import type { TFile, WorkspaceLeaf } from "obsidian";
 import { Notice, Plugin } from "obsidian";
-import { signal, type Signal } from "@preact/signals";
+import { effect, signal, type Signal } from "@preact/signals";
 import { installBridge, removeBridge } from "./bridge/mcp-bridge";
 import { num } from "./calc/abilities";
 import {
@@ -25,6 +25,7 @@ import { MiniSheetSettingTab } from "./settings";
 import { SpellIndex } from "./spells/index";
 import { ManeuverIndex } from "./maneuvers/index";
 import { CustomItemsStore } from "./state/custom-items";
+import { ensureRacialSpellbook, racialBooksEqual } from "./state/racial-slas";
 import { MiniSheetStore } from "./state/store";
 import { ConfigView } from "./views/ConfigView";
 import { EquipmentDatabaseView } from "./views/EquipmentDatabaseView";
@@ -66,6 +67,25 @@ export default class MiniSheetPlugin extends Plugin {
 
     this.spellIndex = new SpellIndex(this);
     this.spellIndex.init();
+
+    // Keep the active character's innate racial spellbook in sync with their
+    // race/heritage and the spell index. Re-runs on any data change and on
+    // every index rebuild (byName is a plain Map, so subscribe to the rebuild
+    // signal). Skips entirely until the index has built — an SLA can only be
+    // seeded once its spell note is indexed — so it never wipes a previously
+    // seeded book at startup. Writes only on real changes (churn guard).
+    this.register(
+      effect(() => {
+        void this.spellIndex.lastRebuildMs.value;
+        if (this.spellIndex.byName.size === 0) return;
+        const character = this.store.getCharacter();
+        if (!character) return;
+        const { book } = ensureRacialSpellbook(character, this.spellIndex);
+        if (!racialBooksEqual(book, character.racialSpellbook)) {
+          this.store.setRacialSpellbook(character.id, book);
+        }
+      }),
+    );
 
     this.maneuverIndex = new ManeuverIndex(this);
     this.maneuverIndex.init();

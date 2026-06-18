@@ -39,6 +39,10 @@ export const UNCOMMON_RACES: RaceData[] = [
   {
     key: "duergar",
     name: "Duergar",
+    slaSpells: [
+      { name: "Enlarge Person", perDay: 1 },
+      { name: "Invisibility", perDay: 1 },
+    ],
     category: "uncommon",
     source: "Advanced Race Guide",
     size: "medium",
@@ -411,6 +415,14 @@ export const UNCOMMON_RACES: RaceData[] = [
   {
     key: "svirfneblin",
     name: "Svirfneblin",
+    // Constant nondetection modeled as at-will (perDay 0); the +1 illusion DC
+    // is a non-SLA trait and stays in the summary.
+    slaSpells: [
+      { name: "Nondetection", perDay: 0 },
+      { name: "Blindness/Deafness", perDay: 1 },
+      { name: "Blur", perDay: 1 },
+      { name: "Disguise Self", perDay: 1 },
+    ],
     category: "uncommon",
     source: "Advanced Race Guide",
     size: "small",

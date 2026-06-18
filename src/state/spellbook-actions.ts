@@ -87,18 +87,22 @@ export function setLevelRemaining(
   );
 }
 
+/** Which spellbook an SLA action targets — the class book or the innate
+ *  racial book (both expose `.slas`). */
+export type SlaBookKey = "spellbook" | "racialSpellbook";
+
 /** SLA cast: decrement castsRemaining (floor 0; at-will SLAs are no-ops). */
 export function castSla(
   store: MiniSheetStore,
   character: CharacterRecord,
   slaIndex: number,
+  bookKey: SlaBookKey = "spellbook",
 ): void {
-  const sb = requireSpellbook(character);
-  const entry = sb.slas[slaIndex];
+  const entry = character[bookKey]?.slas[slaIndex];
   if (!entry || entry.casts === 0) return;
   store.setCharacterField(
     character.id,
-    `spellbook.slas.${slaIndex}.castsRemaining`,
+    `${bookKey}.slas.${slaIndex}.castsRemaining`,
     Math.max(0, entry.castsRemaining - 1),
   );
 }
@@ -108,13 +112,13 @@ export function setSlaRemaining(
   character: CharacterRecord,
   slaIndex: number,
   value: number,
+  bookKey: SlaBookKey = "spellbook",
 ): void {
-  const sb = requireSpellbook(character);
-  const entry = sb.slas[slaIndex];
+  const entry = character[bookKey]?.slas[slaIndex];
   if (!entry) return;
   store.setCharacterField(
     character.id,
-    `spellbook.slas.${slaIndex}.castsRemaining`,
+    `${bookKey}.slas.${slaIndex}.castsRemaining`,
     Math.min(Math.max(0, value), entry.casts),
   );
 }

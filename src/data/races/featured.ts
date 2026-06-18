@@ -11,6 +11,7 @@ export const FEATURED_RACES: RaceData[] = [
   {
     key: "aasimar",
     name: "Aasimar",
+    slaSpells: [{ name: "Daylight", perDay: 1 }],
     category: "featured",
     source: "Advanced Race Guide",
     size: "medium",
@@ -108,6 +109,7 @@ export const FEATURED_RACES: RaceData[] = [
   {
     key: "dhampir",
     name: "Dhampir",
+    slaSpells: [{ name: "Detect Undead", perDay: 3 }],
     category: "featured",
     source: "Advanced Race Guide",
     size: "medium",
@@ -161,6 +163,11 @@ export const FEATURED_RACES: RaceData[] = [
   {
     key: "drow",
     name: "Drow",
+    slaSpells: [
+      { name: "Dancing Lights", perDay: 1 },
+      { name: "Darkness", perDay: 1 },
+      { name: "Faerie Fire", perDay: 1 },
+    ],
     category: "featured",
     source: "Advanced Race Guide",
     size: "medium",
@@ -217,6 +224,9 @@ export const FEATURED_RACES: RaceData[] = [
   {
     key: "fetchling",
     name: "Fetchling",
+    // Only the unconditional SLA is seeded; shadow walk (9th) and plane shift
+    // (13th) are level-gated and stay documented in the trait summary.
+    slaSpells: [{ name: "Disguise Self", perDay: 1 }],
     category: "featured",
     source: "Advanced Race Guide",
     size: "medium",
@@ -318,6 +328,7 @@ export const FEATURED_RACES: RaceData[] = [
   {
     key: "ifrit",
     name: "Ifrit",
+    slaSpells: [{ name: "Burning Hands", perDay: 1 }],
     category: "featured",
     source: "Advanced Race Guide",
     size: "medium",
@@ -431,6 +442,7 @@ export const FEATURED_RACES: RaceData[] = [
   {
     key: "oread",
     name: "Oread",
+    slaSpells: [{ name: "Magic Stone", perDay: 1 }],
     category: "featured",
     source: "Advanced Race Guide",
     size: "medium",
@@ -511,6 +523,7 @@ export const FEATURED_RACES: RaceData[] = [
   {
     key: "sylph",
     name: "Sylph",
+    slaSpells: [{ name: "Feather Fall", perDay: 1 }],
     category: "featured",
     source: "Advanced Race Guide",
     size: "medium",
@@ -587,6 +600,7 @@ export const FEATURED_RACES: RaceData[] = [
   {
     key: "tiefling",
     name: "Tiefling",
+    slaSpells: [{ name: "Darkness", perDay: 1 }],
     category: "featured",
     source: "Advanced Race Guide",
     size: "medium",
@@ -643,6 +657,7 @@ export const FEATURED_RACES: RaceData[] = [
   {
     key: "undine",
     name: "Undine",
+    slaSpells: [{ name: "Hydraulic Push", perDay: 1 }],
     category: "featured",
     source: "Advanced Race Guide",
     size: "medium",

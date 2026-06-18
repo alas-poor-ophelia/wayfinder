@@ -46,6 +46,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { dex: 2, wis: 2, int: -2 },
     sla: "Hideous laughter 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Hideous Laughter", perDay: 1 }],
     ...tieflingSkilled("Faultspawn", "Appraise", "Knowledge (local)"),
   },
   // Blood of Fiends pg. 19
@@ -56,6 +57,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { dex: 2, int: 2, wis: -2 },
     sla: "Death knell 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Death Knell", perDay: 1 }],
     ...tieflingSkilled("Grimspawn", "Disable Device", "Sleight of Hand"),
   },
   // Blood of Fiends pg. 20
@@ -66,6 +68,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { con: 2, wis: 2, int: -2 },
     sla: "Bear's endurance 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Bear's Endurance", perDay: 1 }],
     ...tieflingSkilled("Foulspawn", "Intimidate", "Knowledge (religion)"),
   },
   // Blood of Fiends pg. 20
@@ -76,6 +79,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { str: 2, cha: 2, int: -2 },
     sla: "Shatter 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Shatter", perDay: 1 }],
     ...tieflingSkilled("Pitborn", "Disable Device", "Perception"),
   },
   // Blood of Fiends pg. 21
@@ -86,6 +90,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { con: 2, wis: 2, cha: -2 },
     sla: "Pyrotechnics 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Pyrotechnics", perDay: 1 }],
     ...tieflingSkilled("Hellspawn", "Diplomacy", "Sense Motive"),
   },
   // Blood of Fiends pg. 21
@@ -96,6 +101,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { dex: 2, cha: 2, int: -2 },
     sla: "Misdirection 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Misdirection", perDay: 1 }],
     ...tieflingSkilled("Spitespawn", "Diplomacy", "Linguistics"),
   },
   // Blood of Fiends pg. 22
@@ -106,6 +112,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { con: 2, cha: 2, wis: -2 },
     sla: "Web 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Web", perDay: 1 }],
     ...tieflingSkilled("Shackleborn", "Escape Artist", "Intimidate"),
   },
   // Blood of Fiends pg. 22
@@ -116,6 +123,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { str: 2, wis: 2, cha: -2 },
     sla: "Alter self 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Alter Self", perDay: 1 }],
     ...tieflingSkilled("Hungerseed", "Disguise", "Intimidate"),
   },
   // Blood of Fiends pg. 23
@@ -126,6 +134,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { str: 2, wis: 2, int: -2 },
     sla: "Blur 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Blur", perDay: 1 }],
     ...tieflingSkilled("Motherless", "Escape Artist", "Survival"),
   },
   // Blood of Fiends pg. 23
@@ -136,6 +145,7 @@ export const TIEFLING_HERITAGES: RaceHeritage[] = [
     source: "Blood of Fiends",
     abilityMods: { dex: 2, cha: 2, wis: -2 },
     sla: "Detect thoughts 1/day (caster level equals character level).",
+    slaSpells: [{ name: "Detect Thoughts", perDay: 1 }],
     ...tieflingSkilled("Beastbrood", "Disguise", "Sense Motive"),
   },
 ];
@@ -152,6 +162,7 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     source: "Blood of Angels",
     abilityMods: { con: 2, cha: 2 },
     sla: "Summon nature's ally II 1/day.",
+    slaSpells: [{ name: "Summon Nature's Ally II", perDay: 1 }],
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
       {
@@ -176,6 +187,7 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     source: "Blood of Angels",
     abilityMods: { str: 2, cha: 2 },
     sla: "Alter self 1/day.",
+    slaSpells: [{ name: "Alter Self", perDay: 1 }],
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
       {
@@ -200,6 +212,7 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     source: "Blood of Angels",
     abilityMods: { con: 2, wis: 2 },
     sla: "Continual flame 1/day.",
+    slaSpells: [{ name: "Continual Flame", perDay: 1 }],
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
       {
@@ -224,6 +237,7 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     source: "Blood of Angels",
     abilityMods: { dex: 2, cha: 2 },
     sla: "Glitterdust 1/day.",
+    slaSpells: [{ name: "Glitterdust", perDay: 1 }],
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
       {
@@ -251,6 +265,7 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     source: "Blood of Angels",
     abilityMods: { dex: 2, wis: 2 },
     sla: "See invisibility 1/day.",
+    slaSpells: [{ name: "See Invisibility", perDay: 1 }],
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
       {
@@ -275,6 +290,7 @@ export const AASIMAR_HERITAGES: RaceHeritage[] = [
     source: "Blood of Angels",
     abilityMods: { int: 2, cha: 2 },
     sla: "Pyrotechnics 1/day.",
+    slaSpells: [{ name: "Pyrotechnics", perDay: 1 }],
     replacesSources: ["Aasimar: Skilled"],
     modifiers: [
       {
@@ -330,5 +346,8 @@ export function applyHeritage(race: RaceData, heritageKey?: string): RaceData {
     abilityMods: heritage.abilityMods,
     modifiers: [...kept, ...heritage.modifiers],
     traits,
+    // heritage SLA replaces the base racial SLA (RAW); fall back to the base
+    // race's when a heritage somehow lacks structured data.
+    slaSpells: heritage.slaSpells ?? race.slaSpells,
   };
 }

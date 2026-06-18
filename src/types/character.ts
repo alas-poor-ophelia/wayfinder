@@ -326,6 +326,11 @@ export interface CharacterRecord {
   checklistState?: Record<string, boolean>;
   /** absent = non-caster (Hwayoung keeps her static SLA content) */
   spellbook?: SpellbookState;
+  /** Innate "racial" spellbook (castingClass ""), wholly managed by the
+   *  racial-SLA seeder: holds spell-like abilities granted by race/heritage so
+   *  they show even on non-casters. Absent = no unconditional racial SLAs (or
+   *  none resolved yet). Never hand-edited; rebuilt by ensureRacialSpellbook. */
+  racialSpellbook?: SpellbookState;
   /** absent = not a Path of War initiator (schema v15). Same optional/
    *  absent-default pattern as spellbook — never seeded by default. */
   maneuverbook?: ManeuverBookState;

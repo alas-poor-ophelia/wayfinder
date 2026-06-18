@@ -30,17 +30,27 @@ export function SpellsTab({
   computed: ComputedCharacter;
 }) {
   const sb = character.spellbook;
+  // Racial SLAs live in the innate book and must show even with no class
+  // spellbook, so the SLA section rides along in both minimal branches.
   if (!sb || !computed.spellbook) {
-    return <SpellSlotsTab store={store} character={character} />;
+    return (
+      <>
+        <SlaSection plugin={plugin} store={store} character={character} />
+        <SpellSlotsTab store={store} character={character} />
+      </>
+    );
   }
   // slot-only book (schema v5): no caster class, maxima from slotOverrides
   if (sb.castingClass === "") {
     return (
-      <SpellSlotsTab
-        store={store}
-        character={character}
-        computed={computed.spellbook}
-      />
+      <>
+        <SlaSection plugin={plugin} store={store} character={character} />
+        <SpellSlotsTab
+          store={store}
+          character={character}
+          computed={computed.spellbook}
+        />
+      </>
     );
   }
 

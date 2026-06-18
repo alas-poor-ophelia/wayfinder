@@ -215,6 +215,32 @@
     font-size: 10.5px;
     color: var(--text-mute);
   }
+  .rail__divider {
+    height: 1px;
+    background: var(--line);
+    margin: 8px 4px;
+    flex-shrink: 0;
+  }
+  .rail__item--pane .rail__name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rail__open {
+    color: var(--text-mute);
+    display: flex;
+    flex-shrink: 0;
+    opacity: 0.65;
+  }
+  .rail__open svg {
+    width: 13px;
+    height: 13px;
+    display: block;
+  }
+  .rail__item--pane:hover .rail__open {
+    opacity: 1;
+    color: var(--text);
+  }
 
   /* detail (scroll) */
   .detail {

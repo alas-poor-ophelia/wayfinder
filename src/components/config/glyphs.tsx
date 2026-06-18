@@ -96,4 +96,10 @@ export const UI = {
       <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
     </>,
   ),
+  openExt: svg(
+    <>
+      <path d="M7 17 17 7" />
+      <path d="M7 7h10v10" />
+    </>,
+  ),
 };

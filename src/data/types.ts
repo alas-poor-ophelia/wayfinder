@@ -147,6 +147,21 @@ export interface RaceTrait {
   summary: string;
 }
 
+/**
+ * An unconditional racial spell-like ability, structured for auto-seeding into
+ * the character's innate spellbook. `name` is matched (case-insensitive)
+ * against the SpellIndex by the seeder; `perDay` is uses/day (0 = at will /
+ * constant). CONDITIONAL SLAs (gated on an ability score or character level,
+ * or a player choice) are deliberately NOT listed here — they stay documented
+ * in the trait `summary` and are surfaced as a config note, never auto-seeded.
+ */
+export interface RacialSla {
+  /** spell name as it appears in the spell index */
+  name: string;
+  /** uses per day; 0 = at will / constant */
+  perDay: number;
+}
+
 export interface RaceData {
   /** kebab-case key, e.g. "half-orc" */
   key: string;
@@ -169,6 +184,10 @@ export interface RaceData {
   modifiers: Modifier[];
   /** the full trait catalog, including traits not expressible as modifiers */
   traits: RaceTrait[];
+  /** unconditional spell-like abilities to auto-seed into the innate
+   *  spellbook. Absent = none (or all conditional). A heritage's own
+   *  slaSpells, when present, REPLACE these (see applyHeritage). */
+  slaSpells?: RacialSla[];
 }
 
 /**
@@ -196,6 +215,9 @@ export interface RaceHeritage {
   /** replacement spell-like ability — swaps the base race's
    *  "Spell-Like Ability" trait summary */
   sla: string;
+  /** structured form of `sla` for auto-seeding; REPLACES the base race's
+   *  slaSpells when present (heritage SLA overrides the racial one, RAW). */
+  slaSpells?: RacialSla[];
   /** extra descriptive traits beyond the SLA swap, if any */
   traits?: RaceTrait[];
 }
