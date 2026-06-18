@@ -42,12 +42,16 @@ export default class MiniSheetPlugin extends Plugin {
   async onload(): Promise<void> {
     this.store = new MiniSheetStore(this);
     await this.store.load();
+    this.store.initBackend();
 
     this.customItems = new CustomItemsStore(this);
     this.customItems.init();
     // vault files resolve after layout-ready; locate the items file then
     this.app.workspace.onLayoutReady(() => {
       void this.customItems.load();
+      // character data may live in vault file(s) (storage modes other than the
+      // default); those resolve only now, so load them here too
+      void this.store.loadCharacters();
       // Let the Style Settings plugin (if installed) re-scan our styles.css
       // for the `/* @settings */` block once our CSS is in the DOM.
       this.app.workspace.trigger("parse-style-settings");
@@ -212,6 +216,9 @@ export default class MiniSheetPlugin extends Plugin {
    */
   async onExternalSettingsChange(): Promise<void> {
     await this.store.load();
+    // characters may live in vault file(s); re-adopt them too (load() reset the
+    // in-memory roster to data.json's, which is empty in vault storage modes)
+    await this.store.loadCharacters();
     // the synced settings may rename the tracked custom-items file
     await this.customItems.load();
   }

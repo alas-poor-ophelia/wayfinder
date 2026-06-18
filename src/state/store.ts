@@ -1,5 +1,4 @@
 import { signal, type Signal } from "@preact/signals";
-import type { Plugin } from "obsidian";
 import { TABS, type TabName } from "../constants";
 import {
   createDefaultCharacter,
@@ -9,16 +8,21 @@ import {
 } from "../types/character";
 import type { QuickActionDef } from "../types/quick-actions";
 import {
+  characterBackupEnabled,
+  characterStorageMode,
   DEFAULT_DATA,
   DEFAULT_EQUIP_DB,
   DEFAULT_PARTY_INV,
   DEFAULT_SPELL_DB,
   eitrEnabled,
+  type CharacterStorageMode,
   type EquipDbState,
   type MiniSheetData,
   type PartyInvState,
   type SpellDbState,
 } from "../types/data-file";
+import { VaultCharacterBackend } from "./character-backend";
+import type { Plugin } from "obsidian";
 import {
   createDefaultInventory,
   type InventoryState,
@@ -44,6 +48,19 @@ import type { SpellbookState } from "../types/spellbook";
 import { migrateData } from "./migrations";
 
 const SAVE_DEBOUNCE_MS = 500;
+
+/** Short random suffix for new character ids. A name-derived slug alone
+ *  collides across devices that both create the same name offline; under
+ *  per-character vault storage that collision means one file silently
+ *  overwrites the other on Sync. A random suffix makes the id (and so the
+ *  filename) globally unique. */
+function randomSuffix(): string {
+  const uuid = window.crypto?.randomUUID?.();
+  if (uuid) return uuid.replace(/-/g, "").slice(0, 8);
+  return Math.floor(Math.random() * 0xffffffff)
+    .toString(16)
+    .padStart(8, "0");
+}
 
 /** First class entry that drives a spellbook: has a `casting` block and is
  *  not stripped of spellcasting by a selected archetype. null = no caster. */
@@ -82,13 +99,30 @@ function isPristineSpellbook(sb: SpellbookState): boolean {
  */
 export class MiniSheetStore {
   readonly data: Signal<MiniSheetData>;
+  /** false while a vault storage backend is still loading character files
+   *  (deferred to layout-ready); true in plugin mode and once files resolve.
+   *  Views render a loading state rather than an empty roster while false. */
+  readonly charactersReady: Signal<boolean> = signal(true);
   private plugin: Plugin;
+  /** Owns the character slice in the two vault storage modes; dormant (its
+   *  methods no-op) in the default "plugin" mode. */
+  private backend: VaultCharacterBackend;
   private saveTimer: number | null = null;
   private dirty = false;
+  /** schemaVersion read from data.json BEFORE it was stamped current — lets
+   *  loadCharacters() apply pending per-character migrations to vault files. */
+  private loadedSchemaVersion = DEFAULT_DATA.schemaVersion;
 
   constructor(plugin: Plugin) {
     this.plugin = plugin;
     this.data = signal(DEFAULT_DATA);
+    this.backend = new VaultCharacterBackend(plugin, this);
+  }
+
+  /** Register the backend's vault listeners (call once from plugin onload).
+   *  An external (Sync) change to a character file reloads that slice. */
+  initBackend(): void {
+    this.backend.init(() => void this.loadCharacters());
   }
 
   async load(): Promise<void> {
@@ -102,6 +136,8 @@ export class MiniSheetStore {
     this.dirty = false;
     const loaded =
       (await this.plugin.loadData()) as Partial<MiniSheetData> | null;
+    this.loadedSchemaVersion =
+      typeof loaded?.schemaVersion === "number" ? loaded.schemaVersion : 0;
     // migrate BEFORE the merge below — it stamps the current schemaVersion
     // over the loaded one, so migrateData must read the original
     const raw = loaded ? migrateData(loaded) : null;
@@ -113,11 +149,10 @@ export class MiniSheetStore {
         schemaVersion: DEFAULT_DATA.schemaVersion,
         settings: { ...DEFAULT_DATA.settings, ...raw.settings },
         ui: { ...DEFAULT_DATA.ui, ...raw.ui },
-        // schema-forward: records saved before a field existed get defaults
-        characters: (raw.characters ?? []).map((c) => ({
-          ...createDefaultCharacter(c.id, c.name),
-          ...c,
-        })),
+        // schema-forward: records saved before a field existed get defaults.
+        // In vault storage modes data.json holds an empty roster; the real
+        // characters arrive via loadCharacters() at layout-ready.
+        characters: this.hydrateCharacters(raw.characters ?? []),
         // absent stays absent (no default injection); present gets shape-merged
         ...(raw.partyInventory
           ? {
@@ -129,6 +164,142 @@ export class MiniSheetStore {
           : {}),
       };
     }
+    // characters live elsewhere in vault modes; hold the loading state until
+    // loadCharacters() resolves them (deferred to layout-ready, where vault
+    // files are accessible — mirrors CustomItemsStore).
+    this.charactersReady.value =
+      characterStorageMode(this.data.value.settings) === "plugin";
+  }
+
+  /** Schema-forward fill: a record saved before a field existed gets that
+   *  field's default. Used for both data.json and vault-file characters. */
+  private hydrateCharacters(raw: CharacterRecord[]): CharacterRecord[] {
+    return raw.map((c) => ({ ...createDefaultCharacter(c.id, c.name), ...c }));
+  }
+
+  /**
+   * Load the character slice from the active vault backend (no-op in plugin
+   * mode). Deferred to layout-ready and re-run on external (Sync) changes.
+   * Drops any pending local save first so a stale debounce can't clobber the
+   * newer on-disk truth, then runs pending per-character migrations against the
+   * schemaVersion data.json was last saved at.
+   */
+  async loadCharacters(): Promise<void> {
+    const mode = characterStorageMode(this.data.value.settings);
+    if (mode === "plugin") {
+      this.charactersReady.value = true;
+      return;
+    }
+    if (this.saveTimer) {
+      window.clearTimeout(this.saveTimer);
+      this.saveTimer = null;
+    }
+    this.dirty = false;
+    const payload = await this.backend.loadFrom(mode);
+    if (payload) {
+      // vault files may predate the current schema (upgrade while in vault
+      // mode); run the same migrations data.json gets, then schema-forward.
+      const migrated = migrateData({
+        schemaVersion: this.loadedSchemaVersion,
+        characters: payload.characters,
+        settings: this.data.value.settings,
+      });
+      this.data.value = {
+        ...this.data.value,
+        characters: this.hydrateCharacters(
+          migrated.characters ?? payload.characters,
+        ),
+        ...(payload.partyInventory
+          ? {
+              partyInventory: {
+                ...createDefaultInventory(),
+                ...payload.partyInventory,
+              },
+            }
+          : {}),
+      };
+    }
+    this.charactersReady.value = true;
+  }
+
+  /** data.json payload for the vault modes: everything EXCEPT the character
+   *  slice, which the backend owns (kept out of data.json so its high-churn
+   *  writes don't fight Obsidian Sync). */
+  private configSlice(): MiniSheetData {
+    return { ...this.data.value, characters: [], partyInventory: undefined };
+  }
+
+  /**
+   * Move the character slice between storage modes. Order is deliberate
+   * (write-new → verify → flip setting → flush → clear-old) so a crash mid-
+   * migration never strands characters: the setting flip is the commit, and
+   * the old location is only cleared after the new one verifies. Returns false
+   * (leaving the old mode intact) if the new location can't be read back.
+   */
+  async migrateStorage(
+    oldMode: CharacterStorageMode,
+    newMode: CharacterStorageMode,
+  ): Promise<boolean> {
+    if (oldMode === newMode) return true;
+    await this.flush(); // ensure the old location holds current state
+    const snapshot = {
+      characters: this.data.value.characters,
+      ...(this.data.value.partyInventory
+        ? { partyInventory: this.data.value.partyInventory }
+        : {}),
+    };
+    // 1. write to the NEW location (no-op for plugin mode — data.json)
+    await this.backend.saveAs(newMode, snapshot);
+    // 2. verify readback (plugin target needs no vault readback)
+    if (newMode !== "plugin") {
+      const rb = await this.backend.loadFrom(newMode);
+      if (!rb || rb.characters.length !== snapshot.characters.length) {
+        return false;
+      }
+    }
+    // 3. flip the setting — this is the atomic commit of the switch
+    this.updateSettings({ characterStorage: newMode });
+    // 4. persist config (in vault modes this strips characters from data.json;
+    //    switching TO plugin writes the full blob back into data.json)
+    await this.flush();
+    // 5. only now clear the OLD location
+    if (oldMode !== "plugin") await this.backend.clearMode(oldMode);
+    // refresh backend bookkeeping for the new mode
+    await this.loadCharacters();
+    return true;
+  }
+
+  /** Move the vault character file(s) to a new folder (no-op in plugin mode).
+   *  Write-new → verify → delete-old, same crash-safe ordering as
+   *  migrateStorage. The folder setting is updated to the new value either way. */
+  async relocateStorage(newFolder: string): Promise<boolean> {
+    const mode = characterStorageMode(this.data.value.settings);
+    const oldFolder = (
+      this.data.value.settings.characterStorageFolder ?? ""
+    ).trim();
+    const next = newFolder.trim();
+    if (mode === "plugin" || oldFolder === next) {
+      this.updateSettings({ characterStorageFolder: newFolder });
+      await this.flush();
+      return true;
+    }
+    await this.flush();
+    const snapshot = {
+      characters: this.data.value.characters,
+      ...(this.data.value.partyInventory
+        ? { partyInventory: this.data.value.partyInventory }
+        : {}),
+    };
+    // point the backend at the new folder, then write there
+    this.updateSettings({ characterStorageFolder: newFolder });
+    await this.backend.saveAs(mode, snapshot);
+    const rb = await this.backend.loadFrom(mode);
+    if (!rb || rb.characters.length !== snapshot.characters.length) {
+      return false; // new location unverified; old files left intact
+    }
+    await this.backend.clearMode(mode, oldFolder); // delete old-folder files
+    await this.loadCharacters();
+    return true;
   }
 
   /** Replace the whole data object and persist (debounced). */
@@ -142,7 +313,9 @@ export class MiniSheetStore {
     );
   }
 
-  /** Write pending changes to data.json immediately. */
+  /** Write pending changes immediately. In plugin mode that's the whole blob
+   *  to data.json (unchanged). In vault modes the character slice is routed to
+   *  the backend and data.json keeps only config (settings/ui). */
   async flush(): Promise<void> {
     if (this.saveTimer) {
       window.clearTimeout(this.saveTimer);
@@ -150,7 +323,53 @@ export class MiniSheetStore {
     }
     if (!this.dirty) return;
     this.dirty = false;
-    await this.plugin.saveData(this.data.value);
+    const mode = characterStorageMode(this.data.value.settings);
+    if (mode === "plugin") {
+      await this.plugin.saveData(this.data.value);
+    } else {
+      await this.plugin.saveData(this.configSlice());
+      // guard the load window: before loadCharacters() resolves the vault
+      // files, the in-memory roster is empty/stale — persisting it would
+      // overwrite the real files. Config is safe to write; the slice is not.
+      if (this.charactersReady.value) {
+        await this.backend.save(this.characterSlice());
+      }
+    }
+    await this.maybeBackup();
+  }
+
+  /** The character slice the backend owns (roster + shared party loot). */
+  private characterSlice(): {
+    characters: CharacterRecord[];
+    partyInventory?: InventoryState;
+  } {
+    return {
+      characters: this.data.value.characters,
+      ...(this.data.value.partyInventory
+        ? { partyInventory: this.data.value.partyInventory }
+        : {}),
+    };
+  }
+
+  /** Best-effort backup snapshot — never throws into the primary save path,
+   *  skipped while the roster is still loading or the feature is off. */
+  private async maybeBackup(): Promise<void> {
+    if (!this.charactersReady.value) return;
+    if (!characterBackupEnabled(this.data.value.settings)) return;
+    try {
+      await this.backend.writeBackup(
+        this.data.value.settings.characterBackupFolder ?? "",
+        this.characterSlice(),
+      );
+    } catch {
+      // backup is a safety net, not load-bearing: a failure must not break the
+      // real save or surface noise on every debounce
+    }
+  }
+
+  /** Force a backup now (used when the toggle is switched on). */
+  async backupNow(): Promise<void> {
+    await this.maybeBackup();
   }
 
   setTab(tab: TabName | number): void {
@@ -252,9 +471,12 @@ export class MiniSheetStore {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, "") || "character";
-    let id = base;
-    let n = 2;
-    while (d.characters.some((c) => c.id === id)) id = `${base}-${n++}`;
+    // random suffix (not a local counter): two devices creating the same name
+    // offline must not mint the same id, else per-character vault files collide
+    // and one silently overwrites the other on Sync.
+    let id = `${base}-${randomSuffix()}`;
+    while (d.characters.some((c) => c.id === id))
+      id = `${base}-${randomSuffix()}`;
     const record = createDefaultCharacter(id, name);
     // Seed only the truly-default actions (the full factory seed is a legacy
     // grab-bag of class-specific actions); Power Attack rides on EitR.

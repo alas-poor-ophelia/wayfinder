@@ -21,16 +21,25 @@ export function App({ plugin, store }: AppProps) {
   const data = store.data.value;
   const active = data.ui.selectedTab;
   const character = store.getCharacter();
+  const charactersReady = store.charactersReady.value;
 
   if (!character) {
     return (
       <div class="ms-sheet">
         <main class="ms-content">
           <div class="ms-placeholder">
-            <div>No character yet</div>
-            <div class="ms-muted">
-              Run the “Wayfinder: New character” command to create one
-            </div>
+            {charactersReady ? (
+              <>
+                <div>No character yet</div>
+                <div class="ms-muted">
+                  Run the “Wayfinder: New character” command to create one
+                </div>
+              </>
+            ) : (
+              // vault storage mode: character file(s) still loading from disk —
+              // don't flash the empty state (or let a save clobber the roster)
+              <div class="ms-muted">Loading characters…</div>
+            )}
           </div>
         </main>
       </div>

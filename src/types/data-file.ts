@@ -137,6 +137,47 @@ export interface MiniSheetSettings {
   /** Use the Carrel plugin's references board for the References tab instead of
    *  the built-in barebones list. Only honored when Carrel is installed. */
   useCarrelReferences?: boolean;
+  /** Where character data is persisted. Absent = "plugin" (the default and
+   *  pre-feature behaviour: characters live in the plugin's data.json).
+   *  - "vault-single": all characters in ONE vault JSON file.
+   *  - "vault-per-character": one vault JSON file per character (+ a separate
+   *    party-inventory file). Smaller per-edit diffs = fewer Obsidian Sync
+   *    conflicts when different devices edit different characters.
+   *  Switching modes migrates existing characters to the new location (see
+   *  MiniSheetStore.migrateStorage). Read with characterStorageMode(). */
+  characterStorage?: CharacterStorageMode;
+  /** Vault folder for the character file(s). Empty = located by name anywhere
+   *  in the vault and created at the vault root (same as customItemsFileName).
+   *  Only meaningful in the two vault storage modes. */
+  characterStorageFolder?: string;
+  /** Off by default. When on, every save also writes a whole-roster snapshot to
+   *  a separate vault file (wayfinder-backup.json) — a disaster-recovery copy
+   *  independent of the primary storage, in ALL modes. Best-effort: a backup
+   *  failure never blocks the real save. */
+  characterBackup?: boolean;
+  /** Vault folder for the backup file. Empty = vault root. */
+  characterBackupFolder?: string;
+}
+
+export type CharacterStorageMode =
+  | "plugin"
+  | "vault-single"
+  | "vault-per-character";
+
+/** Read the character-storage mode with the established default ("plugin").
+ *  Absence — older data.json — means the pre-feature behaviour where all
+ *  character data lives in the plugin's data.json. */
+export function characterStorageMode(
+  settings: Pick<MiniSheetSettings, "characterStorage">,
+): CharacterStorageMode {
+  return settings.characterStorage ?? "plugin";
+}
+
+/** Whether the off-by-default character backup is enabled. */
+export function characterBackupEnabled(
+  settings: Pick<MiniSheetSettings, "characterBackup">,
+): boolean {
+  return settings.characterBackup ?? false;
 }
 
 /** Vault-wide houserule switches. Currently the only entry is the
