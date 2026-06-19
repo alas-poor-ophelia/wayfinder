@@ -89,4 +89,58 @@ describe("computeManeuvers", () => {
     const m = computeManeuvers(c, mods({ cha: 1 }))!;
     expect(m.counts).toEqual({ known: 2, readied: 1, stances: 1, expended: 0 });
   });
+
+  it("the three base classes report the abilityMod recovery kind", () => {
+    expect(computeManeuvers(warlord(5), mods({ cha: 3 }))!.recoveryKind).toBe(
+      "abilityMod",
+    );
+  });
+});
+
+function initiator(
+  className: string,
+  classKey: string,
+  stat: "int" | "wis" | "cha",
+  level: number,
+) {
+  const c = createDefaultCharacter("t", "Tester");
+  c.classes = [{ className, level }];
+  c.maneuverbook = createDefaultManeuverBook(classKey, stat);
+  return c;
+}
+
+describe("Expanded classes (Harbinger / Mystic / Zealot)", () => {
+  it("Harbinger: Int-based abilityMod recovery + table limits", () => {
+    const m = computeManeuvers(
+      initiator("Harbinger", "harbinger", "int", 11),
+      mods({ int: 4 }),
+    )!;
+    expect(m.className).toBe("Harbinger");
+    expect(m.initiatorLevel).toBe(11);
+    expect(m.recoveryKind).toBe("abilityMod");
+    expect(m.recoveryCount).toBe(4); // Int mod
+    expect(m.limits).toEqual({ known: 11, readied: 7, stances: 5 });
+  });
+
+  it("Zealot: Cha-based abilityMod recovery, floors at 2", () => {
+    const m = computeManeuvers(
+      initiator("Zealot", "zealot", "cha", 1),
+      mods({ cha: -1 }),
+    )!;
+    expect(m.recoveryKind).toBe("abilityMod");
+    expect(m.recoveryCount).toBe(2);
+    expect(m.limits).toEqual({ known: 5, readied: 3, stances: 1 });
+  });
+
+  it("Mystic: stochastic recovery (granted/turn, independent of Wis mod)", () => {
+    const m = computeManeuvers(
+      initiator("Mystic", "mystic", "wis", 20),
+      mods({ wis: 6 }),
+    )!;
+    expect(m.recoveryKind).toBe("stochastic");
+    expect(m.recoveryCount).toBe(2); // grantedPerTurn — NOT the Wis mod of 6
+    expect(m.limits).toEqual({ known: 21, readied: 12, stances: 7 });
+    // DC math still uses the initiating stat
+    expect(m.initMod).toBe(6);
+  });
 });

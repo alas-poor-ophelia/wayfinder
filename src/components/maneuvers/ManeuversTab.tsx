@@ -131,7 +131,12 @@ export function ManeuversTab({
         </div>
         {m.recoveryMethod && (
           <p class="help">
-            Recovers {m.recoveryCount} ({stat} mod, min 2). {m.recoveryMethod}
+            {m.recoveryKind === "stochastic"
+              ? `${m.recoveryCount} maneuvers granted per turn (cycling). `
+              : m.recoveryKind === "fixed"
+                ? `Recovers ${m.recoveryCount}. `
+                : `Recovers ${m.recoveryCount} (${stat} mod, min 2). `}
+            {m.recoveryMethod}
           </p>
         )}
       </section>

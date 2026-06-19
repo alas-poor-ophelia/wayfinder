@@ -15,7 +15,11 @@
  */
 import type { AbilityScores, CharacterRecord } from "../types/character";
 import type { ManeuverType } from "../types/maneuverbook";
-import { maneuverLimits, powClass } from "../data/maneuvers";
+import {
+  maneuverLimits,
+  powClass,
+  type RecoveryModel,
+} from "../data/maneuvers";
 
 export interface ManeuverComputed {
   /** the maneuverbook's initiating class key, e.g. "warlord" */
@@ -31,8 +35,11 @@ export interface ManeuverComputed {
   initMod: number;
   limits: { known: number; readied: number; stances: number };
   counts: { known: number; readied: number; stances: number; expended: number };
-  /** maneuvers regained by the class recovery action (ability mod, min 2) */
+  /** maneuvers regained by the class recovery action (ability mod, min 2),
+   *  or — for the stochastic Mystic — the number granted per turn */
   recoveryCount: number;
+  /** which recovery rule applies, so the tab can phrase it correctly */
+  recoveryKind: RecoveryModel["kind"];
   recoveryMethod: string;
 }
 
@@ -82,6 +89,18 @@ export function computeManeuvers(
 
   const initMod = abilityMods[book.initiatingStat] ?? 0;
 
+  // Recovery count: dispatch on the structured model. No model (older books)
+  // falls back to the legacy max(2, initMod), preserving the base classes
+  // byte-for-byte (their abilityMod stat === the initiating stat).
+  const rm = meta?.recoveryModel;
+  const recoveryCount = !rm
+    ? Math.max(2, initMod)
+    : rm.kind === "abilityMod"
+      ? Math.max(rm.min, abilityMods[rm.stat] ?? 0)
+      : rm.kind === "fixed"
+        ? rm.count
+        : rm.grantedPerTurn; // stochastic (Mystic): granted per turn
+
   const countByType = (t: ManeuverType) =>
     book.maneuvers.filter((m) => m.type === t).length;
   const knownCount = book.maneuvers.length - countByType("Stance"); // stances counted separately
@@ -100,7 +119,8 @@ export function computeManeuvers(
       stances: countByType("Stance"),
       expended: book.expended.length,
     },
-    recoveryCount: Math.max(2, initMod),
+    recoveryCount,
+    recoveryKind: rm?.kind ?? "abilityMod",
     recoveryMethod: meta?.recovery ?? "",
   };
 }
