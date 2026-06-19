@@ -59,6 +59,7 @@ export function filterManeuvers(
     if (search && !d.name.toLowerCase().includes(search)) return false;
     if (db.disciplines.length && !db.disciplines.includes(d.discipline))
       return false;
+    if (db.sources.length && !db.sources.includes(d.source)) return false;
     if (db.types.length && !db.types.includes(d.type)) return false;
     if (db.tiers.length && !db.tiers.includes(d.level)) return false;
     if (db.knownOnly && !knownIds.has(d.id)) return false;
@@ -89,6 +90,7 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
   const target = resolveTarget(store, db);
   const characters = store.data.value.characters.filter((c) => c.maneuverbook);
   const disciplines = plugin.maneuverIndex.allDisciplines.value;
+  const sources = plugin.maneuverIndex.allSources.value;
 
   const knownIds = new Set(
     target?.maneuverbook?.maneuvers.map((m) => m.id) ?? [],
@@ -154,6 +156,7 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
             store.updateManeuverDb({
               search: "",
               disciplines: [],
+              sources: [],
               types: [],
               tiers: [],
               knownOnly: false,
@@ -234,6 +237,43 @@ export function ManeuverDatabaseApp({ plugin }: { plugin: MiniSheetPlugin }) {
                 })}
               </div>
             </div>
+
+            {sources.length > 1 && (
+              <div class="ms-spelldb__fgroup">
+                <div class="ms-spelldb__flabel">
+                  Source
+                  {db.sources.length > 0 && (
+                    <span class="badge">{db.sources.length}</span>
+                  )}
+                </div>
+                <div class="ms-spelldb__classlist">
+                  {sources.map((s) => {
+                    const on = db.sources.includes(s);
+                    return (
+                      <label
+                        key={s}
+                        class={`ms-spelldb__classrow${on ? " is-on" : ""}`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={on}
+                          onChange={() =>
+                            store.updateManeuverDb({
+                              sources: toggleIn(db.sources, s),
+                              page: 0,
+                            })
+                          }
+                        />
+                        <span class={`ms-spelldb__check${on ? " is-on" : ""}`}>
+                          {on && <UI.check />}
+                        </span>
+                        {s}
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             <div class="ms-spelldb__fgroup">
               <div class="ms-spelldb__flabel">Type</div>

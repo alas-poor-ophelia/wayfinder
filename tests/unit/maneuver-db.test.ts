@@ -17,6 +17,7 @@ function doc(
   discipline: string,
   level: ManeuverLevel,
   type: ManeuverType,
+  source = "Path of War",
 ): ManeuverDoc {
   return {
     path: `${discipline}/${name}.md`,
@@ -32,7 +33,7 @@ function doc(
     save: "",
     prerequisites: "",
     skill: "",
-    source: "Path of War",
+    source,
   };
 }
 
@@ -42,6 +43,8 @@ const DOCS: ManeuverDoc[] = [
   doc("Pride Leader's Stance", "Golden Lion", 1, "Stance"),
   doc("Iron Shell", "Iron Tortoise", 3, "Counter"),
   doc("Abyssal Drive", "Black Seraph", 6, "Strike"),
+  doc("Swift Current", "Mithral Current", 2, "Strike", "Path of War: Expanded"),
+  doc("Soul Crusher", "Black Seraph", 8, "Strike", "Midgard Campaign Setting"),
 ];
 
 const db = (over: Partial<ManeuverDbState> = {}): ManeuverDbState => ({
@@ -81,12 +84,41 @@ describe("filterManeuvers", () => {
     const out = filterManeuvers(DOCS, db({ knownOnly: true }), known);
     expect(out.map((d) => d.name)).toEqual(["Tactical Strike"]);
   });
+
+  it("filters by source (book of origin), AND-combined with others", () => {
+    expect(
+      filterManeuvers(
+        DOCS,
+        db({ sources: ["Path of War: Expanded"] }),
+        empty,
+      ).map((d) => d.name),
+    ).toEqual(["Swift Current"]);
+    // multiple sources OR within the source filter
+    expect(
+      filterManeuvers(
+        DOCS,
+        db({ sources: ["Path of War: Expanded", "Midgard Campaign Setting"] }),
+        empty,
+      ),
+    ).toHaveLength(2);
+    // AND-combined with discipline
+    expect(
+      filterManeuvers(
+        DOCS,
+        db({
+          sources: ["Midgard Campaign Setting"],
+          disciplines: ["Black Seraph"],
+        }),
+        empty,
+      ).map((d) => d.name),
+    ).toEqual(["Soul Crusher"]);
+  });
 });
 
 describe("sortManeuvers", () => {
   it("sorts by tier ascending, name as tiebreak", () => {
     const out = sortManeuvers(DOCS, db({ sortKey: "tier" }));
-    expect(out.map((d) => d.level)).toEqual([1, 1, 1, 3, 6]);
+    expect(out.map((d) => d.level)).toEqual([1, 1, 1, 2, 3, 6, 8]);
   });
 
   it("sorts by name by default", () => {

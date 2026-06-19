@@ -131,6 +131,8 @@ export const DEFAULT_EQUIP_DB: EquipDbState = {
 export interface ManeuverDbState {
   search: string;
   disciplines: string[];
+  /** book-of-origin filter (the §15 source: Path of War / Expanded / …) */
+  sources: string[];
   /** ManeuverType[] as strings: Strike / Boost / Counter / Stance */
   types: string[];
   /** maneuver tiers 1–9 */
@@ -146,6 +148,7 @@ export interface ManeuverDbState {
 export const DEFAULT_MANEUVER_DB: ManeuverDbState = {
   search: "",
   disciplines: [],
+  sources: [],
   types: [],
   tiers: [],
   knownOnly: false,
