@@ -17,12 +17,14 @@ import {
   deleteManeuverLoadout,
   recoverAll,
   setActiveStance,
+  setPendingStrike,
   snapshotReadiedAsLoadout,
   toggleActiveBoost,
   toggleExpended,
   toggleReadied,
 } from "../../state/maneuver-actions";
 import { maneuverEffect } from "../../data/maneuver-effects";
+import { strikeEffect } from "../../data/strike-effects";
 
 const READIED_TYPES: ManeuverType[] = ["Strike", "Boost", "Counter"];
 
@@ -229,10 +231,16 @@ export function ManeuversTab({
               const spent = book.expended.includes(mn.id);
               const hasEffect = mn.type === "Boost" && !!maneuverEffect(mn.id);
               const boostOn = (book.activeBoosts ?? []).includes(mn.id);
+              // a Strike with a modelled one-shot rider can be armed for the
+              // next attack (shadows the boost toggle; see strike-effects.ts)
+              const armable = mn.type === "Strike" && !!strikeEffect(mn.id);
+              const armed = book.pendingStrikeId === mn.id;
               return (
                 <div
                   key={mn.id}
-                  class={`ms-mnv__row${spent ? " is-expended" : ""}`}
+                  class={`ms-mnv__row${spent ? " is-expended" : ""}${
+                    armed ? " is-armed" : ""
+                  }`}
                 >
                   <button
                     class="ms-mnv__expend"
@@ -250,6 +258,24 @@ export function ManeuversTab({
                       onClick={() => toggleActiveBoost(store, character, mn.id)}
                     >
                       {boostOn ? "on" : "off"}
+                    </button>
+                  ) : armable ? (
+                    <button
+                      class={`ms-mnv__arm${armed ? " is-armed" : ""}`}
+                      title={
+                        armed
+                          ? "Disarm this strike"
+                          : "Arm this strike's rider for your next attack"
+                      }
+                      onClick={() =>
+                        setPendingStrike(
+                          store,
+                          character,
+                          armed ? undefined : mn.id,
+                        )
+                      }
+                    >
+                      {armed ? "armed" : "arm"}
                     </button>
                   ) : (
                     <span class="ms-mnv__action">{mn.action}</span>

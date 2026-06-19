@@ -16,6 +16,7 @@ import {
 } from "../types/maneuverbook";
 import type { ManeuverDoc } from "../maneuvers/index";
 import { powClass } from "../data/maneuvers";
+import { strikeEffect } from "../data/strike-effects";
 
 function write(
   store: MiniSheetStore,
@@ -104,6 +105,8 @@ export function removeManeuver(
     activeBoosts: (book.activeBoosts ?? []).filter((b) => b !== id),
     activeStanceId:
       book.activeStanceId === id ? undefined : book.activeStanceId,
+    pendingStrikeId:
+      book.pendingStrikeId === id ? undefined : book.pendingStrikeId,
   });
 }
 
@@ -125,6 +128,10 @@ export function toggleReadied(
     activeBoosts: isReadied
       ? (book.activeBoosts ?? []).filter((b) => b !== id)
       : book.activeBoosts,
+    pendingStrikeId:
+      isReadied && book.pendingStrikeId === id
+        ? undefined
+        : book.pendingStrikeId,
   });
 }
 
@@ -159,6 +166,11 @@ export function toggleExpended(
     expended: isExpended
       ? book.expended.filter((e) => e !== id)
       : [...book.expended, id],
+    // expending the armed strike spends its one-shot rider (the "next attack")
+    pendingStrikeId:
+      book.pendingStrikeId === id && !isExpended
+        ? undefined
+        : book.pendingStrikeId,
   });
 }
 
@@ -168,8 +180,13 @@ export function recoverAll(
   character: CharacterRecord,
 ): void {
   const book = requireBook(character);
-  if (!book.expended.length) return;
-  write(store, character, { ...book, expended: [] });
+  if (!book.expended.length && book.pendingStrikeId === undefined) return;
+  // a fresh round: drop any unspent armed strike too
+  write(store, character, {
+    ...book,
+    expended: [],
+    pendingStrikeId: undefined,
+  });
 }
 
 /** Set (or clear, with undefined) the one active stance. */
@@ -180,6 +197,25 @@ export function setActiveStance(
 ): void {
   const book = requireBook(character);
   write(store, character, { ...book, activeStanceId: id });
+}
+
+/**
+ * Arm (or clear, with undefined) the pending Strike whose one-shot rider
+ * applies to the next attack (computeAll merges it into the attack hooks).
+ * Guard mirrors toggleActiveBoost: only a readied, modelled strike (one with a
+ * registered strikeEffect) can be armed — arming anything else is a no-op.
+ * Arming a second strike replaces the first.
+ */
+export function setPendingStrike(
+  store: MiniSheetStore,
+  character: CharacterRecord,
+  id: string | undefined,
+): void {
+  const book = requireBook(character);
+  if (id !== undefined && !(book.readied.includes(id) && strikeEffect(id))) {
+    return;
+  }
+  write(store, character, { ...book, pendingStrikeId: id });
 }
 
 /* ----------------------------- loadouts ----------------------------- */
@@ -230,6 +266,7 @@ export function applyManeuverLoadout(
         : undefined,
     expended: [],
     activeBoosts: [],
+    pendingStrikeId: undefined,
     appliedLoadoutId: id,
   });
 }

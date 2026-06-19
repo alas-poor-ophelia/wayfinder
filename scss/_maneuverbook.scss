@@ -203,6 +203,33 @@
     }
   }
 
+  // arm toggle — a Strike's one-shot rider; mirrors the boost pill but uses
+  // the red accent (armed = a primed strike) so it reads apart from a boost.
+  .ms-mnv__arm {
+    flex: 0 0 auto;
+    min-width: 48px;
+    height: auto;
+    padding: 2px 6px;
+    font-size: 0.78em;
+    border-radius: 4px;
+    border: 1px solid
+      color-mix(in srgb, var(--ms-red, #8b0000) 55%, transparent);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+
+    &.is-armed {
+      border-color: color-mix(in srgb, var(--ms-red, #8b0000) 85%, transparent);
+      background: color-mix(in srgb, var(--ms-red, #8b0000) 20%, transparent);
+      color: color-mix(in srgb, var(--ms-red, #8b0000) 70%, var(--text-normal));
+    }
+  }
+
+  // armed strike row gets a faint red ledger tint so it's visible at a glance
+  .ms-mnv__row.is-armed {
+    background: color-mix(in srgb, var(--ms-red, #8b0000) 8%, transparent);
+  }
+
   .ms-mnv__effects {
     margin-top: 6px;
   }

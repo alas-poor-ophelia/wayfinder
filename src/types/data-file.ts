@@ -293,7 +293,14 @@ export const DEFAULT_DATA: MiniSheetData = {
   // MiniSheetSettings gains maneuversFolder (schema-forward, like v8/v13/v14 —
   // optional/defaulted; the merge in store.load() fills the folder default).
   // No migration code.
-  schemaVersion: 15,
+  // v16: ManeuverBookState gains optional pendingStrikeId (the armed Path of
+  // War Strike whose one-shot rider rides the attack hooks — see
+  // src/data/strike-effects.ts). Schema-forward, like v8/v14/v15 — optional
+  // with an absent-default of undefined; a v15 book loads, stamps to v16, and
+  // round-trips with no pendingStrikeId. No migration code. The frozen calc
+  // parity fixture (tests/unit/fixtures) carries NO maneuverbook, so an
+  // optional field on that subtree changes nothing — no regen required.
+  schemaVersion: 16,
   settings: {
     rulesFolder: "Rules",
     spellsFolder: "MiniSheet/z_Components/database/spells",

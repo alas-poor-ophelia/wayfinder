@@ -90,6 +90,12 @@ export interface ManeuverBookState {
   activeBoosts?: string[];
   /** the one stance currently active (a `maneuvers` id with type Stance) */
   activeStanceId?: string;
+  /**
+   * The single armed Strike whose one-shot rider applies to the next attack
+   * (a `maneuvers` id with type Strike, parallel to `activeStanceId`). Cleared
+   * when the strike is expended/recovered. Absent on older books — read as
+   * undefined. (schema v16; see src/data/strike-effects.ts) */
+  pendingStrikeId?: string;
   /** persisted collapse state of the tab's sections */
   sectionCollapsed: Record<string, boolean>;
   /** named readied sets; absent on books predating this feature — read `?? []` */

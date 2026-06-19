@@ -48,6 +48,7 @@ import { classResources } from "../data/classes";
 import { evaluateFooterFormula, evaluateResourceFormula } from "./resources";
 import { getBuffDef } from "../data/buffs";
 import { maneuverEffect } from "../data/maneuver-effects";
+import { strikeEffect, type StrikeEffect } from "../data/strike-effects";
 import {
   applyHeritage,
   getHeritage,
@@ -265,6 +266,18 @@ export function computeAll(
       .join("\n");
   }
 
+  // Path of War — armed Strike: a one-shot rider on the NEXT attack. Unlike
+  // stances/boosts it CANNOT ride baseMods (the engine is stateless-additive,
+  // so a baseMod would be always-on). Instead it merges into the attack hooks
+  // below (atkAdjust/dmgAdjust scalars, the weapon-song dice slot, the keen
+  // channel, the attack note block) — deliberately NOT the smite channel
+  // (ray double-count quirk, attacks.ts:7). The rider applies to every attack
+  // block this round; "next attack only" is enforced by the store clearing
+  // pendingStrikeId on expend (see setPendingStrike / toggleExpended).
+  const strike: StrikeEffect | undefined = mb?.pendingStrikeId
+    ? strikeEffect(mb.pendingStrikeId)
+    : undefined;
+
   // Animal companion: the Base Statistics table contributes a natural-armor
   // bonus and a Str/Dex increase on top of the user-entered base animal.
   // (BAB and base saves are applied separately below.) The table only fires
@@ -466,6 +479,31 @@ export function computeAll(
     resolveModifiers(combined, "damage.ranged"),
   );
 
+  // Fold the armed strike's one-shot dice / keen / rider into the same channels
+  // the weapon song uses. With no strike armed these reduce to the quick-action
+  // values byte-for-byte (regression-locked); the smite channel stays untouched.
+  const songDice = qa?.extraDamageDice;
+  const songNote = qa?.attackNoteLines.length
+    ? "\n\n**Weapon Song Effects:**\n" + qa.attackNoteLines.join("\n")
+    : "";
+  const addDice = (base: string | undefined, extra: string) =>
+    base ? `${base} ${extra}` : extra;
+  const sd = strike?.extraDamageDice;
+  const strikeDamageDice = sd
+    ? {
+        melee: addDice(songDice?.melee, sd),
+        ranged: addDice(songDice?.ranged, sd),
+        unarmed: addDice(songDice?.unarmed, sd),
+      }
+    : songDice;
+  // expandThreat applies weapon-agnostically (all buckets), OR'd with any
+  // quick-action keen. No present strike sets it — see strike-effects.ts.
+  const strikeKeen = strike?.expandThreat
+    ? { melee: true, ranged: true, unarmed: true }
+    : qa?.keen;
+  const strikeNote =
+    songNote + (strike?.riderText ? `\n\n**Strike:** ${strike.riderText}` : "");
+
   const attackInput = {
     strMod: mods.str,
     dexMod: mods.dex,
@@ -473,14 +511,28 @@ export function computeAll(
     bab,
     paladinLevel,
     monkLevel,
-    atkAdjust: character.adjustments.atk + meleeAtk.rest,
-    dmgAdjust: character.adjustments.dmg + meleeDmg.rest,
-    rangedAtkAdjust: character.adjustments.rangedAtk + rangedAtk.rest,
-    rangedDmgAdjust: character.adjustments.rangedDmg + rangedDmg.rest,
+    // strike?.atk/dmgBonus fold into every bucket — a strike rides whatever
+    // weapon the next attack uses, so it is applied weapon-agnostically.
+    atkAdjust:
+      character.adjustments.atk + meleeAtk.rest + (strike?.atkBonus ?? 0),
+    dmgAdjust:
+      character.adjustments.dmg + meleeDmg.rest + (strike?.dmgBonus ?? 0),
+    rangedAtkAdjust:
+      character.adjustments.rangedAtk +
+      rangedAtk.rest +
+      (strike?.atkBonus ?? 0),
+    rangedDmgAdjust:
+      character.adjustments.rangedDmg +
+      rangedDmg.rest +
+      (strike?.dmgBonus ?? 0),
     unarmedAtkAdjust:
-      character.adjustments.unarmedAtk + combinedFor("attack.unarmed"),
+      character.adjustments.unarmedAtk +
+      combinedFor("attack.unarmed") +
+      (strike?.atkBonus ?? 0),
     unarmedDmgAdjust:
-      character.adjustments.unarmedDmg + combinedFor("damage.unarmed"),
+      character.adjustments.unarmedDmg +
+      combinedFor("damage.unarmed") +
+      (strike?.dmgBonus ?? 0),
     meleeWeaponEnhancement: meleeAtk.enhancement,
     rangedWeaponEnhancement: rangedAtk.enhancement,
     // With quick actions resolved, the legacy toggle booleans are fed
@@ -514,17 +566,12 @@ export function computeAll(
             ? { preciseStrikeOverride: qa.preciseStrikeOverride }
             : {}),
           ...(qa.flurry ? { flurryAttacks: qa.flurry.attacks } : {}),
-          extraDamageDice: qa.extraDamageDice,
-          keen: qa.keen,
-          ...(qa.attackNoteLines.length
-            ? {
-                attackNoteBlock:
-                  "\n\n**Weapon Song Effects:**\n" +
-                  qa.attackNoteLines.join("\n"),
-              }
-            : {}),
         }
       : {}),
+    // weapon-song + armed-strike dice/keen/rider, merged (see above)
+    ...(strikeDamageDice ? { extraDamageDice: strikeDamageDice } : {}),
+    ...(strikeKeen ? { keen: strikeKeen } : {}),
+    ...(strikeNote ? { attackNoteBlock: strikeNote } : {}),
     // schema v4: panache is a resources[] pool; the optional field is the
     // pre-migration fallback
     panachePoints:
