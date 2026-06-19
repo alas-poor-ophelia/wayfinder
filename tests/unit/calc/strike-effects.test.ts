@@ -10,6 +10,11 @@ import { computeAll } from "../../../src/calc";
 import { createDefaultCharacter } from "../../../src/types/character";
 import { createDefaultManeuverBook } from "../../../src/types/maneuverbook";
 import { seedQuickActionsFromToggles } from "../../../src/data/quick-actions";
+import {
+  STRIKE_EFFECTS,
+  STRIKE_REFERENCE_ONLY,
+  strikeEffect,
+} from "../../../src/data/strike-effects";
 
 const armed = (id: string) => {
   const base = createDefaultCharacter("t", "T");
@@ -98,5 +103,50 @@ describe("armed Strike one-shot riders in computeAll", () => {
     const base = computeAll(createDefaultCharacter("t", "T"));
     const bogus = computeAll(armed("golden-lion:no-such-strike"));
     expect(bogus.attacks).toEqual(base.attacks);
+  });
+});
+
+// Structural invariants (CI-safe — no corpus dependency; the corpus
+// completeness + transcription cross-check lives in scripts/strike-verify.mjs).
+describe("strike-effects registry invariants", () => {
+  const entries = Object.entries(STRIKE_EFFECTS);
+
+  it("strikeEffect() resolves known ids and rejects unknown", () => {
+    expect(strikeEffect("thrashing-dragon:wyrmling-s-fang")).toBeDefined();
+    expect(strikeEffect("nope:nope")).toBeUndefined();
+  });
+
+  it("every entry has at least one meaningful field", () => {
+    for (const [id, e] of entries) {
+      const meaningful =
+        typeof e.atkBonus === "number" ||
+        typeof e.dmgBonus === "number" ||
+        !!e.extraDamageDice ||
+        !!e.expandThreat ||
+        !!e.riderText;
+      expect(meaningful, `${id} has no effect`).toBe(true);
+    }
+  });
+
+  it("ids are well-formed discipline:slug", () => {
+    for (const id of [
+      ...Object.keys(STRIKE_EFFECTS),
+      ...Object.keys(STRIKE_REFERENCE_ONLY),
+    ]) {
+      expect(id, id).toMatch(/^[a-z0-9-]+:[a-z0-9-]+$/);
+    }
+  });
+
+  it("extraDamageDice is a well-formed dice rider", () => {
+    for (const [id, e] of entries) {
+      if (e.extraDamageDice)
+        expect(e.extraDamageDice, id).toMatch(/^\+\d+d\d+( [a-z]+)?$/);
+    }
+  });
+
+  it("no id is both modelled and reference-only", () => {
+    const ref = new Set(Object.keys(STRIKE_REFERENCE_ONLY));
+    for (const id of Object.keys(STRIKE_EFFECTS))
+      expect(ref.has(id), `${id} in both maps`).toBe(false);
   });
 });
