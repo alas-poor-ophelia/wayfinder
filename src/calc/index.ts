@@ -47,7 +47,7 @@ import { resolveArchetypeEffects } from "../data/archetypes";
 import { classResources } from "../data/classes";
 import { evaluateFooterFormula, evaluateResourceFormula } from "./resources";
 import { getBuffDef } from "../data/buffs";
-import { maneuverEffect } from "../data/maneuver-effects";
+import { maneuverEffect, maneuverModifiers } from "../data/maneuver-effects";
 import { strikeEffect, type StrikeEffect } from "../data/strike-effects";
 import {
   applyHeritage,
@@ -58,7 +58,11 @@ import {
 import { companionRow } from "../data/companion";
 import type { RaceData } from "../data/types";
 import { resolveQuickActions } from "./quick-actions";
-import { computeManeuvers, type ManeuverComputed } from "./maneuvers";
+import {
+  computeManeuvers,
+  initiatorLevelOf,
+  type ManeuverComputed,
+} from "./maneuvers";
 
 /** One equipped weapon's rendered attack text for a combat-tab block. */
 export interface AttackProfileText {
@@ -249,6 +253,9 @@ export function computeAll(
   const maneuverNoteLines: string[] = [];
   const mb = character.maneuverbook;
   if (mb) {
+    // IL is needed for scaled effects; it's pure of ability mods, so it's
+    // available here (before abilityMods) without a cycle.
+    const il = initiatorLevelOf(character) ?? 0;
     const activeIds = [
       ...(mb.activeStanceId ? [mb.activeStanceId] : []),
       ...(mb.activeBoosts ?? []),
@@ -256,7 +263,7 @@ export function computeAll(
     for (const id of activeIds) {
       const eff = maneuverEffect(id);
       if (!eff) continue;
-      maneuverMods.push(...eff.modifiers);
+      maneuverMods.push(...maneuverModifiers(eff, { initiatorLevel: il }));
       if (eff.note) maneuverNoteLines.push(`- ${eff.note}`);
     }
   }

@@ -42,6 +42,24 @@ function tierFromInitiatorLevel(il: number): number {
 }
 
 /**
+ * Initiator Level from levels alone (initiating-class levels + ⌊½ others⌋,
+ * or the explicit override). Pure of ability mods, so computeAll can resolve
+ * IL-scaled stance/boost effects at the modifier-fold point — which runs
+ * before ability mods are known. Returns null when there is no maneuverbook.
+ */
+export function initiatorLevelOf(character: CharacterRecord): number | null {
+  const book = character.maneuverbook;
+  if (!book) return null;
+  const initiatingKey = book.initiatingClass.toLowerCase();
+  const totalLevel = character.classes.reduce((s, c) => s + c.level, 0);
+  const classLevel = character.classes
+    .filter((c) => c.className.toLowerCase().includes(initiatingKey))
+    .reduce((s, c) => s + c.level, 0);
+  const otherLevel = totalLevel - classLevel;
+  return book.initiatorLevelOverride ?? classLevel + Math.floor(otherLevel / 2);
+}
+
+/**
  * Compute the maneuver block, or null when the character has no maneuverbook.
  * `abilityMods` is the effective per-ability modifier map (computeAll already
  * resolved it), so the recovery count and save DCs track buffs/items.
@@ -56,14 +74,11 @@ export function computeManeuvers(
   const meta = powClass(book.initiatingClass);
   const initiatingKey = book.initiatingClass.toLowerCase();
 
-  const totalLevel = character.classes.reduce((s, c) => s + c.level, 0);
   const classLevel = character.classes
     .filter((c) => c.className.toLowerCase().includes(initiatingKey))
     .reduce((s, c) => s + c.level, 0);
-  const otherLevel = totalLevel - classLevel;
 
-  const initiatorLevel =
-    book.initiatorLevelOverride ?? classLevel + Math.floor(otherLevel / 2);
+  const initiatorLevel = initiatorLevelOf(character) ?? 0;
 
   const initMod = abilityMods[book.initiatingStat] ?? 0;
 
