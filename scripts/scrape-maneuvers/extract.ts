@@ -36,6 +36,38 @@ export interface ManeuverRecord {
   save: string;
   prerequisites: string;
   markdown: string;
+  /** book of origin, from the page's OGL Section 15 credit (see extractSource) */
+  source: string;
+}
+
+/**
+ * OGL Section 15 → book of origin. The §15 block lists the whole OGL chain
+ * (SRD → Pathfinder → Psionics → Path of War → Path of War: Expanded → …), so
+ * a page's source is the MOST-SPECIFIC product credited on it: a separate
+ * product (Midgard, Lords of the Night) wins over Expanded, which wins over the
+ * base book. The credit must sit near a copyright year so navigation links to
+ * "Path of War" elsewhere on the page don't count (H-738: §15 is the only
+ * authoritative signal). Returns the fallback when no §15 product is found.
+ */
+export function extractSource(html: string, fallback = "Path of War"): string {
+  const text = decode(parse(html).text);
+  const idx = text.search(/Section 15\s*:?\s*Copyright Notice/i);
+  const scope = idx >= 0 ? text.slice(idx) : text;
+  // a product name within a short span of a copyright marker/year is a §15
+  // credit (so a navigation link to "Path of War" elsewhere doesn't count)
+  const has = (m: string) =>
+    new RegExp(`${m}[^.]{0,40}(©|copyright|20\\d\\d)`, "i").test(scope);
+  // Separate products win (specific origin). Then the discriminator: the base
+  // credit reads "Path of War, © 2014" (comma after War) while Expanded reads
+  // "Path of War – Expanded, © 2016". d20pfsrd lists ONLY Expanded for pure
+  // Expanded content but lists the base credit for base content (even when the
+  // page also references Expanded), so the base credit's PRESENCE means the
+  // page's book is the base one.
+  if (has("Midgard Campaign Setting")) return "Midgard Campaign Setting";
+  if (has("Lords of the Night")) return "Lords of the Night";
+  if (has("Path of War,")) return "Path of War";
+  if (has("Path of War\\s*[–—-]\\s*Expanded")) return "Path of War: Expanded";
+  return fallback;
 }
 
 const STAT_LABELS =
@@ -259,6 +291,7 @@ function buildRecord(
   name: string,
   block: Node[],
   discipline: string,
+  source: string,
 ): ManeuverRecord | null {
   const rec: ManeuverRecord = {
     name,
@@ -272,6 +305,7 @@ function buildRecord(
     save: "",
     prerequisites: "",
     markdown: "",
+    source,
   };
 
   // The body begins at the DESCRIPTION divider or the first prose paragraph —
@@ -345,14 +379,21 @@ function blockAfter(node: HTMLElement, include = false): Node[] {
  * sections (11 of the 12 core disciplines). Returns [] for "link-only"
  * disciplines (e.g. Black Seraph) — the runner then falls back to detail pages.
  */
-export function extractManeuvers(html: string, discipline: string): ManeuverRecord[] {
+export function extractManeuvers(
+  html: string,
+  discipline: string,
+  sourceFallback = "Path of War",
+): ManeuverRecord[] {
   const root = parse(html);
+  // §15 is per-page: one source for the index. Falls back to the discipline's
+  // manual override (or "Path of War") when the page has no §15 footer.
+  const source = extractSource(html, sourceFallback);
   const out: ManeuverRecord[] = [];
   for (const h of root.querySelectorAll("h4")) {
     if (/widget/i.test(h.getAttribute("class") ?? "")) continue;
     const name = headingName(h);
     if (!name) continue;
-    const rec = buildRecord(name, blockAfter(h), discipline);
+    const rec = buildRecord(name, blockAfter(h), discipline, source);
     if (rec) out.push(rec);
   }
   return out;
@@ -386,6 +427,7 @@ export function maneuverDetailLinks(html: string, slug: string): string[] {
 export function extractManeuverDetail(
   html: string,
   discipline: string,
+  sourceFallback = "Path of War",
 ): ManeuverRecord | null {
   const root = parse(html);
   const h1 = root.querySelector("h1");
@@ -398,5 +440,12 @@ export function extractManeuverDetail(
       return !!ls.length && /^Discipline\s*:/i.test(ls[0]!) && ls[0]!.includes("(");
     });
   if (!statP) return null;
-  return buildRecord(name, blockAfter(statP, true), discipline);
+  // detail pages carry their OWN §15 — this is how the 3 Black Seraph maneuvers
+  // credited to Midgard get the right source even though the discipline is base.
+  return buildRecord(
+    name,
+    blockAfter(statP, true),
+    discipline,
+    extractSource(html, sourceFallback),
+  );
 }

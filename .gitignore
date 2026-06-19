@@ -12,3 +12,4 @@ main.js
 styles.css
 .git-commit-msg.txt
 scripts/scrape-maneuvers/out/
+scripts/scrape-maneuvers/out-backfill/
