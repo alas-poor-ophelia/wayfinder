@@ -103,6 +103,12 @@ git clone https://github.com/alas-poor-ophelia/wayfinder-rules.git
 
 or download it as a ZIP from the [repository page](https://github.com/alas-poor-ophelia/wayfinder-rules) and unzip it into your vault. The notes are plain Markdown — yours to trim, annotate, or replace. None of this is required: without the pack, the database and every calculation still work; you just won't have the full spell text on tap.
 
+### Path of War (optional)
+
+Wayfinder supports **Path of War**, the third-party martial-maneuver system by Dreamscarred Press. It is **off by default** — turn it on under **Settings → Wayfinder → Path of War**. Once enabled, initiating characters (Warlord, Warder, Stalker) gain a **Maneuvers** tab that tracks readied maneuvers, stances, and boosts, with their effects folded into the sheet's math the same way buffs and quick actions are. A searchable **maneuver database** mirrors the spell database, and maneuvers can be saved as loadouts. Turning the setting back off hides every Path of War surface and leaves your maneuver data untouched.
+
+As with spells, Wayfinder bundles the maneuver *database* but not the full maneuver *text*. The maneuver reference notes ship in the same [reference-note pack](#spell-reference-notes-optional) as the spells, under a `maneuvers/` folder; point **Settings → Wayfinder → Maneuvers folder** at it to link each maneuver to its description. (That setting appears only when Path of War is enabled.)
+
 ### Equipment
 
 A bundled item catalog — 330 weapons, 65 armors, and over 3,000 magic items — is searchable and filterable, and items add to a character's inventory directly from the table. Equipped weapons become attack lines; equipped armor and magic items apply their bonuses automatically.
@@ -137,7 +143,9 @@ Open **Settings → Wayfinder**:
 
 - **Rules folder** — where Wayfinder looks for the rules notes it links to.
 - **Spells folder** — where per-spell notes live, for linking from the spellbook. Point this at the [spell reference-note pack](#spell-reference-notes-optional) or at your own spell notes.
+- **Maneuvers folder** — where per-maneuver notes live (shown only when Path of War is enabled). Point this at the `maneuvers/` folder from the reference-note pack.
 - **Custom items file** — the JSON file your forged items are saved to (created at the vault root on first save).
+- **Path of War** — enable the optional [Path of War](#path-of-war-optional) martial-maneuver system. Off by default.
 - **Elephant in the Room** — a house-rule toggle. When on, the popular EiTR ruleset will be applied. **BETA**.
 - **Use Carrel for References** — shown when the Carrel plugin is installed; switches the References tab between the built-in list and the Carrel board.
 

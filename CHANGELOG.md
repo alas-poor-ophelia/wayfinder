@@ -3,6 +3,16 @@
 Notable changes to Wayfinder. Each version's number matches its `manifest.json`
 entry and its release tag (no `v` prefix).
 
+## 1.0.1 — 2026-06-19
+
+### Added
+
+- A **Maneuvers folder** setting (shown when Path of War is enabled) to point
+  Wayfinder at your Path of War maneuver notes — e.g. the `maneuvers/` folder
+  from the wayfinder-rules pack — so maneuver links resolve, just like the
+  spells folder. Previously the maneuver notes had to sit at a fixed default
+  path.
+
 ## 1.0.0 — 2026-06-18
 
 ### Added

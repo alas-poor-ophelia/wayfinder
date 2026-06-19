@@ -1,7 +1,7 @@
 {
 	"id": "wayfinder",
 	"name": "Wayfinder",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.8.7",
 	"description": "A Pathfinder 1e toolkit — character sheets, spellbook, equipment, and references, optimized for iPad.",
 	"author": "alas, poor ophelia",

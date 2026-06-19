@@ -28,8 +28,9 @@ name equals the `manifest.json` version builds and publishes a GitHub Release wi
    (`README.md`, `readme-images/`, `LICENSE`, `.github/workflows/`, `RELEASE.md`),
    are uncommitted. Review and commit them.
 2. **Land on `main`.** Merge `quality/pre-release-forge` → `main` (tag from `main`).
-3. **Confirm versions agree.** `manifest.json` `version` (currently `0.8.0`),
-   `versions.json` (`"0.8.0": "1.4.11"`), and `package.json` `version` should match.
+3. **Confirm versions agree.** `manifest.json` `version`, the newest
+   `versions.json` entry, and `package.json` `version` must all match (e.g.
+   `1.0.1` with `"1.0.1": "1.8.7"`).
 4. **Create the GitHub repo** `alas-poor-ophelia/wayfinder`, then:
    ```
    git remote add origin https://github.com/alas-poor-ophelia/wayfinder.git
@@ -37,8 +38,8 @@ name equals the `manifest.json` version builds and publishes a GitHub Release wi
    ```
 5. **Tag and push** — the tag MUST equal the manifest version, no `v` prefix:
    ```
-   git tag 0.8.0
-   git push origin 0.8.0
+   git tag 1.0.1
+   git push origin 1.0.1
    ```
 6. **Watch the Action.** It guards `tag == manifest.version`, builds, and creates
    the release. Confirm the three assets are attached and the release is **not**
@@ -49,20 +50,23 @@ name equals the `manifest.json` version builds and publishes a GitHub Release wi
 To cut later versions: bump `manifest.json`, add a `versions.json` entry, commit,
 then tag with the new version.
 
-## 2. wayfinder-rules (spell/rules note pack)
+## 2. wayfinder-rules (spell + maneuver note pack)
 
-A plain content repo. The plugin's README points users here to clone or download
-the spell notes and set **Settings → Wayfinder → Spells folder**.
+A plain content repo (already created at `alas-poor-ophelia/wayfinder-rules`).
+The plugin's README points users here to clone or download the notes and set
+**Settings → Wayfinder → Spells folder** (and **Maneuvers folder** for Path of
+War).
 
-1. **Create** `alas-poor-ophelia/wayfinder-rules`.
-2. **Copy the notes in.** From the vault:
-   `MiniSheet Dev/MiniSheet/z_Components/database/spells/` (~2,829 `.md` files).
-   Keep them in a clearly named folder, e.g. `spells/`, so the repo can hold other
-   loose note sets later (rules, feats, …) without restructuring.
-3. **Add** a short `README.md` (what this is, how to point the Spells folder at it),
-   the **`OGL-1.0a.txt`** and a `NOTICE` crediting Open Game Content — copy
-   `LICENSES/OGL-1.0a.txt` and `LICENSES/NOTICE.md` from this repo as the basis.
-4. **(Optional) Packaged ZIP per release.** Drop the workflow below at
+1. **Refresh the notes.** From the vault, copy into the matching repo folders:
+   - `MiniSheet Dev/MiniSheet/z_Components/database/spells/` → `spells/` (~2,829 `.md`).
+   - `MiniSheet Dev/MiniSheet/z_Components/database/maneuvers/` → `maneuvers/`
+     (~413 `.md`, in discipline subfolders).
+   Each note set lives under its own folder so the repo can hold more later.
+2. **Keep `NOTICE.md` Section 15 current.** Spells are Paizo OGC; the maneuvers
+   add **Path of War © 2014** and **Path of War: Expanded © 2016, Dreamscarred
+   Press** (the notes span both books). `OGL-1.0a.txt` and `NOTICE.md` are
+   already in the repo — update them, don't recreate.
+3. **(Optional) Packaged ZIP per release.** Drop the workflow below at
    `.github/workflows/package.yml`, then `git tag 1.0 && git push origin 1.0` to
    attach a `wayfinder-rules.zip`. Without it, users can still use GitHub's
    *Code → Download ZIP*.

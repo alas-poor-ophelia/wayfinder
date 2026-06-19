@@ -1,7 +1,7 @@
 import type { App } from "obsidian";
 import { Notice, PluginSettingTab, Setting } from "obsidian";
 import type MiniSheetPlugin from "./main";
-import { characterStorageMode } from "./types/data-file";
+import { characterStorageMode, pathOfWarEnabled } from "./types/data-file";
 import { isCarrelInstalled } from "./util/carrel";
 
 export class MiniSheetSettingTab extends PluginSettingTab {
@@ -48,6 +48,26 @@ export class MiniSheetSettingTab extends PluginSettingTab {
             this.plugin.spellIndex.rebuild();
           }),
       );
+
+    // Only relevant when Path of War is enabled — keep it out of the way otherwise.
+    if (pathOfWarEnabled(this.plugin.store.data.value.settings)) {
+      new Setting(containerEl)
+        .setName("Maneuvers folder")
+        .setDesc(
+          "Vault folder containing Path of War maneuver notes (one note per " +
+            "maneuver). Maneuver name links on the maneuvers tab resolve into " +
+            "this folder.",
+        )
+        .addText((text) =>
+          text
+            .setPlaceholder("Folder for maneuver notes")
+            .setValue(this.plugin.store.data.value.settings.maneuversFolder)
+            .onChange((value) => {
+              this.plugin.store.updateSettings({ maneuversFolder: value });
+              this.plugin.maneuverIndex.rebuild();
+            }),
+        );
+    }
 
     new Setting(containerEl)
       .setName("Custom items file")
