@@ -3,6 +3,41 @@
 Notable changes to Wayfinder. Each version's number matches its `manifest.json`
 entry and its release tag (no `v` prefix).
 
+## 1.1.0 — 2026-06-20
+
+Path of War, completed — the full martial-maneuver system, not just the spine.
+
+### Added
+
+- **Strikes are now armable.** A Strike with a modelled rider shows an
+  **arm / armed** button on the Maneuvers tab; arming it folds its bonus —
+  extra damage dice, flat damage, to-hit, or a rider note (prone, ignores DR,
+  auto-hit…) — into your **next attack**, surfaced right on the combat tab's
+  attack line. Expending the strike clears it.
+- **Stances and boosts auto-apply.** Every stance and boost whose effect fits
+  the modifier model now feeds the sheet math when active (AC, saves, attack,
+  CMB/CMD, initiative, speed), including bonuses that **scale with Initiator
+  Level**. Effects that can't be a numeric bonus (auras, healing, extra dice,
+  control) still render their text.
+- **Three more initiating classes** — **Harbinger**, **Mystic**, and
+  **Zealot** (Path of War: Expanded) — selectable under Configure → Combat →
+  Path of War, with correct progressions, save DCs, and recovery. The Mystic's
+  **stochastic** granted-maneuver recovery is modelled distinctly from the
+  ability-mod recovery of the other classes.
+- **Source filter** in the maneuver database — filter by book of origin
+  (Path of War / Path of War: Expanded / Lords of the Night / …). Appears once
+  your maneuver notes span more than one source.
+
+### Changed
+
+- The recovery rule is now **per class** (ability-mod count for five classes,
+  stochastic for the Mystic) instead of a single hardcoded formula. The three
+  base classes recover exactly as before.
+- The maneuver **reference-note pack** gains ten more disciplines (Steel
+  Serpent, Veiled Moon, Elemental Flux, Riven Hourglass, Shattered Mirror,
+  Sleeping Goddess, Solar Wind, Tempest Gale, Radiant Dawn, Unquiet Grave) and
+  per-note **book attribution** from each page's OGL Section 15 credit.
+
 ## 1.0.1 — 2026-06-19
 
 ### Added
