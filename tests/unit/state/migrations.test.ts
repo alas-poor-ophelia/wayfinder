@@ -11,6 +11,7 @@ import {
 } from "../../../src/types/character";
 import type { MiniSheetData } from "../../../src/types/data-file";
 import { createDefaultSpellbook } from "../../../src/types/spellbook";
+import { createDefaultManeuverBook } from "../../../src/types/maneuverbook";
 
 function v3Adarin(): CharacterRecord {
   const c = createDefaultCharacter("adarin", "Adarin");
@@ -273,5 +274,48 @@ describe("migrateData v10 -> v11 (speed/size derive-with-override)", () => {
     const twice = migrateData({ schemaVersion: 11, characters: [once] })
       .characters![0];
     expect(twice).toEqual(once);
+  });
+});
+
+describe("v15 -> v16 (pendingStrikeId is schema-forward)", () => {
+  // v16 added an optional ManeuverBookState.pendingStrikeId. Like v12/v13/v14/
+  // v15 it is schema-forward: migrateData applies NO step (all version<N gates
+  // are ≤11), so a v15 book passes through untouched and the store's merge
+  // stamps schemaVersion 16. These guard the absent-safe round-trip.
+  const v15 = (characters: CharacterRecord[]): Partial<MiniSheetData> => ({
+    schemaVersion: 15,
+    characters,
+  });
+
+  it("a v15 maneuverbook round-trips with no pendingStrikeId added", () => {
+    const c = createDefaultCharacter("w", "Warder");
+    c.classes = [{ className: "Warder", level: 5 }];
+    c.maneuverbook = createDefaultManeuverBook("warder", "int");
+    const out = migrateData(v15([c]));
+    const book = out.characters![0].maneuverbook!;
+    expect(book).toBeDefined();
+    expect(book.pendingStrikeId).toBeUndefined();
+    // migrateData must not mutate an already-v15 record
+    expect(out.characters![0]).toEqual(c);
+  });
+
+  it("preserves an already-armed pendingStrikeId", () => {
+    const c = createDefaultCharacter("w", "Warder");
+    c.maneuverbook = {
+      ...createDefaultManeuverBook("warlord", "cha"),
+      readied: ["thrashing-dragon:wyrmling-s-fang"],
+      pendingStrikeId: "thrashing-dragon:wyrmling-s-fang",
+    };
+    const out = migrateData(v15([c]));
+    expect(out.characters![0].maneuverbook!.pendingStrikeId).toBe(
+      "thrashing-dragon:wyrmling-s-fang",
+    );
+  });
+
+  it("leaves characters without a maneuverbook untouched", () => {
+    const c = createDefaultCharacter("x", "X");
+    const out = migrateData(v15([c]));
+    expect(out.characters![0].maneuverbook).toBeUndefined();
+    expect(out.characters![0]).toEqual(c);
   });
 });
